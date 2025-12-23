@@ -43,7 +43,7 @@ Essential resources for planning and executing enterprise migrations:
 
 ---
 
-## Sites and youtube channles from the FastTrack team 
+## Sites and youtube channels from the FastTrack team 
 
 Various sites and youtube channels from our fastrack team that contain good GH content.
 
