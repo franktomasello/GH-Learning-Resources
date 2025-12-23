@@ -1,87 +1,125 @@
-# Copilot standalone guidance 
+# 🚀 Copilot Standalone Guidance
 
-<br>
+## 📋 Objective
+Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.
 
-## Most Optimal Way: Enterprise Teams Assignment
+---
 
-For **1,000 users**, Enterprise Teams is definitively the best approach. Here's why from the transcript:
+## 🔧 Phase 1: The Setup (Critical Configuration)
 
-- **80%+ of adopters use Enterprise Teams** for bulk assignment
-- **API support** available for automation
-- **IDP integration** possible for sync with identity providers
-- Easier ongoing management than 1k individual assignments
+### Step 1: Navigate to Enterprise Settings
 
-* * *
+1. Click your profile photo (top-right) → **Your enterprises**
+2. Select the target enterprise
 
-## Step-by-Step Implementation:
+### Step 2: Create the Enterprise Team (The "Zero-Cost" Step)
 
-### 1\. **Navigate to Enterprise Settings**
+> ⚠️ **CRITICAL**: This step determines if you pay for 1,000 extra GHE licenses or not. Follow exactly.
 
-- Go to your SIE EMU enterprise account
-- Access the **Licensing page** (not org-level settings)
+1. Go to **People** → **Enterprise teams**
+2. Click **Create enterprise team**
+3. **Name:** Use a functional name (e.g., `copilot-standalone-users`, `contractor-devs`)
+4. **Organizations:** **LEAVE THIS BLANK**
 
-### 2\. **Create Enterprise Team for Perforce Users**
+#### 🛑 WARNING: Organization Access
+- **DO NOT** select any organization
+- **Why?** If you grant this team access to an organization (even "Read" access), every user in it becomes a "standard enterprise member" and immediately consumes a full GitHub Enterprise license (approx. $21/mo or $231/yr depending on contract)
+- **Correct State:** The team exists at the *enterprise* level only, with no org affiliation
 
-- Navigate to **Enterprise Teams**
-- Click "Create Team"
-- Name it something like "Perforce-Copilot-Users" or "PlayStation-Studios-Copilot"
+---
 
-### 3\. **Add Users to the Team**
+## 👥 Phase 2: Add Users to the Team
 
-**Option A - Manual (smaller batches):**
+Choose the method that matches your infrastructure.
 
-- Add users directly through the UI
+### Option A: IdP Group Sync (Best for Long-Term/EMU)
 
-**Option B - API (recommended for 1k users):**
+*Requires Enterprise Managed Users (EMU) or Team Sync configured.*
 
-- Use the Enterprise Teams API to bulk add users
-- Transcript confirms: _"API support for all this new thing we're launching"_ (09:45)
+1. In your IdP (Okta, Azure AD, etc.), create a group (e.g., `github-copilot-users`)
+2. In GitHub **Enterprise teams**, select your team (`copilot-standalone-users`)
+3. Go to **Settings** → **Identity Provider Groups**
+4. Connect the IdP group
+   - **Constraint:** The GitHub team must have **no manually assigned users** before you link the group
+   - **Result:** Membership is now 100% automated by your IdP
 
-**Option C - IDP Sync (best long-term):**
+### Option B: Scripted REST API (Best for Bulk Initial Setup)
 
-- Configure the Enterprise Team to sync with an IDP user group
-- Any changes in IDP automatically update Copilot access
-- Transcript: _"you can configure a team to link with an IDP user group"_ (06:33)
+*Use this if you have a CSV of usernames and don't use IdP sync.*
 
-### 4\. **Assign Copilot to the Enterprise Team**
+**Correct Endpoint:**
+```
+PUT /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}
+```
 
-- Select your newly created team
-- Click "Assign Copilot"
-- This grants Copilot access to all team members
+**Bulk Add Option (Recommended for 1,000 users):**
+```
+POST /enterprises/{enterprise}/teams/{enterprise-team}/memberships/add
+```
+*(accepts an array of usernames)*
 
-### 5\. **Verify Assignment**
+**Important Note:** Enterprise team slugs receive an `ent:` prefix. Use the full slug format in API calls.
 
-> Note: There's a **cooldown period** - seats show up within a few minutes
+**Logic:**
+1. Read list of usernames
+2. Loop through list: Call endpoint for each user (or use bulk add)
+3. Handle 404s (user not found) or 422s (already member)
 
-- Users get **access immediately** even if dashboard takes time to update
-- Go to Licensing dashboard to verify seat count
+### Option C: Manual UI (Not Recommended)
 
-### 6\. **Set Copilot Policies (if needed)**
+- Valid only for <50 users
+- Do not attempt for 1,000 users
 
-- Configure any enterprise-level Copilot policies
-- For unaffiliated users, the "Policy for Enterprise Assigned Users" applies
-- Default is disabled, so enable features you want them to access
+---
 
-* * *
+## 📜 Phase 3: Assign the License
 
-## Important Notes:
+1. In the Enterprise account, go to **Billing & licensing**
+2. Select **Licensing** → **Copilot**
+3. Click **Manage** (next to Copilot Business)
+4. Switch to the **Enterprise teams** tab (not the default "Organizations" tab)
+5. Click **Assign licenses**
+6. Select your team (`copilot-standalone-users`) and confirm
 
-✅ **Users remain unaffiliated** - they never enter an organization, so **zero GHE licenses consumed**
+### ✅ Outcome
+- **All 1,000 users now have a Copilot Business license**
+- **Cost:** 1,000 × Copilot Business rate
+- **GHE Seat Consumption:** 0 (Verified)
 
-✅ **One license per user** - even if assigned multiple times, they only consume one Copilot seat (deduplication happens automatically)
+---
 
-✅ **IDP integration recommended** - set it up once, forget about manual management
+## ✓ Phase 4: Verification & Limits (Triple-Checked)
 
-⚠️ **Cooldown period** - licensing dashboard may take a few minutes to reflect changes (users still get immediate access)
+| Check | Verified Fact |
+|:------|:--------------|
+| **Team Capacity** | **5,000 Members.** The limit was increased from 500 to 5,000 per enterprise team in December 2025. |
+| **License Consumption** | **Copilot Only.** Users in an enterprise team *without* org access do NOT consume a GHE/Visual Studio license. |
+| **Billing Deduplication** | **Unique User.** If a user is already licensed for Copilot in an Org, adding them here generally does not double-bill; the system bills per unique user based on GitHub's combined billing model. |
+| **Scope** | **Copilot Business Only.** This method does *not* grant Copilot Enterprise features (which require repo context/org access). |
+| **Feature Status** | **Public Preview.** Enterprise Teams remain in Public Preview, though widely stable for this use case. |
 
-⚠️ **Enterprise team has a 500 users per team limit _,_ so they might need to spilt out into multiple teams**  
+---
 
-**⚠️  Ideally, we (product) want teams to align with their actual function like `platform-engineers` `ai-engineers` , not `copilot-1` `copilot-2`** 
+## ⚠️ Common Pitfall to Avoid
 
-* * *
+### The "Upgrade" Trap
 
-## Timeline:
+If you later decide to upgrade these users to **Copilot Enterprise** (to use Chat with your codebase), you will need to grant them access to repositories.
 
-This can be set up **today** - it's GA and available now for all EMU accounts.
+- **The Moment you do this:** You must add them to an Organization
+- **The Cost:** They will immediately consume a **GitHub Enterprise license** + the **Copilot Enterprise upgrade** cost
+- **Conclusion:** Keep them on **Copilot Business** if the goal is "standalone" usage (IDE completion/chat without repo context)
 
-<br>
+---
+
+## 📚 Sources
+
+1. [Creating enterprise teams](https://docs.github.com/en/enterprise-cloud@latest/enterprise-onboarding/setting-up-organizations-and-teams/creating-teams)
+2. [REST API endpoints for enterprise team memberships](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-teams/enterprise-team-members)
+3. [Granting users access to GitHub Copilot in your enterprise](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access)
+4. [Combined GitHub Enterprise cloud and server use](https://docs.github.com/en/enterprise-cloud@latest/billing/concepts/enterprise-billing/combined-enterprise-use)
+5. [Enterprise teams product limits increased by over 10x](https://github.blog/changelog/2025-12-08-enterprise-teams-product-limits-increased-by-over-10x/)
+
+---
+
+*Last Updated: December 2025*
