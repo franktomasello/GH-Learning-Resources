@@ -43,6 +43,14 @@ Essential resources for planning and executing enterprise migrations:
 
 ---
 
+## Sites and youtube channles from the FastTrack team 
+
+Various sites and youtube channels from our fastrack team that contain good GH content.
+
+https://www.youtube.com/@MickeyGousset
+https://www.kenmuse.com/
+https://josh-ops.com/
+
 ## 💡 About This Collection
 
 This resource hub is built from real customer engagements and self-guided learning experiences. It complements official GitHub documentation with practical guides for common enterprise scenarios.
