@@ -23,7 +23,7 @@ Master GitHub fundamentals with official certification courses and hands-on prac
 
 Deep-dive tutorials for configuring and managing GitHub EMU environments:
 
-- **[Rafferty's EMU Guides](https://raffertyuy.com/)**  
+- **[Rafferty's EMU Guides](https://raffertyuy.com/raztype/ghec-emu-initial-setup-intro/)**  
   Expert tutorials and configuration walkthroughs for EMU deployments
 
 - **[Setting Up GitHub Copilot for Your Company w/EMU](https://devblogs.microsoft.com/all-things-azure/tutorial-videos-setting-up-github-copilot-for-your-company/)**  
