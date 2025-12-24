@@ -185,6 +185,4 @@ GitHub notes that accounts created **before Aug 22, 2025** may have an auto-crea
 
 <br>
 
----
-
 *Last updated: December 2025*
