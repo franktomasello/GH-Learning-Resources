@@ -1,6 +1,11 @@
 # 🚀 Copilot Standalone Guidance
 
+> **How to assign Copilot Business licenses without consuming GitHub Enterprise (GHE) licenses**
+
+---
+
 ## 📋 Objective
+
 Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.
 
 ---

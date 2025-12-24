@@ -1,4 +1,4 @@
-# 🚀 GitHub Enterprise Managed Users (EMU) Setup Guide
+# 🚀 GitHub Enterprise Managed Users (EMU) Setup Guide (SAML)
 
 > **Complete end-to-end runbook for configuring EMU with Microsoft Entra ID (SAML), Azure billing, and GitHub Copilot**
 
@@ -20,16 +20,18 @@ This guide walks through setting up a new GitHub Enterprise Cloud (GHEC) with En
 
 ## 0️⃣ Prerequisites Checklist
 
-### ✓ Required Items
+### Required Items
 
 Before beginning, ensure you have:
 
-- **EMU Enterprise Created** — A new enterprise with EMU enabled (different from standard enterprise)
-- **Setup User** — `SHORTCODE_admin` created by GitHub, with password set and 2FA enabled (store recovery codes securely)
-- **Entra Admin Access** — Ability to create Enterprise Apps and configure SAML SSO + SCIM provisioning
-- **Azure Subscription** — Subscription ID and someone who can grant tenant-wide admin consent
+| Requirement | Status |
+|-------------|--------|
+| **EMU Enterprise Created** — A new enterprise with EMU enabled | ☐ |
+| **Setup User** — `SHORTCODE_admin` created by GitHub, with password set and 2FA enabled | ☐ |
+| **Entra Admin Access** — Ability to create Enterprise Apps and configure SAML SSO + SCIM | ☐ |
+| **Azure Subscription** — Subscription ID and someone who can grant tenant-wide admin consent | ☐ |
 
-> **💡 Note:** SCIM provisioning is **required** for EMU to manage user lifecycle and account creation.
+> 💡 **Note:** SCIM provisioning is **required** for EMU to manage user lifecycle and account creation.
 
 ---
 
@@ -45,15 +47,15 @@ Before beginning, ensure you have:
 
 ### Important Notes
 
-> **⚠️ Setup User Purpose:** This account is primarily for SCIM provisioning via token and recovery scenarios. Day-to-day enterprise administration should be done with provisioned managed user accounts.
+> ⚠️ **Setup User Purpose:** This account is primarily for SCIM provisioning via token and recovery scenarios. Day-to-day enterprise administration should be done with provisioned managed user accounts.
 
-> **🚨 Email Conflict:** If the provided email address is already associated as a primary email with an existing GitHub account, the activation link will not work. Modify the existing account's primary email first.
+> 🚨 **Email Conflict:** If the provided email address is already associated as a primary email with an existing GitHub account, the activation link will not work. Modify the existing account's primary email first.
 
 ---
 
 ## 2️⃣ Create the Entra ID Enterprise Application
 
-### Navigation Path
+### Navigation
 
 ```
 Microsoft Entra Admin Center
@@ -408,18 +410,13 @@ SCIM Tenant URL:    https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMA
 
 After completing this guide, you should have:
 
-✅ EMU enterprise fully configured with Entra ID authentication  
-✅ SCIM provisioning active for automated user lifecycle management  
-✅ Azure subscription connected for metered billing  
-✅ GitHub Copilot enabled and configured  
-✅ Initial organization structure established  
-✅ First users provisioned and able to access GitHub  
+- ✅ EMU enterprise fully configured with Entra ID authentication
+- ✅ SCIM provisioning active for automated user lifecycle management
+- ✅ Azure subscription connected for metered billing
+- ✅ GitHub Copilot enabled and configured
+- ✅ Initial organization structure established
+- ✅ First users provisioned and able to access GitHub
 
 ---
 
-<div align="center">
-
-**📅 Document Version**  
-*Last Updated: December 2025*
-
-</div>
+*Last updated: December 2025*
