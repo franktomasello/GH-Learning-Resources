@@ -1,187 +1,181 @@
-# 🎯 Runbook: Let Only a "Hyper Power User" Group Exceed Copilot Premium Request Allowance
+# 🎯 Runbook: Let Only a "Hyper Power User" Group Exceed Copilot Premium Request Allowance (GHEC)
 
-> **Using Cost Centers + Budgets to control who can incur premium request overages**
+> **Use the "Premium request paid usage" policy + cost-center budgets to allow overages for only a subset of users, while blocking everyone else.**
 
 ---
 
 ## 📋 Goal
 
-Allow only a specific subset of users ("hyper power users") to use paid premium requests beyond their included allowance, while everyone else is blocked from overages.
+Allow only a specific subset of users (“hyper power users”) to use paid premium requests beyond their included allowance, while everyone else is blocked from overages using budgets that stop usage at the limit.
 
-> 💡 **Why this matters:** This solves the exact failure mode where org-level $0 budgets with "Stop usage…" enabled block overages for everyone in that org, even if you try to allow spend for a smaller group elsewhere. GitHub explicitly calls out that existing budgets don't get overridden, and conflicting "stop usage" budgets can block premium requests.
-
----
-
-## ✅ Before You Start
-
-Confirm these items before proceeding:
-
-| Requirement | Status |
-|-------------|--------|
-| You're on GitHub Enterprise Cloud (GHEC) | ☐ Confirmed |
-| You know the list of "hyper power users" | ☐ Confirmed |
-| You understand: every user must be covered by a budget to prevent unlimited overages | ☐ Confirmed |
+Key mechanics to keep in mind:
+- Budgets don’t override each other. If any applicable budget with “Stop usage when budget limit is reached” is exhausted, premium requests are blocked, even if another budget “should allow” spend [1].
+- Every user must be covered by a budget or they may have unlimited premium-request overage spend [1].
 
 ---
 
-## 🏗️ Recommended Design
-
-*This is the cleanest and easiest setup to operate.* Cost centers allocate premium request spending based on users (which is exactly what you need for a user subset).
-
-| Cost Center A: "Default Users" | Cost Center B: "Hyper Power Users" |
-|-------------------------------|-----------------------------------|
-| **Budget:** $0 | **Budget:** $X (monthly cap you choose) |
-| **Stop usage when limit reached:** ON | **Stop usage:** ON (hard cap) or OFF (alert-only) |
-| *→ Blocks paid overages* | *→ Allows overages up to cap* |
-
----
-
-## 1️⃣ Step 1 — Enable the "Premium Request Paid Usage" Policy
-
-> ⚠️ **Important:** If this policy is disabled, no one can exceed their included allowance (budgets won't help).
-
-### Navigation
-
-```
-Profile Picture → Enterprise → AI controls → Copilot (sidebar) → Premium request paid usage
-```
-
-### Detailed Steps
-
-1. Top-right on GitHub → click your profile picture
-2. Click **Enterprise** (or Enterprises → select the enterprise)
-3. Top menu → **AI controls**
-4. Left sidebar → **Copilot**
-5. Find **Premium request paid usage** → set to **Enabled**
-6. *Optional:* choose "Enabled for specific products" if you only want overages for certain AI tools
+## ✅ Before You Start (Confirm)
+- You are on GitHub Enterprise Cloud (GHEC).
+- You have the list of hyper power users (GitHub usernames / managed users).
+- You understand budget structure:
+  - Premium requests are metered, so budgets can optionally stop usage [1].
+  - You can use either:
+    - Bundled premium requests budget (recommended for most orgs) [2]
+    - SKU-level budgets (Copilot vs Spark vs Copilot coding agent) [2]
 
 ---
 
-## 2️⃣ Step 2 — Remove/Adjust Blocking $0 Budgets
+## 🏗️ Recommended Design (Most Operable)
 
-> 🔴 **This is the part that's breaking your customer today.**
+Create two cost centers and two cost-center-scoped budgets:
 
-GitHub's guidance:
-- **Edit or delete budgets** that stop usage for the Premium Request SKU if you want paid usage to work
-- **Avoid overlapping/conflicting budgets** because users can be "unexpectedly blocked"
+| Cost Center | Who’s in it | Budget | “Stop usage…” |
+|-------------|-------------|--------|---------------|
+| Default users | All organizations (safety net) | $0 | ON (hard block) |
+| Hyper power users | Only hyper users (direct assignment) | $X | ON (hard cap) or OFF (alert-only) |
 
-### Navigation
+This matches GitHub’s recommended pattern for “budget for specific members” + “separate restrictive budget for everyone else” [2].
 
-```
-Profile Picture → Enterprise → Billing & Licensing → Budgets and alerts (sidebar)
-```
+---
 
-### What to Look For
+## 1️⃣ Step 1 — Enable "Premium request paid usage" (Enterprise Policy)
 
-Review budgets for:
-- **Copilot premium requests** and/or **Bundled premium requests**
-- **Scope:** Enterprise and Organization
+If this policy is disabled, users cannot surpass included allowance, regardless of budgets [1].
 
-### Action Required
+### Exact click-by-click navigation (Enterprise)
+1. In the top-right of GitHub, click your profile picture.
+2. Click Enterprise
+   - Or click Enterprises, then click your enterprise name.
+3. At the top of the enterprise page, click AI controls.
+4. In the left sidebar, click Copilot.
+5. Find Premium request paid usage.
+6. Set it to Enabled [1].
 
-For each budget that is $0 AND has "Stop usage when budget limit is reached" enabled:
+---
 
-1. Click the budget's **⋯ menu** → **Edit** or **Delete**
-2. If you want to keep it for monitoring, **Edit** and turn "Stop usage…" **OFF** (monitor-only)
+## 2️⃣ Step 2 — Remove or Fix Any Budgets That Are Blocking Premium Request Overages
 
-> ⚠️ **Important:** You cannot change the scope of a budget after creating it — so if you need a cost-center-scoped budget, create a new one.
+This is the most common “why is it still blocked?” issue: an existing budget with “Stop usage…” enabled is still applying [1].
+
+### Exact click-by-click navigation (Enterprise budgets list)
+1. Top-right → profile picture
+2. Enterprise (or Enterprises → select enterprise)
+3. At the top of the page, click Billing and licensing.
+4. In the billing left sidebar, click Budgets and alerts.
+
+### What to do on "Budgets and alerts"
+- Look for any budget that applies to:
+  - Bundled premium requests, and/or
+  - SKU-level premium request budgets (e.g., Copilot premium requests / Spark premium requests / Copilot coding agent premium requests) [2]
+- For any budget that is $0 and has “Stop usage when budget limit is reached” = ON (or any other exhausted stop-usage budget that applies to your users):
+  1. Click the ⋯ (kebab) menu next to the budget
+  2. Click Edit (or Delete)
+  3. If keeping it, either:
+     - Increase the budget above $0, or
+     - Turn Stop usage when budget limit is reached OFF (monitor-only)
+
+### Important accuracy notes (verified)
+- Creating a new budget does not override old ones; overlapping budgets can block usage unexpectedly [1].
+- You cannot change the scope of a budget after it’s created (you must create a new one) [3].
 
 ---
 
 ## 3️⃣ Step 3 — Create Two Cost Centers and Assign Users
 
-### Navigation
+### Exact click-by-click navigation (Create cost centers)
+1. Top-right → profile picture
+2. Enterprise (or Enterprises → select enterprise)
+3. Top tab → Billing and licensing
+4. Left sidebar → Cost centers
+5. Click New cost center (upper-right) [4]
 
-```
-Enterprise → Billing & Licensing → Cost centers (sidebar) → New cost center
-```
+### Create cost center: "Default users"
+- Name: Default users
+- Under Resources, select your **Organizations** (e.g., `acme-corp`, `acme-engineering`)
+- Save
+- *Crucial: This acts as a safety net for all current and future members* [5]
 
-### Create the Cost Centers
-
-1. Click **New cost center**
-2. Create cost center: **Default users**
-3. Create cost center: **Hyper power users**
-
-### Assign Users
-
-| Cost Center | Members |
-|-------------|---------|
-| **Default users** | All non-hyper users |
-| **Hyper power users** | Only the hyper list |
-
-> 💡 **How cost centers work:** Cost centers work by assigning resources (including users) to the cost center.
+### Create cost center: "Hyper power users"
+- Name: Hyper power users
+- Under Resources, add only the hyper users (search by individual username)
+- Save
+- *Note: Direct user assignment automatically moves them out of the Default cost center* [6]
 
 ---
 
-## 4️⃣ Step 4 — Create Cost-Center-Scoped Budgets
+## 4️⃣ Step 4 — Create Cost-Center-Scoped Budgets (The Enforcement)
 
-**This is what enforces "only hyper can overspend."**
+### Exact click-by-click navigation (Create a budget)
+1. Top-right → profile picture
+2. Enterprise (or Enterprises → select enterprise)
+3. Top tab → Billing and licensing
+4. Left sidebar → Budgets and alerts
+5. Click New budget [3]
 
-> 💡 **Recommendation:** GitHub recommends a Bundled premium requests budget for most customers (covers premium requests across tools).
+### 4A) Budget for "Default users" (Block Overages)
 
-### 4A) Default Users Budget (Block Overages)
+On the New budget flow:
+- Budget Type
+  - Choose Bundled premium requests budget (recommended for most) [2]
+- Budget scope
+  - Choose Cost center
+  - Select Default users [2]
+- Budget amount: $0
+- Enable: Stop usage when budget limit is reached ✅ (hard block)
+- Click Create budget [2]
 
-**Navigation:**
-```
-Enterprise → Billing & Licensing → Budgets and alerts → New budget
-```
+### 4B) Budget for "Hyper power users" (Allow Overages)
 
-**Configuration:**
-
-| Setting | Value |
-|---------|-------|
-| **Budget Type** | Bundled premium requests budget (recommended) |
-| **Budget scope** | Cost center → **Default users** |
-| **Budget** | **$0** |
-| **Stop usage when budget limit is reached** | ✅ **ON** |
-| **Threshold alerts** | *(Optional)* |
-
-Click **Create budget**
-
----
-
-### 4B) Hyper Power Users Budget (Allow Overages)
-
-Repeat the same steps with these differences:
-
-| Setting | Value |
-|---------|-------|
-| **Scope** | Cost center → **Hyper power users** |
-| **Budget** | **$X** (your monthly cap) |
-| **Stop usage** | **ON** (hard cap) or **OFF** (alert-only) |
+Repeat the same flow, but set:
+- Budget scope: Cost center → Hyper power users
+- Budget amount: $X
+- Stop usage when budget limit is reached:
+  - ON = hard cap
+  - OFF = alert-only (spend can exceed $X) [2]
 
 ---
 
-## 5️⃣ Step 5 — Verify It's Working
+## 5️⃣ Step 5 — Verify It's Working (No Conflicts + Correct Attribution)
 
-### Verify Budgets Aren't Conflicting
+### A) Verify no conflicting budgets
 
-**Navigation:**
-```
-Enterprise → Billing & Licensing → Budgets and alerts
-```
+#### Navigation
+1. Top-right → profile picture
+2. Enterprise → Billing and licensing → Budgets and alerts
 
-**Confirm:**
-- ✅ No leftover org/enterprise $0 stop-usage budgets for premium requests that apply to everyone
-- ✅ Not accidentally using both "Copilot premium requests" and "Bundled premium requests" budgets in overlapping ways
+#### Confirm
+- No leftover Enterprise-level premium-request budgets with Stop usage enabled that unintentionally apply to the hyper users [3].
 
-### Verify Attribution by Cost Center
+### B) Verify usage lands in the right cost center
 
-To check whether usage is landing in the right bucket, use the **Usage views** and/or a **detailed usage report** (look for cost center columns like `cost_center_name`).
-
----
-
-## 💡 Optional: Use a Second Org for Power Users
-
-If the customer's "Enterprise org" exists to raise the included allowance (e.g., Business → Enterprise), GitHub explicitly documents this approach: create a new org, add users, grant Copilot Enterprise to that org.
-
-> 💡 **Use case:** This helps "power users" hit the overage threshold less often, but it does not replace the budget/cost-center setup for "hyper users who must exceed allowance."
+#### GitHub-supported ways
+- On the Usage page, group/filter by cost center [7]
+- Download a detailed usage report and verify columns like cost_center_name [7]
 
 ---
 
-## 📝 Notes for Accounts with Legacy $0 Budgets
+## 💡 Optional Pattern: Use a Second Org to Increase Included Allowance (Power Users)
 
-GitHub notes that accounts created **before Aug 22, 2025** may have an auto-created $0 Copilot premium request budget that rejects overages unless edited/deleted, and that these default $0 budgets are being removed **beginning Dec 2, 2025**.
+If you also need a middle tier (“power users” who just need a bigger included allowance), GitHub documents upgrading selected users to Copilot Enterprise by placing them in a separate org and granting Copilot Enterprise licenses there [8].
+
+---
+
+## 📝 Notes on Legacy Auto-Created $0 Copilot Premium Request Budgets (Verified)
+- Accounts created before Aug 22, 2025 may have had a default $0 Copilot premium request budget that rejects overages unless edited/deleted [1].
+- GitHub announced that starting Dec 2, 2025, those $0 budgets for enterprise/team accounts would be removed, and paid usage would be governed by the Premium request paid usage policy instead [9].
+
+---
+
+## 📚 Sources
+[1] Managing the premium request allowance for your ... https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/manage-and-track-spending/manage-request-allowances
+[2] Controlling and tracking costs at scale https://docs.github.com/en/enterprise-cloud@latest/billing/tutorials/control-costs-at-scale
+[3] Setting up budgets to control spending on metered products https://docs.github.com/enterprise-cloud@latest/billing/tutorials/set-up-budgets
+[4] Using cost centers to allocate costs to business units - GitHub Docs https://docs.github.com/enterprise-cloud@latest/billing/tutorials/use-cost-centers
+[5] Cost center allocation for different products https://docs.github.com/en/enterprise-cloud@latest/billing/reference/cost-center-allocation
+[6] Customers can now add users to a cost center from both the UI and ... https://github.blog/changelog/2025-08-18-customers-can-now-add-users-to-a-cost-center-from-both-the-ui-and-api-2/
+[7] Billing reports reference - GitHub Enterprise Cloud Docs https://docs.github.com/en/enterprise-cloud@latest/billing/reference/billing-reports
+[8] Choosing your enterprise's plan for GitHub Copilot https://docs.github.com/en/enterprise-cloud@latest/copilot/get-started/choose-enterprise-plan
+[9] Upcoming removal of Copilot premium request $0 budgets ... https://github.blog/changelog/2025-09-17-upcoming-removal-of-copilot-premium-request-0-budgets-for-enterprise-and-team-accounts/
 
 ---
 
