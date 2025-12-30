@@ -17,6 +17,12 @@ Master GitHub fundamentals with official certification courses and hands-on prac
 - **[GitHub Skills](https://skills.github.com/)**  
   Interactive courses with real-world exercises in live repositories
 
+- **[GitHub Learn](https://learn.github.com/)**  
+  Central hub for GitHub learning resources, guides, and documentation
+
+- **[GitHub Learning Pathways](https://resources.github.com/learn/pathways/)**  
+  Structured learning paths designed to help you master GitHub based on your role
+
 ---
 
 ## 🏢 GitHub Enterprise Managed Users (EMU)
