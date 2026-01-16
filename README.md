@@ -88,6 +88,15 @@ Stay updated with the latest Copilot features and best practices:
 
 ---
 
+## 🔐 GitHub Advanced Security
+
+Resources for mastering GitHub's advanced security features and CodeQL:
+
+- **[CodeQL Zero to Hero](https://github.com/GitHubSecurityLab/codeql-zero-to-hero)**  
+  Challenges, CodeQL queries, CodeQL databases, and material for the CodeQL Zero to Hero blog post series
+
+---
+
 ## 💡 About This Collection
 
 This resource hub is built from real customer engagements and self-guided learning experiences. It complements official GitHub documentation with practical guides for common enterprise scenarios.
