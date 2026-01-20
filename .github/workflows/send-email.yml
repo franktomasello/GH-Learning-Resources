@@ -32,6 +32,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Minimal permissions - this workflow doesn't need any GitHub token permissions
+permissions: {}
+
 jobs:
   send-email:
     runs-on: ubuntu-latest
