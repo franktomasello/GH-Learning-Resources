@@ -1,0 +1,55 @@
+name: Send Email
+
+on:
+  # Manual trigger via GitHub UI or API
+  workflow_dispatch:
+    inputs:
+      recipient:
+        description: 'Email recipient address'
+        required: true
+        type: string
+      subject:
+        description: 'Email subject line'
+        required: true
+        type: string
+        default: 'GitHub Learning Resources Update'
+      body:
+        description: 'Email body content'
+        required: true
+        type: string
+        default: 'Check out the latest updates to the GitHub Learning Resources repository!'
+      content_type:
+        description: 'Email content type'
+        required: false
+        type: choice
+        options:
+          - text/plain
+          - text/html
+        default: 'text/plain'
+
+# Cancel in-progress runs of the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: ${{ inputs.subject }}
+          to: ${{ inputs.recipient }}
+          from: ${{ secrets.EMAIL_FROM }}
+          body: ${{ inputs.body }}
+          content_type: ${{ inputs.content_type }}
+          
+      - name: Log success
+        run: echo "✅ Email sent successfully to ${{ inputs.recipient }}"
