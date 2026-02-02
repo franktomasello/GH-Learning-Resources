@@ -27,14 +27,14 @@ GitHub's "secrets protection" capabilities include:
 | **Secret scanning alerts** | Detect secrets already in the repo |
 | **Push protection** | Block secrets from being pushed going forward |
 
-> 💡 **Note:** In GitHub's UI/docs, secret scanning alerts for users are enabled when you enable "Secret Protection" for a repository. Push protection requires Secret Protection first.
+> 💡 **Note:** In GitHub's UI/docs, secret scanning alerts for users are enabled when you enable "Secret Protection" for a repository. Push protection requires Secret Protection first.[1]
 
 ### Availability
 
 | Repo Type | Availability |
 |-----------|--------------|
 | **Public repos** | Secret scanning available |
-| **Org-owned repos** | Requires GitHub Team with GitHub Secret Protection enabled |
+| **Org-owned repos** | Requires GitHub Team with GitHub Secret Protection enabled [1][2] |
 
 ---
 
@@ -50,7 +50,7 @@ Repository → Settings → Security (sidebar) → Advanced Security
     → Review impact → Enable Secret Protection
 ```
 
-> ✅ **Result:** Secret scanning alerts for users are enabled when you enable Secret Protection.
+> ✅ **Result:** Secret scanning alerts for users are enabled when you enable Secret Protection.[1]
 
 ---
 
@@ -61,11 +61,11 @@ Repository → Settings → Security (sidebar) → Advanced Security
 **Navigation:**
 
 ```
-Repository → Settings → Security (sidebar) → Advanced Security
+Repository → Settings → Security (sidebar) → Code security
   → Secret Protection → Push Protection → Enable
 ```
 
-> ✅ **Result:** Pushes containing supported secrets are blocked (unless bypassed), and bypasses generate alerts.
+> ✅ **Result:** Pushes containing supported secrets are blocked (unless bypassed), and bypasses generate alerts.[3][4]
 
 ---
 
@@ -78,7 +78,7 @@ Repository → Settings → Security (sidebar) → Advanced Security
 **Navigation:**
 
 ```
-Organization → Security → Assessments (sidebar)
+Organization → Security (sidebar) → Assessments
 ```
 
 ### Enablement Options
@@ -97,7 +97,7 @@ In the banner, open **Get started** dropdown and choose one:
 
 *Recommended for real organization rollouts*
 
-> 💡 **Tip:** Security configurations are GitHub's at-scale mechanism to apply enablement settings across many repositories.
+> 💡 **Tip:** Security configurations are GitHub's at-scale mechanism to apply enablement settings across many repositories.[5]
 
 ---
 
@@ -107,7 +107,7 @@ In the banner, open **Get started** dropdown and choose one:
 
 ```
 Profile Picture → Organizations → [Your Organization] → Settings
-  → Security (sidebar) → Advanced Security → Configurations
+  → Advanced Security (sidebar) → Configurations
 ```
 
 **Steps:**
@@ -127,7 +127,7 @@ Profile Picture → Organizations → [Your Organization] → Settings
 
 ```
 Profile Picture → Organizations → [Your Organization] → Settings
-  → Security (sidebar) → Advanced Security → Configurations
+  → Advanced Security (sidebar) → Configurations
     → New configuration
 ```
 
@@ -141,7 +141,7 @@ Profile Picture → Organizations → [Your Organization] → Settings
 |---------|-------------|
 | **Validity checks** | Verify if detected secrets are still valid |
 | **Non-provider patterns** | Scan for patterns not from known providers |
-| **Scan for generic passwords** | Detect common password patterns |
+| **Scan for generic passwords** | Detect common password patterns (AI detection) [6] |
 | **Push protection** | Block secrets from being pushed |
 | **Bypass privileges** | Allow selected members to bypass; others require review/approval |
 | **Prevent direct alert dismissals** | Require justification for dismissing alerts |
@@ -156,7 +156,7 @@ Profile Picture → Organizations → [Your Organization] → Settings
 
 ```
 Profile Picture → Organizations → [Your Organization] → Settings
-  → Security (sidebar) → Advanced Security → Configurations
+  → Advanced Security (sidebar) → Configurations
 ```
 
 **Steps:**
@@ -177,11 +177,11 @@ Profile Picture → Organizations → [Your Organization] → Settings
 
 ```
 Profile Picture → Settings
-  → Code security and analysis (sidebar, under "Code, planning, and automation")
-    → Push protection for users → Toggle on/off
+  → Code security (sidebar, under "Security")
+    → Push protection for yourself → Toggle on/off
 ```
 
-> 💡 **Note:** This is enabled by default and can be disabled.
+> 💡 **Note:** This is enabled by default and can be disabled.[7][8]
 
 ---
 
@@ -219,7 +219,7 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 1. **Navigate to Configurations:**
    ```
-   Org Settings → Security → Advanced Security → Configurations
+   Org Settings → Advanced Security → Configurations
    ```
 
 2. **Create a custom configuration** enabling:
@@ -239,7 +239,7 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 ## 📝 Additional Notes
 
-> 💡 **Customization:** If you're targeting GHEC vs GHES, and whether you're using GitHub Secret Protection / Code Security (new products) vs legacy GHAS licensing, the runbook's wording can be tailored to match exactly what your admins will see (GitHub notes some setting names/order can differ).
+> 💡 **Customization:** If you're targeting GHEC vs GHES, and whether you're using GitHub Secret Protection / Code Security (new products) vs legacy GHAS licensing, the runbook's wording can be tailored to match exactly what your admins will see. Some settings paths may vary slightly (e.g., "Code security" vs "Advanced Security" at the repository level depending on the specific task).[2][4][1]
 
 ---
 
