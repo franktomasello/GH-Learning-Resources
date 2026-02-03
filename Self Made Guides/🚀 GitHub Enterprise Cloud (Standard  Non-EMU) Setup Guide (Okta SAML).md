@@ -1,6 +1,6 @@
-# 🚀 GitHub Enterprise Cloud (Standard / Non-EMU) Setup Guide (Okta SAML)
+# 🚀 Guide to Setup GHEC (Standard / Non-EMU) + Okta (SAML) + Attach Azure Subscription + Turn on Copilot
 
-Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Okta (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot
+> **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Okta (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
 ## 📋 Overview
 
