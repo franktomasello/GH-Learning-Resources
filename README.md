@@ -80,7 +80,7 @@ Stay updated with the latest Copilot features and best practices:
 - **[How to Write Better Prompts for GitHub Copilot](https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/)**  
   Comprehensive guide detailing specific prompt crafting techniques like "one-shot" vs "few-shot" learning
 
-- **[Mastering Unit Testing with GitHub Copilot](https://github.blog/2024-01-22-how-to-use-github-copilot-for-unit-testing/)**  
+- **[Mastering Unit Testing with GitHub Copilot](https://github.blog/ai-and-ml/github-copilot/how-to-generate-unit-tests-with-github-copilot-tips-and-examples/)**  
   Advanced strategies for generating edge cases, mocking dependencies, and writing comprehensive test suites
 
 - **[Refactoring Code with GitHub Copilot](https://devblogs.microsoft.com/visualstudio/refactoring-code-with-github-copilot/)**  
