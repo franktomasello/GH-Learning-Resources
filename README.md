@@ -83,8 +83,8 @@ Stay updated with the latest Copilot features and best practices:
 - **[Mastering Unit Testing with GitHub Copilot](https://github.blog/ai-and-ml/github-copilot/how-to-generate-unit-tests-with-github-copilot-tips-and-examples/)**  
   Advanced strategies for generating edge cases, mocking dependencies, and writing comprehensive test suites
 
-- **[Refactoring Code with GitHub Copilot](https://devblogs.microsoft.com/visualstudio/refactoring-code-with-github-copilot/)**  
-  Practical walkthrough of using Copilot to identify code smells and safely refactor legacy code blocks
+- **[How to Refactor Code with GitHub Copilot](https://github.blog/ai-and-ml/github-copilot/how-to-refactor-code-with-github-copilot/)**  
+  Practical guide to using Copilot for simplifying conditionals, extracting duplicated logic, and breaking monolithic functions into modular pieces
 
 - **[Agent Skills](https://youtu.be/fabAI1OKKww?si=0XvwsZUtyX3TPBAc)**  
   Video overview of GitHub Copilot agent skills and how to leverage them in your workflow
