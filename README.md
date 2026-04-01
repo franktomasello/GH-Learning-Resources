@@ -86,6 +86,24 @@ Stay updated with the latest Copilot features and best practices:
 - **[Refactoring Code with GitHub Copilot](https://devblogs.microsoft.com/visualstudio/refactoring-code-with-github-copilot/)**  
   Practical walkthrough of using Copilot to identify code smells and safely refactor legacy code blocks
 
+- **[Agent Skills](https://youtu.be/fabAI1OKKww?si=0XvwsZUtyX3TPBAc)**  
+  Video overview of GitHub Copilot agent skills and how to leverage them in your workflow
+
+- **[Agent Orchestration](https://youtu.be/-BhfcPseWFQ?si=pCzZwIXiWjVgVwcy)**  
+  Deep dive into orchestrating multiple Copilot agents for complex, multi-step tasks
+
+- **[Copilot CLI](https://youtu.be/CqcqWLv-sDM?si=C6LED8G9xyi64Hrx)**  
+  Introduction to GitHub Copilot in the command line interface
+
+- **[Fleet Mode in CLI](https://youtu.be/6K5UW594BUc?si=7uFK4SZAfLdcJ8oG)**  
+  Walkthrough of fleet mode capabilities in the Copilot CLI
+
+- **[GitHub Copilot Customization — Custom Instructions, Prompt Files, Custom Agents](https://youtu.be/0XoXNG65rfg?si=HjGG6oVXUZXq5sZF)**  
+  Guide to personalizing Copilot with custom instructions, prompt files, and custom agents
+
+- **[GitHub Copilot Cheatsheet](https://sukurcf.github.io/resources/cheatsheets/github-copilot-cheatsheet.html)**  
+  Quick-reference cheatsheet for GitHub Copilot commands, context variables, chat modes, and prompt flow
+
 ---
 
 ## 🔐 GitHub Advanced Security
