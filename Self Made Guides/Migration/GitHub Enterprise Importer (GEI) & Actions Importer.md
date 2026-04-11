@@ -8,8 +8,8 @@
 
 | Tool | What It Migrates | Best For |
 |------|-----------------|----------|
-| **GitHub Enterprise Importer (GEI)** | Repos, PRs, issues, metadata | Full-fidelity org/repo migrations from ADO, GitLab, Bitbucket, or GitHub |
-| **GitHub Actions Importer** | CI/CD pipeline definitions | Converting Jenkins, Azure Pipelines, GitLab CI, CircleCI to GitHub Actions |
+| **GitHub Enterprise Importer (GEI)** | Repos, PRs, issues, metadata | Full-fidelity org/repo migrations from ADO, GitLab, Bitbucket Server, or GitHub |
+| **GitHub Actions Importer** | CI/CD pipeline definitions | Converting Jenkins, Azure Pipelines, GitLab CI, CircleCI, Travis CI, Bamboo, Bitbucket Pipelines to GitHub Actions |
 | **`git push --mirror`** | Git history, branches, tags | Simple repo moves where metadata (PRs/issues) is not needed |
 
 ---

@@ -1,6 +1,6 @@
 # 🚀 GitHub Enterprise Managed Users (EMU) Setup Guide (Okta SAML)
 
-**Complete end-to-end runbook for configuring EMU with Okta (SAML), Azure billing, and GitHub Copilot**
+> **Complete end-to-end runbook for configuring EMU with Okta (SAML), Azure billing, and GitHub Copilot**
 
 ---
 
@@ -515,6 +515,18 @@ After completing this guide, you should have:
 - ✅ GitHub Copilot enabled and configured
 - ✅ Initial organization structure established
 - ✅ First users provisioned and able to access GitHub
+
+---
+
+## 📝 Resources
+
+| # | Document | URL |
+|---|----------|-----|
+| 1 | Configuring SAML SSO for EMU | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/configuring-authentication-for-enterprise-managed-users/configuring-saml-single-sign-on-for-enterprise-managed-users) |
+| 2 | Configuring SCIM provisioning for EMU | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/provisioning-user-accounts-with-scim/configuring-scim-provisioning-for-users) |
+| 3 | Connecting an Azure subscription | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/billing/managing-the-plan-for-your-github-account/connecting-an-azure-subscription) |
+| 4 | Copilot policies for enterprise | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/copilot/managing-copilot/managing-copilot-for-your-enterprise/managing-policies-and-features-for-copilot-in-your-enterprise) |
+| 5 | Okta GitHub EMU integration | [saml-doc.okta.com](https://saml-doc.okta.com/SAML_Docs/How-to-Configure-SAML-2.0-for-GitHub-Enterprise-Managed-User.html) |
 
 ---
 

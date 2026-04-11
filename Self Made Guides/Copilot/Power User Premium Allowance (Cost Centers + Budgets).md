@@ -4,7 +4,7 @@
 
 ---
 
-## 📋 Goal
+## 📋 Overview
 
 Allow only a specific subset of users (“hyper power users”) to use paid premium requests beyond their included allowance, while everyone else is blocked from overages using budgets that stop usage at the limit.
 
@@ -166,7 +166,7 @@ If you also need a middle tier ("power users" who just need a bigger included al
 
 ---
 
-## 📚 Sources
+## 📝 Resources
 
 | # | Title | Link |
 |:-:|-------|------|

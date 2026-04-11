@@ -91,7 +91,7 @@
 
 ---
 
-## 📚 Reference
+## 📝 Resources
 
 - [EMU Instructions Guide](https://emu-instructions.githubapp.com)
 

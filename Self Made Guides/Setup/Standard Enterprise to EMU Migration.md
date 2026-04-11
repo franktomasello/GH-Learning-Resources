@@ -175,10 +175,10 @@ gh gei migrate-org \
 
 | Resource | Link |
 |----------|------|
-| About EMU | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/about-enterprise-managed-users |
-| EMU abilities and restrictions | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts |
-| GitHub Enterprise Importer | https://docs.github.com/en/migrations/using-github-enterprise-importer |
-| Configuring SCIM for EMU | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/provisioning-user-accounts-with-scim/configuring-scim-provisioning-for-enterprise-managed-users |
+| About EMU | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/about-enterprise-managed-users) |
+| EMU abilities and restrictions | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts) |
+| GitHub Enterprise Importer | [docs.github.com](https://docs.github.com/en/migrations/using-github-enterprise-importer) |
+| Configuring SCIM for EMU | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/provisioning-user-accounts-with-scim/configuring-scim-provisioning-for-enterprise-managed-users) |
 
 ---
 

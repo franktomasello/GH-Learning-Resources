@@ -15,6 +15,8 @@ Responsible AI governance requires BOTH platform controls (what GitHub provides)
 | **Organizational policy** | Leadership/security | Usage guidelines, training, acceptable use |
 | **Developer practices** | Individual developers | Prompt hygiene, code review diligence |
 
+---
+
 ## 1️⃣ Platform Controls (Admin-Configurable)
 
 ### Content Exclusions
@@ -66,6 +68,8 @@ Enterprise → AI controls → Copilot → Policies
 
 For Business and Enterprise plans: GitHub does NOT use your code or prompts to train AI models. Prompts are NOT retained after serving responses.
 
+---
+
 ## 2️⃣ Code Governance Controls
 
 ### Required PR Reviews
@@ -100,6 +104,8 @@ Create `CODEOWNERS` file to require specific team approvals on sensitive paths:
 /.github/workflows/ @devops-team
 ```
 
+---
+
 ## 3️⃣ Custom Instructions for Standards
 
 ### Organization-Level
@@ -117,6 +123,8 @@ Example instructions:
 ### Repository-Level
 
 Create `.github/copilot-instructions.md` with project-specific rules.
+
+---
 
 ## 4️⃣ Mitigating "Vibe Coding"
 
@@ -137,6 +145,8 @@ Create `.github/copilot-instructions.md` with project-specific rules.
 - Monitor Copilot usage metrics for teams with unusually high acceptance rates — may indicate insufficient review
 - Train developers: Copilot is an accelerator, not a replacement for understanding
 - Run periodic code quality reviews on AI-heavy PRs
+
+---
 
 ## 5️⃣ Monitoring & Audit
 
@@ -167,11 +177,11 @@ Organization → Security → Overview
 
 | Resource | Link |
 |----------|------|
-| Copilot Trust Center | https://resources.github.com/copilot-trust-center/ |
-| Content exclusions | https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot |
-| Custom instructions | https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot |
-| Managing Copilot policies | https://docs.github.com/en/copilot/managing-copilot/managing-copilot-for-your-enterprise/managing-policies-and-features-for-copilot-in-your-enterprise |
-| About rulesets | https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets |
+| Copilot Trust Center | [GitHub Resources](https://resources.github.com/copilot-trust-center/) |
+| Content exclusions | [GitHub Docs](https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot) |
+| Custom instructions | [GitHub Docs](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot) |
+| Managing Copilot policies | [GitHub Docs](https://docs.github.com/en/copilot/managing-copilot/managing-copilot-for-your-enterprise/managing-policies-and-features-for-copilot-in-your-enterprise) |
+| About rulesets | [GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) |
 
 ---
 

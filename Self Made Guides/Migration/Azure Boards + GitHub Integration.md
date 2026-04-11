@@ -8,6 +8,8 @@
 
 Keep work items in Azure Boards while hosting code in GitHub. Link commits, branches, and PRs back to Boards work items using `AB#` syntax.
 
+---
+
 ## 1️⃣ Connect Azure Boards to GitHub
 
 ### From Azure DevOps Side
@@ -27,6 +29,8 @@ Azure DevOps → Project Settings → Boards → GitHub connections
 | GitHub App (recommended) | Organization-wide, production use |
 
 > 💡 **Tip:** The GitHub App method is recommended for enterprise — it provides org-level access without depending on individual user tokens.
+
+---
 
 ## 2️⃣ Link Work Items to GitHub Activity
 
@@ -50,6 +54,8 @@ Configure Azure Boards to automatically update work item state based on GitHub P
 
 Configure at: Azure DevOps → Project Settings → Boards → GitHub connections → select connection → Configure
 
+---
+
 ## 3️⃣ Common Patterns for Migration
 
 ### Pattern 1: Boards + GitHub (Bridge Model)
@@ -68,6 +74,8 @@ Configure at: Azure DevOps → Project Settings → Boards → GitHub connection
 - Cross-link via `AB#` syntax
 - Best for: large enterprises with mixed team preferences
 
+---
+
 ## 4️⃣ Best Practices
 
 - Use the **GitHub App** connection method (not OAuth) for production
@@ -81,10 +89,10 @@ Configure at: Azure DevOps → Project Settings → Boards → GitHub connection
 
 | Resource | Link |
 |----------|------|
-| Azure Boards + GitHub overview | https://learn.microsoft.com/en-us/azure/devops/boards/github/overview |
-| Connect Azure Boards to GitHub | https://learn.microsoft.com/en-us/azure/devops/boards/github/connect-to-github |
-| AB# linking syntax | https://learn.microsoft.com/en-us/azure/devops/boards/github/link-to-from-github |
-| Planning migration to GitHub | https://docs.github.com/en/migrations/overview/planning-your-migration-to-github |
+| Azure Boards + GitHub overview | [Microsoft Learn](https://learn.microsoft.com/en-us/azure/devops/boards/github/overview) |
+| Connect Azure Boards to GitHub | [Microsoft Learn](https://learn.microsoft.com/en-us/azure/devops/boards/github/connect-to-github) |
+| AB# linking syntax | [Microsoft Learn](https://learn.microsoft.com/en-us/azure/devops/boards/github/link-to-from-github) |
+| Planning migration to GitHub | [GitHub Docs](https://docs.github.com/en/migrations/overview/planning-your-migration-to-github) |
 
 ---
 

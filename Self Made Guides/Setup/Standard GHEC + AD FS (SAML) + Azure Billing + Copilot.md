@@ -2,6 +2,8 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Active Directory Federation Services (AD FS) SAML, user provisioning, Azure billing, and GitHub Copilot**
 
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -41,7 +43,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ## 1️⃣ Create SCIM Setup User (Note: SCIM Not Natively Supported by AD FS)
 
-⚠️ **AD FS does not natively support SCIM provisioning.** Unlike cloud IdPs (Okta, OneLogin, Entra ID), AD FS cannot automatically provision or deprovision GitHub organization members.
+> ⚠️ **Important:** AD FS does not natively support SCIM provisioning. Unlike cloud IdPs (Okta, OneLogin, Entra ID), AD FS cannot automatically provision or deprovision GitHub organization members.
 
 ### Options for User Provisioning
 
@@ -65,9 +67,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ### Important Notes
 
-- 📌 This setup user will consume a GitHub license (if used)
-- 📌 Treat it as a system account: minimal use outside of IAM configuration
-- 📌 If using manual management only, this step can be skipped
+> 📌 **Note:** This setup user will consume a GitHub license (if used). Treat it as a system account: minimal use outside of IAM configuration. If using manual management only, this step can be skipped.
 
 ## 2️⃣ Add Relying Party Trust in AD FS
 
@@ -186,7 +186,7 @@ You will configure **Organization SAML** (always for the target org).
 
 If your org is under an Enterprise account, you may also configure **Enterprise SAML**.
 
-⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
+> ⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
 
 ### 4A — (Conditionally Required) Configure Enterprise SAML
 
@@ -236,11 +236,11 @@ GitHub (top-right profile picture)
 5. **Immediately download and secure SSO recovery codes:**
     - Organization Settings → Authentication security → Single sign-on recovery codes
 
-🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
+> 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
 ## 5️⃣ Enforce SAML SSO for the Organization (Required)
 
-⚠️ **Enforcement removes org members who have not authenticated through the IdP,** and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
+> ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
 
 ### Navigation Path (GitHub UI)
 
@@ -267,7 +267,7 @@ GitHub (top-right profile picture)
 
 ## 6️⃣ User Provisioning (Manual or Scripted — No Native SCIM)
 
-⚠️ **AD FS does not provide native SCIM support.** You must manage GitHub organization membership through one of the following approaches.
+> ⚠️ **Important:** AD FS does not provide native SCIM support. You must manage GitHub organization membership through one of the following approaches.
 
 ### Option A: Manual Provisioning
 
@@ -305,9 +305,7 @@ GitHub (top-right profile picture)
 
 ### Important Notes
 
-- 📌 Regardless of provisioning method, users must still authenticate via SAML (AD FS) to access the org
-- 📌 For new hires: invite to GitHub org → user authenticates via AD FS on first access
-- 📌 For departures: remove from GitHub org (manually or via script) and disable AD account
+> 📌 **Note:** Regardless of provisioning method, users must still authenticate via SAML (AD FS) to access the org. For new hires: invite to GitHub org, then user authenticates via AD FS on first access. For departures: remove from GitHub org (manually or via script) and disable AD account.
 
 ## 7️⃣ Assign Users (AD Group → Mapped via Claims)
 
@@ -384,7 +382,7 @@ GitHub
 8. Under **Select a subscription**, pick the Azure Subscription ID
 9. Click **Connect**
 
-💡 **Admin Consent:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+> 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
 
 ## 9️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -506,8 +504,7 @@ GitHub (top-right profile picture)
 
 **Token nuance:**
 
-- 📌 GitHub states **PAT classic** requires post-creation SSO authorization
-- 📌 GitHub states **fine-grained PATs** are authorized during creation, before org access is granted
+> 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -577,11 +574,11 @@ If your organization is currently using AD FS and is evaluating long-term identi
 
 Microsoft provides migration tooling and documentation for moving from AD FS to Entra ID. This migration would unlock native SCIM provisioning, automated lifecycle management, and a path to GitHub Enterprise Managed Users (EMU) if desired in the future.
 
-* * *
+---
 
 _Last updated: April 2026_
 
-Sources
+## 📝 Resources
 
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)
 - [AD FS Operations - Microsoft Learn](https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/operations/ad-fs-operations)

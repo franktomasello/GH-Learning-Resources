@@ -243,4 +243,15 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 ---
 
+## 📝 Resources
+
+| Resource | Link |
+|----------|------|
+| About secret scanning | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning) |
+| Configuring secret scanning | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-secret-scanning-for-your-repository) |
+| Push protection for repositories | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-push-protection-for-your-repository) |
+| Security configurations | [GitHub Docs](https://docs.github.com/en/code-security/securing-your-organization/enabling-security-features-in-your-organization/configuring-global-security-settings-for-your-organization) |
+
+---
+
 *Last updated: February 2026*

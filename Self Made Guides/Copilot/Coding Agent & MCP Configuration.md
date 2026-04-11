@@ -13,6 +13,8 @@
 | **MCP (Model Context Protocol)** | Extend agent with external tools and data sources |
 | **Custom agents** | Package approved workflows as reusable agents |
 
+---
+
 ## 1️⃣ Enable Copilot Coding Agent
 
 ### Enterprise Level
@@ -31,6 +33,8 @@ Organization → Settings → Copilot → Policies
 
 > ⚠️ **Important:** Coding agent always opens PRs — it never commits directly to branches. This ensures all AI-generated code goes through review.
 
+---
+
 ## 2️⃣ Scope Agent to Approved Repositories
 
 The coding agent can be scoped to specific repos:
@@ -44,6 +48,8 @@ Organization → Settings → Copilot → Policies
 - Start with a small set of approved repos and teams
 - Expand after validating output quality and review processes
 - Do NOT enable on repos containing sensitive data without content exclusions
+
+---
 
 ## 3️⃣ Configure MCP (Model Context Protocol)
 
@@ -75,6 +81,8 @@ Create `.github/copilot/mcp.json` in the repository:
 | API connectors | Call external APIs |
 | Custom servers | Build your own for internal tools |
 
+---
+
 ## 4️⃣ Security Review for MCP
 
 > ⚠️ **Treat MCP server/tool approval as a governance decision, not just a developer convenience setting.**
@@ -87,6 +95,8 @@ Create `.github/copilot/mcp.json` in the repository:
 - [ ] Does it comply with your data classification policy?
 - [ ] Has the MCP server been reviewed by your security team?
 - [ ] Are there content exclusions in place for sensitive files?
+
+---
 
 ## 5️⃣ Custom Instructions for Agent Quality
 
@@ -116,6 +126,8 @@ Organization → Settings → Copilot → Custom instructions
   → Add instructions that apply across all repos in the org
 ```
 
+---
+
 ## 6️⃣ Monitor Agent Usage
 
 ```
@@ -133,11 +145,11 @@ Enterprise → AI controls → Insights
 
 | Resource | Link |
 |----------|------|
-| About Copilot coding agent | https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent |
-| Extending coding agent with MCP | https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp |
-| Best practices for coding agent | https://docs.github.com/en/copilot/how-tos/agents/copilot-coding-agent/best-practices-for-using-copilot-to-work-on-tasks |
-| Copilot features overview | https://docs.github.com/en/copilot/get-started/features |
-| Custom instructions | https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot |
+| About Copilot coding agent | [GitHub Docs](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent) |
+| Extending coding agent with MCP | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp) |
+| Best practices for coding agent | [GitHub Docs](https://docs.github.com/en/copilot/how-tos/agents/copilot-coding-agent/best-practices-for-using-copilot-to-work-on-tasks) |
+| Copilot features overview | [GitHub Docs](https://docs.github.com/en/copilot/get-started/features) |
+| Custom instructions | [GitHub Docs](https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot) |
 
 ---
 

@@ -236,8 +236,8 @@ Enterprise → Settings → Billing (sidebar) → Usage report
 
 | Resource | Link |
 |----------|------|
-| **Creating cost centers** | https://docs.github.com/en/billing/using-the-enhanced-billing-platform-for-enterprises/gathering-insights-on-your-spending#creating-cost-centers |
-| **Connecting an Azure subscription** | https://docs.github.com/en/billing/managing-the-plan-for-your-github-account/connecting-an-azure-subscription |
+| **Creating cost centers** | [GitHub Docs](https://docs.github.com/en/billing/using-the-enhanced-billing-platform-for-enterprises/gathering-insights-on-your-spending#creating-cost-centers) |
+| **Connecting an Azure subscription** | [GitHub Docs](https://docs.github.com/en/billing/managing-the-plan-for-your-github-account/connecting-an-azure-subscription) |
 
 ---
 

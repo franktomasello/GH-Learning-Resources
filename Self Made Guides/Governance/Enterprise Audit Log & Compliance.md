@@ -14,6 +14,8 @@ GitHub Enterprise Cloud provides audit logging at multiple levels:
 | **Organization** | Activity within one org | Org → Settings → Audit log |
 | **User** | Individual user's security activity | Profile → Settings → Security log |
 
+---
+
 ## 1️⃣ Access the Enterprise Audit Log
 
 ```
@@ -46,6 +48,8 @@ Enterprise → Settings → Audit log
 | `copilot.seat_assigned` | Copilot seat assigned |
 | `copilot.seat_removed` | Copilot seat removed |
 
+---
+
 ## 2️⃣ Audit Log Streaming (SIEM Integration)
 
 Stream audit events in real-time to your SIEM:
@@ -69,6 +73,8 @@ Enterprise → Settings → Audit log → Log streaming
 | Splunk | HEC URL, HEC token |
 
 > 💡 **Tip:** Set up streaming early — it captures events going forward, not retroactively.
+
+---
 
 ## 3️⃣ Audit Log API
 
@@ -101,6 +107,8 @@ query {
 }
 ```
 
+---
+
 ## 4️⃣ Git Events Logging
 
 For git-level events (pushes, clones):
@@ -111,6 +119,8 @@ Enterprise → Settings → Audit log → Git events
 ```
 
 > ⚠️ **Note:** Git events generate high volume. Enable only if required for compliance. Events include: `git.clone`, `git.fetch`, `git.push`.
+
+---
 
 ## 5️⃣ IP Allow Lists
 
@@ -123,6 +133,8 @@ Enterprise → Settings → Authentication security → IP allow list
 ```
 
 > ⚠️ **Important:** Test thoroughly before enabling. Locked-out admins cannot disable the allow list without GitHub Support.
+
+---
 
 ## 6️⃣ Compliance Checklist
 
@@ -144,11 +156,11 @@ Enterprise → Settings → Authentication security → IP allow list
 
 | Resource | Link |
 |----------|------|
-| About the audit log | https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/about-the-audit-log-for-your-enterprise |
-| Audit log streaming | https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/streaming-the-audit-log-for-your-enterprise |
-| Audit log API | https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-admin/audit-log |
-| IP allow lists | https://docs.github.com/en/enterprise-cloud@latest/admin/enforcing-policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-security-settings-in-your-enterprise#managing-allowed-ip-addresses-for-organizations-in-your-enterprise |
-| GitHub security features | https://docs.github.com/en/enterprise-cloud@latest/code-security/getting-started/github-security-features |
+| About the audit log | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/about-the-audit-log-for-your-enterprise) |
+| Audit log streaming | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/streaming-the-audit-log-for-your-enterprise) |
+| Audit log API | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-admin/audit-log) |
+| IP allow lists | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/enforcing-policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-security-settings-in-your-enterprise#managing-allowed-ip-addresses-for-organizations-in-your-enterprise) |
+| GitHub security features | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/code-security/getting-started/github-security-features) |
 
 ---
 

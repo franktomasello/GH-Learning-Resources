@@ -1,6 +1,6 @@
 # 🚀 GitHub Enterprise Managed Users (EMU) Setup Guide (PingFederate SAML)
 
-**Complete end-to-end runbook for configuring EMU with PingFederate (SAML), Azure billing, and GitHub Copilot**
+> **Complete end-to-end runbook for configuring EMU with PingFederate (SAML), Azure billing, and GitHub Copilot**
 
 ---
 

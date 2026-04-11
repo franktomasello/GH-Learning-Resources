@@ -2,6 +2,8 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Okta (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -33,7 +35,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
 
-⚠️ **This user is required because Okta's GitHub SCIM provisioning uses a third-party OAuth authorization that acts on behalf of a specific GitHub user.** If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
+> ⚠️ **Important:** This user is required because Okta's GitHub SCIM provisioning uses a third-party OAuth authorization that acts on behalf of a specific GitHub user. If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
 
 ### Process
 
@@ -48,8 +50,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ### Important Notes
 
-- 📌 This setup user will consume a GitHub license
-- 📌 Treat it as a system account: minimal use outside of IAM configuration
+> 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
 ## 2️⃣ Create the Okta Application (GitHub Enterprise Cloud – Organization)
 
@@ -93,7 +94,7 @@ You will configure **Organization SAML** (always for the target org).
 
 If your org is under an Enterprise account, you may also configure **Enterprise SAML**.
 
-⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
+> ⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
 
 ### 3A — (Conditionally Required) Configure Enterprise SAML
 
@@ -143,11 +144,11 @@ GitHub (top-right profile picture)
 5. **Immediately download and secure SSO recovery codes:**
     - Organization Settings → Authentication security → Single sign-on recovery codes
 
-🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
+> 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
 ## 4️⃣ Enforce SAML SSO for the Organization (Required)
 
-⚠️ **Enforcement removes org members who have not authenticated through the IdP,** and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
+> ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
 
 ### Navigation Path (GitHub UI)
 
@@ -174,7 +175,7 @@ GitHub (top-right profile picture)
 
 ## 5️⃣ Configure SCIM Provisioning (Okta → GitHub Organization)
 
-💡 **In Standard non-EMU, the Okta integration uses a third-party OAuth flow for SCIM.** The OAuth app acts on behalf of the GitHub user who authorized it (hence Step 1).
+> 💡 **Tip:** In Standard non-EMU, the Okta integration uses a third-party OAuth flow for SCIM. The OAuth app acts on behalf of the GitHub user who authorized it (hence Step 1).
 
 ### 5A — Create an active SAML session for the setup user (Required)
 
@@ -207,7 +208,7 @@ Okta Admin Console
 3. Click **Authenticate with GitHub Enterprise Cloud - Organization**
 4. Complete the GitHub OAuth authorization as the SCIM setup user
 
-📌 **Note:** Okta may show an **Import Groups** option. GitHub's docs state this is not supported; selecting/deselecting does not change behavior.
+> 📌 **Note:** Okta may show an **Import Groups** option. GitHub's docs state this is not supported; selecting/deselecting does not change behavior.
 
 ### 5C — Configure Provisioning Settings + Mappings (Required)
 
@@ -287,7 +288,7 @@ GitHub
 8. Under **Select a subscription**, pick the Azure Subscription ID
 9. Click **Connect**
 
-💡 **Admin Consent:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+> 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
 
 ## 7️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -409,8 +410,7 @@ GitHub (top-right profile picture)
 
 **Token nuance:**
 
-- 📌 GitHub states **PAT classic** requires post-creation SSO authorization
-- 📌 GitHub states **fine-grained PATs** are authorized during creation, before org access is granted
+> 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -462,8 +462,12 @@ After completing this guide, you should have:
 - ✅ Users have authorized SSH keys and PATs for SSO access
 - ✅ Pilot users provisioned and able to access GitHub via SSO
 
-* * *
+---
 
 _Last updated: February 2026_
 
-Sources
+## 📝 Resources
+
+- [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)
+- [Configuring SAML SSO and SCIM using Okta - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/configuring-saml-single-sign-on-and-scim-using-okta)
+- [About SCIM for organizations - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-scim-for-organizations)

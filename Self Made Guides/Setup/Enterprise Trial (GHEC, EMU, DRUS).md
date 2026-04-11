@@ -93,12 +93,19 @@ Enterprise → Settings → Authentication security
 
 ## 4️⃣ Configure SAML SSO (Standard GHEC Only)
 
-*For standard GHEC, SAML SSO is configured at the organization level, not the enterprise level.*
+*For standard GHEC, SAML SSO can be configured at the organization level or the enterprise level. Enterprise-level SAML is also supported and, when configured, overrides any org-level SAML settings.*
 
-**Navigation:**
+**Navigation (org-level):**
 
 ```
 Organization → Settings → Authentication security
+  → SAML single sign-on → Enable SAML authentication
+```
+
+**Navigation (enterprise-level — recommended):**
+
+```
+Enterprise → Settings → Authentication security
   → SAML single sign-on → Enable SAML authentication
 ```
 
@@ -178,8 +185,8 @@ Organization → Settings → Advanced Security → Configurations
 
 | Resource | Link |
 |----------|------|
-| **Start a trial** | https://github.com/enterprise/trial |
-| **Trial setup documentation** | https://docs.github.com/en/enterprise-cloud@latest/admin/setting-up-your-enterprise/setting-up-a-trial-of-github-enterprise-cloud |
+| **Start a trial** | [github.com/enterprise/trial](https://github.com/enterprise/trial) |
+| **Trial setup documentation** | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/setting-up-your-enterprise/setting-up-a-trial-of-github-enterprise-cloud) |
 
 ---
 

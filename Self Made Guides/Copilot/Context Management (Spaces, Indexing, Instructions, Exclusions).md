@@ -17,6 +17,8 @@ Copilot output quality depends on context. There are four context pillars:
 
 > 💡 **The biggest unlock is not a different model — it is giving Copilot the right standing instructions, exclusions, and task context.**
 
+---
+
 ## 1️⃣ Repository Custom Instructions
 
 Create `.github/copilot-instructions.md` in any repository:
@@ -46,6 +48,8 @@ Create `.github/instructions/*.instructions.md` for folder-specific rules:
 .github/instructions/tests.instructions.md   → rules for /tests/
 ```
 
+---
+
 ## 2️⃣ Organization Custom Instructions
 
 ```
@@ -60,6 +64,8 @@ Use for:
 - Standard review expectations
 - Company-wide architectural guidance
 - Security requirements (e.g., "never use eval()", "always sanitize user input")
+
+---
 
 ## 3️⃣ Content Exclusion
 
@@ -91,6 +97,8 @@ Organization → Settings → Copilot → Content exclusions
 
 > ⚠️ **Content exclusion inherits:** Enterprise → Organization → Repository. More restrictive rules win.
 
+---
+
 ## 4️⃣ Repository Indexing
 
 Repository indexing lets Copilot understand your full codebase for better answers in Copilot Chat.
@@ -111,6 +119,8 @@ Repository → Settings → Copilot → Indexing
 - It does NOT send your entire codebase to the model with every prompt
 - It creates an index that helps Copilot find relevant code when you ask
 - Content exclusions still apply — excluded files are not indexed
+
+---
 
 ## 5️⃣ Copilot Spaces
 
@@ -141,6 +151,8 @@ GitHub.com → Copilot → Spaces → New Space
 - Keep Spaces focused — one per feature or project, not one giant "everything" Space
 - Update Spaces as the project evolves
 
+---
+
 ## 6️⃣ Putting It All Together
 
 ### Recommended Setup Order
@@ -167,12 +179,12 @@ Enterprise (content exclusion — what Copilot CANNOT see)
 
 | Resource | Link |
 |----------|------|
-| Repository custom instructions | https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot |
-| Organization custom instructions | https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions |
-| Content exclusion | https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot |
-| Repository indexing | https://docs.github.com/en/copilot/concepts/context/repository-indexing |
-| Copilot Spaces | https://docs.github.com/en/copilot/concepts/context/spaces |
-| Using Copilot Spaces | https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces |
+| Repository custom instructions | [GitHub Docs](https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot) |
+| Organization custom instructions | [GitHub Docs](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions) |
+| Content exclusion | [GitHub Docs](https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot) |
+| Repository indexing | [GitHub Docs](https://docs.github.com/en/copilot/concepts/context/repository-indexing) |
+| Copilot Spaces | [GitHub Docs](https://docs.github.com/en/copilot/concepts/context/spaces) |
+| Using Copilot Spaces | [GitHub Docs](https://docs.github.com/en/copilot/how-tos/provide-context/use-copilot-spaces) |
 
 ---
 

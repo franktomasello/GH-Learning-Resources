@@ -15,6 +15,8 @@ EMU users CANNOT contribute to public repos outside the enterprise. Open-source 
 
 > ⚠️ **These are two completely separate identities.** The enterprise has no control over the personal account, and the personal account has no access to the EMU enterprise.
 
+---
+
 ## 1️⃣ Set Up the EMU Account
 
 This is handled by your IdP (Entra ID, Okta, PingFederate) via SCIM provisioning:
@@ -27,6 +29,8 @@ This is handled by your IdP (Entra ID, Okta, PingFederate) via SCIM provisioning
 - Cannot interact with repos outside the enterprise (no PRs, issues, stars, forks)
 - Cannot contribute to open-source projects
 - Fully governed by enterprise policies
+
+---
 
 ## 2️⃣ Set Up the Personal Account
 
@@ -42,6 +46,8 @@ Users create a separate, free GitHub.com account independently:
 - User owns this account
 
 > 💡 **Tip:** If a user already registered their work email with a personal GitHub.com account, they should change that account's primary email to a personal address to avoid confusion with the EMU account.
+
+---
 
 ## 3️⃣ Establish the Governance Bridge
 
@@ -63,6 +69,8 @@ Mirror approved internal code to public repos:
 - Use GitHub Actions in the EMU enterprise to push to a public org
 - Add secret scanning and review gates before any push to the public mirror
 - See the **Internal-to-Public Repository Mirroring Runbook** for details
+
+---
 
 ## 4️⃣ Organizational Structure
 
@@ -88,6 +96,8 @@ Separate on github.com (NOT in the EMU enterprise):
 | Maintaining agency's public repos | Personal account (in the public org) |
 | Reading public documentation | Either account |
 
+---
+
 ## 5️⃣ Communication to Users
 
 Publish clear onboarding guidance:
@@ -100,8 +110,8 @@ Publish clear onboarding guidance:
 
 | Resource | Link |
 |----------|------|
-| EMU restrictions | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts |
-| About EMU | https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users |
+| EMU restrictions | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts) |
+| About EMU | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users) |
 | Internal-to-Public Mirroring | See: Internal-to-Public Repository Mirroring Runbook.md in this folder |
 
 ---

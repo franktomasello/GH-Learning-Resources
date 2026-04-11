@@ -182,4 +182,15 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ---
 
+## 📝 Resources
+
+| Resource | Link |
+|----------|------|
+| Managing the premium request allowance | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/manage-and-track-spending/manage-request-allowances) |
+| Setting up budgets to control spending | [GitHub Docs](https://docs.github.com/enterprise-cloud@latest/billing/tutorials/set-up-budgets) |
+| Using cost centers to allocate costs | [GitHub Docs](https://docs.github.com/enterprise-cloud@latest/billing/tutorials/use-cost-centers) |
+| Controlling and tracking costs at scale | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/billing/tutorials/control-costs-at-scale) |
+
+---
+
 *Last updated: December 2025*

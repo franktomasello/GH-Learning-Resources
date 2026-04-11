@@ -4,7 +4,7 @@
 
 ---
 
-## 📋 Objective
+## 📋 Overview
 
 Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.
 
@@ -117,7 +117,7 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ---
 
-## 📚 Sources
+## 📝 Resources
 
 1. [Creating enterprise teams](https://docs.github.com/en/enterprise-cloud@latest/enterprise-onboarding/setting-up-organizations-and-teams/creating-teams)
 2. [REST API endpoints for enterprise team memberships](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-teams/enterprise-team-members)

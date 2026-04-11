@@ -92,13 +92,13 @@ Moving from standard GHEC to DRUS requires:
 
 | Resource | Link |
 |----------|------|
-| About data residency | https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/about-github-enterprise-cloud-with-data-residency |
-| Feature overview for GHE.com | https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/feature-overview-for-github-enterprise-cloud-with-data-residency |
-| About storage with data residency | https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/about-storage-of-your-data-with-data-residency |
-| Network details for GHE.com | https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/network-details-for-ghecom |
-| GitHub FedRAMP page | https://government.github.com/fedramp/ |
-| About GHES | https://docs.github.com/en/enterprise-server@latest/admin/overview/about-github-enterprise-server |
-| BYOK for Copilot | https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-your-own-api-keys |
+| About data residency | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/about-github-enterprise-cloud-with-data-residency) |
+| Feature overview for GHE.com | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/feature-overview-for-github-enterprise-cloud-with-data-residency) |
+| About storage with data residency | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/about-storage-of-your-data-with-data-residency) |
+| Network details for GHE.com | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/data-residency/network-details-for-ghecom) |
+| GitHub FedRAMP page | [government.github.com](https://government.github.com/fedramp/) |
+| About GHES | [docs.github.com](https://docs.github.com/en/enterprise-server@latest/admin/overview/about-github-enterprise-server) |
+| BYOK for Copilot | [docs.github.com](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-your-own-api-keys) |
 
 ---
 

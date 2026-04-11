@@ -2,6 +2,8 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with PingFederate/PingOne (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -33,7 +35,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
 
-⚠️ **This user is required because SCIM provisioning acts on behalf of a specific GitHub user via a PAT (Personal Access Token).** If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
+> ⚠️ **Important:** This user is required because SCIM provisioning acts on behalf of a specific GitHub user via a PAT (Personal Access Token). If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
 
 ### Process
 
@@ -48,8 +50,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ### Important Notes
 
-- 📌 This setup user will consume a GitHub license
-- 📌 Treat it as a system account: minimal use outside of IAM configuration
+> 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
 ## 2️⃣ Create the PingFederate SP Connection (or PingOne Application)
 
@@ -120,9 +121,9 @@ From your PingFederate SP Connection or PingOne Application configuration, captu
 2. **IdP Entity ID** (Issuer)
 3. **X.509 Signing Certificate** (public certificate, Base64-encoded)
 
-💡 **PingFederate:** These values are available under SP Connection → Protocol Settings → Export Metadata, or from the server's federation metadata endpoint (e.g., `https://your-pingfed-server:9031/pf/federation_metadata.ping?PartnerSpId=https://github.com/orgs/YOUR_ORG`)
+> 💡 **Tip:** **PingFederate:** These values are available under SP Connection, Protocol Settings, Export Metadata, or from the server's federation metadata endpoint (e.g., `https://your-pingfed-server:9031/pf/federation_metadata.ping?PartnerSpId=https://github.com/orgs/YOUR_ORG`)
 
-💡 **PingOne:** These values are available under the Application → Configuration tab, or by downloading the IdP metadata XML.
+> 💡 **Tip:** **PingOne:** These values are available under the Application, Configuration tab, or by downloading the IdP metadata XML.
 
 ## 3️⃣ Enable SAML SSO in GitHub
 
@@ -130,7 +131,7 @@ You will configure **Organization SAML** (always for the target org).
 
 If your org is under an Enterprise account, you may also configure **Enterprise SAML**.
 
-⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
+> ⚠️ **Warning:** Enabling SAML impacts how members authenticate. Ensure you have recovery codes stored for break-glass access.
 
 ### 3A — (Conditionally Required) Configure Enterprise SAML
 
@@ -178,11 +179,11 @@ GitHub (top-right profile picture)
 5. **Immediately download and secure SSO recovery codes:**
     - Organization Settings → Authentication security → Single sign-on recovery codes
 
-🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
+> 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
 ## 4️⃣ Enforce SAML SSO for the Organization (Required)
 
-⚠️ **Enforcement removes org members who have not authenticated through the IdP,** and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
+> ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
 
 ### Navigation Path (GitHub UI)
 
@@ -208,7 +209,7 @@ GitHub (top-right profile picture)
 
 ## 5️⃣ Configure SCIM Provisioning (PingFederate → GitHub Organization)
 
-💡 **In Standard non-EMU, SCIM provisioning manages organization membership lifecycle.** PingFederate/PingOne communicates with GitHub's SCIM API using a PAT from the dedicated setup user.
+> 💡 **Tip:** In Standard non-EMU, SCIM provisioning manages organization membership lifecycle. PingFederate/PingOne communicates with GitHub's SCIM API using a PAT from the dedicated setup user.
 
 ### 5A — Generate SCIM PAT from the Setup User (Required)
 
@@ -258,7 +259,7 @@ GitHub (top-right profile picture)
 4. Configure attribute mappings
 5. Save and enable provisioning
 
-📌 **Note:** The SCIM tenant URL is found in your GitHub Organization → Settings → Authentication security, under the SCIM section (visible after SAML is enabled and enforced).
+> 📌 **Note:** The SCIM tenant URL is found in your GitHub Organization → Settings → Authentication security, under the SCIM section (visible after SAML is enabled and enforced).
 
 ### 5C — Assign Users/Groups (Required)
 
@@ -343,7 +344,7 @@ GitHub
 8. Under **Select a subscription**, pick the Azure Subscription ID
 9. Click **Connect**
 
-💡 **Admin Consent:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+> 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
 
 ## 7️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -459,8 +460,7 @@ GitHub (top-right profile picture)
 
 **Token nuance:**
 
-- 📌 GitHub states **PAT classic** requires post-creation SSO authorization
-- 📌 GitHub states **fine-grained PATs** are authorized during creation, before org access is granted
+> 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -513,10 +513,11 @@ After completing this guide, you should have:
 - ✅ Users have authorized SSH keys and PATs for SSO access
 - ✅ Pilot users provisioned and able to access GitHub via SSO
 
-* * *
+---
 
 _Last updated: April 2026_
 
-Sources
+## 📝 Resources
+
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)
 - [PingIdentity GitHub Integration Documentation](https://docs.pingidentity.com/integrations/github/)

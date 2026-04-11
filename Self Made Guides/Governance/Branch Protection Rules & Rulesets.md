@@ -256,9 +256,9 @@ Ruleset → Bypass list → Add bypass
 
 | Resource | Link |
 |----------|------|
-| **About rulesets** | https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets |
-| **Org-level rulesets** | https://docs.github.com/en/organizations/managing-organization-settings/creating-rulesets-for-repositories-in-your-organization |
-| **About protected branches** | https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches |
+| **About rulesets** | [GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) |
+| **Org-level rulesets** | [GitHub Docs](https://docs.github.com/en/organizations/managing-organization-settings/creating-rulesets-for-repositories-in-your-organization) |
+| **About protected branches** | [GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) |
 
 ---
 

@@ -27,7 +27,7 @@ This runbook walks through every major decision and configuration step when stan
 |---------|-------------------|-----|------------------------|
 | **User accounts** | Users create their own github.com accounts | Accounts provisioned and managed by IdP | Same as EMU |
 | **SSO** | SAML SSO (optional per org, required at enterprise) | SAML or OIDC (required) | SAML or OIDC (required) |
-| **SCIM provisioning** | Not available at enterprise level | Required — IdP provisions and deprovisions users | Required |
+| **SCIM provisioning** | Available at org level with supported IdPs (Entra ID, Okta) — not available at enterprise level | Required — IdP provisions and deprovisions users | Required |
 | **Public repos** | Supported | Not supported | Not supported |
 | **External collaboration** | Users can contribute to any public repo | Restricted — EMU users cannot interact outside the enterprise | Restricted |
 | **Data residency** | No (US-hosted) | No (US-hosted) | Yes — choose region at setup |
@@ -364,7 +364,7 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 
 ---
 
-## 📚 Resources
+## 📝 Resources
 
 - [About GitHub Enterprise Cloud](https://docs.github.com/en/enterprise-cloud@latest/admin/overview/about-github-enterprise-cloud)
 - [Setting up your enterprise](https://docs.github.com/en/enterprise-cloud@latest/admin/setting-up-your-enterprise)

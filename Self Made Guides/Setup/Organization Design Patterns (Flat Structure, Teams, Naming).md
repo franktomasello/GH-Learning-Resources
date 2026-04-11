@@ -158,11 +158,11 @@ Enterprise → People → Teams → Create team
 
 | Resource | Link |
 |----------|------|
-| About organizations | https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/about-organizations |
-| About teams | https://docs.github.com/en/organizations/organizing-members-into-teams/about-teams |
-| Custom properties | https://docs.github.com/en/organizations/managing-organization-settings/managing-custom-properties-for-repositories-in-your-organization |
-| Repository visibility | https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility |
-| Enterprise teams | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-groups-of-people-with-roles/managing-teams-in-your-enterprise |
+| About organizations | [docs.github.com](https://docs.github.com/en/organizations/collaborating-with-groups-in-organizations/about-organizations) |
+| About teams | [docs.github.com](https://docs.github.com/en/organizations/organizing-members-into-teams/about-teams) |
+| Custom properties | [docs.github.com](https://docs.github.com/en/organizations/managing-organization-settings/managing-custom-properties-for-repositories-in-your-organization) |
+| Repository visibility | [docs.github.com](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility) |
+| Enterprise teams | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-groups-of-people-with-roles/managing-teams-in-your-enterprise) |
 
 ---
 

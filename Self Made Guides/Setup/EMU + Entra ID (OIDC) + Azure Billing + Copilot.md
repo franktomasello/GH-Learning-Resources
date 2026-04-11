@@ -349,7 +349,7 @@ Run through these checks to confirm successful setup:
 
 ---
 
-## 📎 Appendix A: Key URLs
+## 📝 Resources
 
 | Resource | URL |
 |----------|-----|
@@ -360,7 +360,7 @@ Run through these checks to confirm successful setup:
 
 ---
 
-## 📚 Appendix B: Source Documentation
+## 📝 Source Documentation
 
 | # | Document | URL |
 |---|----------|-----|

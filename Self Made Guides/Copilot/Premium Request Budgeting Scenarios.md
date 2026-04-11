@@ -122,4 +122,15 @@ Budgets can monitor or block overages. If any applicable budget has **"Stop usag
 
 ---
 
+## 📝 Resources
+
+| Resource | Link |
+|----------|------|
+| Managing the premium request allowance | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/manage-and-track-spending/manage-request-allowances) |
+| Setting up budgets to control spending | [GitHub Docs](https://docs.github.com/enterprise-cloud@latest/billing/tutorials/set-up-budgets) |
+| Choosing your enterprise's plan for GitHub Copilot | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/copilot/get-started/choose-enterprise-plan) |
+| Using cost centers to allocate costs | [GitHub Docs](https://docs.github.com/enterprise-cloud@latest/billing/tutorials/use-cost-centers) |
+
+---
+
 *Last updated: December 2025*

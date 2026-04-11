@@ -175,8 +175,8 @@ Repository → Settings → Collaborators and teams (sidebar)
 
 | Resource | Link |
 |----------|------|
-| **Enabling guest collaborators** | https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-users-in-your-enterprise/enabling-guest-collaborators |
-| **About Enterprise Managed Users** | https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users |
+| **Enabling guest collaborators** | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-users-in-your-enterprise/enabling-guest-collaborators) |
+| **About Enterprise Managed Users** | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users) |
 
 ---
 
