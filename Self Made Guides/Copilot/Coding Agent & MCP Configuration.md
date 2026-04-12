@@ -141,6 +141,43 @@ Enterprise → AI controls → Insights
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: The coding agent is not creating PRs — what should we check?
+**A:** Verify three things: (1) the coding agent is enabled at both the enterprise AND organization level (enterprise policies act as a ceiling), (2) the required premium model is available and not disabled in model settings, and (3) the repository has proper permissions — the agent needs write access to create branches and PRs.
+
+---
+
+### Q: MCP server is not connecting — how do I debug this?
+**A:** Check the `.github/copilot/mcp.json` file for valid JSON syntax. Verify the MCP server command (e.g., `npx`) is accessible in the agent's runtime environment. Check network and firewall rules if the MCP server needs to reach external endpoints. Review the agent session logs for specific connection error messages.
+
+---
+
+### Q: Can the coding agent access private dependencies?
+**A:** Only if the repository has the necessary credentials configured. Set up repository secrets or tokens for private registries (npm, Maven, etc.) and reference them in your build configuration. The agent runs in the context of the repository and can use configured secrets.
+
+---
+
+### Q: The agent is producing low-quality output — how can we improve it?
+**A:** Add a `.github/copilot-instructions.md` file with project conventions, build commands, test commands, and architectural guidance. The more context the agent has about your project's patterns and standards, the better its output. Also consider adding path-specific instruction files in `.github/instructions/`.
+
+---
+
+### Q: How do we limit which repos can use the coding agent?
+**A:** Navigate to Org Settings > Copilot > Policies > Copilot coding agent and select "Select repositories" to choose specific repos. Start with a small set of approved repos and expand after validating output quality and review processes.
+
+---
+
+### Q: Coding agent sessions are consuming too many premium requests — how do we control this?
+**A:** Each agent session and steering comment consumes premium requests. Limit available premium models via enterprise/org model settings, set premium request budgets, and educate users to write clear, detailed issue descriptions to reduce back-and-forth steering comments.
+
+---
+
+### Q: Is it safe to enable MCP servers from third-party sources?
+**A:** Treat MCP server approval as a governance decision. Run through the security review checklist before enabling any MCP server: assess what tools/APIs it accesses, what credentials it requires, what network access it needs, and whether it complies with your data classification policy. Have your security team review before approving.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

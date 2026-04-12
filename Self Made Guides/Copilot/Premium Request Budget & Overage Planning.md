@@ -194,6 +194,43 @@ Enterprise → Settings → Billing & Licensing → Usage
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Users hit the 300 premium request limit mid-month — what happens?
+**A:** If overages are disabled, users fall back to the included base models (GPT-4o, GPT-4.1, GPT-5 mini) and cannot use premium models until the next billing cycle. If overages are enabled, they can continue using premium models and the enterprise is billed at $0.04 per additional premium request.
+
+---
+
+### Q: How do we see which users are consuming the most premium requests?
+**A:** Navigate to Enterprise > Billing & Licensing > Usage and filter by Copilot. This shows per-user consumption of premium requests. You can also download a CSV usage report for deeper analysis.
+
+---
+
+### Q: Can we set a hard spending cap on premium request overages?
+**A:** Yes. Navigate to Enterprise > Settings > Billing > Budgets, create a budget scoped to premium requests, set a dollar amount, and enable "Stop usage when budget limit is reached." Configure alert thresholds (e.g., 50%, 75%, 100%) to get notifications before hitting the cap.
+
+---
+
+### Q: The multipliers changed since we did our cost estimate — what should we do?
+**A:** Model multipliers can change over time. Always check the current values on the GitHub supported models documentation page before finalizing budget estimates. Recalculate your projections whenever multipliers are updated and adjust budgets accordingly.
+
+---
+
+### Q: Do premium requests reset monthly? Do unused requests roll over?
+**A:** Yes, premium requests reset on each billing cycle. Unused requests do not roll over to the next month. Each user starts fresh with their full allowance (300 for Business, 1,000 for Enterprise) at the beginning of each billing period.
+
+---
+
+### Q: We enabled overages but users are still being blocked — why?
+**A:** Check for existing budgets under Enterprise > Billing > Budgets & alerts. If any applicable budget with "Stop usage when budget limit is reached" is exhausted (including legacy $0 budgets), premium requests will be blocked even if the overage policy is enabled. Delete or increase any blocking budgets.
+
+---
+
+### Q: How do we estimate costs before enabling premium models for the whole enterprise?
+**A:** Run a pilot with 10-20 users for 2-4 weeks with overages disabled. Review per-user and per-model consumption in the billing reports, then multiply by your total user count. Use the budget planning formula in this guide to project monthly costs before expanding.
+
+---
+
 ## 📚 Resources
 
 - [Copilot premium requests](https://docs.github.com/en/copilot/concepts/billing/copilot-requests)

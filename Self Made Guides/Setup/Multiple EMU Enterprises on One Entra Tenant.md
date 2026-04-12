@@ -91,6 +91,43 @@ Entra ID → Enterprise Applications → [GitHub EMU App]
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: SCIM is provisioning users to the wrong enterprise — how did this happen?
+**A:** Each EMU enterprise must have its own dedicated Entra Enterprise Application with separate SCIM configurations. If users are landing in the wrong enterprise, check which Enterprise Application they are assigned to in Entra. A user assigned to "GitHub EMU - Enterprise A" will be provisioned to Enterprise A. Verify the Tenant URL and Secret Token in each app's Provisioning settings point to the correct enterprise's SCIM endpoint. Never reuse the same SCIM token across Enterprise Applications.
+
+---
+
+### Q: A user is assigned to both Enterprise Applications — will they get two managed accounts?
+**A:** Yes. If an Entra user is assigned to both Enterprise Applications, they will be provisioned as separate managed user accounts in each enterprise (e.g., `jsmith_shortcodeA` and `jsmith_shortcodeB`). This is valid if the user needs access to both enterprises. However, ensure this is intentional — accidental dual assignment wastes licenses. Use dedicated Entra groups (one per enterprise) and avoid assigning the same user to multiple groups unless cross-enterprise access is required.
+
+---
+
+### Q: The enterprise shortcodes are confusing our users — how do we choose good shortcodes?
+**A:** Shortcodes are appended to every managed username (e.g., `jsmith_contoso`). Choose shortcodes that are short (4-8 characters), descriptive, and easy to distinguish. For example, if Enterprise A is for North America and Enterprise B is for EMEA, use shortcodes like `na` and `emea` (yielding `jsmith_na` and `jsmith_emea`). Avoid similar-looking shortcodes that could confuse users. Shortcodes are set at enterprise creation and cannot be changed.
+
+---
+
+### Q: We need audit logs across both enterprises — is there a way to get cross-enterprise visibility?
+**A:** No. Each EMU enterprise has its own separate audit log with no native cross-enterprise aggregation. To get a unified view, stream audit logs from both enterprises to a common SIEM (Splunk, Sentinel, etc.) using the audit log streaming feature (Enterprise > Settings > Audit log > Log streaming). Configure each enterprise to stream to the same destination. This is the only way to achieve cross-enterprise audit visibility.
+
+---
+
+### Q: Can we use the same Entra groups for both Enterprise Applications, or do they need to be separate?
+**A:** You should use separate Entra groups for each Enterprise Application to maintain clear boundaries. While you technically could assign the same group to both apps, this would provision every user in that group to both enterprises (creating dual accounts and consuming licenses in both). Use group naming that clearly indicates the target enterprise, e.g., `GitHub-Enterprise-A-Users` and `GitHub-Enterprise-B-Users`.
+
+---
+
+### Q: One enterprise uses SAML and the other uses OIDC — is that supported on the same Entra tenant?
+**A:** Yes. Each Enterprise Application is independent, so one can use the SAML-based EMU app and the other can use the OIDC-based EMU app. The SAML app is "GitHub Enterprise Managed User" and the OIDC app is "GitHub Enterprise Managed User (OIDC)." Configure each per its respective setup guide. The choice of SAML vs OIDC is per-enterprise and does not affect the other.
+
+---
+
+### Q: We are hitting Entra provisioning rate limits — how do we manage provisioning across two enterprises?
+**A:** Entra ID runs provisioning cycles independently for each Enterprise Application (approximately every 40 minutes per app). If both enterprises have large user populations, stagger the initial provisioning: start provisioning for Enterprise A first, wait for the initial cycle to complete, then start Enterprise B. For ongoing operations, do not assign more than 1,000 users per hour per enterprise to avoid GitHub's SCIM rate limits. Monitor the provisioning logs in each Entra app separately.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

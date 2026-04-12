@@ -662,6 +662,48 @@ After completing this guide, you should have:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I am using PingFederate (self-managed) — what is the most common SP Connection misconfiguration?
+**A:** The most frequent issue is an incorrect Partner Entity ID or ACS URL in the SP Connection. The Entity ID must be exactly `https://github.com/enterprises/YOUR_ENTERPRISE` (no trailing slash), and the ACS URL must be `https://github.com/enterprises/YOUR_ENTERPRISE/saml/consume` with binding set to POST. Also verify the Connection Name is descriptive but the actual SAML configuration values are what matter — the connection name is only for your reference.
+
+---
+
+### Q: My attribute contract mapping seems correct, but SAML authentication still fails — what should I check?
+**A:** Verify the NameID format and the attribute fulfillment in the Assertion Creation step. GitHub expects `NameID` to be a unique, stable identifier (email or username). Common mistakes include mapping `NameID` to `displayName` instead of a unique identifier, or using an incorrect NameID format. Set the NameID format to `urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified` or `emailAddress`. Also ensure the email and name claims use the correct schema URIs as documented.
+
+---
+
+### Q: SCIM outbound provisioning in PingFederate is failing — how do I troubleshoot?
+**A:** Check the PingFederate server logs (under `<PF_INSTALL>/log/`) for SCIM-related errors. Common causes include: (1) the SCIM Base URL is wrong — verify it matches `https://api.github.com/scim/v2/enterprises/YOUR_ENTERPRISE`, (2) the Bearer Token (PAT) is invalid or expired, (3) attribute mappings do not match GitHub's SCIM schema (e.g., `userName`, `emails`, `displayName` are required). Test the connection using the PingFederate Admin Console before enabling provisioning.
+
+---
+
+### Q: My PingFederate signing certificate is expiring — how do I renew it without downtime?
+**A:** Generate a new signing certificate in PingFederate (Security > Signing & Decryption Keys & Certificates). Export the new certificate in X.509/PEM format. Before activating it in PingFederate, update the certificate in GitHub enterprise settings (Enterprise > Settings > Authentication security > SAML > Public certificate). Once GitHub has the new cert, activate it as the primary signing certificate in PingFederate. This avoids a window where the certs are mismatched.
+
+---
+
+### Q: What is the difference between PingFederate and PingOne, and which should I use?
+**A:** PingFederate is a self-managed, on-premises (or customer-hosted) federation server. PingOne is Ping Identity's cloud-hosted identity platform. Both support SAML and SCIM with GitHub EMU. Use PingFederate if your organization already runs it on-premises and manages its own infrastructure. Use PingOne if you prefer a SaaS-based IdP. The configuration steps differ — PingFederate uses SP Connections and Outbound Provisioning, while PingOne uses Applications with built-in provisioning tabs.
+
+---
+
+### Q: I configured everything in PingOne but the GitHub catalog integration was not available — what do I do?
+**A:** If the "GitHub Enterprise Managed User" catalog integration is not available in PingOne, create a custom SAML application instead. Manually enter the Entity ID, ACS URL, and Sign-on URL from the SAML Values table in this guide. For SCIM, configure a custom outbound provisioning channel using GitHub's SCIM Base URL and a Bearer Token. The functionality is identical — the catalog integration simply pre-fills these values.
+
+---
+
+### Q: Token signing in PingFederate uses SHA-1 by default — does GitHub require SHA-256?
+**A:** GitHub supports both SHA-1 and SHA-256 for SAML signature and digest methods, but SHA-256 is strongly recommended and is the modern default. In PingFederate, verify the signing algorithm under the SP Connection's Protocol Settings > Signature Policy. Select RSA-SHA256 for the Signature Algorithm and SHA-256 for the Digest Algorithm. When configuring SAML in GitHub, select the matching Signature Method and Digest Method from the dropdowns.
+
+---
+
+### Q: Users are provisioned via SCIM but cannot sign in — what is likely the issue?
+**A:** This usually means SCIM provisioning succeeded but the user is not assigned to the SP Connection for SSO. In PingFederate, user assignment for SSO is controlled by your authentication policy and the user datastore connected to the SP Connection. Verify the user exists in the LDAP/AD directory connected to PingFederate and that no access control policy is blocking their authentication. In PingOne, verify the user's group is assigned to the application under the Access tab.
+
+---
+
 ## 📚 Resources
 
 - [Configuring SAML SSO for Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/configuring-authentication-for-enterprise-managed-users/configuring-saml-single-sign-on-for-enterprise-managed-users)

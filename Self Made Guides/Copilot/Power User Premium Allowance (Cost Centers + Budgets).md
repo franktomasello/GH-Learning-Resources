@@ -166,6 +166,33 @@ If you also need a middle tier ("power users" who just need a bigger included al
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I assigned users to the "Hyper power users" cost center but they are still blocked from overages — why?
+**A:** Check for conflicting budgets. If an enterprise-wide or org-level budget with "Stop usage when budget limit is reached" is exhausted, it will block those users even though they have a separate cost center budget. Review all budgets on the Budgets & alerts page and remove or edit any that conflict.
+
+---
+
+### Q: A new user joined the org but is not covered by any cost center — what happens?
+**A:** If a user is not assigned to any cost center and there is no enterprise-wide budget covering them, they may have unlimited premium request overage spend. Always ensure a "Default users" cost center with a $0 hard-block budget covers all organizations as a safety net.
+
+---
+
+### Q: I moved a user from "Default users" to "Hyper power users" but the change is not reflected — how long does it take?
+**A:** Direct user assignment to a cost center automatically moves them out of any org-based cost center assignment. The change should take effect within minutes. If it does not, verify the assignment on the Cost centers page and check that you are using the correct GitHub username.
+
+---
+
+### Q: Can I use the API to manage cost center assignments for hyper power users?
+**A:** Yes, adding users to cost centers is supported via the enterprise billing REST API. However, note that the endpoint does not work with fine-grained PATs (and some GitHub App token types). Use a classic PAT with appropriate enterprise billing permissions.
+
+---
+
+### Q: How do I verify that usage is landing in the correct cost center?
+**A:** Navigate to Enterprise > Billing and licensing > Usage > Premium request analytics and group or filter by cost center. You can also download a detailed usage report (CSV) and check the `cost_center_name` column to confirm attribution.
+
+---
+
 ## 📝 Resources
 
 | # | Title | Link |

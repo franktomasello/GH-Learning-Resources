@@ -149,6 +149,41 @@ CodeQL supports the following languages for analysis:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Code scanning is enabled across our org but we see zero alerts. What should we check?
+**A:** Walk through the six common causes in Section 7 of this guide: (1) scanning may not be configured despite GHAS being enabled, (2) repos may only contain unsupported languages, (3) no code has been pushed since enablement to trigger a scan, (4) CodeQL workflows may be failing silently, (5) alert filters in the Security tab may be hiding results, and (6) org-level default setup may not have propagated to all repos. Check the org-level Security tab "Coverage" view first.
+
+---
+
+### Q: My CodeQL workflow is failing on a compiled language like C++ or Java. What is going wrong?
+**A:** CodeQL requires a successful build to analyze compiled languages. If the default setup cannot build your code, switch to the advanced (workflow file) setup and add the necessary build steps (e.g., `mvn compile` for Java or `cmake && make` for C++). The workflow must produce compiled artifacts for CodeQL to analyze.
+
+---
+
+### Q: We are getting too many false positives from code scanning. How do we reduce noise?
+**A:** If you are using the Extended query suite, switch back to the Default suite, which is curated for high-confidence findings with a low false-positive rate. You can also dismiss individual alerts as "false positive" or "won't fix" to clean up the alert list. For recurring false positives, consider adding inline suppression comments or configuring query filters in your CodeQL configuration.
+
+---
+
+### Q: Copilot Autofix is enabled but it is not generating fix suggestions for our findings. Why?
+**A:** Verify that your organization has a GitHub Advanced Security (GHAS) license and that Copilot Autofix is enabled at the org level (Settings > Code security > Copilot Autofix). Also check that the language of the finding is supported by Copilot Autofix -- not all CodeQL-supported languages have Autofix coverage yet. Autofix suggestions only appear on pull request findings, not on default-branch scan results.
+
+---
+
+### Q: Code scanning results are not showing up on pull requests, only on the default branch. How do I fix this?
+**A:** Verify that your CodeQL workflow includes `pull_request` as a trigger event. The default setup includes this automatically, but if you are using a custom workflow file, you must explicitly add `on: pull_request` targeting the appropriate branches. Without this trigger, scans only run on push to the default branch and results will not appear inline on PRs.
+
+---
+
+### Q: How do I exclude test files or generated code from code scanning results?
+**A:** In a custom workflow file, use `paths-ignore` in the workflow trigger to skip scanning on pushes that only change test files. For more granular control, create a CodeQL configuration file (`.github/codeql/codeql-config.yml`) and define `paths-ignore` patterns to exclude directories like `**/test/**` or `**/generated/**` from analysis.
+
+---
+
+### Q: Can I run CodeQL on languages not in the supported list, like Rust or PHP?
+**A:** CodeQL does not support those languages natively. For unsupported languages, you can integrate third-party SARIF-compatible scanning tools (e.g., Semgrep, Snyk) that upload results to the GitHub code scanning API. These results will appear alongside any CodeQL findings in the Security tab.
+
 ## 📚 Resources
 
 - [About code scanning with CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql)

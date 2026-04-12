@@ -204,6 +204,36 @@ Organization → Settings → Actions (sidebar)
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Our included minutes are exhausted mid-month. How do we avoid this recurring issue?
+**A:** Move high-volume or long-running workloads to self-hosted runners, which consume zero included minutes. Also review macOS and Windows job usage -- these consume minutes at 10x and 2x multipliers respectively. Set a spending limit to control overage costs, and use billing reports to identify which repos or workflows are consuming the most minutes.
+
+---
+
+### Q: My self-hosted runner is online but jobs are not being picked up. What should I check?
+**A:** Verify three things: (1) the runner shows as "Online" in Org Settings > Actions > Runners, (2) the `runs-on` label in your workflow matches a label assigned to the runner exactly, and (3) the runner group the runner belongs to is configured to allow the organization that owns the workflow. Also check the runner application logs for errors.
+
+---
+
+### Q: VNET injection for GitHub-hosted runners is not working. What are the common issues?
+**A:** Ensure the Azure subnet is delegated to `GitHub.Network/networkSettings` (this is a specific Azure delegation requirement). Verify the subnet has enough available IP addresses for the number of concurrent runners you expect. Also confirm the Azure subscription, VNET, and subnet are in a supported region, and that the runner group is correctly configured with the Azure private networking settings.
+
+---
+
+### Q: Workflows are running on the wrong runner type (e.g., GitHub-hosted instead of self-hosted). How do I fix this?
+**A:** Check the `runs-on` label in your workflow YAML. For self-hosted runners, use labels like `self-hosted` plus any custom labels you assigned. For GitHub-hosted runners, use labels like `ubuntu-latest`. If you have runner groups, verify the group assignment and that the correct org has access. Using runner groups to isolate runner types by organization or purpose helps prevent routing mistakes.
+
+---
+
+### Q: Our Actions spending limit was hit and workflows are queuing but not running. What do we do?
+**A:** When the spending limit is reached, GitHub-hosted runner jobs queue indefinitely without executing. To resolve immediately, increase the spending limit under Enterprise > Settings > Billing > Spending limits > Actions. For a longer-term fix, move high-consumption workloads to self-hosted runners and set `timeout-minutes` on all workflows to prevent runaway jobs from consuming your budget.
+
+---
+
+### Q: How can we prevent developers from using untrusted third-party Actions from the Marketplace?
+**A:** Configure an Actions allowlist at the enterprise level (Enterprise > Settings > Policies > Actions > Allow select actions). Specify the exact actions and versions that are permitted (e.g., `actions/checkout@v4`, `azure/login@v2`). This prevents developers from pulling in unvetted third-party actions that could introduce supply chain risks.
+
 ## 📚 Resources
 
 - [About billing for GitHub Actions](https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions)

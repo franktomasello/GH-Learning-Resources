@@ -232,6 +232,36 @@ Enterprise → Settings → Billing (sidebar) → Usage report
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: My cost center is showing $0 usage even though the assigned organizations are actively using GitHub. Why?
+**A:** First, verify that the organizations are correctly assigned to the cost center (Enterprise > Settings > Billing > Cost centers > [Your cost center] > Manage organizations). Usage data can take 24-48 hours to appear in cost center reports after organizations are assigned. If the orgs were just added, check again the next day.
+
+---
+
+### Q: I cannot create cost centers. The option does not appear. What do I need?
+**A:** Creating cost centers requires the enterprise owner role. Billing managers can view billing data but cannot create or modify cost centers. Contact your enterprise owner to create cost centers, or request the enterprise owner role if your responsibilities require it.
+
+---
+
+### Q: I set up a budget alert but it never fired even though spending exceeded the threshold. What happened?
+**A:** Budget alerts are based on projected usage trends, not real-time actual spending. If spending spiked suddenly rather than gradually increasing, the projection may not have triggered the alert before the threshold was crossed. Also verify the alert thresholds are configured correctly and that the notification email is going to a monitored inbox (check spam filters).
+
+---
+
+### Q: Our Azure subscription for billing is in a different tenant than our SSO/EMU identity tenant. Is that a problem?
+**A:** Billing and identity are independent concerns. The Azure subscription used for GitHub billing does not need to be in the same Entra ID tenant as your SAML/SSO or EMU identity configuration. However, the billing admin who links the Azure subscription must have access to that subscription -- if it is in a different tenant, the admin may need to be invited as a guest user in that tenant.
+
+---
+
+### Q: Can I split billing by team within a single organization?
+**A:** Cost centers operate at the organization level only -- you cannot assign individual teams or repositories to different cost centers within the same org. The recommended workaround is to create separate organizations for each billing group (e.g., `acme-engineering`, `acme-data-science`), then assign each org to its own cost center. Use internal repository visibility for cross-org collaboration.
+
+---
+
+### Q: How often are usage reports updated, and can I automate the export?
+**A:** Usage reports in the GitHub enterprise billing dashboard are updated daily. You can manually download CSV exports from Enterprise > Settings > Billing > Usage report. For automation, use the GitHub billing REST API to programmatically retrieve usage data and feed it into your finance systems or data warehouse.
+
 ## 📝 Resources
 
 | Resource | Link |

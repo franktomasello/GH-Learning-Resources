@@ -188,6 +188,36 @@ Internal Repository → Settings → Rules → Rulesets
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: The mirror workflow is failing with authentication errors. What should I check?
+**A:** Verify that the PAT, deploy key, or GitHub App token stored as a secret has not expired. Check that the secret name in the workflow matches the actual secret name in Settings > Secrets and variables > Actions (e.g., `MIRROR_TOKEN`). For PATs, confirm the token still has Contents: Read and Write permission on the target public repository. Regenerate and re-store the credential if needed.
+
+---
+
+### Q: Sensitive data was accidentally pushed to the public mirror. What should we do immediately?
+**A:** Treat this as a security incident. First, immediately revoke and rotate any exposed credentials (API keys, tokens, passwords). Then use `git filter-repo` to remove the sensitive data from the public repo's history and force-push the cleaned history. Notify your security team and assess the exposure window. Consider temporarily deleting the public repo if the exposure is severe, and re-mirror after cleanup.
+
+---
+
+### Q: The public mirror only shows the latest commit instead of the full history. What is wrong?
+**A:** The `actions/checkout` step in the workflow is using the default shallow clone (`fetch-depth: 1`). Set `fetch-depth: 0` in the checkout step to fetch the full commit history before pushing to the mirror. Without full history, only the most recent commit is pushed.
+
+---
+
+### Q: How do I stop mirroring to the public repository?
+**A:** Remove or disable the GitHub Actions mirror workflow in the internal repository (delete the `.github/workflows/mirror-to-public.yml` file or disable the workflow in the Actions tab). Also delete the deploy key from the public repository (or revoke the PAT/App token) to prevent any residual access. The public repo will remain in its current state but will no longer receive updates.
+
+---
+
+### Q: Can I mirror only specific files or directories instead of the entire repository?
+**A:** Yes. Use a dedicated mirror branch that contains only the approved content, and configure the workflow to push only that branch. Alternatively, use `git filter-repo` in the workflow to strip internal-only files before pushing. You can also maintain a `.gitignore` on the mirror branch that excludes internal files, though this only affects new commits.
+
+---
+
+### Q: The mirror workflow runs but nothing changes in the public repo. What could be the issue?
+**A:** If there are no new commits on the source branch since the last mirror run, `git push` will report "Everything up-to-date" and no changes will appear. Also verify the workflow trigger branch matches the branch you are committing to. Check the workflow run logs in the Actions tab for any error messages or skipped steps.
+
 ## 📚 Resources
 
 - [actions/checkout](https://github.com/actions/checkout)

@@ -171,6 +171,36 @@ Repository → Settings → Collaborators and teams (sidebar)
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: A guest collaborator cannot see internal-visibility repositories in the organization. Is this a bug?
+**A:** No, this is by design. Guest collaborators do not have automatic access to internal-visibility repositories, even if they are members of an organization. They can only access repositories that have been explicitly granted to them. Add the guest collaborator directly to the specific repos they need via Repository > Settings > Collaborators and teams.
+
+---
+
+### Q: SCIM provisioning is not creating the guest collaborator account. What should I check?
+**A:** Verify that the `guest_collaborator` role is correctly mapped in your IdP's Enterprise Application configuration. In Entra ID, check that the user or group is assigned with the "Guest Collaborator" role selected. In Okta, confirm the Role attribute is set to `guest_collaborator` in the assignment settings. Also verify that SCIM provisioning is active and syncing successfully -- check the IdP's provisioning logs for errors.
+
+---
+
+### Q: Can we convert a guest collaborator to a full enterprise member without deprovisioning them?
+**A:** Yes, update the user's role assignment in your identity provider from `guest_collaborator` to the regular member role, then trigger a SCIM sync. The user's managed account will be updated to full member status, granting them access to internal-visibility repos and other member capabilities. You do not need to deprovision and re-create the account.
+
+---
+
+### Q: Does a guest collaborator consume a license seat in our enterprise?
+**A:** Yes, guest collaborators do consume enterprise license seats just like regular members. Each provisioned guest collaborator counts as one seat toward your enterprise license total. Factor this into your capacity planning when onboarding contractors and vendors.
+
+---
+
+### Q: How do we offboard a guest collaborator when their contract ends?
+**A:** Remove the user from the GitHub EMU application assignment in your IdP (Entra ID or Okta). SCIM deprovisioning will automatically suspend the managed account and remove all access. Do not try to remove the user directly in GitHub -- always deprovision through the IdP to ensure the account lifecycle is properly managed.
+
+---
+
+### Q: Can guest collaborators create repositories or fork existing repos?
+**A:** No. Guest collaborators cannot create repositories or fork repos within the enterprise. They are limited to read/write access on repositories that have been explicitly granted to them. If a contractor needs to create a repo, an enterprise member or admin must create it and then grant the guest collaborator access.
+
 ## 📝 Resources
 
 | Resource | Link |

@@ -152,6 +152,36 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: We transferred a repository but the old URL is not redirecting. What happened?
+**A:** GitHub creates temporary redirects from the old URL to the new location, but these redirects break if a new repository is created at the old path (`owner/repo-name`). Redirects are also not guaranteed to persist indefinitely. Update all references (CI/CD configs, documentation, git remotes, package manifests) to the new URL proactively rather than relying on redirects.
+
+---
+
+### Q: The repository transfer failed. What are the most common causes?
+**A:** You must have admin access on the source repository AND be an owner of the destination organization. Other causes include: the destination org already has a repo with the same name, the repo uses features not available in the destination (e.g., different plan tier), or there are pending required reviews that block the transfer. Verify permissions on both sides before retrying.
+
+---
+
+### Q: We renamed our organization and now CI/CD pipelines are broken. What do we need to update?
+**A:** Update all hardcoded organization names in: GitHub Actions workflow files (especially `actions/checkout` and cross-repo references), git remote URLs on developer machines (`git remote set-url origin`), webhook configurations, package registry references (npm, Maven, NuGet), and any external tools that reference the org name. Run `git remote set-url origin https://github.com/NEW-ORG-NAME/repo.git` on every developer workstation.
+
+---
+
+### Q: Our SCIM/SSO configuration stopped working after an organization rename. How do we fix it?
+**A:** Your identity provider (Entra ID, Okta, PingFederate) stores the organization name or URL in its configuration. After renaming the org, update the SAML SSO URL and SCIM endpoint in your IdP to reflect the new organization name. Test SSO login and verify SCIM provisioning is syncing correctly. Failing to update the IdP will prevent users from authenticating or being provisioned.
+
+---
+
+### Q: After transferring a repo to a new org, team access and security configurations are missing. Is that expected?
+**A:** Yes. Team access, org-level rulesets, security configurations (secret scanning, code scanning settings), and GitHub App installations do not transfer automatically. The destination org's existing policies will apply instead. You must manually grant team access, verify branch protection rules, reinstall GitHub Apps, and confirm security configurations in the new org.
+
+---
+
+### Q: Can I undo a repository transfer or organization rename?
+**A:** There is no built-in "undo" for either operation. For a repository transfer, you can transfer the repo back to the original owner if you still have the necessary permissions. For an organization rename, you can rename the org again to the old name (if no one has claimed it). In both cases, any external references, CI/CD pipelines, and integrations will need to be updated again.
+
 ## 📚 Resources
 
 - [Transferring a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository)

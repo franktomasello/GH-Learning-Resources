@@ -518,6 +518,48 @@ After completing this guide, you should have:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I installed the wrong Okta app — how do I tell if I have the EMU app vs the standard org app?
+**A:** The correct catalog app for EMU is named **"GitHub Enterprise Managed User"** (for github.com) or **"GitHub Enterprise Managed User - GHE.com"** (for data residency). The standard org app is named **"GitHub Enterprise Cloud - Organization"**. If you accidentally installed the standard org app, SCIM provisioning and SAML will target org-level endpoints instead of enterprise-level. Delete the incorrect app and install the EMU-specific one from the Okta catalog.
+
+---
+
+### Q: SCIM provisioning errors show "conflicting user" or users are not appearing in the enterprise — what is happening?
+**A:** This typically occurs when the provisioned username or email already exists on GitHub. For EMU, the username is generated as `IDP_USERNAME_SHORTCODE` (e.g., `jsmith_contoso`). If there is a collision, SCIM will fail for that user. Check the Okta provisioning logs (Applications > GitHub EMU > Provisioning > Logs) for specific error messages. Resolve conflicts by adjusting the `userName` mapping in Okta or by having the conflicting account change its username.
+
+---
+
+### Q: Okta Push Groups are assigned but members are not syncing to GitHub teams — why?
+**A:** Push Groups in Okta push group membership to GitHub, but the groups must be mapped to GitHub teams within an organization. Verify that: (1) the group is assigned under Assignments in the Okta app, (2) the Push Groups tab shows the group is actively pushing, (3) the group name matches or is mapped to a GitHub team. Also note that Okta does not support nested groups — only direct members of the pushed group will sync.
+
+---
+
+### Q: SAML assertion errors appear when testing the configuration — what should I check?
+**A:** Common SAML assertion errors include: signature validation failure (wrong certificate pasted into GitHub), NameID format mismatch (GitHub expects `unspecified` or `emailAddress`), and audience restriction failure (Entity ID mismatch). In Okta, go to the Sign On tab and click "View SAML setup instructions" or "More details" to verify the Sign on URL, Issuer, and certificate. Ensure the Enterprise Name field in Okta exactly matches your enterprise slug.
+
+---
+
+### Q: Provisioned usernames are missing the shortcode suffix — what went wrong?
+**A:** If usernames appear without the `_SHORTCODE` suffix, you may have installed the standard organization app instead of the EMU app. The EMU app automatically appends the enterprise shortcode to provisioned usernames. Verify you are using the "GitHub Enterprise Managed User" catalog app in Okta, and that the Enterprise Name field is populated with your correct enterprise slug.
+
+---
+
+### Q: Users are caught in an SSO login loop and cannot access GitHub — how do I break the cycle?
+**A:** An SSO loop typically indicates a mismatch between the SAML configuration in Okta and GitHub. Verify: (1) the Entity ID in Okta matches `https://github.com/enterprises/YOUR_ENTERPRISE` exactly (no trailing slash), (2) the ACS URL is correct, (3) the Issuer value in GitHub matches what Okta sends. Clear browser cookies and try in an incognito window. If the loop persists, use enterprise recovery codes to access the enterprise and reconfigure SAML.
+
+---
+
+### Q: How do I test SCIM provisioning for a single user before rolling out to everyone?
+**A:** In Okta, use the "Provision on demand" feature: go to the Assignments tab, assign a single test user, then go to Provisioning > Integration > and click "Force Sync" or use the "Provision user" button on the individual assignment. Check the Okta provisioning logs and verify the user appears in the GitHub enterprise People tab within a few minutes.
+
+---
+
+### Q: We switched Okta tenants — do we need to reconfigure everything?
+**A:** Yes. A new Okta tenant means new app integrations, new SAML certificates, and new SCIM connections. You will need to: (1) install the EMU catalog app in the new Okta tenant, (2) update the SAML certificate and Sign on URL in GitHub enterprise settings, (3) generate a new SCIM token and configure provisioning in the new tenant, and (4) reassign all users and groups. Plan this as a maintenance window.
+
+---
+
 ## 📝 Resources
 
 | # | Document | URL |

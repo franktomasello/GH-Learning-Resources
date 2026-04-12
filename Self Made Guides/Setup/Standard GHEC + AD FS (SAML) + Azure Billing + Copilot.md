@@ -578,6 +578,48 @@ Microsoft provides migration tooling and documentation for moving from AD FS to 
 
 _Last updated: April 2026_
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: GitHub cannot reach my AD FS server — SAML test fails with a connection error. What do I need?
+**A:** AD FS must be publicly accessible from the internet for GitHub's SAML flow to work. If your AD FS server is behind a firewall, deploy a Web Application Proxy (WAP) server in your DMZ that proxies SAML requests to the internal AD FS server. The WAP publishes the AD FS federation endpoint (typically `https://your-adfs-server/adfs/ls/`) externally. Without WAP or public access, GitHub cannot validate SAML assertions and SSO will fail.
+
+---
+
+### Q: My claim rules are configured, but GitHub shows "NameID not found in SAML assertion" — what is wrong?
+**A:** This error means the SAML assertion does not contain a properly formatted NameID claim. Verify you have both claim rules configured: (1) an LDAP Attributes rule that sends the email as an E-Mail Address claim, and (2) a Transform rule that converts E-Mail Address to Name ID with the "Email" outgoing format. The two rules must be in the correct order — the LDAP rule first, then the transform rule. Use a SAML tracer browser extension to inspect the actual assertion.
+
+---
+
+### Q: AD FS does not support SCIM — how do I manage user provisioning?
+**A:** AD FS has no native SCIM support. Your options are: (1) **Manual provisioning** — invite users to the org individually via GitHub settings, (2) **API scripts** — build a PowerShell or Python script that reads AD group membership and uses the GitHub REST API to invite/remove org members on a schedule, or (3) **SCIM bridge** — deploy middleware that translates AD changes into SCIM API calls. For most organizations, option 2 (API scripts) provides the best balance of automation and simplicity.
+
+---
+
+### Q: The AD FS certificate needs renewal — how do I update it in GitHub without breaking SSO?
+**A:** When the AD FS token-signing certificate is near expiration, generate the new certificate in AD FS Management Console (Service > Certificates). Export it in Base64-encoded X.509 (.CER) format. Update the certificate in GitHub first (Organization Settings > Authentication security > SAML > Public certificate), save, then activate the new certificate as primary in AD FS. Updating GitHub before AD FS ensures there is no window where the certificates are mismatched.
+
+---
+
+### Q: GitHub rejects the SAML response with a "signature algorithm mismatch" error — what is the issue?
+**A:** GitHub requires SHA-256 for both the signature and digest algorithms. AD FS may default to SHA-1 on older configurations. In AD FS Management Console, open the Relying Party Trust properties for GitHub, go to the Advanced tab, and change the Secure Hash Algorithm to SHA-256. If the Advanced tab is not available, use PowerShell: `Set-AdfsRelyingPartyTrust -TargetName "GitHub - YOUR_ORG" -SignatureAlgorithm "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"`.
+
+---
+
+### Q: Users authenticate successfully via AD FS but end up in an SSO redirect loop — what causes this?
+**A:** An SSO redirect loop usually means the SAML configuration values do not match between AD FS and GitHub. Verify: (1) the Entity ID (Relying Party Trust Identifier) matches `https://github.com/orgs/YOUR_ORG` exactly, (2) the ACS URL matches `https://github.com/orgs/YOUR_ORG/saml/consume`, (3) the Federation Service Identifier (Issuer) in GitHub matches the Entity ID in AD FS. Also check for clock skew between the AD FS server and GitHub — time differences greater than 5 minutes can cause assertion validation failures.
+
+---
+
+### Q: We are considering migrating from AD FS to Entra ID — what are the benefits for GitHub?
+**A:** Migrating to Entra ID unlocks native SCIM provisioning (eliminating the need for manual provisioning or scripts), Conditional Access Policies, cloud-native management with no on-premises servers, and a path to GitHub Enterprise Managed Users (EMU) if desired. Microsoft provides migration tooling for AD FS to Entra ID. For GitHub specifically, you would switch from the AD FS Relying Party Trust to the Entra ID Enterprise Application for SAML and gain automatic user lifecycle management through SCIM.
+
+---
+
+### Q: Can I use the AD FS proxy URL as the Sign-on URL in GitHub, or must it be the direct AD FS URL?
+**A:** Use the externally accessible URL — which is typically the Web Application Proxy (WAP) URL or a load-balanced federation endpoint. This is the URL GitHub will redirect users to for authentication. If you use `https://adfs.yourdomain.com/adfs/ls/`, that URL must be resolvable and reachable from the public internet. Internal-only URLs will cause authentication to fail for users outside your corporate network.
+
+---
+
 ## 📝 Resources
 
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)

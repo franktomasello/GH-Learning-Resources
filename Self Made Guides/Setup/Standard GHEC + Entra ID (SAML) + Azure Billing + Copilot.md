@@ -541,6 +541,48 @@ After completing this guide, you should have:
 
 _Last updated: April 2026_
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Users say they cannot access org resources after SAML was enabled — but they have GitHub accounts. What is wrong?
+**A:** In standard (non-EMU) GHEC, users must link their personal GitHub account to their IdP identity by completing the SAML SSO flow at least once. Simply having a GitHub account is not enough. Direct them to `https://github.com/orgs/YOUR_ORG/sso` to authenticate. If SAML is enforced and they have not completed SSO, they will be removed from the org and must re-authenticate to rejoin (access is restored if they rejoin within three months).
+
+---
+
+### Q: A developer's `git push` fails with a 403 after SAML enforcement — what do they need to do?
+**A:** After SAML enforcement, Personal Access Tokens (classic) must be individually authorized for the SSO-enabled org. Navigate to Settings > Developer settings > Personal access tokens, find the token, click "Configure SSO," and authorize it for the org. Fine-grained PATs are authorized during creation and do not need this extra step. SSH keys also require SSO authorization under Settings > SSH and GPG keys > Configure SSO.
+
+---
+
+### Q: My SSH keys are not working after SAML enforcement — how do I fix this?
+**A:** SSH keys must be explicitly authorized for each SSO-enabled organization. Go to GitHub Settings > SSH and GPG keys, find your key, click "Configure SSO," and click "Authorize" next to the relevant org. This must be done for every SSH key that needs access to the org's repositories. This step is separate from adding the key to your GitHub account.
+
+---
+
+### Q: SAML enforcement unexpectedly removed members from the org — including bots and service accounts. How do I prevent this?
+**A:** Enforcement removes any org member who has not authenticated via the IdP. Bots and service accounts that do not have IdP identities will be removed. Before enforcing, review the list of unauthenticated members GitHub shows. For service accounts, either: (1) create IdP identities for them and have them complete SSO, or (2) after enforcement, use GitHub Apps (which are not affected by SAML enforcement) instead of bot user accounts for automation.
+
+---
+
+### Q: The SCIM setup user's OAuth token keeps expiring and provisioning stops — what do I do?
+**A:** In standard non-EMU with Entra ID, the SCIM token is generated from the GitHub org settings (not a PAT). This token is tied to the user who generated it. If that user's org membership changes or their SAML session expires, provisioning can break. Ensure the setup user remains an active org owner with a valid SAML session. If provisioning stops, sign in as the setup user, visit `/orgs/YOUR_ORG/sso` to refresh the SAML session, and regenerate the SCIM token in org settings if needed.
+
+---
+
+### Q: There is an email mismatch between Entra ID and GitHub — users are getting duplicate identities. How do I resolve this?
+**A:** The SAML NameID value sent by Entra must match what GitHub expects for identity linking. If Entra sends `user.userprincipalname` but the user's GitHub account uses a different email, the link will fail or create a separate identity. Standardize on one attribute (UPN or mail) in the Entra SAML Attributes & Claims configuration. Users can add their UPN as a verified email on their GitHub account to resolve the mismatch. Check the external identity mappings under Organization > People > filter by "External identity."
+
+---
+
+### Q: We have an enterprise account — should we configure SAML at the enterprise level or the org level?
+**A:** If you want consistent SAML enforcement across all organizations, configure it at the enterprise level — this overrides all org-level SAML settings. If different orgs need different IdPs or you want to roll out SAML incrementally, use org-level SAML. You cannot mix both — enterprise SAML replaces org-level SAML entirely. Most customers with a single IdP should use enterprise-level SAML for simplicity.
+
+---
+
+### Q: Entra ID provisioning logs show errors but users seem to be in the org — should I be concerned?
+**A:** Yes. Common "silent" errors include failed attribute updates and deprovisioning failures. These can lead to stale memberships or incorrect role assignments over time. Review the provisioning logs in Entra (Enterprise Application > Provisioning > Provisioning logs) and filter for failures. Address mapping errors and ensure the SCIM endpoint is responding correctly. A healthy provisioning integration should show zero errors in steady state.
+
+---
+
 ## 📝 Resources
 
 - [Configuring SAML SSO and SCIM using Entra ID](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/configuring-saml-single-sign-on-and-scim-using-entra-id)

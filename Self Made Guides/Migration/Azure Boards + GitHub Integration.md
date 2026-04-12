@@ -85,6 +85,36 @@ Configure at: Azure DevOps → Project Settings → Boards → GitHub connection
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I am using AB# syntax in commits and PRs but the links are not appearing in Azure Boards. What is wrong?
+**A:** Verify that the GitHub connection is properly configured in Azure DevOps project settings (Project Settings > Boards > GitHub connections). Confirm that the specific repository is included in the connection -- not all repos may be connected by default. Also ensure the `AB#` prefix is followed by a valid work item ID with no spaces (e.g., `AB#1234`, not `AB# 1234`).
+
+---
+
+### Q: Work item state transitions are not triggering automatically when PRs are merged. How do I fix this?
+**A:** State transitions must be explicitly configured in the Azure Boards GitHub connection settings. Navigate to Azure DevOps > Project Settings > Boards > GitHub connections, select your connection, and click Configure. Map the PR events (opened, merged, closed) to the desired work item state transitions. Without this configuration, `AB#` links will appear but state changes will not be automatic.
+
+---
+
+### Q: Can I connect multiple GitHub repositories to a single Azure Board?
+**A:** Yes. Multiple GitHub repositories can be connected to the same Azure DevOps project and Board. Each repository's commits, PRs, and branches can link to the same work items using `AB#` syntax. Add additional repos through Project Settings > Boards > GitHub connections > Add repositories.
+
+---
+
+### Q: Should I use the OAuth connection or the GitHub App connection method?
+**A:** The GitHub App connection is recommended for organization-wide production use. OAuth connections are tied to an individual user's token and will break if that user leaves the organization or revokes their token. The GitHub App method provides org-level access that is independent of any individual user.
+
+---
+
+### Q: We are seeing duplicate or stale links between Azure Boards work items and GitHub. How do we clean this up?
+**A:** Stale links can occur if repositories are renamed, transferred, or deleted after the connection was established. Review the GitHub connection in Azure DevOps project settings and remove any disconnected or renamed repositories, then re-add them with their current names. For duplicate links on individual work items, manually remove the incorrect links from the work item's "Links" tab in Azure Boards.
+
+---
+
+### Q: Can I migrate our Azure Boards work items to GitHub Issues eventually?
+**A:** Yes, GitHub Enterprise Importer (GEI) supports migrating ADO work items to GitHub Issues. However, many teams prefer the bridge model -- keeping planning in Azure Boards while moving code to GitHub -- during a transitional period. When ready for full migration, use GEI to migrate work items and then retire the Azure Boards connection.
+
 ## 📝 Resources
 
 | Resource | Link |

@@ -106,6 +106,36 @@ Publish clear onboarding guidance:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Users are confused about which GitHub account to use for what. How do we communicate this clearly?
+**A:** Publish clear onboarding documentation that states: use the EMU account (e.g., `username_shortcode`) for all enterprise/internal work, and use a separate personal GitHub.com account for open-source contributions. Include this guidance in new-hire onboarding, your internal wiki, and Slack channel topics. A simple rule: if you are accessing enterprise repos, use your managed account; if you are contributing to public open-source, use your personal account.
+
+---
+
+### Q: Can the enterprise track or monitor what employees do on their personal GitHub.com accounts?
+**A:** No. The enterprise has no visibility into personal GitHub.com accounts. Personal accounts are completely independent of the EMU enterprise -- the enterprise cannot see repos, contributions, stars, or any activity on a personal account. These are two entirely separate identities with no technical link between them.
+
+---
+
+### Q: A user accidentally pushed enterprise/proprietary code to their personal GitHub account. What should we do?
+**A:** Treat this as a security incident. Immediately assess what was exposed (source code, secrets, internal documentation). Revoke and rotate any credentials found in the pushed code. Use `git filter-repo` to remove the proprietary content from the personal repo's history, or delete the personal repo entirely if appropriate. Document the incident and review your organization's code publishing approval process to prevent recurrence.
+
+---
+
+### Q: How can we mirror approved internal code to a public repository for open-source release?
+**A:** Use the Internal-to-Public Repository Mirroring approach: set up a GitHub Actions workflow in the EMU enterprise that pushes approved code from a designated release branch to a separate public organization on github.com. Apply security controls including secret scanning, push protection, and required PR reviews before code reaches the mirror branch. See the Internal-to-Public Repository Mirroring runbook for detailed setup instructions.
+
+---
+
+### Q: Can a user's EMU account and personal account be linked or merged?
+**A:** No. EMU accounts and personal accounts are completely separate identities that cannot be linked, merged, or associated in any way. Each has its own username, profile, and access. Contributions made under one account will not appear under the other. This separation is by design to maintain the enterprise's tenant boundary and governance controls.
+
+---
+
+### Q: Can EMU users interact with public repositories on github.com at all?
+**A:** EMU users can view public repositories on github.com, but they cannot interact with them -- they cannot create issues, open pull requests, leave comments, star, watch, or fork public repos outside the enterprise. For any public interaction, users must use a separate personal GitHub.com account.
+
 ## 📝 Resources
 
 | Resource | Link |

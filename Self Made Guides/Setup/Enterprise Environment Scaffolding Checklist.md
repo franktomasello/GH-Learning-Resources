@@ -364,6 +364,48 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Should we use one enterprise or multiple enterprises?
+**A:** Use one enterprise per company in almost all cases. Multiple enterprises add significant complexity: separate billing, separate audit logs, separate policy governance, and no shared visibility. Only consider multiple enterprises when you have hard compliance boundaries (e.g., FedRAMP vs non-FedRAMP workloads), completely independent IdPs that cannot federate, or legally distinct entities with no shared governance. If in doubt, start with one enterprise and use organizations for separation.
+
+---
+
+### Q: How many organizations should we create inside our enterprise?
+**A:** Keep the number low. Create separate organizations only when you need distinct admin models, compliance boundaries, cost centers for billing, or different IdPs (standard enterprise with per-org SAML). Do not create one org per team or one org per project — use teams and repositories within a single org instead. A typical enterprise has 2-5 organizations (e.g., engineering, platform, security, sandbox).
+
+---
+
+### Q: When should we use internal vs private repository visibility?
+**A:** Use **internal** for repositories that should be discoverable and readable by everyone in the enterprise across all organizations — this enables InnerSource and knowledge sharing. Use **private** for repositories with restricted access where only explicitly granted users or teams should see the code. A good default is to make most repos internal and reserve private for sensitive or regulated code.
+
+---
+
+### Q: We have shared platform repos (Actions, templates, IaC) — where should they live?
+**A:** Create a dedicated "platform" or "shared" organization for cross-cutting resources like reusable Actions, workflow templates, Terraform modules, and internal packages. Set these repos to **internal** visibility so all enterprise members can use them. This avoids duplication across orgs and establishes a single source of truth for shared tooling. Grant write access only to the platform team.
+
+---
+
+### Q: Enterprise policies I set are not cascading to organizations as expected — what is happening?
+**A:** Enterprise policies have three modes: **Enforced** (applies to all orgs, cannot be overridden), **Allowed** (org owners can enable/disable within the enterprise's allowed range), and **No policy** (fully delegated to org owners). If you set a policy at the enterprise level but org owners can still override it, you likely chose "Allow" or "No policy" instead of "Enforce." Navigate to Enterprise > Settings > Policies and check the enforcement level for each policy. Rulesets set at the enterprise level always cascade and cannot be overridden.
+
+---
+
+### Q: We already set up our environment but realize we chose the wrong identity model — can we switch?
+**A:** No. The identity model (Standard vs EMU vs EMU with Data Residency) is set at enterprise creation and cannot be changed. Switching requires creating a new enterprise with the correct identity model, reconfiguring identity and provisioning, and migrating all repositories using GitHub Enterprise Importer (GEI). Treat this as a 4-8 week migration project. This is why the identity model decision in Step 1 is the most important choice in this guide.
+
+---
+
+### Q: How should we handle cost allocation across multiple business units?
+**A:** Use GitHub's Cost Centers feature (Enterprise > Billing > Cost centers). Create a cost center for each business unit or department and assign organizations or specific user groups to each. This allows you to track and allocate metered usage (Copilot, Actions, Packages, GHAS) per cost center. Set spending budgets with alerts at 50%, 75%, and 100% thresholds to prevent surprise overages.
+
+---
+
+### Q: Our security team wants to enable Advanced Security (GHAS) for all repos — should we do it at once?
+**A:** Enable incrementally. Start by applying the GitHub recommended security configuration to a pilot set of repositories or one organization. Review the initial alerts (secret scanning, code scanning) and establish a triage process before rolling out broadly. Enabling GHAS across hundreds of repos at once can generate a flood of alerts that overwhelm teams. Use org-level Security Configurations to apply settings consistently, and ramp up over 2-4 weeks.
+
+---
+
 ## 📝 Resources
 
 - [About GitHub Enterprise Cloud](https://docs.github.com/en/enterprise-cloud@latest/admin/overview/about-github-enterprise-cloud)

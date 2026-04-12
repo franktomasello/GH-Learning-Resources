@@ -301,6 +301,36 @@ gh gei reclaim-mannequin \
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: GEI migration fails with a timeout error on a large repository. How do I resolve this?
+**A:** Large repositories can exceed the default timeout. Try using `--queue-only` to queue the migration and let it run asynchronously, then check status with `gh gei wait-for-migration`. For very large repos, also try setting `--target-repo-visibility` explicitly. If the issue persists, consider splitting the migration (e.g., migrate git history first with `git push --mirror`, then use GEI for metadata).
+
+---
+
+### Q: After migration, I see "mannequin" placeholder accounts instead of real users in PRs and issues. How do I fix this?
+**A:** GEI creates mannequin (placeholder) accounts for users from the source platform who do not have a corresponding GitHub account. Reclaim these mannequins by navigating to Enterprise Settings > People > Mannequins, or use the CLI: `gh gei reclaim-mannequin --github-target-org "MyOrg" --mannequin-user "old-user" --target-user "github-user"`. Export all mannequins first with `--csv` to plan the mapping.
+
+---
+
+### Q: Some pull requests are missing after migration. What could have gone wrong?
+**A:** The most common cause is API rate limiting on the source platform. GEI fetches PRs via the source API, and rate limits can cause incomplete transfers. Rerun the migration for the specific repository -- GEI is idempotent and will pick up missed items. Also check that the source PAT has sufficient scopes to read all PR data.
+
+---
+
+### Q: Actions Importer is producing invalid YAML output for some pipelines. How should I handle this?
+**A:** Actions Importer handles straightforward pipeline constructs well but may struggle with complex conditional logic, custom plugins, or advanced template expressions. Always use `gh actions-importer dry-run` first to generate the YAML without committing it, then manually review and fix any syntax issues. Treat the output as a starting point that may require hand-editing for complex pipelines.
+
+---
+
+### Q: Are secrets (Actions secrets, environment variables) migrated by GEI?
+**A:** No. Secrets are never migrated automatically by any migration tool. You must manually recreate all repository secrets, organization secrets, and environment secrets on the target GitHub instance. Inventory your secrets before migration and have the values ready for re-entry. This is by design for security reasons.
+
+---
+
+### Q: Can I do a dry-run or test migration before the real cutover?
+**A:** Yes. Run GEI against a test target organization first to validate the migration without affecting production. For Actions Importer, use `gh actions-importer dry-run` to generate converted workflow YAML without committing it. The phased approach in Section 10 of this guide (Pilot > Org-by-Org Rollout > Cutover > Decommission) is recommended for production migrations.
+
 ## 📚 Resources
 
 - [GitHub Enterprise Importer Documentation](https://docs.github.com/en/migrations/using-github-enterprise-importer)

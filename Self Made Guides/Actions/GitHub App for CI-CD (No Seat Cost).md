@@ -261,6 +261,36 @@ jobs:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: My workflow fails with "Resource not accessible by integration" when using a GitHub App token. What is wrong?
+**A:** This error means the App does not have the required permission for the API endpoint being called, OR the App is not installed on the target repository. Check two things: (1) the App's permissions in its settings include the necessary access (e.g., Contents: Read & Write for pushing code), and (2) the App is installed on the specific repo you are trying to access (check Org Settings > Developer settings > GitHub Apps > [Your App] > Install App).
+
+---
+
+### Q: Token generation is failing in my workflow with the `actions/create-github-app-token` action. What should I check?
+**A:** Verify that: (1) the `APP_ID` secret contains the correct numeric App ID from the App's General page, (2) the `APP_PRIVATE_KEY` secret contains the full contents of the `.pem` file including the `-----BEGIN RSA PRIVATE KEY-----` header and footer, and (3) the private key has not been regenerated since you stored it (regenerating invalidates previous keys). Also ensure there are no extra newlines or whitespace in the secret values.
+
+---
+
+### Q: When should I use a GitHub App vs a Personal Access Token (PAT)?
+**A:** Use a GitHub App for organization-wide CI/CD automation -- it provides scoped, short-lived tokens with no seat cost and better audit trails. Use a PAT only for quick personal scripts or when a third-party tool specifically requires a PAT and cannot accept App tokens. GitHub Apps are strongly recommended for any production automation.
+
+---
+
+### Q: I created a GitHub App but it does not appear in my organization. Where is it?
+**A:** If the App was created under your personal account (Settings > Developer settings > GitHub Apps), it will not appear in the organization. To create an org-level App, navigate to Organization > Settings > Developer settings > GitHub Apps > New GitHub App. You can transfer an existing personal App to an org, but it is simpler to create it at the org level from the start.
+
+---
+
+### Q: How are GitHub App installation tokens scoped? Can a token access any repo in the org?
+**A:** Installation tokens are scoped to the repositories where the App is installed. If the App is installed on "All repositories," the token can access any repo in the org. If installed on "Only select repositories," the token is limited to those specific repos. You can further narrow the scope at runtime by passing the `repositories` parameter to the `actions/create-github-app-token` action.
+
+---
+
+### Q: How long do GitHub App installation tokens last, and do I need to handle rotation?
+**A:** Installation tokens are valid for approximately 1 hour and are automatically generated fresh on each workflow run by the `actions/create-github-app-token` action. You do not need to manually rotate them. This short lifetime is a key security advantage over PATs, which can be long-lived and require manual rotation.
+
 ## 📚 Resources
 
 - [About Creating GitHub Apps](https://docs.github.com/en/apps/creating-github-apps/about-creating-github-apps/about-creating-github-apps)

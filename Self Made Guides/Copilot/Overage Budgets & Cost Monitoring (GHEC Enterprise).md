@@ -182,6 +182,33 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I created a new budget but users are still being blocked — why?
+**A:** Creating a new budget does not override existing budgets. If any applicable budget with "Stop usage when budget limit is reached" enabled is exhausted, premium requests are blocked. Check the Budgets & alerts page for all active budgets and delete or edit any conflicting ones (including legacy $0 budgets).
+
+---
+
+### Q: Budget alert emails are not firing — what should I check?
+**A:** Verify that alert recipients are configured on the budget (email addresses must be set during budget creation). Check that the alert thresholds (e.g., 75%, 90%, 100%) are configured. Also confirm that the budget scope matches the usage you expect — an org-scoped budget will not alert on usage from a different org.
+
+---
+
+### Q: How do I know if my enterprise has a legacy $0 Copilot premium request budget?
+**A:** Navigate to Enterprise > Billing and licensing > Budgets and alerts. Look for any budget with a $0 amount and "Stop usage when budget limit is reached" enabled that covers premium requests. Accounts created before Aug 22, 2025 may have had one auto-created. Delete or edit it if present.
+
+---
+
+### Q: Can I change the scope of an existing budget (e.g., from enterprise-wide to org-level)?
+**A:** No, you cannot change the scope of a budget after it is created. You must create a new budget with the desired scope and then delete the old one.
+
+---
+
+### Q: One heavy-consuming org burned through the enterprise-wide budget and blocked everyone — how do we prevent this?
+**A:** Switch from a single enterprise-wide budget to per-org or per-cost-center budgets. This isolates spend so one team's heavy usage does not block other teams. See Guide B (by Organization) or Guide C (by Cost Center) in this runbook.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

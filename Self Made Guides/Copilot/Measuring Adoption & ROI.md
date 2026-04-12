@@ -294,6 +294,43 @@ The Copilot metrics API provides programmatic access to usage data:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Our acceptance rate seems low (15-20%) — is that normal?
+**A:** Typical mature deployments see 25-40% acceptance rates. Low rates may indicate poor context setup (missing custom instructions or repository indexing), lack of developer training, or users working in languages where Copilot is less effective. Add `.github/copilot-instructions.md` files and run enablement sessions to improve.
+
+---
+
+### Q: The Copilot metrics API is returning empty data — what's wrong?
+**A:** Check three things: (1) your API token has the correct permissions (requires `manage_billing:copilot` or admin scope), (2) ensure Copilot has been active for at least 24 hours — the API returns daily granularity and may not have data yet, and (3) verify you are using the correct org or enterprise slug in the endpoint URL.
+
+---
+
+### Q: How do we attribute productivity gains to Copilot vs other factors?
+**A:** Use a before/after pilot methodology with a control group. Collect baseline metrics (PR merge time, PRs per developer, developer satisfaction) for 2-4 weeks before the pilot, then compare against the pilot group over 30-60 days. Pair quantitative metrics with developer surveys to capture both measurable and perceived impact.
+
+---
+
+### Q: Can we export Copilot metrics to Power BI or Tableau?
+**A:** Yes. Use the Copilot metrics API endpoints (`GET /orgs/{org}/copilot/metrics` or `/enterprises/{enterprise}/copilot/metrics`) to pull daily data. Schedule daily exports to a data warehouse or CSV, then connect Power BI or Tableau to the data source to build custom dashboards.
+
+---
+
+### Q: Seat utilization is low — many assigned users are not using Copilot. What should we do?
+**A:** If utilization is below 70%, consider running enablement sessions or office hours to help users get started. Reclaim unused seats from users who have not activated Copilot after 30 days. Use team-based assignment to ensure seats go to engaged users.
+
+---
+
+### Q: How long should we wait before reporting ROI to leadership?
+**A:** Lead with adoption metrics in the first 90 days (active users, seat utilization, acceptance rate trends). Shift to ROI metrics (PR velocity improvements, developer satisfaction changes, cost per active user) after 3-6 months when usage patterns have stabilized and you have meaningful before/after comparisons.
+
+---
+
+### Q: Our metrics show high usage but leadership wants dollar-value ROI — how do we calculate that?
+**A:** Estimate developer time saved by multiplying accepted suggestions by average time-per-task saved (typically 30-60 seconds per accepted suggestion). Convert to hourly developer cost. Compare this against total Copilot licensing and premium request costs. Supplement with survey data on perceived productivity gains.
+
+---
+
 ## 📚 Resources
 
 - [Analyzing Copilot usage in your organization](https://docs.github.com/en/copilot/rolling-out-github-copilot-at-scale/analyzing-usage-and-impact/analyzing-copilot-usage-in-your-organization)

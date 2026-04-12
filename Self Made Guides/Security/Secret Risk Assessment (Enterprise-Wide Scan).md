@@ -123,6 +123,36 @@ For each secret found in the assessment or through ongoing scanning:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: The assessment says "0 secrets found" but we know secrets exist in our repositories. Why?
+**A:** The risk assessment detects secrets matching GitHub's supported provider patterns (AWS keys, Azure tokens, GitHub PATs, etc.). If your organization uses custom or proprietary secret formats (e.g., internal API tokens with a non-standard prefix), the assessment will not detect them. Create custom secret scanning patterns at the org or enterprise level to cover your proprietary formats, then enable ongoing secret scanning for continuous detection.
+
+---
+
+### Q: Can we schedule the risk assessment to run automatically on a recurring basis?
+**A:** No. The enterprise-level secret risk assessment is an on-demand, point-in-time scan. For ongoing, continuous detection of secrets, enable secret scanning on your repositories. Secret scanning runs automatically on every push and periodically scans existing content, providing real-time alerts rather than periodic snapshots.
+
+---
+
+### Q: The results show secrets found in archived repositories. Should we be concerned?
+**A:** Yes. Archived repositories are still scanned because the secrets in them may still be active and exploitable. Revoke and rotate any credentials found in archived repos immediately, just as you would for active repos. The archived status only prevents new commits -- it does not reduce the risk of exposed credentials in existing history.
+
+---
+
+### Q: Who has permission to run the enterprise-wide secret risk assessment?
+**A:** Only enterprise owners can initiate the secret risk assessment. Organization owners, billing managers, and other roles do not have access to this feature. If you need the assessment run, contact someone with the enterprise owner role.
+
+---
+
+### Q: How long does the risk assessment take to complete?
+**A:** The duration depends on the number of repositories and their size across your enterprise. For small enterprises (under 100 repos), results may be ready within minutes. For large enterprises with thousands of repositories, the assessment may take several hours. You will be notified when the results are ready.
+
+---
+
+### Q: Does running the risk assessment enable secret scanning on our repositories?
+**A:** No. The risk assessment is a standalone, read-only scan that does not change any repository settings. It does not enable secret scanning, push protection, or any other feature. After reviewing the results, you must separately enable secret scanning and push protection on your repositories to get ongoing protection.
+
 ## 📚 Resources
 
 - [Understanding your organization's exposure to leaked secrets](https://docs.github.com/en/enterprise-cloud@latest/code-security/securing-your-organization/understanding-your-organizations-exposure-to-leaked-secrets)

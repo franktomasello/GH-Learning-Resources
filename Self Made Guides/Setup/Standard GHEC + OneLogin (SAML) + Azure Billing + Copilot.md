@@ -489,6 +489,48 @@ After completing this guide, you should have:
 
 _Last updated: April 2026_
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: How do I set up the SCIM API token in OneLogin for GitHub provisioning?
+**A:** Sign in to GitHub as the SCIM setup user, navigate to Organization Settings > Authentication security, and under SCIM provisioning, generate a SCIM token. Copy this token and the SCIM base URL. In OneLogin, go to the GitHub app > Provisioning tab, enable provisioning, and enter the SCIM Base URL and Bearer Token. Click Save and test by assigning a pilot user. The token is displayed only once — regenerate it if lost.
+
+---
+
+### Q: OneLogin's SAML certificate is expiring — how do I renew it?
+**A:** In OneLogin, go to the GitHub app > SSO tab > Manage Certificates. Generate a new certificate. Before activating the new cert in OneLogin, download it and paste it into GitHub (Organization Settings > Authentication security > SAML > Public certificate). Save in GitHub first. Then set the new certificate as active in OneLogin and remove the old one. This prevents a mismatch window where GitHub does not trust the new cert.
+
+---
+
+### Q: SAML assertion attribute mapping errors are preventing sign-in — what should I verify?
+**A:** In OneLogin, go to the GitHub app > Parameters tab. Verify that the NameID field maps to the user's email address (this is what GitHub uses for identity linking). Check the SSO tab to confirm the SAML Signature Algorithm is set to SHA-256 (not SHA-1, which can cause validation failures). Also verify the Issuer URL and SAML 2.0 Endpoint match what you entered in GitHub. Use the OneLogin SAML Toolkit or browser developer tools to inspect the actual assertion being sent.
+
+---
+
+### Q: Which OneLogin connector version should I use — there seem to be multiple?
+**A:** Use the **"GitHub Enterprise Cloud - Organization"** connector from the OneLogin catalog. Older connectors may be labeled differently or target deprecated endpoints. If you see multiple versions, choose the one most recently updated in the catalog. Avoid using connectors labeled for "GitHub Enterprise Managed User" (that is for EMU, not standard orgs). If provisioning behaves unexpectedly, check the OneLogin release notes for your connector version.
+
+---
+
+### Q: Users are authenticated via SAML but not getting added to the org — SCIM does not seem to be working. What is wrong?
+**A:** Verify provisioning is enabled in OneLogin (GitHub app > Provisioning tab) and that Create Users, Update Users, and Deactivate Users are all checked. Confirm the SCIM credentials (base URL and bearer token) are correct and the token has not expired. Check the OneLogin Events log for provisioning errors. Also ensure the user is assigned to the GitHub app in OneLogin — SAML authentication alone does not trigger SCIM provisioning.
+
+---
+
+### Q: After SAML enforcement, some users lost access — how do I restore them?
+**A:** Users who had not authenticated via the IdP before enforcement are removed from the org. If they rejoin within three months, their previous access privileges and settings are restored automatically. Direct them to `https://github.com/orgs/YOUR_ORG/sso` to authenticate. For bots or service accounts, either assign IdP identities to them or migrate to GitHub Apps. Review the enforcement removal list in Organization > People > filter by "Removed."
+
+---
+
+### Q: Can OneLogin handle group-based provisioning to GitHub, or only individual user assignment?
+**A:** OneLogin supports both individual user and group-based assignment. You can assign groups under the GitHub app > Users/Access tab. However, OneLogin's SCIM provisioning for GitHub only manages org membership — it does not natively sync groups to GitHub teams. For team-based access control, you will need to manage GitHub team memberships separately or use the GitHub Teams API.
+
+---
+
+### Q: SCIM provisioning worked initially but has stopped syncing new users — what happened?
+**A:** The most common cause is an expired or invalidated SCIM bearer token. Tokens can be invalidated if the setup user's org membership changes or if the token is regenerated. Check the OneLogin Events log for HTTP 401 or 403 errors from the GitHub SCIM endpoint. If the token is the issue, regenerate it in GitHub org settings and update it in OneLogin's Provisioning configuration.
+
+---
+
 ## 📝 Resources
 
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)

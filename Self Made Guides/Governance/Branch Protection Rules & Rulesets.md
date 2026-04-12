@@ -252,6 +252,36 @@ Ruleset → Bypass list → Add bypass
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I created a branch protection rule or ruleset, but it does not seem to be enforcing. What should I check?
+**A:** First, verify the branch name pattern targets the correct branch (e.g., `main` vs `master`, or that a wildcard like `release/*` matches your branch names). For rulesets, confirm the enforcement status is set to "Active" -- rulesets in "Evaluate" or "Disabled" mode do not enforce. Also check whether the rule is at the repo, org, or enterprise level, as a higher-level rule may be taking precedence.
+
+---
+
+### Q: Our admin can bypass branch protection and push directly to the protected branch. How do we prevent this?
+**A:** Classic branch protection rules allow repository admins to bypass protections by default (unless "Include administrators" is checked). For stricter enforcement, use rulesets instead. Rulesets support explicit bypass lists, so you can exclude admins from the bypass list entirely, or require them to go through the same PR process as everyone else.
+
+---
+
+### Q: Should we use rulesets or classic branch protection rules? What is the difference?
+**A:** Rulesets are the newer, recommended approach. They offer several advantages over classic rules: explicit bypass lists (control exactly who can bypass), layering (multiple rulesets can apply to the same branch), org-level and enterprise-level enforcement, and the ability to target repos dynamically by name pattern. Classic branch protection is still supported but lacks these capabilities. Use rulesets for new configurations and consider migrating existing classic rules.
+
+---
+
+### Q: How do I require CODEOWNERS approval for changes to specific file paths?
+**A:** First, create a `CODEOWNERS` file in `.github/CODEOWNERS`, `docs/CODEOWNERS`, or the repository root, defining ownership rules for paths. Then enable "Require review from Code Owners" in your branch protection rule or ruleset. When a PR modifies files matched by a CODEOWNERS entry, the designated owner(s) must approve before the PR can merge.
+
+---
+
+### Q: CI status checks are passing but not blocking the merge when they fail. What is wrong?
+**A:** Verify that the status check name in the branch protection rule or ruleset matches the exact name of the check as it appears in the PR (this is case-sensitive). A common issue is a mismatch between the check name configured in the rule and the actual job or workflow name. Check the PR's "Checks" tab to see the exact name GitHub is receiving, then update the protection rule to match.
+
+---
+
+### Q: Can multiple rulesets apply to the same branch at the same time?
+**A:** Yes, rulesets are designed to layer. When multiple rulesets target the same branch, all rules from all matching rulesets are combined. The most restrictive setting wins -- for example, if one ruleset requires 1 approval and another requires 2, the branch will require 2 approvals. This layering works across repo-level, org-level, and enterprise-level rulesets.
+
 ## 📝 Resources
 
 | Resource | Link |

@@ -164,6 +164,43 @@ Enterprise → Settings → Copilot → Policies
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: BYOK is not the same as CMK for data at rest — correct?
+**A:** Correct. BYOK in the Copilot context means bringing your own AI model provider API keys so that inference requests route through your provider account. This is completely separate from customer-managed encryption keys (CMK/BYOK) for encrypting platform data at rest.
+
+---
+
+### Q: Can we use BYOK for air-gapped environments?
+**A:** No. BYOK still requires network connectivity to both GitHub and the AI model provider endpoint. It changes where inference happens but does not remove the need for outbound network access.
+
+---
+
+### Q: The provider endpoint is returning errors after BYOK setup — what should we check?
+**A:** Verify three things: (1) the API key is valid and has not expired or been revoked at the provider, (2) check the provider's rate limits and quota — you may be hitting usage caps, and (3) ensure the endpoint URL is correct (especially for Azure AI Foundry or OpenAI-compatible endpoints where a custom URL is required).
+
+---
+
+### Q: Can different orgs under the same enterprise use different BYOK providers?
+**A:** Yes, BYOK can be configured at the enterprise level with policies controlling which organizations have access to which BYOK-configured providers. You can set access to "Selected organizations" per provider.
+
+---
+
+### Q: Does BYOK change where inference happens?
+**A:** Yes. With BYOK, inference requests are routed through your chosen provider's infrastructure instead of GitHub's default model endpoints. This means data handling and compliance are governed by your provider's terms, not GitHub's.
+
+---
+
+### Q: Do we still need Copilot licenses if we use BYOK?
+**A:** Yes. BYOK adds model routing but does not replace Copilot licensing. You still need Copilot Business or Enterprise seats for each user. BYOK model usage is billed by the AI provider separately from the GitHub Copilot subscription.
+
+---
+
+### Q: How do we rotate or update a BYOK API key?
+**A:** Navigate to Enterprise > Settings > Copilot > Policies > Model management > Configure BYOK, select the provider, and update the API key. Test the connection after updating to verify the new key works. There is no automatic key rotation — this must be done manually.
+
+---
+
 ## 📚 Resources
 
 - [Use your own API keys for Copilot](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-your-own-api-keys)

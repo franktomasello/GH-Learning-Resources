@@ -263,6 +263,48 @@ Enterprise → AI controls → Copilot → Policies
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Can we restrict models at the org level if the enterprise allows them?
+**A:** Yes, an organization can be more restrictive than the enterprise but not less restrictive. If the enterprise enables a model, the org admin can disable it for their org. However, if the enterprise disables a model, the org admin cannot re-enable it.
+
+---
+
+### Q: My content exclusion patterns are not working — what's wrong?
+**A:** Check three things: (1) verify your glob syntax is correct (e.g., `**/.env` not `*.env`), (2) ensure patterns are relative to the repository root, and (3) wait up to 30 minutes for exclusions to propagate. Exclusions do not take effect instantly after saving.
+
+---
+
+### Q: Can we see which files are currently excluded?
+**A:** There is no dashboard or report that lists excluded files. The best way to test is to ask Copilot Chat about content in an excluded file — if the exclusion is working, Copilot will not reference that file's content.
+
+---
+
+### Q: Custom instructions are not being followed — what should I check?
+**A:** Verify the file path is exactly `.github/copilot-instructions.md` at the repository root. Also confirm that the custom instructions feature is enabled at the organization level under Settings > Copilot > Custom instructions. If using task-specific instructions, check that the `applyWhen` front matter pattern matches the files you are working with.
+
+---
+
+### Q: Can we enforce custom instructions across all repos in the org?
+**A:** Use organization-level custom instructions for shared standards that apply everywhere. Repository-level instructions in `.github/copilot-instructions.md` then add project-specific context on top. Org instructions are automatically included in all Copilot Chat conversations for org members.
+
+---
+
+### Q: We disabled a model at the enterprise level but users still see it — why?
+**A:** Model restriction changes can take a few minutes to propagate. Ask users to restart their IDE or refresh their Copilot Chat session. If the model still appears, verify the change was saved correctly in Enterprise > AI controls > Copilot > Models.
+
+---
+
+### Q: Can content exclusions block Copilot code completions and Chat separately?
+**A:** No, content exclusions apply to both Copilot code completions and Copilot Chat simultaneously. You cannot exclude a file from Chat but allow it for completions or vice versa.
+
+---
+
+### Q: What happens if org-level and enterprise-level exclusions overlap?
+**A:** Organization-level exclusions are additive to enterprise-level exclusions. You do not need to duplicate enterprise exclusions at the org level. The most restrictive combination of all applicable exclusions applies.
+
+---
+
 ## 📚 Resources
 
 - [Configure access to AI models](https://docs.github.com/en/copilot/how-tos/use-ai-models/configure-access-to-ai-models)

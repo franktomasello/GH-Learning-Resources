@@ -117,6 +117,33 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Users in the enterprise team are consuming GHE licenses — what went wrong?
+**A:** The enterprise team was likely granted access to an organization. If the team has any org affiliation (even "Read" access), every member becomes a standard enterprise member and consumes a GHE license. Verify the team has no organization access under Enterprise > People > Enterprise teams > [your team] > Settings.
+
+---
+
+### Q: We want to upgrade standalone users to Copilot Enterprise — what's the cost impact?
+**A:** Copilot Enterprise features require repository and org access. The moment you add standalone users to an organization, they consume a GitHub Enterprise license (approximately $21/month) in addition to the Copilot Enterprise upgrade cost. This is the "upgrade trap" — factor in the GHE seat cost before migrating.
+
+---
+
+### Q: Can we use IdP group sync and manual assignment together on the same enterprise team?
+**A:** No. If you link an IdP group to an enterprise team, the team must have no manually assigned users. Membership becomes 100% automated by your IdP. Choose one method: IdP sync for long-term management or API/manual for initial setup.
+
+---
+
+### Q: We hit the enterprise team member limit — what's the cap?
+**A:** The limit is 5,000 members per enterprise team (increased from 500 in December 2025). If you need to assign Copilot to more than 5,000 users in standalone mode, create multiple enterprise teams and assign licenses to each.
+
+---
+
+### Q: A user already has Copilot through an org — will adding them to the standalone enterprise team cause double billing?
+**A:** No. GitHub's combined billing model bills per unique user. If a user is already licensed for Copilot in an org, adding them to the enterprise team generally does not double-bill. The system deduplicates based on unique user identity.
+
+---
+
 ## 📝 Resources
 
 1. [Creating enterprise teams](https://docs.github.com/en/enterprise-cloud@latest/enterprise-onboarding/setting-up-organizations-and-teams/creating-teams)

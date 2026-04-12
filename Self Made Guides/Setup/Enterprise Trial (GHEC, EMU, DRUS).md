@@ -181,6 +181,48 @@ Organization → Settings → Advanced Security → Configurations
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: My setup link expired — it has been more than 7 days. How do I get a new one?
+**A:** The activation link in the setup email expires after 7 days. If it expires, you must restart the trial process by going to `https://github.com/enterprise/trial` and creating a new trial. If the enterprise name (slug) you wanted is now taken by the expired trial, contact GitHub Support or your GitHub Sales representative to have the expired trial removed so the namespace is freed up.
+
+---
+
+### Q: Which trial type should I choose — Standard GHEC, EMU, or DRUS?
+**A:** Choose **Standard GHEC** if your developers already have GitHub.com accounts and you want a low-friction evaluation with optional SAML SSO. Choose **EMU** if your organization requires full identity governance (all accounts provisioned and controlled by your IdP). Choose **DRUS** if you have a formal US data residency requirement in addition to EMU. If unsure, start with Standard GHEC — it is the simplest to set up and evaluate. You cannot convert between trial types, so choose based on your production intent.
+
+---
+
+### Q: Can I extend the trial, and who do I contact?
+**A:** Yes, trials can be extended from 30 days to 60-90 days. Contact your GitHub Solutions Engineer (SE), Customer Success Manager (CSM), or Sales representative to request an extension. Submit the request before day 25 of your trial — requests made after the trial expires may not be honored. Include a brief explanation of what you still need to evaluate.
+
+---
+
+### Q: The enterprise namespace I want is already taken — what can I do?
+**A:** Enterprise slugs are globally unique across all of GitHub. If the name you want is taken by another customer, you must choose a different slug. If it was taken by a previous trial you created that expired, contact GitHub Support to have it released. Common workarounds include appending a suffix (e.g., `contoso-corp` instead of `contoso`). The enterprise slug is permanent and cannot be changed after creation.
+
+---
+
+### Q: I requested a Copilot or GHAS add-on trial, but it is not showing up — what should I check?
+**A:** Add-on trials (Copilot Business, GHAS) must be activated by your GitHub Sales representative or Solutions Engineer — they are not self-service. After requesting, allow 1-2 business days for activation. Once activated, Copilot appears under Enterprise > Settings > AI controls > Copilot, and GHAS appears under Organization > Settings > Advanced Security. If it still does not appear, confirm with your GitHub contact that the add-on was applied to the correct enterprise or org.
+
+---
+
+### Q: What happens to my data when the trial expires?
+**A:** When a trial expires, the enterprise enters a frozen state. You lose the ability to create new repos, push code, or manage settings, but existing data (repos, issues, PRs) is preserved for a grace period. If you convert to a paid plan within the grace period, all data is retained. If the trial is not converted, GitHub will eventually delete the enterprise and all associated data. Contact your GitHub representative to convert before expiration to avoid any data loss.
+
+---
+
+### Q: Can I convert a trial directly to a paid enterprise without starting over?
+**A:** Yes. When you are ready to purchase, work with your GitHub Sales representative to convert the trial to a paid plan. All configuration, repositories, users, and settings carry over — you do not need to rebuild anything. This is one of the key benefits of properly configuring your trial as if it were production.
+
+---
+
+### Q: I set up an EMU trial but realized I need Standard GHEC instead — can I switch?
+**A:** No. The identity model (Standard vs EMU vs DRUS) is set at enterprise creation and cannot be changed. You must create a new trial with the correct type. If you need to preserve any repository data from the EMU trial, use GitHub Enterprise Importer (GEI) to migrate repos to the new enterprise. Plan the identity model decision carefully before starting the trial.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

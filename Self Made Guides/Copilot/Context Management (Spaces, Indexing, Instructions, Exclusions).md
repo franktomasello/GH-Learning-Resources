@@ -175,6 +175,43 @@ Enterprise (content exclusion — what Copilot CANNOT see)
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: How long does repository indexing take?
+**A:** It depends on repository size. Small repos may index in minutes, while large repos with extensive history can take hours. Indexing happens in the background after repo creation or significant changes. Check the status at Repository > Settings > Copilot > Indexing.
+
+---
+
+### Q: @workspace is not returning relevant results — what should I check?
+**A:** Ensure indexing is complete for the repository (check status in repo settings). Verify that the relevant files are not excluded via content exclusion rules. If the repo was recently created or had major changes, wait for re-indexing to finish before expecting accurate results.
+
+---
+
+### Q: When should I use Spaces vs @workspace?
+**A:** Use `@workspace` for single-repo local context when you are working within one repository. Use Spaces when you need cross-repo context — for example, working across multiple related repos, onboarding with bundled docs and code, or feature development that spans several projects.
+
+---
+
+### Q: Content exclusion is not working for a specific file — what's wrong?
+**A:** Exclusions can take up to 30 minutes to propagate after saving. Verify your glob pattern syntax is correct and that patterns are relative to the repository root. Test by asking Copilot about content in the excluded file — if exclusion is working, Copilot will not reference it.
+
+---
+
+### Q: Can we share Copilot Spaces across the team?
+**A:** Yes, Spaces support sharing with team members. When creating or editing a Space, you can share it with specific users or teams. This is useful for onboarding, cross-functional projects, and shared context sets.
+
+---
+
+### Q: My custom instructions in `.github/copilot-instructions.md` don't seem to be taking effect — why?
+**A:** Verify the file is at exactly `.github/copilot-instructions.md` in the repository root (not in a subdirectory). Confirm the custom instructions feature is enabled at the organization level. Also check that your instructions are clear and specific — vague instructions may not produce noticeable changes in Copilot behavior.
+
+---
+
+### Q: Can I use Spaces to give Copilot context about internal documentation or design specs?
+**A:** Yes. Spaces can bundle repositories, files, documents, PRs, issues, and free-form notes. Adding API documentation, design specs, or architecture docs to a Space gives Copilot richer context for more grounded answers.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

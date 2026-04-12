@@ -243,6 +243,36 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Push protection is blocking my push, but the detected string is a false positive. How do I bypass it?
+**A:** When push protection blocks a push, you can bypass it by selecting a reason (e.g., "used in tests" or "false positive") in the GitHub UI or CLI prompt. If your organization requires bypass approval, the push will be held until an authorized reviewer approves it. Note that all bypasses generate an alert for security teams to review.
+
+---
+
+### Q: Secret scanning is enabled but it is not finding secrets I know are in the repo. Why?
+**A:** Secret scanning only detects patterns from its supported providers list. Verify that the secret type you expect to find is in the [supported secret patterns list](https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns). Custom or proprietary secret formats require you to create a custom pattern (org-level or enterprise-level) to be detected.
+
+---
+
+### Q: Push protection is enabled, but users can still push commits containing secrets. What is wrong?
+**A:** Check whether your organization allows push protection bypass without requiring approval. If bypass is configured to "Always allow," users can self-approve and push the secret through. To enforce stricter controls, configure bypass privileges to require review/approval from a designated security team before the push is allowed.
+
+---
+
+### Q: A secret was already committed to git history before we enabled scanning. How do I remove it?
+**A:** First, immediately revoke the exposed credential with the issuing provider. Then use `git filter-repo` or the BFG Repo Cleaner to rewrite history and remove the secret from all commits. After rewriting, force-push to GitHub. Note that anyone who cloned the repo will need to re-clone. Simply deleting the file in a new commit does NOT remove it from history.
+
+---
+
+### Q: I created a custom secret scanning pattern, but it is not matching secrets I expect it to find. What should I check?
+**A:** Verify the regex syntax is correct by testing it against sample data using the "Test" feature in the custom pattern editor before enabling. Common issues include unescaped special characters, overly strict anchoring, and missing character classes. Also confirm the pattern is enabled and applied to the correct scope (org or enterprise).
+
+---
+
+### Q: What is the difference between secret scanning alerts and push protection?
+**A:** Secret scanning alerts are a detection mechanism that scans existing repository content and history, alerting you to secrets that are already present. Push protection is a prevention mechanism that blocks secrets from being committed in the first place by rejecting pushes that contain supported secret patterns. Both features complement each other: push protection stops new leaks, while secret scanning alerts catch secrets that were committed before push protection was enabled.
+
 ## 📝 Resources
 
 | Resource | Link |

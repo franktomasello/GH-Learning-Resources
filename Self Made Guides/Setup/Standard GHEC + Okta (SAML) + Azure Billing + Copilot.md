@@ -466,6 +466,48 @@ After completing this guide, you should have:
 
 _Last updated: February 2026_
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I installed the wrong Okta catalog app — how do I tell EMU vs standard org?
+**A:** The correct app for standard (non-EMU) GHEC is **"GitHub Enterprise Cloud - Organization"**. The EMU app is named **"GitHub Enterprise Managed User"**. If you installed the EMU app, SCIM and SAML will target the enterprise endpoint instead of the org endpoint, and provisioning will fail. Delete the incorrect app in Okta and install "GitHub Enterprise Cloud - Organization" from the catalog.
+
+---
+
+### Q: The OAuth authorization for SCIM provisioning keeps failing — what is going wrong?
+**A:** Okta's standard org SCIM integration uses a third-party OAuth flow (not a PAT). The setup user must: (1) be an org owner, (2) have an active SAML session for the org (visit `https://github.com/orgs/YOUR_ORG/sso` first), and (3) complete the OAuth authorization as that user in the Okta Provisioning tab. If the authorization popup fails silently, try in an incognito window, ensure pop-ups are not blocked, and confirm the setup user can access the org.
+
+---
+
+### Q: SAML enforcement removed bots and service accounts from the org — how do I avoid this?
+**A:** Before enforcing SAML, review the list of members who have not authenticated via the IdP. Bots and service accounts without external identities will be removed. To prevent this: (1) assign IdP identities to service accounts and have them complete SSO before enforcement, or (2) switch automation to use GitHub Apps, which are not affected by SAML enforcement. After enforcement, removed accounts can rejoin within three months with their previous access restored.
+
+---
+
+### Q: We forgot to save our SSO recovery codes before enforcement — what now?
+**A:** If SAML is already enforced and working, you can still access the recovery codes. Navigate to Organization Settings > Authentication security > Single sign-on recovery codes. Download and store them immediately. If your IdP goes down and you do not have recovery codes, you will need to contact GitHub Support for assistance, which can take time. Always store recovery codes in a secure vault accessible to at least two org owners.
+
+---
+
+### Q: Users cannot push after enforcement — they get "Resource protected by organization SAML enforcement" errors. What is the fix?
+**A:** After SAML enforcement, PAT classic tokens must be individually SSO-authorized for the org. Each user must go to Settings > Developer settings > Personal access tokens, click "Configure SSO" next to the token, and authorize it for the org. SSH keys also need SSO authorization under Settings > SSH and GPG keys > Configure SSO. Fine-grained PATs are authorized during creation and do not require this extra step.
+
+---
+
+### Q: Okta provisioning is working, but some users appear as "outside collaborator" instead of "member" — why?
+**A:** This can happen if users were manually invited as outside collaborators before SCIM provisioning took over. SCIM does not automatically upgrade outside collaborators to members. Remove the user's outside collaborator role manually, then let Okta re-provision them as a member. Also verify the Okta app role mapping is set to "Member" (not "Outside Collaborator") for the affected users.
+
+---
+
+### Q: We need to test SAML before enforcing it for everyone — how?
+**A:** After enabling SAML (but before enforcing), SAML is optional — users can still access the org without SSO. Use the "Test SAML configuration" button in GitHub org settings to validate the flow. Assign a pilot group in Okta and have them authenticate via `https://github.com/orgs/YOUR_ORG/sso`. Once the pilot confirms everything works, proceed to enforcement. This test phase lets you catch configuration issues without locking anyone out.
+
+---
+
+### Q: Can we use the same Okta app for multiple GitHub organizations?
+**A:** No. Each GitHub organization requires its own Okta catalog app instance because the SAML Entity ID and SCIM endpoint are org-specific. Install a separate "GitHub Enterprise Cloud - Organization" app in Okta for each org you need to configure. Each app will have its own SAML settings, provisioning configuration, and user assignments.
+
+---
+
 ## 📝 Resources
 
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)

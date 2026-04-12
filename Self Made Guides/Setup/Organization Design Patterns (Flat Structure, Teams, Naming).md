@@ -154,6 +154,48 @@ Enterprise → People → Teams → Create team
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: We migrated from GitLab and created one org per GitLab subgroup — now we have 50+ orgs. Is that a problem?
+**A:** Yes. GitHub has a flatter hierarchy than GitLab, and creating one org per subgroup leads to excessive admin overhead, fragmented policies, and poor cross-org discoverability. Consolidate to 3-7 organizations aligned to major business units or compliance boundaries. Use teams (including nested teams) for the granularity that GitLab subgroups provided. Use topics, naming conventions, and custom properties to organize repos within each org.
+
+---
+
+### Q: We established a naming convention but nobody is following it — how do we enforce it?
+**A:** GitHub does not natively enforce repo naming conventions at the platform level. Options include: (1) use a GitHub App or Action that runs on `repository.created` webhook events and renames or flags non-compliant repos, (2) restrict repository creation to org owners or a platform team who enforce the convention manually, (3) use repository templates with pre-set names that follow the pattern. Custom properties can supplement naming by providing structured metadata even if the repo name is imperfect.
+
+---
+
+### Q: Topics are not discoverable — our developers cannot find repos by topic. What is the best approach?
+**A:** Topics are searchable via `https://github.com/orgs/YOUR_ORG/repositories?q=topic:TOPIC_NAME` but this URL is not always obvious. Improve discoverability by: (1) documenting your topic taxonomy in a central README or wiki, (2) using the organization-level Repositories tab which supports topic filtering, (3) pinning key repos to the organization profile page, and (4) using custom properties for governance metadata (topics for informal categorization, custom properties for formal metadata).
+
+---
+
+### Q: When should we use enterprise teams vs organization teams?
+**A:** Use **organization teams** for repository access control within a single org — this is the most common use case. Use **enterprise teams** when you need to grant access to repos across multiple organizations or assign Copilot licenses at the enterprise level without requiring org membership. Enterprise teams span the entire enterprise and are managed by enterprise owners. If all your repos are in one org, organization teams are sufficient.
+
+---
+
+### Q: We set custom properties at the enterprise level, but they are not showing up on our repos — what is wrong?
+**A:** Custom properties defined at the enterprise level are available on all repos across all orgs, but property values must be set on each repository individually (or in bulk via the API). Simply defining a custom property does not auto-populate values. Navigate to individual repos > Settings > Custom properties to set values, or use the REST API to set values in bulk. Also verify the property was created at the correct level (enterprise vs org).
+
+---
+
+### Q: How do we handle a shared "monorepo" that multiple teams need access to across orgs?
+**A:** Place the monorepo in the organization where it is most naturally managed (typically the platform or engineering org). Set visibility to **internal** so all enterprise members can read it. Use team-based permissions for write/maintain/admin access. If specific teams from other orgs need write access, either add those users to a team in the repo's org, or use enterprise teams to grant cross-org access. Avoid duplicating the repo across multiple orgs.
+
+---
+
+### Q: We want to restrict who can create repos in our organization — is that possible?
+**A:** Yes. Go to Organization > Settings > Member privileges > Repository creation. You can restrict repo creation to org owners only, or allow all members to create repos with specific visibility constraints (e.g., members can create private repos but not public or internal). For tighter control, restrict creation to owners and use a request workflow (e.g., a GitHub Issue template or a Slack integration) for teams to request new repos.
+
+---
+
+### Q: How should we structure teams when we have both permanent staff and contractors?
+**A:** Create separate teams for contractors (e.g., `contractor-team-x`) with limited permissions (read or write, never admin). In EMU environments, contractors can be provisioned via SCIM like regular users, or invited as guest collaborators with access to specific repos. Use nested teams to group contractors under a parent team for easy auditing. Set up a process to review and remove contractor access when engagements end — IdP group sync makes this automatic when contractors are removed from the IdP group.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

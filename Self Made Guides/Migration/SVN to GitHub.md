@@ -302,6 +302,36 @@ git push --tags origin
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: `svn2git` fails because our SVN repo does not use the standard trunk/branches/tags layout. What should I do?
+**A:** Use `--rootistrunk` if the root of the SVN repo is the trunk (no branches or tags directories). For custom directory names, specify them explicitly with `--trunk`, `--branches`, and `--tags` flags. If the layout is highly non-standard, try `--no-minimize-url` or switch to `git svn clone` with manual path specifications for more control.
+
+---
+
+### Q: The conversion fails with author mapping errors. How do I fix this?
+**A:** Every SVN username that appears in the repository history must have a corresponding entry in the `authors.txt` file. Run the SVN log extraction command to get all unique usernames, then verify each one has a mapping. Common issues include missing entries for `(no author)` (commits with no SVN username), bot accounts, and usernames with special characters.
+
+---
+
+### Q: The SVN-to-Git conversion is taking many hours for our large repository. Is there a faster approach?
+**A:** For very large repositories, use `git svn clone` with incremental fetching rather than converting everything at once. You can also clone a subset of history using `--revision START:HEAD` to skip ancient history. Another option is to split the SVN repo into smaller logical units and convert them into separate Git repos. Running the conversion on a machine with fast network access to the SVN server also helps significantly.
+
+---
+
+### Q: GitHub is rejecting our push because of files over 100MB. How do we handle large binaries?
+**A:** Files over 100MB must be tracked with Git LFS before pushing to GitHub. Run `git lfs track "*.ext"` for each large file type, then use `git lfs migrate import --include="*.zip,*.jar,*.dll" --everything` to rewrite history so large files are stored in LFS throughout. Push again after the LFS migration. Note that this rewrites commit SHAs.
+
+---
+
+### Q: The `.gitignore` generated from `svn:ignore` properties does not seem correct. What should I check?
+**A:** `git svn show-ignore` outputs SVN ignore properties in a format similar to `.gitignore`, but SVN ignores are per-directory while Git uses a single file (with optional subdirectory overrides). Manually verify the output and consolidate patterns into a root `.gitignore`. Pay attention to path prefixes -- SVN ignore patterns are relative to each directory, while `.gitignore` patterns are relative to the repo root unless prefixed with `/`.
+
+---
+
+### Q: After conversion, some SVN branches or tags are missing from the Git repo. What went wrong?
+**A:** Check that `svn2git` or `git svn` successfully processed all branches. Empty branches (with no unique commits) may not convert. Also verify the SVN branch/tag paths match what the conversion tool expects. After `git svn clone`, SVN branches appear as remote refs that must be explicitly converted to local branches and tags using the conversion commands in Section 3 of this guide.
+
 ## 📚 Resources
 
 - [Importing an External Git Repository Using the Command Line](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/importing-an-external-git-repository-using-the-command-line)

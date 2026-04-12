@@ -517,6 +517,48 @@ After completing this guide, you should have:
 
 _Last updated: April 2026_
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: What is the difference between an SP Connection (PingFederate) and an Application (PingOne) for this setup?
+**A:** An SP Connection in PingFederate (self-managed) is the equivalent of an Application in PingOne (cloud). Both define the SAML trust relationship between Ping and GitHub. In PingFederate, you configure SP Connections under Identity Provider > SP Connections. In PingOne, you configure Applications under Connections > Applications. The SAML values (Entity ID, ACS URL, Sign-on URL) are the same — the admin UI and navigation differ.
+
+---
+
+### Q: The SAML certificate exported from PingFederate is in DER format — GitHub rejects it. What do I do?
+**A:** GitHub requires the certificate in Base64-encoded PEM format (the text that starts with `-----BEGIN CERTIFICATE-----`). If you exported in DER/binary format, convert it using OpenSSL: `openssl x509 -inform DER -in cert.der -outform PEM -out cert.pem`. Alternatively, re-export from PingFederate and select "X.509 Certificate (PEM)" as the export format. Paste the full PEM text (including the BEGIN/END lines) into GitHub.
+
+---
+
+### Q: Outbound provisioning from PingFederate is failing with connection errors — what should I check?
+**A:** Verify: (1) the SCIM Base URL is correct (`https://api.github.com/scim/v2/organizations/YOUR_ORG`), (2) the Bearer Token (PAT) is valid and has the `admin:org` scope, (3) the PAT has been SSO-authorized for the org, and (4) PingFederate can reach `api.github.com` on port 443 (check firewall/proxy rules). Test the connection using the PingFederate Admin Console. If using PingOne, verify the same settings under the Provisioning tab.
+
+---
+
+### Q: SAML enforcement removed my service accounts — how do I handle automation with PingFederate?
+**A:** Service accounts without IdP identities are removed during enforcement. For PingFederate environments: (1) create IdP identities in your LDAP/AD directory for service accounts and assign them to the SP Connection, or (2) migrate automation to GitHub Apps, which are not affected by SAML enforcement. If service accounts were removed, they can rejoin within three months with their access restored.
+
+---
+
+### Q: The signing certificate on PingFederate is about to expire — how do I rotate without downtime?
+**A:** Generate a new signing certificate in PingFederate (Security > Signing & Decryption Keys & Certificates). Before activating it as the primary cert in PingFederate, paste the new certificate into GitHub (Organization Settings > Authentication security > SAML > Public certificate > update). Save in GitHub first, then activate the new cert in PingFederate. This ensures GitHub trusts the new cert before PingFederate starts using it.
+
+---
+
+### Q: PingFederate's token-based authentication for SCIM uses a PAT — does the PAT need SSO authorization?
+**A:** Yes. In standard non-EMU GHEC with SAML enforced, any PAT (classic) used for API access to the org must be SSO-authorized. After generating the PAT as the setup user, go to Settings > Developer settings > Personal access tokens, click "Configure SSO" next to the token, and authorize it for the org. Without this step, SCIM API calls from PingFederate will return 403 errors.
+
+---
+
+### Q: Users can authenticate via SAML but are not being provisioned into the org — what is missing?
+**A:** SAML authentication and SCIM provisioning are separate configurations. A user can authenticate via SAML but still not be an org member if SCIM provisioning is not set up or if the user is not in scope for the outbound provisioning channel. Verify that outbound provisioning is enabled on the SP Connection (PingFederate) or the Provisioning tab (PingOne), and that the user is in the correct LDAP/AD group or PingOne group assigned to the application.
+
+---
+
+### Q: How do I test the SAML configuration before rolling out to all users?
+**A:** Enable SAML in GitHub org settings without enforcing it. Use the "Test SAML configuration" button to validate the flow with your PingFederate credentials. Assign a pilot group in PingFederate (via access control policy on the SP Connection) and have them authenticate at `https://github.com/orgs/YOUR_ORG/sso`. Once validated, proceed with enforcement.
+
+---
+
 ## 📝 Resources
 
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)

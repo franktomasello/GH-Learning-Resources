@@ -122,6 +122,33 @@ Budgets can monitor or block overages. If any applicable budget has **"Stop usag
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: We moved users to Copilot Enterprise but costs went up instead of down — what happened?
+**A:** The cost savings from Copilot Enterprise only apply when users consume more than approximately 800 premium requests per month. If the moved users are not heavy premium request consumers, the higher seat cost ($39 vs $19) will outweigh the savings from the larger included allowance. Re-check per-user consumption in the usage report.
+
+---
+
+### Q: We created a budget for the "allowed overage" org but users in other orgs can still incur overages — why?
+**A:** Every Copilot user must be covered by some budget, otherwise uncovered users can have unlimited premium request spending. Create a separate restrictive budget (e.g., $0 with "Stop usage when budget limit is reached") that covers all other orgs or users.
+
+---
+
+### Q: Budget interaction is confusing — a new budget did not override the old one. How do budgets interact?
+**A:** Budgets never override each other. They are additive. If any applicable budget with "Stop usage when budget limit is reached" is exhausted, premium requests are blocked — even if another budget would still allow spend. Always review all active budgets on the Budgets & alerts page when troubleshooting.
+
+---
+
+### Q: How do we identify which users should be moved to Copilot Enterprise?
+**A:** Download the "Copilot premium requests usage report" from Enterprise > Billing & licensing > Usage. Aggregate by user and look for users consistently near or over 800 premium requests per month. These users will save money on Enterprise vs Business with overages.
+
+---
+
+### Q: Can we use cost center budgets and org budgets together?
+**A:** Yes, but be careful. If a user is covered by both an org-level budget and a cost-center budget, both apply. If either budget is exhausted and has "Stop usage when budget limit is reached" enabled, the user is blocked. Plan your budget structure to avoid overlapping stop-usage budgets.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

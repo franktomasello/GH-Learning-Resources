@@ -173,6 +173,48 @@ Organization → Security → Overview
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Developers are accepting all Copilot suggestions without review — how do we address this?
+**A:** Require PR reviews via rulesets (Org > Settings > Rules > Rulesets), run GHAS code scanning on all PRs to catch vulnerabilities regardless of author, and monitor acceptance rates for teams with unusually high rates (above 50%) as a signal of insufficient review. Use coaching conversations, not punishment.
+
+---
+
+### Q: Copilot is suggesting code that matches public repositories — how do we prevent this?
+**A:** Enable the public code filter at Organization > Settings > Copilot > Policies > Suggestions matching public code > Block. This filters out suggestions that closely match publicly available code, reducing intellectual property and licensing risk.
+
+---
+
+### Q: How do we enforce responsible AI policy across the entire enterprise?
+**A:** Combine multiple layers: enterprise policies for model and feature controls, organization-level custom instructions for coding standards, required PR reviews via rulesets, and GHAS scanning (CodeQL, secret scanning, Dependabot) on all repositories. No single control is sufficient — defense in depth is required.
+
+---
+
+### Q: Copilot is suggesting secrets or credentials in code — how do we stop this?
+**A:** Enable push protection under Org > Settings > Code security > Secret scanning to block commits containing detected secrets. Configure content exclusion for sensitive files (`.env`, credentials, config files). Add custom instructions stating "Never suggest hardcoded secrets, API keys, or credentials — always use environment variables."
+
+---
+
+### Q: How do we audit what Copilot is being used for across the enterprise?
+**A:** Use the enterprise audit log (Enterprise > Settings > Audit log) and filter for Copilot-related events. Combine this with Copilot usage insights (Enterprise > AI controls > Insights) for adoption metrics. For code-level auditing, GHAS security scanning results show vulnerabilities across all repos regardless of author.
+
+---
+
+### Q: Does GitHub use our code or prompts to train AI models?
+**A:** No. For Copilot Business and Enterprise plans, GitHub does not use your code, prompts, or suggestions to train AI models. Prompts are not retained after serving responses. This is a contractual commitment documented in the Copilot Trust Center.
+
+---
+
+### Q: How do we prevent "vibe coding" from introducing security vulnerabilities?
+**A:** Enforce required PR reviews so AI-generated code is always reviewed by a human. Enable GHAS code scanning (CodeQL) as a required status check on PRs. Use branch protection to prevent direct pushes to main. Monitor teams with unusually high Copilot acceptance rates for coaching opportunities.
+
+---
+
+### Q: Can we restrict which Copilot Extensions are allowed?
+**A:** Yes. At the enterprise level, navigate to Enterprise > AI controls > Copilot > Policies > Copilot Extensions. Set to "Disabled" to block all extensions enterprise-wide, or use "No policy" to let org admins decide. Review and approve extensions through your security team before enabling.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |

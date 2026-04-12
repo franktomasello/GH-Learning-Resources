@@ -260,6 +260,36 @@ No changes are needed in the workflow YAML itself. The `azure/login` action auto
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I am getting "AADSTS700016: Application not found" when my workflow tries to log in to Azure. What is wrong?
+**A:** This error means Azure cannot find the App Registration. Verify that the `client-id` (Application ID) and `tenant-id` (Directory ID) stored in your GitHub secrets are correct and correspond to an active App Registration in the correct Entra ID tenant. Copy-paste errors and extra whitespace in secret values are common causes.
+
+---
+
+### Q: My workflow fails with "No matching federated identity record found." How do I fix this?
+**A:** The subject claim in the OIDC token does not match any federated credential on the App Registration. Verify that the organization name, repository name, branch name (or environment name), and entity type in the federated credential exactly match your workflow context. For example, if your credential is scoped to `repo:MyOrg/my-repo:environment:production`, the workflow job must specify `environment: production`. Check for typos and case sensitivity.
+
+---
+
+### Q: OIDC was working on GitHub.com but stopped after we migrated to GHE.com. What changed?
+**A:** The OIDC issuer URL is different on GHE.com. Update the federated credential on the Azure App Registration to use `https://token.actions.SUBDOMAIN.ghe.com` instead of `https://token.actions.githubusercontent.com`. You may need to create a new federated credential with the GHE.com issuer and remove the old one after testing.
+
+---
+
+### Q: Azure login succeeds but I get "Permission denied" when deploying to a resource. What should I check?
+**A:** The App Registration needs the correct Azure RBAC role assignment on the target resource (subscription, resource group, or individual resource). Verify the role assignment in Azure Portal under Access Control (IAM) for the specific resource. Common mistake: assigning the role at the subscription level when the deployment targets a different subscription, or using a role with insufficient permissions (e.g., Reader instead of Contributor).
+
+---
+
+### Q: My deployment takes longer than 1 hour and the OIDC token expires mid-job. How do I handle this?
+**A:** OIDC tokens from the `azure/login` action are valid for approximately 1 hour. For long-running deployments, break the job into smaller steps that each complete within the token lifetime, or re-authenticate mid-job by calling `azure/login` again in a later step. You can also restructure your workflow to use multiple jobs with separate login steps.
+
+---
+
+### Q: Do I need to store any Azure credentials as GitHub secrets with OIDC?
+**A:** You store the Application (client) ID, Directory (tenant) ID, and Subscription ID as GitHub secrets -- but these are identifiers, not credentials. No client secrets, certificates, or passwords are needed. The OIDC exchange generates a short-lived token at runtime without any stored credential, which is the primary security advantage of this approach.
+
 ## 📚 Resources
 
 - [Configuring OpenID Connect in Azure](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-azure)

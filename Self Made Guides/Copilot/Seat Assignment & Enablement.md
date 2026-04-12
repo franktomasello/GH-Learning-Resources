@@ -244,6 +244,43 @@ Enterprise → AI controls → Copilot → Access
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: A user says Copilot isn't working even though we assigned them a seat — what should we check?
+**A:** Verify four things: (1) the user's IDE extension is up to date, (2) their SSO/SAML session is active and not expired, (3) the user has accepted the Copilot terms of service, and (4) they are signed into the correct GitHub account in their IDE. An assigned seat does not activate until the user completes these steps.
+
+---
+
+### Q: Can we auto-assign Copilot to all new org members?
+**A:** Yes, set the access policy to "All members" under Org Settings > Copilot > Access. New members joining the organization will automatically receive a Copilot seat. Monitor your seat count against your license total to avoid exceeding your purchased seats.
+
+---
+
+### Q: A user has both Copilot Business and Enterprise assigned — what happens?
+**A:** Enterprise takes precedence. The user gets Enterprise-tier features. To avoid unnecessary cost, remove the lower-tier (Business) assignment by removing them from the Business-tier organization's Copilot access.
+
+---
+
+### Q: How do we revoke a seat immediately?
+**A:** Remove the user from the team or individual seat assignment under Org Settings > Copilot > Access. The revocation takes effect within minutes. The user will lose Copilot functionality in their IDE on their next session refresh.
+
+---
+
+### Q: Seats are showing as "pending" — what does that mean?
+**A:** A pending seat means the user has been assigned but has not yet activated Copilot. The user needs to sign into an IDE with the Copilot extension installed and accept the Copilot terms of service. Pending seats still consume a license.
+
+---
+
+### Q: We removed a user from the org but they still appear to have a Copilot seat — why?
+**A:** Seat assignment changes may take a few minutes to reflect in the UI. If the user belongs to multiple organizations under the same enterprise, they may still have a seat through another org. Check all org-level assignments in the enterprise access view.
+
+---
+
+### Q: How many seats can we assign during a pilot without over-purchasing?
+**A:** Use team-based assignment with a dedicated pilot team (e.g., `copilot-pilot`). This lets you control exactly who has access. Seats are counted at the enterprise level, so you only need enough total licenses to cover all assigned users across all orgs.
+
+---
+
 ## 📚 Resources
 
 - [Managing access to GitHub Copilot in your organization](https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-access-to-github-copilot-in-your-organization)

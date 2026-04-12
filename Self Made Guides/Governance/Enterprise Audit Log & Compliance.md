@@ -152,6 +152,36 @@ Enterprise → Settings → Authentication security → IP allow list
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: I configured audit log streaming but events are not appearing in my SIEM. What should I check?
+**A:** Verify the endpoint URL is correct and accessible, confirm the authentication credentials (API token, SAS URL, etc.) are valid and not expired, and ensure streaming is enabled (not paused) in the enterprise settings. Also note that audit log streaming only captures events going forward from the moment it is enabled -- it does not backfill historical events. Check your SIEM's ingestion logs for connection errors.
+
+---
+
+### Q: Can we search audit logs older than 6 months in the GitHub UI?
+**A:** The enterprise audit log UI retains events for the most recent 6 months. For longer retention, configure audit log streaming to a SIEM or storage destination (S3, Splunk, Azure Blob, etc.) before the 6-month window elapses. Once events age out of the UI, they can only be queried from your SIEM or storage backend.
+
+---
+
+### Q: We enabled git events logging and it is generating massive volume. Is that expected?
+**A:** Yes, git events (`git.clone`, `git.fetch`, `git.push`) are very high-volume because they fire for every developer interaction with repositories. Enable git events logging only if your compliance or security requirements specifically mandate tracking these operations. If the volume is overwhelming your SIEM, consider filtering git events at the SIEM ingestion layer rather than disabling them entirely.
+
+---
+
+### Q: The IP allow list locked out our admin. How do we regain access?
+**A:** If all admins are locked out due to an IP allow list misconfiguration, contact GitHub Support for assistance. To prevent this in the future, always include a "break-glass" IP range (such as a VPN gateway or known emergency access point) in the allow list before enabling it. Test the allow list thoroughly with a subset of users before enforcing it enterprise-wide.
+
+---
+
+### Q: How do I find out who deleted a repository or changed its visibility?
+**A:** Search the enterprise audit log using `action:repo.destroy` for deletions or `action:repo.access` for visibility changes. You can combine filters such as `action:repo.destroy actor:username created:>2026-01-01` to narrow results. The audit log entry will show the actor, timestamp, and the affected repository.
+
+---
+
+### Q: Can we use the audit log API to build custom compliance dashboards?
+**A:** Yes, both the REST API and GraphQL API support querying audit log events programmatically. Use the REST endpoint at `/enterprises/{enterprise}/audit-log` with query parameters to filter by action, actor, date, and organization. Pipe results into your dashboard tooling or data warehouse for custom compliance reporting.
+
 ## 📝 Resources
 
 | Resource | Link |

@@ -419,6 +419,48 @@ After completing this guide, you should have:
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: The setup user activation link does not work — what is wrong?
+**A:** The most common cause is an email conflict. If the email address provided for the setup user is already associated as a primary email on another GitHub account, the activation link will silently fail. Find the existing GitHub account using that email, change its primary email to something else, and then retry the activation link. If the link has expired, contact GitHub Support to resend it.
+
+---
+
+### Q: I get a "user already exists" error when SCIM tries to provision a user — how do I fix this?
+**A:** This occurs when the user's email or username already exists on GitHub (either as a personal account or in another enterprise). The conflicting account must change its primary email or username before SCIM can provision the managed user. Check the Entra ID provisioning logs for the specific attribute conflict and resolve it on the GitHub side.
+
+---
+
+### Q: SCIM provisioning in Entra ID shows a "quarantined" status — what does that mean?
+**A:** Quarantine means Entra ID detected a high error rate during provisioning cycles. Common causes include an expired or invalid SCIM PAT, an incorrect Tenant URL, or rate limiting from assigning too many users at once. Check the provisioning logs in Entra for specific errors. Regenerate the SCIM token if needed, verify the Tenant URL, and restart provisioning. Entra will automatically exit quarantine after a successful cycle.
+
+---
+
+### Q: Should the SCIM attribute mapping use UPN or mail for the username?
+**A:** For EMU, the `userName` SCIM attribute determines the GitHub username (with the shortcode suffix appended). Most organizations map `userPrincipalName` to `userName`. However, if your UPNs contain characters GitHub does not allow (such as `#` or `%`), or if UPNs differ significantly from email addresses, consider using `mail` instead. Test with a small pilot group before rolling out broadly.
+
+---
+
+### Q: My SAML Entity ID is correct, but authentication still fails — what should I check?
+**A:** A common culprit is a trailing slash in the Entity ID. The Entity ID must be exactly `https://github.com/enterprises/YOUR_ENTERPRISE` with no trailing slash. Also verify the ACS URL and Sign-on URL match exactly. Check that the Base64 certificate you pasted does not contain extra whitespace or line breaks. Finally, confirm you are using the correct Entra Enterprise Application (the EMU gallery app, not the standard org app).
+
+---
+
+### Q: How do I rotate the SCIM token without breaking provisioning?
+**A:** Sign in as the setup user (`SHORTCODE_admin`), generate a new PAT with the `scim:enterprise` scope, then immediately update the Secret Token field in the Entra ID provisioning configuration. Click Test Connection to confirm the new token works, then save. The old token is invalidated when you generate a new one, so update Entra promptly to minimize downtime.
+
+---
+
+### Q: The test user can sign in via SSO but lands on an empty enterprise with no orgs — why?
+**A:** SSO authentication and SCIM provisioning are separate steps. The user must be both assigned in the Entra Enterprise Application (for SCIM) and assigned to an Entra group that is linked to a GitHub team within an organization. Verify the user appears in the enterprise People tab, and that they have been added to at least one organization via team membership.
+
+---
+
+### Q: The setup user is locked out of 2FA — how do I regain access?
+**A:** Use the personal 2FA recovery codes that were saved when 2FA was first enabled on the setup user. If those are lost, use the enterprise SSO recovery codes to access the enterprise and contact GitHub Support to reset the setup user's 2FA. This is why securely storing both sets of recovery codes during initial setup is critical.
+
+---
+
 ## 📝 Resources
 
 | # | Document | URL |

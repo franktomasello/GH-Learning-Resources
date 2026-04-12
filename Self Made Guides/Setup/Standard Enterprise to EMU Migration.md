@@ -171,6 +171,48 @@ gh gei migrate-org \
 
 ---
 
+## ❓ Common Questions & Troubleshooting
+
+### Q: Can I migrate from standard enterprise to EMU in-place without creating a new enterprise?
+**A:** No. There is no in-place conversion. EMU requires a fundamentally different identity model (IdP-provisioned accounts vs personal accounts). You must create a new EMU enterprise, configure identity and provisioning, migrate repositories using GitHub Enterprise Importer (GEI), and have users switch to their new managed accounts. Plan this as a full migration project with a coordinated cutover.
+
+---
+
+### Q: All our automation PATs stopped working after migration — what happened?
+**A:** PATs from personal accounts in the old enterprise do not transfer to the new EMU enterprise. Managed user accounts are entirely new identities, so all existing PATs, SSH keys, and OAuth tokens are invalid. Before migration, inventory all PATs used for automation. After migration, generate new PATs from managed user accounts, or preferably migrate automation to GitHub Apps (which are more resilient and not tied to individual user accounts).
+
+---
+
+### Q: Commit attribution in the new enterprise shows different usernames — how do we preserve history?
+**A:** GEI migrates git history faithfully (all commits, branches, tags), but commit author information is based on the git `user.email` in each commit. If the email in old commits does not match the new managed user's email, GitHub will not link those commits to the new account. The git history is preserved, but the GitHub UI may show commits as authored by an unrecognized user. There is no way to retroactively re-attribute commits to new managed accounts without rewriting git history, which is not recommended.
+
+---
+
+### Q: Our CI/CD pipelines use OIDC trust with AWS/Azure/GCP — do the trust policies need updating?
+**A:** Yes. If your OIDC trust policies reference the GitHub token issuer URL, they must be updated. For standard github.com, the issuer is `https://token.actions.githubusercontent.com`. If the new EMU enterprise is on GHE.com (data residency), the issuer changes to `https://token.actions.SUBDOMAIN.ghe.com`. Even on github.com, the organization and repository names may change, which affects OIDC subject claims. Update all trust policies before cutover to avoid CI/CD failures.
+
+---
+
+### Q: Users are confused by having two GitHub accounts (old personal + new managed) — how do we manage this?
+**A:** This is expected and should be communicated clearly before migration. The old personal GitHub account remains active and can still be used for open-source contributions. The new managed account (`username_SHORTCODE`) is for enterprise work only. Advise users to: (1) configure separate browser profiles or use incognito for each account, (2) update their local git configs to use the correct email for the managed account, (3) set up SSH config with separate keys for each account. Provide clear documentation distinguishing the two.
+
+---
+
+### Q: How long should we keep the old enterprise live after cutover?
+**A:** Keep the old enterprise in read-only mode (archive all repos) for at least 4-8 weeks after cutover. This gives teams time to discover any missed migrations, verify that all integrations work in the new enterprise, and reference old configuration. Monitor access to the old enterprise — if traffic drops to near zero after 4 weeks, it is safe to decommission. Before decommissioning, do a final check that all repositories, secrets, and configuration have been migrated.
+
+---
+
+### Q: GEI migrated our repos, but Actions secrets, webhooks, and branch protections are missing — is that expected?
+**A:** Yes. GEI migrates git history, pull requests, and some metadata, but it does NOT migrate Actions secrets, variables, environment configurations, webhooks, branch protection rules, rulesets, GitHub Apps, or OIDC trust policies. These must be manually reconfigured in the new enterprise. Build a checklist from the Pre-Migration Inventory (Step 1) and work through each item. Consider scripting the recreation of secrets and rulesets using the GitHub API.
+
+---
+
+### Q: Some of our repos use GitHub Packages — will the registry URLs change?
+**A:** If both enterprises are on github.com, the package registry URLs change because the org names may differ. If the new enterprise is on GHE.com (data residency), the registry base URL changes entirely (e.g., from `ghcr.io` to `containers.SUBDOMAIN.ghe.com`). Update all Dockerfiles, CI/CD pipeline references, and developer workstation configurations to point to the new registry URLs. Plan to re-publish packages to the new registry if needed.
+
+---
+
 ## 📝 Resources
 
 | Resource | Link |
