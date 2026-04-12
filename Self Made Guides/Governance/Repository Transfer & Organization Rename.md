@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Transfer repo:** `Repo → Settings → General → Danger Zone → Transfer repository`
+- **Rename org:** `Org → Settings → General → Change organization's name`
+- **Update git remote (post-rename):** `git remote set-url origin https://github.com/NEW-ORG-NAME/repo.git`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Repo admin role on source repo (for transfers) | ☐ |
+| Org owner role on destination org (for transfers) | ☐ |
+| Org owner role (for renames) | ☐ |
+| Communication plan for affected teams | ☐ |
+| Inventory of integrations, CI/CD, SSO, and external references | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers two high-impact administrative operations that require careful planning and coordination.
@@ -181,6 +203,16 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 ### Q: Can I undo a repository transfer or organization rename?
 **A:** There is no built-in "undo" for either operation. For a repository transfer, you can transfer the repo back to the original owner if you still have the necessary permissions. For an organization rename, you can rename the org again to the old name (if no one has claimed it). In both cases, any external references, CI/CD pipelines, and integrations will need to be updated again.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Organization Design Patterns (Flat Structure, Teams, Naming) | `Setup/Organization Design Patterns (Flat Structure, Teams, Naming).md` |
+| GitHub Enterprise Importer (GEI) & Actions Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+
+---
 
 ## 📚 Resources
 

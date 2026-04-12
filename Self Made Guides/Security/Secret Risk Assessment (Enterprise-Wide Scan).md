@@ -4,6 +4,26 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Run assessment:** `Enterprise → Settings → Code Security → Secret scanning → Run a risk assessment`
+- **Enable push protection (org):** `Org → Settings → Code security → Secret scanning → Push protection → Enable`
+- **Create custom patterns:** `Org → Settings → Code security → Secret scanning → Custom patterns → New pattern`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Enterprise owner role | ☐ |
+| GitHub Enterprise Cloud account | ☐ |
+| No GHAS license required (assessment is free) | ☐ |
+
+---
+
 ## 📋 Overview
 
 The Secret Risk Assessment is a **free**, enterprise-wide scan that detects leaked secrets across **all** repositories -- including those that do not have GHAS or secret scanning enabled.
@@ -152,6 +172,16 @@ For each secret found in the assessment or through ongoing scanning:
 
 ### Q: Does running the risk assessment enable secret scanning on our repositories?
 **A:** No. The risk assessment is a standalone, read-only scan that does not change any repository settings. It does not enable secret scanning, push protection, or any other feature. After reviewing the results, you must separately enable secret scanning and push protection on your repositories to get ongoing protection.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Code Scanning (CodeQL) Enablement & Troubleshooting | `Security/Code Scanning (CodeQL) Enablement & Troubleshooting.md` |
+
+---
 
 ## 📚 Resources
 

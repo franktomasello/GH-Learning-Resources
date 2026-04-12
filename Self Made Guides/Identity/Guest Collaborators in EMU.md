@@ -4,6 +4,17 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Assign role (Entra ID):** `Azure Portal → Entra ID → Enterprise Applications → GitHub EMU App → Users and groups → Add → Select "Guest Collaborator" role`
+- **Assign role (Okta):** `Okta Admin → Applications → GitHub EMU App → Assignments → Set Role to guest_collaborator`
+- **Add to org:** `Org → People → Invite member → Search managed username`
+- **Add to repo:** `Repo → Settings → Collaborators and teams → Add people → Search managed username`
+
+---
+
 ## 📋 Overview
 
 This runbook covers how to set up guest collaborator access in an EMU enterprise:
@@ -200,6 +211,18 @@ Repository → Settings → Collaborators and teams (sidebar)
 
 ### Q: Can guest collaborators create repositories or fork existing repos?
 **A:** No. Guest collaborators cannot create repositories or fork repos within the enterprise. They are limited to read/write access on repositories that have been explicitly granted to them. If a contractor needs to create a repo, an enterprise member or admin must create it and then grant the guest collaborator access.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| EMU + Entra ID (OIDC) + Azure Billing + Copilot | `Setup/EMU + Entra ID (OIDC) + Azure Billing + Copilot.md` |
+| EMU + Entra ID (SAML) + Azure Billing + Copilot | `Setup/EMU + Entra ID (SAML) + Azure Billing + Copilot.md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+
+---
 
 ## 📝 Resources
 

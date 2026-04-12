@@ -4,6 +4,31 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Identity:** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM (EMU) or SAML SSO (Standard)
+- **Governance:** Enterprise → Settings → Policies → Set repo visibility defaults, rulesets, Actions policies, PAT policies, App policies
+- **Security:** Org → Settings → Advanced Security → Configurations → Apply recommended config (secret scanning + push protection + CodeQL)
+- **Billing:** Enterprise → Billing → Payment information → Connect Azure subscription → Create cost centers → Set budgets with alerts
+- **Copilot:** Enterprise → AI controls → Copilot → Enable access → Configure models, content exclusions, custom instructions
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account created (Standard, EMU, or DRUS) | ☐ |
+| Identity model decided (Standard vs EMU vs EMU with Data Residency) | ☐ |
+| IdP admin access (Entra ID, Okta, or PingFederate) | ☐ |
+| Azure Subscription ID for billing | ☐ |
+| Organization structure planned (names, boundaries, team model) | ☐ |
+| Security policy requirements documented (branch rules, secret scanning, code scanning) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook walks through every major decision and configuration step when standing up a new GitHub Enterprise Cloud environment. Follow the sections in order — each builds on the previous.
@@ -403,6 +428,18 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 
 ### Q: Our security team wants to enable Advanced Security (GHAS) for all repos — should we do it at once?
 **A:** Enable incrementally. Start by applying the GitHub recommended security configuration to a pilot set of repositories or one organization. Review the initial alerts (secret scanning, code scanning) and establish a triage process before rolling out broadly. Enabling GHAS across hundreds of repos at once can generate a flood of alerts that overwhelm teams. Use org-level Security Configurations to apply settings consistently, and ramp up over 2-4 weeks.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Organization Design Patterns | `Setup/Organization Design Patterns (Flat Structure, Teams, Naming).md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
+| Copilot Admin Controls | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Okta:** Applications → Browse App Catalog → "GitHub Enterprise Cloud - Organization" → Add Integration → Set org name → Sign On tab → Capture SSO URL, Issuer, X.509 cert
+- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste Okta values → Test → Save → Enforce SAML SSO
+- **SCIM:** Sign in as setup user → Visit `/orgs/YOUR_ORG/sso` → Okta App → Provisioning → Enable API Integration → Authenticate with GitHub
+- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -505,6 +517,18 @@ _Last updated: February 2026_
 
 ### Q: Can we use the same Okta app for multiple GitHub organizations?
 **A:** No. Each GitHub organization requires its own Okta catalog app instance because the SAML Entity ID and SCIM endpoint are org-specific. Install a separate "GitHub Enterprise Cloud - Organization" app in Okta for each org you need to configure. Each app will have its own SAML settings, provisioning configuration, and user assignments.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

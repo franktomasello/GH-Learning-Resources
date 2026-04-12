@@ -4,6 +4,27 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Create enterprise team: `Enterprise → People → Enterprise teams → Create enterprise team` (leave org access blank)
+- Add users: IdP group sync, REST API bulk add, or manual UI
+- Assign licenses: `Enterprise → Billing & licensing → Licensing → Copilot → Manage → Enterprise teams tab → Assign licenses`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
+| Copilot Business subscription purchased | ☐ |
+| List of GitHub usernames for standalone users | ☐ |
+| IdP group configured (if using IdP sync) or API access (if using REST API) | ☐ |
+
+---
+
 ## 📋 Overview
 
 Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.
@@ -141,6 +162,16 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ### Q: A user already has Copilot through an org — will adding them to the standalone enterprise team cause double billing?
 **A:** No. GitHub's combined billing model bills per unique user. If a user is already licensed for Copilot in an org, adding them to the enterprise team generally does not double-bill. The system deduplicates based on unique user identity.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Enterprise Trial (GHEC, EMU, DRUS) | `Setup/Enterprise Trial (GHEC, EMU, DRUS).md` |
 
 ---
 

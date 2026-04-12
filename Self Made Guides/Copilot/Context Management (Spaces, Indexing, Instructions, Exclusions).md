@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Repo instructions: create `.github/copilot-instructions.md` in repo root
+- Path-specific instructions: create `.github/instructions/*.instructions.md`
+- Org instructions: `Org Settings → Copilot → Custom instructions → Add instructions`
+- Content exclusions: `Enterprise → AI controls → Copilot → Content exclusion` or `Org Settings → Copilot → Content exclusions`
+- Check indexing: `Repository → Settings → Copilot → Indexing`
+- Create Spaces: `GitHub.com → Copilot → Spaces → New Space`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Copilot Business or Copilot Enterprise subscription active | ☐ |
+| Organization admin access (for org-level instructions and exclusions) | ☐ |
+| Repository write access (for repo-level instructions) | ☐ |
+| Enterprise owner access (for enterprise-level content exclusions) | ☐ |
+
+---
+
 ## 📋 Overview
 
 Copilot output quality depends on context. There are four context pillars:
@@ -209,6 +233,16 @@ Enterprise (content exclusion — what Copilot CANNOT see)
 
 ### Q: Can I use Spaces to give Copilot context about internal documentation or design specs?
 **A:** Yes. Spaces can bundle repositories, files, documents, PRs, issues, and free-form notes. Adding API documentation, design specs, or architecture docs to a Space gives Copilot richer context for more grounded answers.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Coding Agent & MCP Configuration | `Copilot/Coding Agent & MCP Configuration.md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
 
 ---
 

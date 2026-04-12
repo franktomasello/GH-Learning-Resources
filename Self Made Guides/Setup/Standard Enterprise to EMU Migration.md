@@ -4,6 +4,31 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Inventory:** Catalog all repos, org memberships, teams, Apps, webhooks, Actions secrets, PATs, SSH keys, OIDC trusts before starting
+- **New EMU enterprise:** Work with GitHub account team → Receive `SHORTCODE_admin` → Set password + 2FA → Configure IdP (SAML/OIDC + SCIM)
+- **Migrate repos:** `gh extension install github/gh-gei` → `gh gei migrate-repo` or `gh gei migrate-org` for bulk migration
+- **Reconfigure:** Recreate org structure, teams, rulesets, Actions secrets, webhooks, GitHub Apps, OIDC trust policies manually
+- **Cutover:** Archive old enterprise repos → Redirect users → Validate workflows → Monitor 2-4 weeks → Decommission old enterprise
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub account team engaged to provision new EMU enterprise | ☐ |
+| Pre-migration inventory completed (repos, teams, Apps, secrets, webhooks, OIDC trusts) | ☐ |
+| IdP admin access (Entra ID, Okta, or PingFederate) for EMU configuration | ☐ |
+| GEI CLI installed (`gh extension install github/gh-gei`) | ☐ |
+| Cutover date coordinated with all teams | ☐ |
+| Communication plan for users about dual-account model | ☐ |
+
+---
+
 ## 📋 Overview
 
 Migrating from standard GitHub Enterprise to EMU is a **one-way migration** that moves from user-owned accounts to enterprise-owned, IdP-controlled accounts. This requires careful planning.
@@ -210,6 +235,17 @@ gh gei migrate-org \
 
 ### Q: Some of our repos use GitHub Packages — will the registry URLs change?
 **A:** If both enterprises are on github.com, the package registry URLs change because the org names may differ. If the new enterprise is on GHE.com (data residency), the registry base URL changes entirely (e.g., from `ghcr.io` to `containers.SUBDOMAIN.ghe.com`). Update all Dockerfiles, CI/CD pipeline references, and developer workstation configurations to point to the new registry URLs. Plan to re-publish packages to the new registry if needed.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| GitHub Enterprise Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
 
 ---
 

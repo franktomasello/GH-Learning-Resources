@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Okta:** Applications → Browse App Catalog → "GitHub Enterprise Managed User" → Add Integration → Sign On tab → Set Enterprise Name to your slug
+- **GitHub:** Sign in as `SHORTCODE_admin` → Enterprise → Identity provider → Add SAML configuration → Paste Okta Sign-on URL, Issuer, X.509 cert → Save
+- **SCIM:** As `SHORTCODE_admin`, generate PAT with `scim:enterprise` scope → Okta App → Provisioning → Enable API Integration → Paste token → Save
+- **Billing:** Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept permissions → Connect
+- **Copilot:** Enterprise Settings → AI controls → Copilot → Enable for orgs → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up a new GitHub Enterprise Cloud (GHEC) with Enterprise Managed Users (EMU), including:
@@ -557,6 +569,19 @@ After completing this guide, you should have:
 
 ### Q: We switched Okta tenants — do we need to reconfigure everything?
 **A:** Yes. A new Okta tenant means new app integrations, new SAML certificates, and new SCIM connections. You will need to: (1) install the EMU catalog app in the new Okta tenant, (2) update the SAML certificate and Sign on URL in GitHub enterprise settings, (3) generate a new SCIM token and configure provisioning in the new tenant, and (4) reassign all users and groups. Plan this as a maintenance window.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

@@ -4,6 +4,27 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Connect Boards to GitHub:** `Azure DevOps → Project Settings → Boards → GitHub connections → Connect`
+- **Link work items:** Use `AB#1234` syntax in commit messages, PR titles, or branch names
+- **Configure state transitions:** `Azure DevOps → Project Settings → Boards → GitHub connections → Configure`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Azure DevOps project with Azure Boards enabled | ☐ |
+| GitHub organization with target repositories | ☐ |
+| Permissions to configure GitHub connections in Azure DevOps project settings | ☐ |
+| GitHub App connection method configured (recommended over OAuth) | ☐ |
+
+---
+
 ## 📋 Overview
 
 Keep work items in Azure Boards while hosting code in GitHub. Link commits, branches, and PRs back to Boards work items using `AB#` syntax.
@@ -114,6 +135,16 @@ Configure at: Azure DevOps → Project Settings → Boards → GitHub connection
 
 ### Q: Can I migrate our Azure Boards work items to GitHub Issues eventually?
 **A:** Yes, GitHub Enterprise Importer (GEI) supports migrating ADO work items to GitHub Issues. However, many teams prefer the bridge model -- keeping planning in Azure Boards while moving code to GitHub -- during a transitional period. When ready for full migration, use GEI to migrate work items and then retire the Azure Boards connection.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| GitHub Enterprise Importer (GEI) & Actions Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
+| Organization Design Patterns (Flat Structure, Teams, Naming) | `Setup/Organization Design Patterns (Flat Structure, Teams, Naming).md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+
+---
 
 ## 📝 Resources
 

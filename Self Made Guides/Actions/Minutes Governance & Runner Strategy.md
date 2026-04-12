@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Set spending limit:** `Enterprise → Settings → Billing → Spending limits → Actions → Set limit`
+- **Restrict allowed Actions:** `Enterprise → Settings → Policies → Actions → Allow select actions → Configure allowlist`
+- **Create runner group:** `Enterprise → Settings → Actions → Runner groups → New runner group`
+- **Add self-hosted runner:** `Org → Settings → Actions → Runners → New self-hosted runner`
+- **Monitor usage:** `Enterprise → Settings → Billing → Usage report → Download CSV`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Enterprise owner role (for enterprise-level policies and spending limits) | ☐ |
+| GitHub Enterprise Cloud account | ☐ |
+| Azure subscription (if using VNET injection for GitHub-hosted runners) | ☐ |
+| Infrastructure for self-hosted runners (if applicable) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers included minutes, overage pricing, spending controls, runner strategy decisions, and governance mechanisms for GitHub Actions at the enterprise level.
@@ -233,6 +256,17 @@ Organization → Settings → Actions (sidebar)
 
 ### Q: How can we prevent developers from using untrusted third-party Actions from the Marketplace?
 **A:** Configure an Actions allowlist at the enterprise level (Enterprise > Settings > Policies > Actions > Allow select actions). Specify the exact actions and versions that are permitted (e.g., `actions/checkout@v4`, `azure/login@v2`). This prevents developers from pulling in unvetted third-party actions that could introduce supply chain risks.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| GitHub App for CI/CD (No Seat Cost) | `Actions/GitHub App for CI-CD (No Seat Cost).md` |
+| OIDC Federation for Azure Deployments | `Actions/OIDC Federation for Azure Deployments.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+
+---
 
 ## 📚 Resources
 

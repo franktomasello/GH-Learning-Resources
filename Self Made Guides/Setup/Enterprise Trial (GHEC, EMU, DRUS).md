@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Start trial:** Browse to `github.com/enterprise/trial` → Sign in → Choose trial type (Standard GHEC / EMU / DRUS) → Enter enterprise name → Create enterprise
+- **Activate:** Open setup email within 7 days → Click activation link → Complete on-screen prompts
+- **IdP (EMU/DRUS only):** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM before inviting users
+- **Add-ons:** Contact your GitHub SE/CSM to request Copilot Business (50 seats) or GHAS trial add-ons
+- **Extend:** Request extension before day 25 → Contact GitHub SE/CSM/Sales
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Existing GitHub.com account (to initiate the trial) | ☐ |
+| Enterprise name (slug) decided — globally unique, cannot be changed | ☐ |
+| Identity model chosen: Standard GHEC, EMU, or DRUS | ☐ |
+| IdP admin access ready (EMU/DRUS: Entra ID, Okta, or PingFederate) | ☐ |
+| GitHub SE/CSM contact identified (for add-on trials and extensions) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers every step to initiate and configure a GitHub Enterprise Cloud trial:
@@ -220,6 +244,16 @@ Organization → Settings → Advanced Security → Configurations
 
 ### Q: I set up an EMU trial but realized I need Standard GHEC instead — can I switch?
 **A:** No. The identity model (Standard vs EMU vs DRUS) is set at enterprise creation and cannot be changed. You must create a new trial with the correct type. If you need to preserve any repository data from the EMU trial, use GitHub Enterprise Importer (GEI) to migrate repos to the new enterprise. Plan the identity model decision carefully before starting the trial.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Data Residency Decision Guide | `Setup/Data Residency Decision Guide (DRUS vs Standard vs GHES).md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
 
 ---
 

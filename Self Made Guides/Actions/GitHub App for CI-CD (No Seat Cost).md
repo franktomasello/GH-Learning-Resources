@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Create GitHub App:** `Org → Settings → Developer settings → GitHub Apps → New GitHub App`
+- **Set permissions:** `Org → Settings → Developer settings → GitHub Apps → [App] → Permissions & events`
+- **Generate private key:** `GitHub Apps → [App] → General → Private keys → Generate a private key`
+- **Install App:** `GitHub Apps → [App] → Install App → Install → Select repositories`
+- **In workflow:** Use `actions/create-github-app-token@v1` with `app-id` and `private-key` secrets
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Org owner or admin role to create and install GitHub Apps | ☐ |
+| GitHub Actions enabled on target repositories | ☐ |
+| Permissions identified for your CI/CD use case (Contents, PRs, Checks, etc.) | ☐ |
+
+---
+
 ## 📋 Overview
 
 | Authentication Method | Seat Cost | Security | Permissions | Best For |
@@ -290,6 +312,16 @@ jobs:
 
 ### Q: How long do GitHub App installation tokens last, and do I need to handle rotation?
 **A:** Installation tokens are valid for approximately 1 hour and are automatically generated fresh on each workflow run by the `actions/create-github-app-token` action. You do not need to manually rotate them. This short lifetime is a key security advantage over PATs, which can be long-lived and require manual rotation.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Minutes Governance & Runner Strategy | `Actions/Minutes Governance & Runner Strategy.md` |
+| OIDC Federation for Azure Deployments | `Actions/OIDC Federation for Azure Deployments.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+
+---
 
 ## 📚 Resources
 

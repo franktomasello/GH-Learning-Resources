@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **AD FS:** Trust Relationships → Relying Party Trusts → Add → Manual → Entity ID `https://github.com/orgs/YOUR_ORG` → ACS URL → Configure claim rules (email → NameID)
+- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste AD FS SSO URL, Federation Service ID, token-signing cert → Test → Save → Enforce
+- **Provisioning:** Manual (invite users) or API scripts (AD group sync) — AD FS does NOT support native SCIM
+- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -617,6 +629,18 @@ _Last updated: April 2026_
 
 ### Q: Can I use the AD FS proxy URL as the Sign-on URL in GitHub, or must it be the direct AD FS URL?
 **A:** Use the externally accessible URL — which is typically the Web Application Proxy (WAP) URL or a load-balanced federation endpoint. This is the URL GitHub will redirect users to for authentication. If you use `https://adfs.yourdomain.com/adfs/ls/`, that URL must be resolvable and reachable from the public internet. Internal-only URLs will cause authentication to fail for users outside your corporate network.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

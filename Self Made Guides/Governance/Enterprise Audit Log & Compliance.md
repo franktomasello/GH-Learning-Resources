@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Enterprise audit log:** `Enterprise → Settings → Audit log`
+- **Set up log streaming:** `Enterprise → Settings → Audit log → Log streaming → Set up a stream`
+- **Enable git events:** `Enterprise → Settings → Audit log → Git events → Enable`
+- **IP allow list:** `Enterprise → Settings → Authentication security → IP allow list → Add IP range`
+- **Download usage report:** `Enterprise → Settings → Billing → Usage report → Download CSV`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Enterprise owner role | ☐ |
+| GitHub Enterprise Cloud account | ☐ |
+| SIEM endpoint configured (for log streaming) | ☐ |
+| SIEM credentials ready (API token, SAS URL, HEC token, etc.) | ☐ |
+
+---
+
 ## 📋 Overview
 
 GitHub Enterprise Cloud provides audit logging at multiple levels:
@@ -181,6 +204,17 @@ Enterprise → Settings → Authentication security → IP allow list
 
 ### Q: Can we use the audit log API to build custom compliance dashboards?
 **A:** Yes, both the REST API and GraphQL API support querying audit log events programmatically. Use the REST endpoint at `/enterprises/{enterprise}/audit-log` with query parameters to filter by action, actor, date, and organization. Pipe results into your dashboard tooling or data warehouse for custom compliance reporting.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
+
+---
 
 ## 📝 Resources
 

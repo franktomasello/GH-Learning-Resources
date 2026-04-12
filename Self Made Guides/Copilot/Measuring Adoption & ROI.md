@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Enterprise adoption metrics: `Enterprise → AI controls → Insights`
+- Premium request spend: `Enterprise → Billing & Licensing → Usage`
+- Org-level usage: `Org Settings → Copilot → Usage`
+- API for custom dashboards: `GET /orgs/{org}/copilot/metrics` or `/enterprises/{enterprise}/copilot/metrics`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner or billing admin access | ☐ |
+| Copilot Business or Copilot Enterprise subscription active with assigned seats | ☐ |
+| API token with `manage_billing:copilot` scope (for metrics API) | ☐ |
+| Survey tool for qualitative developer feedback (optional) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers how to measure and report on GitHub Copilot adoption and return on investment:
@@ -328,6 +350,16 @@ The Copilot metrics API provides programmatic access to usage data:
 
 ### Q: Our metrics show high usage but leadership wants dollar-value ROI — how do we calculate that?
 **A:** Estimate developer time saved by multiplying accepted suggestions by average time-per-task saved (typically 30-60 seconds per accepted suggestion). Convert to hourly developer cost. Compare this against total Copilot licensing and premium request costs. Supplement with survey data on perceived productivity gains.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
 
 ---
 

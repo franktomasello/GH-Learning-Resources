@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Install GEI CLI:** `gh extension install github/gh-gei`
+- **Generate migration script (ADO):** `gh gei generate-script --ado-source-org "Org" --github-target-org "Org"`
+- **Migrate single repo:** `gh gei migrate-repo --source-repo "repo" --github-target-org "Org"`
+- **Install Actions Importer:** `gh extension install github/gh-actions-importer`
+- **Reclaim mannequins:** `gh gei reclaim-mannequin --github-target-org "Org" --csv`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| `gh` CLI installed with GEI extension (`gh extension install github/gh-gei`) | ☐ |
+| Source platform PAT with appropriate scopes (ADO, GitLab, Bitbucket, or GitHub) | ☐ |
+| Target GitHub PAT with `repo`, `admin:org`, `workflow`, `read:packages` scopes | ☐ |
+| Target organization created on GitHub | ☐ |
+| Network connectivity from migration machine to both source and target platforms | ☐ |
+
+---
+
 ## 📋 Overview
 
 | Tool | What It Migrates | Best For |
@@ -330,6 +354,18 @@ gh gei reclaim-mannequin \
 
 ### Q: Can I do a dry-run or test migration before the real cutover?
 **A:** Yes. Run GEI against a test target organization first to validate the migration without affecting production. For Actions Importer, use `gh actions-importer dry-run` to generate converted workflow YAML without committing it. The phased approach in Section 10 of this guide (Pilot > Org-by-Org Rollout > Cutover > Decommission) is recommended for production migrations.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Organization Design Patterns (Flat Structure, Teams, Naming) | `Setup/Organization Design Patterns (Flat Structure, Teams, Naming).md` |
+| Azure Boards + GitHub Integration | `Migration/Azure Boards + GitHub Integration.md` |
+| SVN to GitHub | `Migration/SVN to GitHub.md` |
+| OIDC Federation for Azure Deployments | `Actions/OIDC Federation for Azure Deployments.md` |
+
+---
 
 ## 📚 Resources
 

@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Verify in VS Admin Portal:** `https://manage.visualstudio.com → Subscribers → Search for user`
+- **Verify on GitHub side:** `Enterprise → Settings → Billing → Licensing → View license usage`
+- **User self-link (GitHub):** `GitHub.com → Profile → Settings → Billing and plans → Plans → Link Visual Studio subscription`
+- **User self-link (VS portal):** `https://my.visualstudio.com → Benefits → Tools → GitHub Enterprise → Activate`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Visual Studio Enterprise subscription (not Professional) | ☐ |
+| Subscription assigned to user's corporate email (not personal email) | ☐ |
+| Subscription associated with the correct Entra ID tenant | ☐ |
+| GitHub Enterprise Cloud account linked to the enterprise | ☐ |
+| User has a GitHub account with a verified email matching the VS subscription | ☐ |
+
+---
+
 ## 📋 Overview
 
 Visual Studio Enterprise subscriptions include a GitHub Enterprise Cloud seat at no additional cost. This runbook walks through verifying eligibility, confirming the link on both the VS Admin Portal and GitHub Enterprise sides, and troubleshooting common issues.
@@ -148,6 +171,16 @@ https://my.visualstudio.com → Benefits tab
 
 ### Q: A user linked their VS subscription to the wrong GitHub account. How do they fix it?
 **A:** The user must unlink the VS subscription from the incorrect GitHub account, then re-link it to the correct account. Unlink by going to GitHub.com > Settings > Billing and plans and removing the VS subscription link. Then sign in with the correct GitHub account and complete the linking process from Step 3 of this guide.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Enterprise Trial (GHEC, EMU, DRUS) | `Setup/Enterprise Trial (GHEC, EMU, DRUS).md` |
+
+---
 
 ## 📚 Resources
 

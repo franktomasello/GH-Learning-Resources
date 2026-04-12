@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Content exclusions: `Enterprise → AI controls → Copilot → Content exclusion`
+- Model restrictions: `Enterprise → AI controls → Copilot → Models` — enable only approved models
+- Public code filter: `Org Settings → Copilot → Policies → Suggestions matching public code → Block`
+- Required PR reviews: `Org Settings → Rules → Rulesets → Require a pull request before merging`
+- Required status checks: `Org Settings → Rules → Rulesets → Require status checks → Add CodeQL, tests`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud with enterprise owner access | ☐ |
+| Copilot Business or Copilot Enterprise subscription active | ☐ |
+| GitHub Advanced Security (GHAS) enabled for code scanning and secret scanning | ☐ |
+| Organization admin access for rulesets and policy configuration | ☐ |
+| Organizational AI acceptable-use policy defined | ☐ |
+
+---
+
 ## 📋 Overview
 
 Responsible AI governance requires BOTH platform controls (what GitHub provides) AND organizational controls (what the enterprise enforces through policy and process).
@@ -212,6 +236,17 @@ Organization → Security → Overview
 
 ### Q: Can we restrict which Copilot Extensions are allowed?
 **A:** Yes. At the enterprise level, navigate to Enterprise > AI controls > Copilot > Policies > Copilot Extensions. Set to "Disabled" to block all extensions enterprise-wide, or use "No policy" to let org admins decide. Review and approve extensions through your security team before enabling.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Context Management (Spaces, Indexing, Instructions, Exclusions) | `Copilot/Context Management (Spaces, Indexing, Instructions, Exclusions).md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Code Scanning (CodeQL) Enablement & Troubleshooting | `Security/Code Scanning (CodeQL) Enablement & Troubleshooting.md` |
 
 ---
 

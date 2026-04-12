@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Standard GHEC:** No data residency guarantee, broadest feature set, github.com — choose when no formal residency requirement exists
+- **DRUS (GHE.com):** Formal US data residency, EMU required, SUBDOMAIN.ghe.com — choose when regulatory/contractual language mandates US data residency
+- **GHES:** Self-hosted, full infrastructure control — choose for air-gapped, IL4/IL5, or disconnected environments
+- **Migration to DRUS:** Full migration project (4-8 weeks) — new GHE.com enterprise + reconfigure IdP + GEI repo migration + update all integrations
+- **Copilot inference:** DRUS does NOT guarantee US-only inference — use BYOK for provider-level region control
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Data residency requirements documented (regulatory, contractual, or policy-driven) | ☐ |
+| Compliance team consulted on FedRAMP / IL level needs | ☐ |
+| Identity model decision made (Standard vs EMU) | ☐ |
+| Migration effort assessed if moving from existing github.com enterprise | ☐ |
+| Copilot inference geography requirements clarified with stakeholders | ☐ |
+
+---
+
 ## 📋 Overview
 
 | Deployment | Hosting | Identity | Data Location | URL |
@@ -127,6 +151,17 @@ Moving from standard GHEC to DRUS requires:
 
 ### Q: The customer conflates DRUS with Azure GCC High — how do I clarify?
 **A:** DRUS and Azure GCC High are entirely different offerings. Azure GCC High is a US government-specific Azure cloud environment meeting IL4/IL5 requirements. DRUS is GitHub's data residency offering that stores covered platform data in the US — it runs on GitHub's own infrastructure, not in Azure GCC High. There is no GitHub equivalent of Azure GCC High. If the customer needs IL4/IL5, the only option is GHES deployed within their own FedRAMP-authorized boundary or GCC High environment.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Trial (GHEC, EMU, DRUS) | `Setup/Enterprise Trial (GHEC, EMU, DRUS).md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| OIDC Federation for Azure Deployments | `Actions/OIDC Federation for Azure Deployments.md` |
 
 ---
 

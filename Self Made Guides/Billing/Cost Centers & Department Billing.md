@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Create cost center:** `Enterprise → Settings → Billing → Cost centers → Create cost center`
+- **Assign orgs:** `Enterprise → Settings → Billing → Cost centers → [Cost center] → Manage organizations`
+- **Create SKU budget:** `Enterprise → Settings → Billing → Cost centers → [Cost center] → Budgets → Create budget`
+- **Set spending limit:** `Enterprise → Settings → Billing → Spending limits → [Product] → Set limit`
+- **Export usage report:** `Enterprise → Settings → Billing → Usage report → Download CSV`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Enterprise owner role | ☐ |
+| GitHub Enterprise Cloud account | ☐ |
+| Azure subscription linked (for Azure billing) | ☐ |
+| Organizations created and assigned to the enterprise | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers how to set up cost tracking and billing for enterprise departments:
@@ -261,6 +284,18 @@ Enterprise → Settings → Billing (sidebar) → Usage report
 
 ### Q: How often are usage reports updated, and can I automate the export?
 **A:** Usage reports in the GitHub enterprise billing dashboard are updated daily. You can manually download CSV exports from Enterprise > Settings > Billing > Usage report. For automation, use the GitHub billing REST API to programmatically retrieve usage data and feed it into your finance systems or data warehouse.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
+| Visual Studio Subscription to GitHub Enterprise Linking | `Billing/Visual Studio Subscription to GitHub Enterprise Linking.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Minutes Governance & Runner Strategy | `Actions/Minutes Governance & Runner Strategy.md` |
+
+---
 
 ## 📝 Resources
 

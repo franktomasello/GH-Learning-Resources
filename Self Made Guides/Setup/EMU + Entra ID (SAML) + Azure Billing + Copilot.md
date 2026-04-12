@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Entra ID:** Create Enterprise App "GitHub Enterprise Managed User" from gallery → Configure SAML with Entity ID `https://github.com/enterprises/YOUR_ENTERPRISE`
+- **GitHub:** Sign in as `SHORTCODE_admin` → Enterprise Settings → Authentication security → Paste Sign-on URL, Issuer, Base64 cert → Save
+- **SCIM:** As `SHORTCODE_admin`, generate PAT with `scim:enterprise` scope → Enter in Entra App → Provisioning → Automatic → Test Connection
+- **Billing:** Enterprise → Billing & licensing → Payment information → Add Azure Subscription → Accept permissions → Connect
+- **Copilot:** Enterprise Settings → AI controls → Copilot → Enable for orgs → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up a new GitHub Enterprise Cloud (GHEC) with Enterprise Managed Users (EMU), including:
@@ -458,6 +470,19 @@ After completing this guide, you should have:
 
 ### Q: The setup user is locked out of 2FA — how do I regain access?
 **A:** Use the personal 2FA recovery codes that were saved when 2FA was first enabled on the setup user. If those are lost, use the enterprise SSO recovery codes to access the enterprise and contact GitHub Support to reset the setup user's 2FA. This is why securely storing both sets of recovery codes during initial setup is critical.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

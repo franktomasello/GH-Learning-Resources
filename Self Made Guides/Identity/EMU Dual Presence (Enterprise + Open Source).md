@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the key steps:**
+
+- **EMU account:** Provisioned automatically via IdP (Entra ID / Okta) + SCIM -- username format `username_shortcode`
+- **Personal account:** User creates separately at github.com/signup with a personal email
+- **Public org for OSS:** Create a non-EMU org on github.com for open-source publishing
+- **Mirror internal to public:** Use GitHub Actions workflow with `MIRROR_TOKEN` secret to push approved code
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| EMU enterprise configured with IdP and SCIM provisioning | ☐ |
+| Users have personal GitHub.com accounts (separate from EMU) | ☐ |
+| Open-source contribution policy defined and approved | ☐ |
+| Separate public organization created on github.com (if mirroring) | ☐ |
+
+---
+
 ## 📋 Overview
 
 EMU users CANNOT contribute to public repos outside the enterprise. Open-source participation requires a **dual-account approach**.
@@ -135,6 +157,17 @@ Publish clear onboarding guidance:
 
 ### Q: Can EMU users interact with public repositories on github.com at all?
 **A:** EMU users can view public repositories on github.com, but they cannot interact with them -- they cannot create issues, open pull requests, leave comments, star, watch, or fork public repos outside the enterprise. For any public interaction, users must use a separate personal GitHub.com account.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| Internal-to-Public Repository Mirroring | `Migration/Internal-to-Public Repository Mirroring.md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+
+---
 
 ## 📝 Resources
 

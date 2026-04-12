@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Set overage policy: `Enterprise → AI controls → Copilot → Premium request paid usage → Enable/Disable`
+- Create budget: `Enterprise → Billing and licensing → Budgets and alerts → New budget`
+- Create cost center: `Enterprise → Billing and licensing → Cost centers → New cost center`
+- Monitor usage: `Enterprise → Billing and licensing → Usage → Premium request analytics`
+- Download report: from Usage page, click `Get usage report → Email me the report`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud (GHEC) with enterprise billing enabled | ☐ |
+| Enterprise owner or billing admin access | ☐ |
+| Copilot Business or Enterprise subscription active | ☐ |
+| Legacy $0 budgets reviewed and deleted/edited if present | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers three approaches for setting up premium request budgets:
@@ -206,6 +229,17 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ### Q: One heavy-consuming org burned through the enterprise-wide budget and blocked everyone — how do we prevent this?
 **A:** Switch from a single enterprise-wide budget to per-org or per-cost-center budgets. This isolates spend so one team's heavy usage does not block other teams. See Guide B (by Organization) or Guide C (by Cost Center) in this runbook.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Premium Request Budgeting Scenarios | `Copilot/Premium Request Budgeting Scenarios.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
+| Power User Premium Allowance (Cost Centers + Budgets) | `Copilot/Power User Premium Allowance (Cost Centers + Budgets).md` |
 
 ---
 

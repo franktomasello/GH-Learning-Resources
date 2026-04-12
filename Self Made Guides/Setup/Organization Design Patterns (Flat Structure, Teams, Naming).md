@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Org structure:** Keep 3-7 orgs max — align to business units or compliance boundaries, not teams or projects
+- **Repo naming:** Use `team-project-component` pattern (e.g., `platform-auth-service`) for alphabetical grouping
+- **Teams:** Organization → Teams → New team → Set parent for nesting → Sync with IdP groups for automated membership
+- **Custom properties:** Enterprise Settings → Custom properties → Define metadata fields (department, data-classification, owner-team)
+- **Internal repos:** Set visibility to Internal for cross-org discoverability within the enterprise
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account created | ☐ |
+| Enterprise owner or org owner access | ☐ |
+| Organization naming and boundary decisions made | ☐ |
+| Repository naming convention agreed upon by teams | ☐ |
+| IdP groups defined for team sync (if using SCIM) | ☐ |
+
+---
+
 ## 📋 Overview
 
 GitHub uses a flatter hierarchy than GitLab or Azure DevOps. Understanding the mapping is critical for a clean migration.
@@ -193,6 +217,15 @@ Enterprise → People → Teams → Create team
 
 ### Q: How should we structure teams when we have both permanent staff and contractors?
 **A:** Create separate teams for contractors (e.g., `contractor-team-x`) with limited permissions (read or write, never admin). In EMU environments, contractors can be provisioned via SCIM like regular users, or invited as guest collaborators with access to specific repos. Use nested teams to group contractors under a parent team for easy auditing. Set up a process to review and remove contractor access when engagements end — IdP group sync makes this automatic when contractors are removed from the IdP group.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| GitHub Enterprise Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
 
 ---
 

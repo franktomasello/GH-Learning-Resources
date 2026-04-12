@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Restrict models: `Enterprise → AI controls → Copilot → Models` — toggle models on/off
+- Content exclusions: `Enterprise → AI controls → Copilot → Content exclusion` — add glob patterns or repos
+- Org custom instructions: `Org Settings → Copilot → Custom instructions` — enter up to 6,000 characters
+- Repo instructions: create `.github/copilot-instructions.md` in repo root
+- Public code filter: `Enterprise → AI controls → Copilot → Policies → Suggestions matching public code → Block`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
+| Copilot Business or Copilot Enterprise subscription active | ☐ |
+| Organization admin access (for org-level controls) | ☐ |
+| Repository admin or write access (for repo-level instructions) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers the key admin controls for GitHub Copilot that let you govern what models are available, what code Copilot can reference, and what instructions guide its behavior:
@@ -302,6 +325,18 @@ Enterprise → AI controls → Copilot → Policies
 
 ### Q: What happens if org-level and enterprise-level exclusions overlap?
 **A:** Organization-level exclusions are additive to enterprise-level exclusions. You do not need to duplicate enterprise exclusions at the org level. The most restrictive combination of all applicable exclusions applies.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| BYOK (Bring Your Own Key) Configuration | `Copilot/BYOK (Bring Your Own Key) Configuration.md` |
+| Context Management (Spaces, Indexing, Instructions, Exclusions) | `Copilot/Context Management (Spaces, Indexing, Instructions, Exclusions).md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+| Coding Agent & MCP Configuration | `Copilot/Coding Agent & MCP Configuration.md` |
 
 ---
 

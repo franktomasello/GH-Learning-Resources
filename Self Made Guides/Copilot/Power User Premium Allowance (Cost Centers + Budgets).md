@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Enable paid overages: `Enterprise → AI controls → Copilot → Premium request paid usage → Enabled`
+- Review/delete legacy budgets: `Enterprise → Billing and licensing → Budgets and alerts`
+- Create cost centers: `Enterprise → Billing and licensing → Cost centers → New cost center`
+- Create $0 budget for default users: `Budgets and alerts → New budget → Cost center: Default users → $0 → Stop usage: ON`
+- Create allowance budget for power users: `Budgets and alerts → New budget → Cost center: Hyper power users → $X`
+
+---
+
 ## 📋 Overview
 
 Allow only a specific subset of users (“hyper power users”) to use paid premium requests beyond their included allowance, while everyone else is blocked from overages using budgets that stop usage at the limit.
@@ -190,6 +202,16 @@ If you also need a middle tier ("power users" who just need a bigger included al
 
 ### Q: How do I verify that usage is landing in the correct cost center?
 **A:** Navigate to Enterprise > Billing and licensing > Usage > Premium request analytics and group or filter by cost center. You can also download a detailed usage report (CSV) and check the `cost_center_name` column to confirm attribution.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

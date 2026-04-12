@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Single repo (default setup):** `Repo → Settings → Code security → Code scanning → Set up → Default`
+- **Org-wide enablement:** `Org → Settings → Code security → Code scanning → Enable for all repositories`
+- **Switch to Extended suite:** `Org → Settings → Code security → Global settings → CodeQL → Query suite → Extended`
+- **Enable Copilot Autofix:** `Org → Settings → Code security → Code scanning → Copilot Autofix → Enable`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Advanced Security (GHAS) or GitHub Code Security license | ☐ |
+| Org owner or repo admin role | ☐ |
+| Repository contains a CodeQL-supported language (C/C++, C#, Go, Java, Kotlin, JS/TS, Python, Ruby, Swift) | ☐ |
+| For Copilot Autofix: Copilot license at the org level | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers how to enable and configure CodeQL-based code scanning, choose the right query suite, enable AI-powered autofix, and troubleshoot when results are missing.
@@ -183,6 +205,17 @@ CodeQL supports the following languages for analysis:
 
 ### Q: Can I run CodeQL on languages not in the supported list, like Rust or PHP?
 **A:** CodeQL does not support those languages natively. For unsupported languages, you can integrate third-party SARIF-compatible scanning tools (e.g., Semgrep, Snyk) that upload results to the GitHub code scanning API. These results will appear alongside any CodeQL findings in the Security tab.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Coding Agent & MCP Configuration | `Copilot/Coding Agent & MCP Configuration.md` |
+
+---
 
 ## 📚 Resources
 

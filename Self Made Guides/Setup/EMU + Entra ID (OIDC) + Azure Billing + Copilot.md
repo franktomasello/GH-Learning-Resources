@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **GitHub:** Sign in as `SHORT-CODE_admin` → Enterprise → Identity provider → Single sign-on → Enable OIDC configuration → Save (redirects to Entra)
+- **Entra ID:** Sign in as Global Admin → Consent on behalf of organization → Accept (auto-creates the OIDC Enterprise App)
+- **SCIM:** As `SHORT-CODE_admin`, generate PAT with `scim:enterprise` scope → Entra App → Provisioning → Automatic → Enter Tenant URL + token → Test Connection
+- **Billing:** Enterprise Settings → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise Settings → Policies → Copilot → Enable access → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 **Scope:**
@@ -388,6 +400,19 @@ Run through these checks to confirm successful setup:
 
 ### Q: Can I use the same Entra Enterprise Application for both OIDC SSO and SCIM provisioning?
 **A:** Yes. When you enable OIDC, GitHub automatically creates the "GitHub Enterprise Managed User (OIDC)" Enterprise Application in your Entra tenant. You configure SCIM provisioning on this same application. Do not create a separate SAML-based Enterprise Application — use only the OIDC one for both SSO and SCIM.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

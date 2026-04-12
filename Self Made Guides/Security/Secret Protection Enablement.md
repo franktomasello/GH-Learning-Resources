@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Single repo:** `Repo → Settings → Security → Advanced Security → Secret Protection → Enable`
+- **Org-wide:** `Org → Security → Assessments → Get started → For all repositories`
+- **At scale (Security Configs):** `Org → Settings → Advanced Security → Configurations → Apply to All repositories`
+- **Push protection (repo):** `Repo → Settings → Security → Code security → Secret Protection → Push Protection → Enable`
+- **User-level push protection:** `Profile → Settings → Code security → Push protection for yourself → Toggle on`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud or GitHub Team plan | ☐ |
+| GitHub Secret Protection product enabled (for private/internal repos) | ☐ |
+| Org owner or repo admin role | ☐ |
+| Understanding of which repos to target (public vs. private/internal) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers every practical way to "turn on secrets protection" in GitHub:
@@ -272,6 +295,17 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 ### Q: What is the difference between secret scanning alerts and push protection?
 **A:** Secret scanning alerts are a detection mechanism that scans existing repository content and history, alerting you to secrets that are already present. Push protection is a prevention mechanism that blocks secrets from being committed in the first place by rejecting pushes that contain supported secret patterns. Both features complement each other: push protection stops new leaks, while secret scanning alerts catch secrets that were committed before push protection was enabled.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Secret Risk Assessment (Enterprise-Wide Scan) | `Security/Secret Risk Assessment (Enterprise-Wide Scan).md` |
+| Code Scanning (CodeQL) Enablement & Troubleshooting | `Security/Code Scanning (CodeQL) Enablement & Troubleshooting.md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+
+---
 
 ## 📝 Resources
 

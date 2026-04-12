@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Classic rule (repo):** `Repo → Settings → Branches → Add branch protection rule`
+- **Repo-level ruleset:** `Repo → Settings → Rules → Rulesets → New ruleset → New branch ruleset`
+- **Org-level ruleset:** `Org → Settings → Rules → Rulesets → New ruleset → New branch ruleset`
+- **Enterprise-level ruleset:** `Enterprise → Settings → Policies → Repository rulesets → New ruleset`
+- **CODEOWNERS:** Create `.github/CODEOWNERS` file and enable "Require review from Code Owners" in protection rule
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Repo admin (for repo-level rules), org owner (for org-level), or enterprise owner (for enterprise-level) | ☐ |
+| GitHub Enterprise Cloud (for org-level and enterprise-level rulesets) | ☐ |
+| Branch naming conventions established | ☐ |
+| CI/CD status check names identified (if requiring status checks) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers every method for enforcing branch protection in GitHub:
@@ -281,6 +304,17 @@ Ruleset → Bypass list → Add bypass
 
 ### Q: Can multiple rulesets apply to the same branch at the same time?
 **A:** Yes, rulesets are designed to layer. When multiple rulesets target the same branch, all rules from all matching rulesets are combined. The most restrictive setting wins -- for example, if one ruleset requires 1 approval and another requires 2, the branch will require 2 approvals. This layering works across repo-level, org-level, and enterprise-level rulesets.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Code Scanning (CodeQL) Enablement & Troubleshooting | `Security/Code Scanning (CodeQL) Enablement & Troubleshooting.md` |
+| Copilot Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+
+---
 
 ## 📝 Resources
 

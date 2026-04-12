@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Enable coding agent (enterprise): `Enterprise → AI controls → Copilot → Policies → Copilot coding agent → Enable`
+- Enable coding agent (org): `Org Settings → Copilot → Policies → Copilot coding agent → Enable`
+- Scope to repos: `Org Settings → Copilot → Policies → Copilot coding agent → Select repositories`
+- Configure MCP: create `.github/copilot/mcp.json` in the repository
+- Custom instructions: create `.github/copilot-instructions.md` in repo root
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud with enterprise owner access | ☐ |
+| Copilot Business or Copilot Enterprise subscription active | ☐ |
+| Coding agent enabled at enterprise level (org cannot override if disabled) | ☐ |
+| Premium request budget configured (coding agent sessions consume premium requests) | ☐ |
+| Security review completed for any MCP servers before enabling | ☐ |
+
+---
+
 ## 📋 Overview
 
 | Capability | Description |
@@ -175,6 +199,17 @@ Enterprise → AI controls → Insights
 
 ### Q: Is it safe to enable MCP servers from third-party sources?
 **A:** Treat MCP server approval as a governance decision. Run through the security review checklist before enabling any MCP server: assess what tools/APIs it accesses, what credentials it requires, what network access it needs, and whether it complies with your data classification policy. Have your security team review before approving.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Context Management (Spaces, Indexing, Instructions, Exclusions) | `Copilot/Context Management (Spaces, Indexing, Instructions, Exclusions).md` |
+| Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
 
 ---
 

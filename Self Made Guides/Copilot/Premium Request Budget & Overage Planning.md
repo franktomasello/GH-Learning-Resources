@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Enable/disable overages: `Enterprise → Settings → AI controls → Copilot → Policies → Premium request overages`
+- Set spending budgets: `Enterprise → Settings → Billing → Budgets → Create budget → Set monthly limit`
+- Create cost centers: `Enterprise → Settings → Billing → Cost centers → Create cost center`
+- Control models: `Enterprise → Settings → AI controls → Copilot → Models` — disable high-multiplier models
+- Monitor consumption: `Enterprise → Settings → Billing & Licensing → Usage → Filter by Copilot`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
+| Copilot Business (300 requests/user/month) or Enterprise (1,000 requests/user/month) active | ☐ |
+| Enterprise billing admin access (for budgets and cost centers) | ☐ |
+| Understanding of model multipliers for budget projections | ☐ |
+
+---
+
 ## 📋 Overview
 
 GitHub Copilot includes a monthly allowance of premium requests per user. When users interact with premium models that are not included in the base allowance, each interaction consumes premium requests at a model-specific multiplier rate. Once the allowance is exhausted, overages are billed per request.
@@ -228,6 +251,18 @@ Enterprise → Settings → Billing & Licensing → Usage
 
 ### Q: How do we estimate costs before enabling premium models for the whole enterprise?
 **A:** Run a pilot with 10-20 users for 2-4 weeks with overages disabled. Review per-user and per-model consumption in the billing reports, then multiply by your total user count. Use the budget planning formula in this guide to project monthly costs before expanding.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
+| Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
+| Premium Request Budgeting Scenarios | `Copilot/Premium Request Budgeting Scenarios.md` |
 
 ---
 

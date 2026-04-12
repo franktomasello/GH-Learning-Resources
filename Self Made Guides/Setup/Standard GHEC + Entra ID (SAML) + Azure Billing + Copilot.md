@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Entra ID:** Enterprise Applications → New → "GitHub Enterprise Cloud - Organization" → Single sign-on → SAML → Set Entity ID to `https://github.com/orgs/YOUR_ORG`
+- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste Entra Login URL, Azure AD Identifier, Base64 cert → Test → Save → Enforce
+- **SCIM:** Sign in as setup user → Visit `/orgs/YOUR_ORG/sso` → Org Settings → Authentication security → Generate SCIM token → Enter in Entra Provisioning → Automatic
+- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -580,6 +592,18 @@ _Last updated: April 2026_
 
 ### Q: Entra ID provisioning logs show errors but users seem to be in the org — should I be concerned?
 **A:** Yes. Common "silent" errors include failed attribute updates and deprovisioning failures. These can lead to stale memberships or incorrect role assignments over time. Review the provisioning logs in Entra (Enterprise Application > Provisioning > Provisioning logs) and filter for failures. Address mapping errors and ensure the SCIM endpoint is responding correctly. A healthy provisioning integration should show zero errors in steady state.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

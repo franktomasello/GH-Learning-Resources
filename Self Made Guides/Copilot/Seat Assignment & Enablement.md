@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Enable orgs: `Enterprise → AI controls → Copilot → Access → Enabled for selected organizations`
+- Assign individual seats: `Org Settings → Copilot → Access → Enabled for selected members → Add members`
+- Team-based assignment: `Org Settings → Copilot → Access → Enabled for selected members → Add teams`
+- Enable all members: `Org Settings → Copilot → Access → All members`
+- Assign Business vs Enterprise tier: `Enterprise → AI controls → Copilot → Access` — set tier per org
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
+| Copilot Business or Copilot Enterprise subscription purchased | ☐ |
+| Organization admin access (for org-level seat assignment) | ☐ |
+| GitHub Teams created (for team-based pilot rollouts) | ☐ |
+
+---
+
 ## 📋 Overview
 
 This runbook covers every way to assign and manage GitHub Copilot seats:
@@ -278,6 +301,17 @@ Enterprise → AI controls → Copilot → Access
 
 ### Q: How many seats can we assign during a pilot without over-purchasing?
 **A:** Use team-based assignment with a dedicated pilot team (e.g., `copilot-pilot`). This lets you control exactly who has access. Seats are counted at the enterprise level, so you only need enough total licenses to cover all assigned users across all orgs.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Measuring Adoption & ROI | `Copilot/Measuring Adoption & ROI.md` |
+| Enterprise Trial (GHEC, EMU, DRUS) | `Setup/Enterprise Trial (GHEC, EMU, DRUS).md` |
 
 ---
 

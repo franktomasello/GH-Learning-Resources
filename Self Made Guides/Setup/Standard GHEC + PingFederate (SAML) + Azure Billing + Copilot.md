@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **PingFederate:** Identity Provider → SP Connections → Create New → SAML 2.0 → Entity ID `https://github.com/orgs/YOUR_ORG` → ACS URL with POST binding
+- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste PingFederate SSO URL, Entity ID, X.509 cert → Test → Save → Enforce
+- **SCIM:** As setup user, generate PAT with `admin:org` scope → SSO-authorize for org → PingFederate → Outbound Provisioning → Enter SCIM URL + Bearer Token
+- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -556,6 +568,18 @@ _Last updated: April 2026_
 
 ### Q: How do I test the SAML configuration before rolling out to all users?
 **A:** Enable SAML in GitHub org settings without enforcing it. Use the "Test SAML configuration" button to validate the flow with your PingFederate credentials. Assign a pilot group in PingFederate (via access control policy on the SP Connection) and have them authenticate at `https://github.com/orgs/YOUR_ORG/sso`. Once validated, proceed with enforcement.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

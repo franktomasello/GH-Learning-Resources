@@ -4,6 +4,28 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Configure BYOK: `Enterprise → Settings → Copilot → Policies → Model management → Configure BYOK`
+- Add provider and enter API key, then test the connection
+- Set access policy: `Enterprise → Settings → Copilot → Policies → Model management` — choose all orgs or selected orgs
+- Rotate keys: same BYOK configuration page — update key and re-test
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
+| Copilot Business or Copilot Enterprise subscription active | ☐ |
+| API key from a supported AI model provider (Anthropic, OpenAI, Azure, AWS, Google, xAI) | ☐ |
+| Provider endpoint URL (required for Azure AI Foundry, AWS Bedrock, OpenAI-compatible) | ☐ |
+
+---
+
 ## 📋 Overview
 
 BYOK (Bring Your Own Key) allows enterprise administrators to configure their own API keys from supported AI model providers so that Copilot routes requests through the enterprise's own provider account.
@@ -198,6 +220,16 @@ Enterprise → Settings → Copilot → Policies
 
 ### Q: How do we rotate or update a BYOK API key?
 **A:** Navigate to Enterprise > Settings > Copilot > Policies > Model management > Configure BYOK, select the provider, and update the API key. Test the connection after updating to verify the new key works. There is no automatic key rotation — this must be done manually.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
+| Data Residency Decision Guide (DRUS vs Standard vs GHES) | `Setup/Data Residency Decision Guide (DRUS vs Standard vs GHES).md` |
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
 
 ---
 

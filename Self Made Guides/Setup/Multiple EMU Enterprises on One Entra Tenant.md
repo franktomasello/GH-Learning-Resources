@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Entra ID:** Create one Enterprise Application per EMU enterprise from gallery → Name distinctly (e.g., "GitHub EMU - Enterprise A")
+- **SAML/OIDC:** Configure each app with its own Entity ID, Reply URL, Sign-on URL pointing to the respective enterprise
+- **SCIM:** Each app gets its own Provisioning config with separate Tenant URL + Secret Token from each enterprise's setup user
+- **User scoping:** Create separate Entra groups per enterprise → Assign each group to only its corresponding Enterprise Application
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Two or more EMU enterprises provisioned by GitHub | ☐ |
+| Setup user credentials for each enterprise (`SHORTCODE_admin`) | ☐ |
+| Entra ID admin access (Application Administrator or higher) | ☐ |
+| Separate Entra security groups created for each enterprise's user population | ☐ |
+| Enterprise shortcodes decided (short, descriptive, distinguishable) | ☐ |
+
+---
+
 ## 📋 Overview
 
 Multiple EMU enterprises CAN connect to a single Entra ID tenant. Each EMU enterprise requires its own separate Enterprise Application registration.
@@ -125,6 +148,16 @@ Entra ID → Enterprise Applications → [GitHub EMU App]
 
 ### Q: We are hitting Entra provisioning rate limits — how do we manage provisioning across two enterprises?
 **A:** Entra ID runs provisioning cycles independently for each Enterprise Application (approximately every 40 minutes per app). If both enterprises have large user populations, stagger the initial provisioning: start provisioning for Enterprise A first, wait for the initial cycle to complete, then start Enterprise B. For ongoing operations, do not assign more than 1,000 users per hour per enterprise to avoid GitHub's SCIM rate limits. Monitor the provisioning logs in each Entra app separately.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| EMU + Entra ID (SAML) Setup Guide | `Setup/EMU + Entra ID (SAML) + Azure Billing + Copilot.md` |
+| EMU + Entra ID (OIDC) Setup Guide | `Setup/EMU + Entra ID (OIDC) + Azure Billing + Copilot.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
 
 ---
 

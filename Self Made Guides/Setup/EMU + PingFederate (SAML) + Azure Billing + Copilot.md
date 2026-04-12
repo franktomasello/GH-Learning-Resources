@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **PingFederate:** Identity Provider → SP Connections → Create New → SAML 2.0 → Set Entity ID to `https://github.com/enterprises/YOUR_ENTERPRISE` and ACS URL with POST binding
+- **GitHub:** Sign in as `SHORTCODE_admin` → Enterprise → Identity provider → Add SAML configuration → Paste PingFederate SSO URL, Entity ID, X.509 cert → Save
+- **SCIM:** As `SHORTCODE_admin`, generate PAT with `scim:enterprise` scope → PingFederate SP Connection → Outbound Provisioning → Enter SCIM Base URL + Bearer Token → Test
+- **Billing:** Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept permissions → Connect
+- **Copilot:** Enterprise Settings → AI controls → Copilot → Enable for orgs → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up a new GitHub Enterprise Cloud (GHEC) with Enterprise Managed Users (EMU), including:
@@ -701,6 +713,19 @@ After completing this guide, you should have:
 
 ### Q: Users are provisioned via SCIM but cannot sign in — what is likely the issue?
 **A:** This usually means SCIM provisioning succeeded but the user is not assigned to the SP Connection for SSO. In PingFederate, user assignment for SSO is controlled by your authentication policy and the user datastore connected to the SP Connection. Verify the user exists in the LDAP/AD directory connected to PingFederate and that no access control policy is blocking their authentication. In PingOne, verify the user's group is assigned to the application under the Access tab.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Guest Collaborators in EMU | `Identity/Guest Collaborators in EMU.md` |
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 

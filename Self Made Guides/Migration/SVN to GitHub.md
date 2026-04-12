@@ -4,6 +4,29 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the commands:**
+
+- **Extract SVN authors:** `svn log --quiet URL | awk '/^r/ {print $3}' | sort -u > svn-authors-raw.txt`
+- **Convert with svn2git:** `svn2git https://svn.example.com/repo --authors authors.txt --verbose`
+- **Track large files:** `git lfs track "*.zip" && git lfs migrate import --include="*.zip" --everything`
+- **Push to GitHub:** `git push --all origin && git push --tags origin`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| `svn2git` or `git svn` installed on migration machine | ☐ |
+| Network access to SVN server | ☐ |
+| Authors mapping file (`authors.txt`) prepared | ☐ |
+| Git LFS installed (`git lfs install`) for large binary handling | ☐ |
+| Target GitHub repository created | ☐ |
+
+---
+
 ## 📋 Overview
 
 | Step | Tool | Purpose |
@@ -331,6 +354,16 @@ git push --tags origin
 
 ### Q: After conversion, some SVN branches or tags are missing from the Git repo. What went wrong?
 **A:** Check that `svn2git` or `git svn` successfully processed all branches. Empty branches (with no unique commits) may not convert. Also verify the SVN branch/tag paths match what the conversion tool expects. After `git svn clone`, SVN branches appear as remote refs that must be explicitly converted to local branches and tags using the conversion commands in Section 3 of this guide.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| GitHub Enterprise Importer (GEI) & Actions Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
+| Organization Design Patterns (Flat Structure, Teams, Naming) | `Setup/Organization Design Patterns (Flat Structure, Teams, Naming).md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+
+---
 
 ## 📚 Resources
 

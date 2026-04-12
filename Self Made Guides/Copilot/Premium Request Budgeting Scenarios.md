@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- Download usage report: `Enterprise → Billing & licensing → Usage → Copilot premium requests usage report`
+- Check overage policy: `Enterprise → AI controls → Copilot → Premium request paid usage`
+- Review/clean budgets: `Enterprise → Billing and licensing → Budgets and alerts`
+- Create org-scoped budget: `Budgets and alerts → New budget → Scope: Organization`
+- Create cost center budget: `Billing and licensing → Cost centers → New cost center` then scope a budget to it
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud (GHEC) with enterprise billing enabled | ☐ |
+| Enterprise owner or billing admin access | ☐ |
+| Copilot Business or Enterprise subscription active | ☐ |
+| Copilot premium requests usage report downloaded for analysis | ☐ |
+| Legacy $0 budgets reviewed and deleted/edited if present | ☐ |
+
+---
+
 ## 📋 Overview
 
 This guide covers two common scenarios for controlling Copilot premium request overage spend:
@@ -146,6 +170,16 @@ Budgets can monitor or block overages. If any applicable budget has **"Stop usag
 
 ### Q: Can we use cost center budgets and org budgets together?
 **A:** Yes, but be careful. If a user is covered by both an org-level budget and a cost-center budget, both apply. If either budget is exhausted and has "Stop usage when budget limit is reached" enabled, the user is blocked. Plan your budget structure to avoid overlapping stop-usage budgets.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
+| Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
 
 ---
 

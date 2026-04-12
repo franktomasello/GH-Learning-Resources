@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Create public org:** Create a new organization on github.com (not under EMU enterprise)
+- **Store mirror token:** `Internal Repo → Settings → Secrets and variables → Actions → New secret → MIRROR_TOKEN`
+- **Add workflow:** Create `.github/workflows/mirror-to-public.yml` in internal repo
+- **Enable secret scanning:** `Internal Repo → Settings → Security → Advanced Security → Secret Protection → Enable`
+- **Add branch protection:** `Internal Repo → Settings → Rules → Rulesets → New branch ruleset → Require PR reviews`
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Separate public organization on github.com (not under EMU enterprise) | ☐ |
+| Target public repository created in the public org | ☐ |
+| Authentication token (PAT, deploy key, or GitHub App) for the public repo | ☐ |
+| GitHub Actions enabled on the internal (source) repository | ☐ |
+| Secret scanning enabled on the internal repo | ☐ |
+
+---
+
 ## 📋 Overview
 
 Enterprise Managed User (EMU) enterprises do not support public repositories. Organizations that need to publish open-source code or share projects publicly must mirror approved content from their internal EMU enterprise to a separate public organization on github.com.
@@ -217,6 +241,16 @@ Internal Repository → Settings → Rules → Rulesets
 
 ### Q: The mirror workflow runs but nothing changes in the public repo. What could be the issue?
 **A:** If there are no new commits on the source branch since the last mirror run, `git push` will report "Everything up-to-date" and no changes will appear. Also verify the workflow trigger branch matches the branch you are committing to. Check the workflow run logs in the Actions tab for any error messages or skipped steps.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| EMU Dual Presence (Enterprise + Open Source) | `Identity/EMU Dual Presence (Enterprise + Open Source).md` |
+| Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
+| GitHub App for CI/CD (No Seat Cost) | `Actions/GitHub App for CI-CD (No Seat Cost).md` |
+
+---
 
 ## 📚 Resources
 

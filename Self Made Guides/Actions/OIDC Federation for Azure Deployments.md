@@ -4,6 +4,30 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **Create App Registration:** `Azure Portal → Entra ID → App registrations → + New registration`
+- **Assign RBAC role:** `Azure Portal → Subscriptions → [Sub] → Access control (IAM) → + Add role assignment`
+- **Add federated credential:** `Azure Portal → Entra ID → App registrations → [App] → Certificates & secrets → Federated credentials → + Add credential`
+- **Workflow permissions:** Add `permissions: { id-token: write, contents: read }` to workflow YAML
+- **Store IDs as secrets:** `Repo → Settings → Secrets and variables → Actions → New repository secret` (AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID)
+
+---
+
+## ✅ Prerequisites
+
+| Requirement | Status |
+|-------------|--------|
+| Azure subscription with Entra ID (Azure AD) access | ☐ |
+| Permissions to create App Registrations in Entra ID | ☐ |
+| Permissions to assign RBAC roles on Azure resources | ☐ |
+| GitHub repo with Actions enabled | ☐ |
+| Admin access to create GitHub Actions secrets | ☐ |
+
+---
+
 ## 📋 Overview
 
 OIDC federation eliminates the need for long-lived Azure credentials stored as GitHub secrets. Instead, GitHub Actions requests a short-lived token from Azure at runtime.
@@ -289,6 +313,16 @@ No changes are needed in the workflow YAML itself. The `azure/login` action auto
 
 ### Q: Do I need to store any Azure credentials as GitHub secrets with OIDC?
 **A:** You store the Application (client) ID, Directory (tenant) ID, and Subscription ID as GitHub secrets -- but these are identifiers, not credentials. No client secrets, certificates, or passwords are needed. The OIDC exchange generates a short-lived token at runtime without any stored credential, which is the primary security advantage of this approach.
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| GitHub Enterprise Importer (GEI) & Actions Importer | `Migration/GitHub Enterprise Importer (GEI) & Actions Importer.md` |
+| Data Residency Decision Guide (DRUS vs Standard vs GHES) | `Setup/Data Residency Decision Guide (DRUS vs Standard vs GHES).md` |
+| GitHub App for CI/CD (No Seat Cost) | `Actions/GitHub App for CI-CD (No Seat Cost).md` |
+
+---
 
 ## 📚 Resources
 

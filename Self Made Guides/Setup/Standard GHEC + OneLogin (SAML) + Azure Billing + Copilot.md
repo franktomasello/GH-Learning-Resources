@@ -4,6 +4,18 @@
 
 ---
 
+## ⚡ Quick-Start Summary
+
+> **For experienced admins who just need the click paths:**
+
+- **OneLogin:** Applications → Add App → "GitHub Enterprise Cloud - Organization" → Configuration tab → Enter org slug → SSO tab → Capture SAML 2.0 Endpoint, Issuer URL, X.509 cert
+- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste OneLogin values → Test → Save → Enforce SAML SSO
+- **SCIM:** Sign in as setup user → Org Settings → Authentication security → Generate SCIM token → OneLogin App → Provisioning → Enter SCIM URL + token
+- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
 ## 📋 Overview
 
 This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud (GHEC)**, including:
@@ -528,6 +540,18 @@ _Last updated: April 2026_
 
 ### Q: SCIM provisioning worked initially but has stopped syncing new users — what happened?
 **A:** The most common cause is an expired or invalidated SCIM bearer token. Tokens can be invalidated if the setup user's org membership changes or if the token is regenerated. Check the OneLogin Events log for HTTP 401 or 403 errors from the GitHub SCIM endpoint. If the token is the issue, regenerate it in GitHub org settings and update it in OneLogin's Provisioning configuration.
+
+---
+
+## 🔗 Related Guides
+
+| Guide | Location |
+|-------|----------|
+| Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
+| Standard Enterprise to EMU Migration | `Setup/Standard Enterprise to EMU Migration.md` |
+| Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
+| Copilot Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
+| Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 
 ---
 
