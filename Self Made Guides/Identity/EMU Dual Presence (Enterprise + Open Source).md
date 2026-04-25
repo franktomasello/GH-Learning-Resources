@@ -37,6 +37,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise owner or setup user** | Owns the GitHub-side EMU enterprise, setup user, recovery codes, and final SSO/SCIM enablement. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → configure OIDC or SAML, then Identity provider → SCIM or provisioning setup where shown. Handoff: enterprise shortcode, setup user status, recovery codes stored, SSO test, and provisioning test. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Creates and owns the IdP application, group assignments, SAML/OIDC claims, and SCIM lifecycle rules. | Entra: Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User. Okta: Okta Admin Console → Applications → Browse App Catalog → GitHub Enterprise Managed User. PingFederate: Administrative Console → Applications → SP Connections → Use a template for this connection → GitHub EMU Connector. Handoff: SSO URLs or consent status, SCIM token destination configured, and pilot group assigned. |
+| **Azure subscription Owner, if metered billing is part of rollout** | Connects or approves the Azure subscription used for GitHub metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then support the GitHub billing connection through GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Handoff: connected subscription ID. |
+
+---
+
 ## 📋 Overview
 
 EMU users CANNOT contribute to public repos outside the enterprise. Open-source participation requires a **dual-account approach**.

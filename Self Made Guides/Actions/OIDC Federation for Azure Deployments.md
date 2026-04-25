@@ -39,6 +39,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Microsoft Entra app owner, Application Administrator, Cloud Application Administrator, or Global Administrator** | Creates the app registration or updates the existing deployment identity, then adds the GitHub Actions federated credential. | Microsoft Entra admin center → Entra ID → App registrations → New registration → Register → Overview → copy Application (client) ID and Directory (tenant) ID → Certificates & secrets → Federated credentials → Add credential → GitHub Actions deploying Azure resources → enter Organization, Repository, Entity type, subject details, Name, and Audience → Add. Handoff: client ID, tenant ID, credential name, issuer, subject, and audience. |
+| **Azure subscription, resource group, or resource Owner/RBAC administrator** | Grants the service principal only the Azure role needed by the workflow. | Azure portal → Subscriptions, Resource groups, or the target resource → [scope] → Access control (IAM) → Add → Add role assignment → select the least-privilege role → Next → Members → User, group, or service principal → Select members → [app/service principal] → Select → Review + assign. Handoff: Azure subscription ID, scope, role, and service principal name. |
+| **GitHub repository or organization admin** | Stores Azure identifiers and ensures the workflow can request an OIDC token. | GitHub → [owner/repository] → Settings → Secrets and variables → Actions → Secrets → New repository secret → add AZURE_CLIENT_ID, AZURE_TENANT_ID, and AZURE_SUBSCRIPTION_ID. In the workflow file, set `permissions: id-token: write` and `contents: read`, then use `azure/login` with those secrets. Handoff: successful workflow run and `az account show` output. |
+
+---
+
 ## 📋 Overview
 
 OIDC federation eliminates the need for long-lived Azure credentials stored as GitHub secrets. Instead, GitHub Actions requests a short-lived token from Azure at runtime.

@@ -38,6 +38,17 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise owner** | Configures audit log streaming in GitHub. | GitHub → profile photo → Your enterprises → [enterprise] → Settings → Audit log → Log streaming → Set up a stream → Select provider → enter destination details → Test endpoint if shown → Save. Handoff: active stream destination and test status. |
+| **Azure Storage or Event Hubs administrator** | Creates the Azure destination and provides the exact credential GitHub requires. | For Blob Storage: Azure portal → Storage accounts → [account] → Shared access signature → configure allowed services, resource types, permissions, start, and expiry → Generate SAS and connection string → copy SAS URL. For Event Hubs: Azure portal → Event Hubs → [namespace] → Event Hubs → [hub] → Shared access policies → + Add → choose Send permission → Create → copy connection string or SAS token. Handoff: destination name, region, SAS URL or Event Hubs token, and expiry owner. |
+
+---
+
 ## 📋 Overview
 
 GitHub Enterprise Cloud provides audit logging at multiple levels:

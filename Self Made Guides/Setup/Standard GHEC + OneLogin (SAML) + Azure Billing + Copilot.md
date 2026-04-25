@@ -56,6 +56,21 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **OneLogin administrator** | Creates the GitHub SAML app and configures provisioning if OneLogin SCIM is used. | OneLogin Admin Portal → Applications → Applications → Add App → search GitHub or SAML Custom Connector → Add → Configuration → enter GitHub org SAML URLs → SSO → copy SAML 2.0 Endpoint, Issuer URL, and X.509 Certificate → Provisioning → enable provisioning and enter GitHub SCIM base URL/token if used → Save. Handoff: SAML values, provisioning status, and assigned pilot users/groups. |
+| **GitHub organization owner or dedicated SCIM setup user** | Enables GitHub org SAML and provides the SCIM token for OneLogin provisioning when used. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste OneLogin Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → Organization Settings → Authentication security → SCIM provisioning → Generate token. Handoff: SAML test success, SCIM token, Tenant URL, and recovery codes. |
+| **OneLogin group or role owner** | Maintains app assignments and role mappings. | OneLogin Admin Portal → Users → Roles or Groups → [role/group] → Users → add users, then Applications → [GitHub app] → Users → confirm assignment. Handoff: assigned role/group and pilot users. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
+| **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
+
+---
+
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
 
 > ⚠️ **Important:** This user is required because OneLogin's GitHub SCIM provisioning uses an API token generated from a GitHub user account. If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.

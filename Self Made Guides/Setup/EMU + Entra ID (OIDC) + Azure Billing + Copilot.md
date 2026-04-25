@@ -68,6 +68,21 @@ This affects your SCIM Tenant URL format in Step 4.
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub EMU setup user (`SHORT-CODE_admin`)** | Starts OIDC SSO from GitHub and creates the SCIM token. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → OIDC single sign-on → Enable OIDC configuration → Save → complete Entra redirect. For SCIM: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → select `scim:enterprise` → Generate token. Handoff: SCIM token and Tenant URL. |
+| **Microsoft Entra Global Administrator** | Consents to the GitHub Enterprise Managed User (OIDC) application. | During the GitHub redirect, sign in as Global Administrator → review Permissions requested → Consent on behalf of your organization if shown → Accept. If consent is blocked: Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub Enterprise Managed User (OIDC)] → Review permissions and consent → Approve. Handoff: OIDC enterprise app exists and consent is granted. |
+| **Microsoft Entra Cloud Application Administrator or Application Administrator** | Configures SCIM provisioning and app assignments after OIDC consent. | Microsoft Entra admin center → Entra ID → Enterprise apps → GitHub Enterprise Managed User (OIDC) → Provisioning → New configuration or Get started → Provisioning Mode: Automatic → Admin Credentials → Tenant URL and Secret Token → Test Connection → Create or Save → Users and groups → Add user/group → Assign → Provisioning → Start provisioning. Handoff: successful test connection, assigned pilot group, and provisioning logs. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
+| **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
+
+---
+
 ## 1️⃣ Create/Secure the EMU Setup User
 
 *The setup user (`@SHORT-CODE_admin`) is the only local account that can bypass SSO in emergencies.*

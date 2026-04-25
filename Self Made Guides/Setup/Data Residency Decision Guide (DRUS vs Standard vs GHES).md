@@ -39,6 +39,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise owner or procurement owner** | Chooses GitHub.com, GHE.com with data residency, or GHES before identity and billing are configured. | GitHub sales/procurement flow or enterprise setup link → select deployment model → confirm enterprise slug or GHE.com subdomain → complete enterprise creation → GitHub → profile photo → Your enterprises → [enterprise]. Handoff: selected hosting model, enterprise URL, and subdomain if applicable. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Uses the app and URLs that match the selected hosting model. | For GitHub.com, use the standard GitHub Enterprise Managed User or GitHub Enterprise Cloud app. For GHE.com, use the GHE.com-specific Okta app or GitHub EMU Connector metadata and SCIM URL format. Entra/Okta/Ping portal → GitHub app → Single sign-on and Provisioning → enter GitHub.com or GHE.com URLs exactly. Handoff: SSO values and SCIM Tenant URL matching the chosen environment. |
+| **Azure subscription Owner, if Azure billing is used** | Confirms the subscription can be connected regardless of the selected GitHub hosting model. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
+
+---
+
 ## 📋 Overview
 
 | Deployment | Hosting | Identity | Data Location | URL |

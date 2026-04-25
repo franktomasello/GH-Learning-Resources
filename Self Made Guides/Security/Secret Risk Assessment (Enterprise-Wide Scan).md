@@ -35,6 +35,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub security manager or enterprise owner** | Runs the GitHub-side inventory and confirms which leaked secrets require provider action. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Settings → Code Security → Secret scanning → Run a risk assessment. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Code security → Secret scanning → Run a risk assessment. Then open the assessment/export, filter by provider and repository, open each alert, and record secret type, owner, and remediation status. Handoff: provider-specific remediation list. |
+| **Azure or Microsoft Entra resource owner, if Azure credentials are confirmed exposed** | Revokes, rotates, or removes the exposed Azure credential and updates dependent workloads. | For app secrets: Microsoft Entra admin center → Entra ID → App registrations → [application] → Certificates & secrets → delete compromised secret or certificate → New client secret if still needed → update workload secret store. For Azure role exposure: Azure portal → Subscriptions or Resource groups → [scope] → Access control (IAM) → Role assignments → remove unneeded principal. Handoff: rotated credential ID, disabled credential ID, and validation that workloads use the replacement. |
+| **Okta or PingFederate admin, if IdP tokens or provisioning credentials are confirmed exposed** | Rotates the IdP-side API token or SCIM credential and updates the GitHub integration. | Okta: Applications → [GitHub app] → Provisioning → Integration → Edit → replace API token → Test API Credentials → Save. PingFederate: Applications → SP Connections → [GitHub connection] → Outbound Provisioning → Target → replace Access Token → Save → activate/test channel. Handoff: new credential stored in vault and old credential disabled. |
+
+---
+
 ## 📋 Overview
 
 The Secret Risk Assessment is a **free**, enterprise-wide scan that detects leaked secrets across **all** repositories -- including those that do not have GHAS or secret scanning enabled.

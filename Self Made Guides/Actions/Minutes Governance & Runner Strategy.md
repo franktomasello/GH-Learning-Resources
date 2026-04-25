@@ -38,6 +38,17 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise or organization Actions admin** | Enables the runner group to use Azure private networking. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Settings → Actions → Runner groups → [runner group] → Azure private networking → Configure → select the approved Azure networking configuration → Save. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Actions → Runner groups → [runner group] → Azure private networking → Configure → select the approved Azure networking configuration → Save. Handoff: runner group name and confirmation that Azure private networking is enabled. |
+| **Azure subscription or network Owner** | Creates or validates the VNET, subnet, DNS, routing, and private endpoint dependencies used by GitHub-hosted runners. | Azure portal → Virtual networks → [VNET] → Subnets → + Subnet or [existing subnet] → validate address range and delegation requirements → Network security groups → [NSG] → Inbound security rules and Outbound security rules → validate required traffic → Private DNS zones or Private endpoints as needed. Handoff: subscription ID, resource group, VNET name, subnet name, region, and any required DNS/private endpoint details. |
+
+---
+
 ## 📋 Overview
 
 This runbook covers included minutes, overage pricing, spending controls, runner strategy decisions, and governance mechanisms for GitHub Actions at the enterprise level.

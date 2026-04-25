@@ -37,6 +37,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub organization owner** | Creates and installs the GitHub App before retiring a machine user or IdP-backed service account. | GitHub → profile photo → Your organizations → [organization] → Settings → Developer settings → GitHub Apps → New GitHub App → Create GitHub App → Permissions & events → set minimum permissions → General → Private keys → Generate a private key → Install App → Install → select repositories. Handoff: App ID, installation ID, private key stored as a secret, and repository list. |
+| **Microsoft Entra or Okta admin, only if replacing an IdP-backed machine user** | Removes or disables the old service account after the GitHub App workflow is validated. | Entra: Microsoft Entra admin center → Entra ID → Users → [service account] → Applications or Assigned roles → remove GitHub app assignment, then Block sign-in if approved. Okta: Okta Admin Console → Directory → People → [service account] → Applications → remove GitHub assignment, then More Actions → Deactivate if approved. Handoff: decommission ticket and validation that no workflows still use the old account. |
+| **Azure deployment owner, only if the GitHub App workflow also deploys to Azure** | Keeps Azure deployment identity separate from GitHub App authentication. | Use the Azure OIDC flow in the Azure deployment guide: Microsoft Entra admin center → App registrations → [app] → Certificates & secrets → Federated credentials → Add credential, then Azure portal → [target scope] → Access control (IAM) → Add role assignment. Handoff: Azure client ID, tenant ID, subscription ID, and role assignment scope. |
+
+---
+
 ## 📋 Overview
 
 | Authentication Method | Seat Cost | Security | Permissions | Best For |

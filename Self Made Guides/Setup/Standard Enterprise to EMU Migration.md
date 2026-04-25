@@ -40,6 +40,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub source enterprise owner and target EMU setup user** | Coordinates the move from personal-account enterprise identity to managed-user enterprise identity. | Source: GitHub → profile photo → Your enterprises → [source enterprise] → People, Organizations, Policies, Billing and licensing → export inventory. Target: GitHub → profile photo → Your enterprises → [EMU enterprise] → Identity provider → Single sign-on configuration → configure SSO and SCIM before repository migration. Handoff: source inventory, target enterprise slug, recovery codes, and migration freeze window. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Builds the new EMU IdP app and provisioning scope before users are migrated. | Entra: Enterprise apps → New application → GitHub Enterprise Managed User → Single sign-on and Provisioning. Okta: Applications → Browse App Catalog → GitHub Enterprise Managed User → Sign On and Provisioning. PingFederate: Applications → SP Connections → GitHub EMU Connector → Browser SSO and Outbound Provisioning. Handoff: SSO test, SCIM test, pilot users, and role mappings. |
+| **Azure subscription Owner and Entra consent approver, if Azure billing is retained** | Reconnects or approves metered billing for the target enterprise. | GitHub → profile photo → Your enterprises → [target enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription; Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner; Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → approve if required. Handoff: target enterprise connected subscription ID. |
+
+---
+
 ## 📋 Overview
 
 Migrating from standard GitHub Enterprise to EMU is a **one-way migration** that moves from user-owned accounts to enterprise-owned, IdP-controlled accounts. This requires careful planning.

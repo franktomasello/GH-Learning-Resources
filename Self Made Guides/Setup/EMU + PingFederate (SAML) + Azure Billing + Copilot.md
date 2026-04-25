@@ -57,6 +57,21 @@ Before beginning, ensure you have:
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **PingFederate administrator** | Creates the GitHub EMU SP connection and configures PingFederate outbound SCIM provisioning. | PingFederate Administrative Console → Applications → SP Connections → Use a template for this connection → select GitHub EMU Connector → upload GitHub EMU metadata → Connection Type → Browser SSO Profiles → Next → Configure Browser SSO → Configure Assertion Creation → map LDAP adapter and attributes → Save. For SCIM: SP Connections → [GitHub connection] → Connection Type → Outbound Provisioning → Configure Provisioning → Target → Base URL and Access Token → Manage Channel → Create → Source → select data store → Attribute Mapping → Activation & Summary → Active → Done → Save. Handoff: exported metadata, issuer/entity ID, active channel, and SCIM test evidence. |
+| **GitHub EMU setup user (`SHORT-CODE_admin`)** | Enables SAML in GitHub and provides the SCIM token to the PingFederate admin. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → Add SAML configuration → paste Single sign-on URL, Issuer, and verification certificate from PingFederate → Test SAML configuration → Save. For SCIM token: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → `scim:enterprise` → Generate token. Handoff: Tenant URL, SCIM token, SAML test success, and recovery codes. |
+| **LDAP or identity directory owner** | Controls the users and groups PingFederate can provision. | PingFederate Administrative Console → System → Data Stores → [LDAP data store] → verify connection, then Applications → SP Connections → [GitHub connection] → Outbound Provisioning → Source and Source Location → configure LDAP search base and filters → Save. Handoff: source filter, pilot users, and role attribute mapping. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
+| **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
+
+---
+
 ## 1️⃣ Create & Configure the EMU Setup User
 
 ### Process

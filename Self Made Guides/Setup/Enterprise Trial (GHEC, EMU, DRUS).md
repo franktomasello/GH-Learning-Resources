@@ -39,6 +39,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub trial requester or enterprise owner** | Starts the trial and decides which identity model will be tested. | GitHub Enterprise trial page or GitHub sales-provided setup link → enter organization and enterprise details → select Standard GHEC, EMU, DRUS/GHE.com as applicable → complete setup email → GitHub → profile photo → Your enterprises → [trial enterprise]. Handoff: enterprise URL, trial type, and setup user invitation. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Completes the provider-side app setup for EMU or DRUS trials. | Entra: Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Single sign-on and Provisioning. Okta: Okta Admin Console → Applications → Browse App Catalog → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Sign On and Provisioning. PingFederate: Administrative Console → Applications → SP Connections → GitHub EMU Connector or GitHub SAML SP connection → Browser SSO and Outbound Provisioning. Handoff: SSO values, SCIM status, and pilot group. |
+| **Azure subscription Owner and Microsoft Entra consent approver, if testing Azure billing** | Provides the subscription and consent needed for metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner. Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then Microsoft sign-in → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
+
+---
+
 ## 📋 Overview
 
 This runbook covers every step to initiate and configure a GitHub Enterprise Cloud trial:

@@ -36,6 +36,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise or organization owner** | Creates or selects the GitHub team used for Copilot assignment, then assigns Copilot seats. | Team setup: GitHub → profile photo → Your organizations → [organization] → Teams → New team or [team] → Members → Add members. Enterprise Copilot assignment: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Licensing → Copilot → Manage → Enterprise teams tab → Assign licenses. Organization Copilot assignment: GitHub → profile photo → Your organizations → [organization] → Settings → Copilot → Access → Add seats or Assign seats → choose users or teams → Save. Handoff: team slug and assigned-seat count. |
+| **Microsoft Entra or Okta group owner, if team membership is synchronized from the IdP** | Maintains the source group that drives GitHub team membership. | Entra: Microsoft Entra admin center → Entra ID → Groups → [group] → Members → Add members → select users → Add. Okta: Okta Admin Console → Directory → Groups → [group] → People → Assign people → select users → Save. Handoff: group name, object ID or group ID, and pilot members. |
+| **Visual Studio subscriptions administrator, if Visual Studio benefits are part of the license plan** | Confirms Visual Studio Enterprise subscribers are assigned to the correct corporate identity before GitHub seat assignment. | Visual Studio Admin Portal (`https://manage.visualstudio.com`) → Subscribers → search user → verify Visual Studio Enterprise, active status, corporate email, and tenant. Handoff: eligible subscriber list. |
+
+---
+
 ## 📋 Overview
 
 Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.

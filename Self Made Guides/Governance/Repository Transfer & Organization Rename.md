@@ -37,6 +37,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub organization owner or enterprise owner** | Renames or transfers only after identity and integration owners are ready to update downstream references. | For organization rename: GitHub → profile photo → Your organizations → [organization] → Settings → General → Organization name → Rename. Repository transfer: GitHub → [owner/repository] → Settings → General → Danger Zone → Transfer ownership → enter target owner/repository name → confirm transfer. Handoff: old URL, new URL, redirect status, and cutover time. |
+| **Microsoft Entra application admin, if Entra SAML or SCIM references the old org URL** | Updates SAML and SCIM URLs after the org rename. | Microsoft Entra admin center → Entra ID → Enterprise apps → [GitHub app] → Single sign-on → SAML → Basic SAML Configuration → Edit → update Identifier, Reply URL, and Sign on URL → Save. Then Provisioning → Admin Credentials → update Tenant URL if the org slug changed → Test Connection → Save. Handoff: successful SAML test and SCIM test. |
+| **Okta or PingFederate admin, if that IdP references the old org URL** | Updates SAML and provisioning URLs after the org rename. | Okta: Okta Admin Console → Applications → Applications → [GitHub app] → Sign On → Edit → update organization or SAML URL values → Save, then Provisioning → Integration → update API or base URL → Test API Credentials → Save. PingFederate: Administrative Console → Applications → SP Connections → [GitHub connection] → Browser SSO and Outbound Provisioning → update Entity ID, ACS, and SCIM Base URL → Save → activate. Handoff: successful SSO and provisioning test. |
+
+---
+
 ## 📋 Overview
 
 This runbook covers two high-impact administrative operations that require careful planning and coordination.

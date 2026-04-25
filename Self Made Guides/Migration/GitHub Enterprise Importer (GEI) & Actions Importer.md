@@ -39,6 +39,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Azure DevOps organization or project administrator, for ADO migrations** | Creates the source PAT and confirms the migration operator can read source repositories, pull requests, and work items. | Azure DevOps → User settings → Personal access tokens → New Token → select organization → set expiration → scopes such as Code Read, Project and Team Read, and Work Items Read as required by the migration → Create → copy token. Then Azure DevOps → [organization] → Project settings → Permissions or Repositories → validate access. Handoff: ADO org, project, source repo list, PAT owner, and expiration. |
+| **GitHub target organization owner** | Creates the destination org and token used by GEI or Actions Importer. | GitHub → profile photo → Your organizations → [target org] → Settings → Member privileges and repository defaults → validate policies. Token: GitHub → profile photo → Settings → Developer settings → Personal access tokens → Tokens (classic) or Fine-grained tokens → Generate new token → grant required repo, admin:org, workflow, and package read permissions for the migration path → Generate token. Handoff: target org, PAT scopes, and migration operator. |
+| **Microsoft Entra, Okta, or PingFederate admin, if SAML/SCIM is enforced during migration** | Ensures the migration operator and pilot users are assigned before cutover. | Entra: Enterprise apps → [GitHub app] → Users and groups → Add user/group → Assign. Okta: Applications → [GitHub app] → Assignments → Assign. PingFederate/PingOne: application access or source LDAP group → add migration operator and pilot users. Handoff: SSO login validation and assigned migration group. |
+
+---
+
 ## 📋 Overview
 
 | Tool | What It Migrates | Best For |

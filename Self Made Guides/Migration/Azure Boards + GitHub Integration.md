@@ -36,6 +36,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Azure DevOps Project Administrator** | Creates the Azure Boards connection to GitHub from the project. | Azure DevOps → [organization] → [project] → Project settings → Boards → GitHub connections → Connect your GitHub account or organization → choose GitHub App connection where available → authorize Azure Boards → select repositories → Save. Handoff: connected repository list in GitHub connections. |
+| **GitHub organization owner** | Authorizes or installs the Azure Boards GitHub App for the selected repositories. | GitHub authorization prompt or GitHub → profile photo → Your organizations → [org] → Settings → GitHub Apps → Azure Boards → Configure → select repositories → Save. Handoff: Azure Boards app installed for the expected repos. |
+| **Team/project lead** | Confirms developers use the work-item linking syntax after the connection exists. | Azure Boards → Boards → Work Items → [work item] → Development should show linked commits, branches, or pull requests after developers include `AB#<id>` in commits, branch names, or pull request text. Handoff: test PR or commit linked to a work item. |
+
+---
+
 ## 📋 Overview
 
 Keep work items in Azure Boards while hosting code in GitHub. Link commits, branches, and PRs back to Boards work items using `AB#` syntax.

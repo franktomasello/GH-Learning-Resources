@@ -56,6 +56,21 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Okta application admin** | Creates the GitHub Enterprise Cloud - Organization app, configures SAML, and enables SCIM OAuth provisioning. | Okta Admin Console → Applications → Applications → Browse App Catalog → search GitHub Enterprise Cloud - Organization → Add Integration → enter organization name and app label → Done → Assignments → Assign setup/pilot user → Sign On → View Setup Instructions. After GitHub SAML is enabled, go to Provisioning → Configure API Integration → Enable API integration → Authenticate with GitHub Enterprise Cloud - Organization → Grant → Authorize OktaOAN → Save → To App → Edit → enable Create Users, Update User Attributes, and Deactivate Users → Save. Handoff: setup instructions, OAuth authorization, and provisioning status. |
+| **GitHub organization owner or dedicated SCIM setup user** | Enables org SAML and authorizes Okta SCIM on behalf of the organization. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste Okta Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → visit `https://github.com/orgs/ORG/sso` → complete SSO → return to Okta OAuth flow → Grant → Authorize OktaOAN. Handoff: SAML test success, recovery codes, and Okta authorization. |
+| **Okta group owner** | Maintains the users or groups assigned to the GitHub organization app. | Okta Admin Console → Directory → Groups → [group] → People → Assign people → select users → Save, then Applications → Applications → [GitHub org app] → Assignments → Assign → Assign to Groups → select group → Done. Handoff: pilot group and users assigned. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
+| **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
+
+---
+
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
 
 > ⚠️ **Important:** This user is required because Okta's GitHub SCIM provisioning uses a third-party OAuth authorization that acts on behalf of a specific GitHub user. If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.

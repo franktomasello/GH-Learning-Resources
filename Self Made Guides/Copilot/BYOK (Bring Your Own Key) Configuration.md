@@ -37,6 +37,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise owner** | Configures the BYOK provider and access policy in GitHub Copilot. | GitHub → profile photo → Your enterprises → [enterprise] → Settings → Copilot → Policies → Model management → Configure BYOK → Add provider → select provider → enter required key and endpoint fields → Test connection → Save → set access policy to all organizations or selected organizations. Handoff: provider status shows saved and test succeeds. |
+| **Azure AI Foundry resource owner, if Azure AI Foundry is the selected provider** | Provides the endpoint URL, key, deployment name, and quota confirmation for the Azure-hosted model. | Azure AI Foundry portal → Models + endpoints → [deployment] → Endpoint and keys → copy endpoint URL and key. If the model is not deployed yet: Foundry portal → Discover → Models → [model] → Deploy → Default settings or Custom settings → complete deployment → open deployment details. Handoff: endpoint URL, key, deployment name, region, and quota owner. |
+| **AI provider account owner for non-Azure providers** | Creates or rotates the provider API key and confirms billing ownership outside GitHub. | Provider admin console → API keys or access keys → Create new key → copy key once → restrict or tag it for GitHub Copilot BYOK where supported → record rotation owner and billing account. Handoff: key, endpoint if required, region if required, and rotation date. |
+
+---
+
 ## 📋 Overview
 
 BYOK (Bring Your Own Key) allows enterprise administrators to configure their own API keys from supported AI model providers so that Copilot routes requests through the enterprise's own provider account.

@@ -38,6 +38,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Visual Studio subscriptions administrator** | Confirms that the user has the eligible Visual Studio Enterprise entitlement assigned to the correct corporate identity. | Visual Studio Admin Portal (`https://manage.visualstudio.com`) → Subscribers → search user by name or email → open subscriber → verify Subscription level is Visual Studio Enterprise, Status is active, email is the corporate email, and tenant is correct. Handoff: subscriber email, subscription level, and tenant confirmation. |
+| **GitHub enterprise owner or billing admin** | Verifies that GitHub sees the Visual Studio entitlement on the enterprise license side. | GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Licensing → View license usage → search user → confirm Visual Studio column or license type shows the Visual Studio subscription entitlement. Handoff: user row or export showing entitlement status. |
+| **End user** | Links their own GitHub account to the Visual Studio subscription. | GitHub → profile photo → Settings → Billing and plans → Plans → Link Visual Studio subscription → sign in with the corporate Microsoft account → approve prompts → confirm the linked subscription. Alternative: Visual Studio Benefits Portal → GitHub Enterprise benefit → Activate → sign in to GitHub. Handoff: GitHub profile shows the linked subscription or GitHub access is restored. |
+
+---
+
 ## 📋 Overview
 
 Visual Studio Enterprise subscriptions include a GitHub Enterprise Cloud seat at no additional cost. This runbook walks through verifying eligibility, confirming the link on both the VS Admin Portal and GitHub Enterprise sides, and troubleshooting common issues.

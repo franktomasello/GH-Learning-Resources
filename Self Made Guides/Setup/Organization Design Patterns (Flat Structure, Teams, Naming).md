@@ -39,6 +39,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub organization owner** | Creates organizations, teams, nested teams, and naming patterns in GitHub. | GitHub → profile photo → Your organizations → New organization or [org] → Teams → New team → set team name, parent team if needed, privacy, and description → Create team → Repositories or Members → add access. Handoff: org slug, team slugs, parent team map, and repository access model. |
+| **Microsoft Entra or Okta group owner, if team sync or IdP-driven membership is used** | Maintains the source groups that map to GitHub teams. | Entra: Microsoft Entra admin center → Entra ID → Groups → New group or [group] → Members → Add members → select users → Add. Okta: Okta Admin Console → Directory → Groups → Add group or [group] → People → Assign people → Save. Handoff: group ID, group owner, and mapped GitHub team slug. |
+| **GitHub enterprise owner** | Connects IdP groups to GitHub teams where team synchronization is available. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Settings → Authentication security or Identity provider → Team synchronization or IdP groups → Link group → select IdP group → select GitHub team → Save. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Authentication security → Team synchronization or IdP groups → Link group → select IdP group → select GitHub team → Save. Handoff: mapping list and validation user. |
+
+---
+
 ## 📋 Overview
 
 GitHub uses a flatter hierarchy than GitLab or Azure DevOps. Understanding the mapping is critical for a clean migration.

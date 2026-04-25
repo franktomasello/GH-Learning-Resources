@@ -64,6 +64,21 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **AD FS administrator** | Creates the relying party trust and claim rules for GitHub SAML. | AD FS Management → Relying Party Trusts → Add Relying Party Trust → Claims aware → enter or import GitHub metadata/URLs → configure identifiers and endpoints → Finish. Then Relying Party Trusts → [GitHub trust] → Edit Claim Issuance Policy → Add Rule → send LDAP attributes or transform claims for NameID/email → OK. Handoff: Sign-on URL, Issuer, certificate, and claim rule export. |
+| **GitHub organization owner** | Enables org SAML using the AD FS values and handles manual or scripted user provisioning. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste AD FS Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → download recovery codes. Provisioning is manual/scripted because AD FS does not provide native GitHub SCIM. Handoff: SAML test success, recovery codes, and user provisioning roster. |
+| **Active Directory group owner** | Maintains the AD group used by AD FS claim rules or manual provisioning. | Active Directory Users and Computers → [domain] → Users or target OU → [group] → Members → Add → enter users → Check Names → OK. Handoff: AD group name, pilot users, and owner for ongoing changes. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
+| **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
+
+---
+
 ## 1️⃣ Create SCIM Setup User (Note: SCIM Not Natively Supported by AD FS)
 
 > ⚠️ **Important:** AD FS does not natively support SCIM provisioning. Unlike cloud IdPs (Okta, OneLogin, Entra ID), AD FS cannot automatically provision or deprovision GitHub organization members.

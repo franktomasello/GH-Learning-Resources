@@ -38,6 +38,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub setup user for each EMU enterprise** | Configures each enterprise separately and captures a separate SCIM token per enterprise. | For each enterprise: GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → choose SAML unless this is the single permitted Entra OIDC integration → configure and test SSO. Then setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → `scim:enterprise`. Handoff: enterprise slug, SAML values or OIDC status, Tenant URL, and SCIM token. |
+| **Microsoft Entra Application Administrator or Cloud Application Administrator** | Creates a separate enterprise application and provisioning configuration per EMU enterprise. | Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User → Create → rename app with the enterprise slug → Single sign-on → SAML → configure enterprise-specific values → Provisioning → Automatic → Tenant URL and Secret Token for that same enterprise → Test Connection → Save → Users and groups → assign enterprise-specific groups. Handoff: one app per enterprise and no mixed SCIM tokens. |
+| **Microsoft Entra Global Administrator** | Approves OIDC only where the tenant is intentionally using the single supported Entra OIDC EMU integration. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → approve the selected GitHub Enterprise Managed User (OIDC) request, or complete the consent prompt during GitHub OIDC setup. Handoff: documented decision identifying which single EMU enterprise uses OIDC and which enterprises use SAML. |
+
+---
+
 ## 📋 Overview
 
 Multiple EMU enterprises CAN connect to a single Entra ID tenant. Each EMU enterprise requires its own separate Enterprise Application registration.

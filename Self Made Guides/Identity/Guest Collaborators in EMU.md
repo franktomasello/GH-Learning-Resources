@@ -71,6 +71,18 @@ Before configuring guest collaborators, ensure you have:
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **Microsoft Entra application admin, for Entra-backed EMU** | Assigns the user or group to the GitHub EMU app with the Guest Collaborator role. | Microsoft Entra admin center or Azure portal → Entra ID → Enterprise applications → GitHub Enterprise Managed User → Users and groups → Add user/group → select user or group → Select a role → Guest Collaborator → Assign. Handoff: assigned user/group and role. |
+| **Okta application admin, for Okta-backed EMU** | Assigns the person or group to the GitHub EMU app with the `guest_collaborator` role attribute. | Okta Admin Console → Applications → Applications → [GitHub Enterprise Managed User app] → Assignments → Assign → Assign to People or Assign to Groups → select user/group → set Role to `guest_collaborator` → Save and Go Back. Handoff: assignment and role value. |
+| **GitHub organization or repository admin** | Grants explicit access after SCIM provisions the guest collaborator account. | For organization access: GitHub → profile photo → Your organizations → [organization] → People → Invite member → search the managed username → select role → Send invitation. Repository-only access: GitHub → [owner/repository] → Settings → Collaborators and teams → Add people or Add teams → select collaborator/team → choose role → Add. Handoff: org or repository access confirmation. |
+
+---
+
 ## 1️⃣ Enable Guest Collaborator Role in Your IdP
 
 ### A) For Entra ID

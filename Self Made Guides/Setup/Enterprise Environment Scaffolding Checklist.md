@@ -40,6 +40,18 @@
 
 ---
 
+## 👥 Provider Account Action Matrix
+
+Use this table to assign provider-side work before following the numbered steps. If one person holds multiple roles, complete each portal row in order and capture the handoff artifact before moving to the next step.
+
+| Account / role | What they must do | Full click path and handoff |
+|---|---|---|
+| **GitHub enterprise owner** | Creates the enterprise/org baseline and opens the provider-specific setup tracks. | GitHub → profile photo → Your enterprises → [enterprise] → Organizations, Policies, Billing and licensing, Identity provider, and Copilot settings → configure baseline controls in the order shown in this checklist. Handoff: enterprise URL, org list, policy decisions, and assigned owners. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Creates the IdP application, group model, SAML/OIDC settings, and provisioning connection required by the chosen identity model. | Entra: Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Single sign-on → Provisioning → Users and groups. Okta: Applications → Browse App Catalog → GitHub app → Sign On → Provisioning → Assignments. PingFederate: Applications → SP Connections → GitHub connector/SP connection → Browser SSO → Outbound Provisioning. Handoff: SSO test, SCIM test, group assignments, and owner list. |
+| **Azure subscription Owner and Entra consent approver** | Completes Azure billing readiness when metered services will be enabled. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner, then Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. If consent is blocked: Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → Approve. Handoff: subscription ID and consent status. |
+
+---
+
 ## 📋 Overview
 
 This runbook walks through every major decision and configuration step when standing up a new GitHub Enterprise Cloud environment. Follow the sections in order — each builds on the previous.
