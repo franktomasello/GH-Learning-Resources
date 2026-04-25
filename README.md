@@ -124,18 +124,6 @@ Resources for mastering GitHub's advanced security features and CodeQL:
 
 ---
 
-## 🧯 Known Errors & Resolutions
-
-> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
-
-| Error or symptom | Likely cause | Resolution |
-|------------------|--------------|------------|
-| **External link returns 404 or redirects unexpectedly** | The upstream learning resource moved, was retired, or requires authentication. | Open the vendor home page or official docs search, replace the link with the canonical current URL, and note if the resource is private/internal. |
-| **GitHub issue or video link requires access** | The resource is private, internal to an organization, region-restricted, or removed from YouTube. | Mark the item as internal-only or replace it with a public equivalent. Do not list private resources as public learning paths. |
-| **Content becomes stale after a product release** | GitHub and Microsoft product names, UI paths, and feature availability change over time. | Review the README quarterly, prefer official docs and maintained training pages, and remove resources that no longer match the current product. |
-
----
-
 ## 💡 About This Collection
 
 This resource hub is built from real customer engagements and self-guided learning experiences. It complements official GitHub documentation with practical guides for common enterprise scenarios.
