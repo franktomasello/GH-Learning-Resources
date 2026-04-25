@@ -4,6 +4,26 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [📋 Overview](#-overview)
+- [🚨 Critical Warning (Read This First)](#-critical-warning-read-this-first)
+- [🤔 Why Budget at Each Level?](#-why-budget-at-each-level)
+- [0️⃣ One-Time Prerequisite: Allow (or Block) Overages via Policy](#0-one-time-prerequisite-allow-or-block-overages-via-policy)
+- [📘 Guide A — Enterprise-Wide Overage Budget](#-guide-a--enterprise-wide-overage-budget)
+- [📗 Guide B — Budget By Organization](#-guide-b--budget-by-organization)
+- [📙 Guide C — Budget By Cost Center](#-guide-c--budget-by-cost-center)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +38,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -216,6 +242,10 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -229,9 +259,15 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: I created a new budget but users are still being blocked — why?
 **A:** Creating a new budget does not override existing budgets. If any applicable budget with "Stop usage when budget limit is reached" enabled is exhausted, premium requests are blocked. Check the Budgets and alerts page for all active budgets and delete or edit any conflicting ones (including legacy $0 budgets).
@@ -255,6 +291,8 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ### Q: One heavy-consuming org burned through the enterprise-wide budget and blocked everyone — how do we prevent this?
 **A:** Switch from a single enterprise-wide budget to per-org or per-cost-center budgets. This isolates spend so one team's heavy usage does not block other teams. See Guide B (by Organization) or Guide C (by Cost Center) in this runbook.
+
+</details>
 
 ---
 

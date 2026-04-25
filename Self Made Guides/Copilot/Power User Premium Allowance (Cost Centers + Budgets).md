@@ -4,6 +4,28 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [📋 Overview](#-overview)
+- [✅ Prerequisites](#-prerequisites)
+- [🏗️ Recommended Design (Most Operable)](#-recommended-design-most-operable)
+- [1️⃣ Step 1 — Enable "Premium request paid usage" (Enterprise Policy)](#1-step-1--enable-premium-request-paid-usage-enterprise-policy)
+- [2️⃣ Step 2 — Remove or Fix Any Budgets That Are Blocking Premium Request Overages](#2-step-2--remove-or-fix-any-budgets-that-are-blocking-premium-request-overages)
+- [3️⃣ Step 3 — Create Two Cost Centers and Assign Users](#3-step-3--create-two-cost-centers-and-assign-users)
+- [4️⃣ Step 4 — Create Cost-Center-Scoped Budgets (The Enforcement)](#4-step-4--create-cost-center-scoped-budgets-the-enforcement)
+- [5️⃣ Step 5 — Verify It's Working (No Conflicts + Correct Attribution)](#5-step-5--verify-its-working-no-conflicts--correct-attribution)
+- [💡 Optional Pattern: Use a Second Org to Increase Included Allowance (Power Users)](#-optional-pattern-use-a-second-org-to-increase-included-allowance-power-users)
+- [📝 Notes on Legacy Auto-Created $0 Copilot Premium Request Budgets (Verified)](#-notes-on-legacy-auto-created-0-copilot-premium-request-budgets-verified)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +40,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -195,6 +223,10 @@ If you also need a middle tier ("power users" who just need a bigger included al
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -208,9 +240,15 @@ If you also need a middle tier ("power users" who just need a bigger included al
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: I assigned users to the "Hyper power users" cost center but they are still blocked from overages — why?
 **A:** Check for conflicting budgets. If an enterprise-wide or org-level budget with "Stop usage when budget limit is reached" is exhausted, it will block those users even though they have a separate cost center budget. Review all budgets on the Budgets and alerts page and remove or edit any that conflict.
@@ -234,6 +272,8 @@ If you also need a middle tier ("power users" who just need a bigger included al
 
 ### Q: How do I verify that usage is landing in the correct cost center?
 **A:** Navigate to Enterprise > Billing and licensing > Usage > Premium request analytics and group or filter by cost center. You can also download a detailed usage report (CSV) and check the `cost_center_name` column to confirm attribution.
+
+</details>
 
 ---
 

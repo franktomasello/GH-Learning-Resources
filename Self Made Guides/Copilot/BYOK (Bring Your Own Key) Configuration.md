@@ -4,6 +4,29 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [🏗️ Supported Providers](#-supported-providers)
+- [1️⃣ Configure BYOK at the Enterprise Level](#1-configure-byok-at-the-enterprise-level)
+- [2️⃣ Set Policies for BYOK Model Access](#2-set-policies-for-byok-model-access)
+- [3️⃣ What BYOK Does](#3-what-byok-does)
+- [4️⃣ What BYOK Does NOT Do](#4-what-byok-does-not-do)
+- [5️⃣ Use Cases for Public Sector and Regulated Industries](#5-use-cases-for-public-sector-and-regulated-industries)
+- [🚀 Quick BYOK Setup Recipe](#-quick-byok-setup-recipe)
+- [📝 Additional Notes](#-additional-notes)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -17,12 +40,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -209,6 +238,10 @@ Enterprise → Settings → Copilot → Policies
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -222,9 +255,15 @@ Enterprise → Settings → Copilot → Policies
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: BYOK is not the same as CMK for data at rest — correct?
 **A:** Correct. BYOK in the Copilot context means bringing your own AI model provider API keys so that inference requests route through your provider account. This is completely separate from customer-managed encryption keys (CMK/BYOK) for encrypting platform data at rest.
@@ -258,6 +297,8 @@ Enterprise → Settings → Copilot → Policies
 
 ### Q: How do we rotate or update a BYOK API key?
 **A:** Navigate to Enterprise > Settings > Copilot > Policies > Model management > Configure BYOK, select the provider, and update the API key. Test the connection after updating to verify the new key works. There is no automatic key rotation — this must be done manually.
+
+</details>
 
 ---
 

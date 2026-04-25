@@ -4,6 +4,29 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [📋 Overview](#-overview)
+- [1️⃣ Create the Authors File](#1-create-the-authors-file)
+- [2️⃣ Convert SVN to Git Using svn2git (Recommended)](#2-convert-svn-to-git-using-svn2git-recommended)
+- [3️⃣ Alternative: git svn clone (More Control)](#3-alternative-git-svn-clone-more-control)
+- [4️⃣ Handle Large Binaries with Git LFS](#4-handle-large-binaries-with-git-lfs)
+- [5️⃣ Convert svn:ignore to .gitignore](#5-convert-svnignore-to-gitignore)
+- [6️⃣ Push to GitHub](#6-push-to-github)
+- [7️⃣ SVN-to-Git Structure Mapping](#7-svn-to-git-structure-mapping)
+- [8️⃣ Validation Checklist Post-Migration](#8-validation-checklist-post-migration)
+- [9️⃣ Tips for a Smooth Transition](#9-tips-for-a-smooth-transition)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the commands:**
@@ -17,12 +40,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -336,6 +365,10 @@ git push --tags origin
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -348,9 +381,15 @@ git push --tags origin
 | **Push rejected because private email would be published** | GitHub account settings block pushes that expose a private email address. | Use a GitHub noreply email in rewritten commits or temporarily adjust the account email privacy setting for the migration account. |
 | **Large files or LFS objects fail to push** | The converted Git repository contains files above GitHub size guidance or missing LFS migration. | Run a large-file scan, migrate binaries to Git LFS where appropriate, and push LFS objects before final validation. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: `svn2git` fails because our SVN repo does not use the standard trunk/branches/tags layout. What should I do?
 **A:** Use `--rootistrunk` if the root of the SVN repo is the trunk (no branches or tags directories). For custom directory names, specify them explicitly with `--trunk`, `--branches`, and `--tags` flags. If the layout is highly non-standard, try `--no-minimize-url` or switch to `git svn clone` with manual path specifications for more control.
@@ -379,6 +418,8 @@ git push --tags origin
 
 ### Q: After conversion, some SVN branches or tags are missing from the Git repo. What went wrong?
 **A:** Check that `svn2git` or `git svn` successfully processed all branches. Empty branches (with no unique commits) may not convert. Also verify the SVN branch/tag paths match what the conversion tool expects. After `git svn clone`, SVN branches appear as remote refs that must be explicitly converted to local branches and tags using the conversion commands in Section 3 of this guide.
+
+</details>
 
 ## 🔗 Related Guides
 

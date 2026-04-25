@@ -4,6 +4,26 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Step 1 — Verify in the Visual Studio Admin Portal](#1-step-1--verify-in-the-visual-studio-admin-portal)
+- [2️⃣ Step 2 — Verify on the GitHub Enterprise Side](#2-step-2--verify-on-the-github-enterprise-side)
+- [3️⃣ Step 3 — User Self-Service Linking](#3-step-3--user-self-service-linking)
+- [4️⃣ Common Issues & Troubleshooting](#4-common-issues--troubleshooting)
+- [5️⃣ Important Caveats](#5-important-caveats)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -17,12 +37,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -165,6 +191,10 @@ https://my.visualstudio.com → Benefits tab
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -181,9 +211,15 @@ https://my.visualstudio.com → Benefits tab
 | **User appears unlicensed in GitHub after linking** | The user has not joined an organization in the enterprise, the link has not synchronized, or the wrong account was linked. | Confirm the user accepted an org invitation, check enterprise license usage after synchronization, and unlink/relink if the wrong GitHub account was used. |
 | **Benefit disappeared after working previously** | The Visual Studio subscription expired, was reassigned, or the bundled benefit changed. | Recheck the subscriber record in the Visual Studio Admin Portal and restore the eligible assignment or replace the seat with a paid GitHub Enterprise license. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: A user cannot find the "Link Visual Studio subscription" option in their GitHub settings. Where is it?
 **A:** The option is at GitHub.com > Profile Picture > Settings > Billing and plans > Plans > "Link Visual Studio subscription." The user must have a Visual Studio Enterprise subscription (not Professional or other tiers) -- only VS Enterprise includes the GitHub Enterprise benefit. Also verify the VS subscription is active and assigned in the Visual Studio Admin Portal.
@@ -212,6 +248,8 @@ https://my.visualstudio.com → Benefits tab
 
 ### Q: A user linked their VS subscription to the wrong GitHub account. How do they fix it?
 **A:** The user must unlink the VS subscription from the incorrect GitHub account, then re-link it to the correct account. Unlink by going to GitHub.com > Settings > Billing and plans and removing the VS subscription link. Then sign in with the correct GitHub account and complete the linking process from Step 3 of this guide.
+
+</details>
 
 ## 🔗 Related Guides
 

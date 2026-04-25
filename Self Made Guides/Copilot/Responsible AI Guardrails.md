@@ -4,6 +4,25 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [📋 Overview](#-overview)
+- [1️⃣ Platform Controls (Admin-Configurable)](#1-platform-controls-admin-configurable)
+- [2️⃣ Code Governance Controls](#2-code-governance-controls)
+- [3️⃣ Custom Instructions for Standards](#3-custom-instructions-for-standards)
+- [4️⃣ Mitigating "Vibe Coding"](#4-mitigating-vibe-coding)
+- [5️⃣ Monitoring & Audit](#5-monitoring--audit)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +37,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -208,6 +233,10 @@ Organization → Security → Overview
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -221,9 +250,15 @@ Organization → Security → Overview
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: Developers are accepting all Copilot suggestions without review — how do we address this?
 **A:** Require PR reviews via rulesets (Org > Settings > Rules > Rulesets), run GHAS code scanning on all PRs to catch vulnerabilities regardless of author, and monitor acceptance rates for teams with unusually high rates (above 50%) as a signal of insufficient review. Use coaching conversations, not punishment.
@@ -262,6 +297,8 @@ Organization → Security → Overview
 
 ### Q: Can we restrict which Copilot Extensions are allowed?
 **A:** Yes. At the enterprise level, navigate to Enterprise > AI controls > Copilot > Policies > Copilot Extensions. Set to "Disabled" to block all extensions enterprise-wide, or use "No policy" to let org admins decide. Review and approve extensions through your security team before enabling.
+
+</details>
 
 ---
 

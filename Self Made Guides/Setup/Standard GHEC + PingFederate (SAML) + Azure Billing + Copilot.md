@@ -4,6 +4,31 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [📋 Overview](#-overview)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)](#1-create--secure-the-scim-setup-user-standard-non-emu)
+- [2️⃣ Create the PingFederate SP Connection (or PingOne Application)](#2-create-the-pingfederate-sp-connection-or-pingone-application)
+- [3️⃣ Enable SAML SSO in GitHub](#3-enable-saml-sso-in-github)
+- [4️⃣ Enforce SAML SSO for the Organization (Required)](#4-enforce-saml-sso-for-the-organization-required)
+- [5️⃣ Configure SCIM Provisioning (PingFederate → GitHub Organization)](#5-configure-scim-provisioning-pingfederate--github-organization)
+- [6️⃣ Attach Azure Subscription for Metered Billing](#6-attach-azure-subscription-for-metered-billing)
+- [7️⃣ Enable GitHub Copilot (Enterprise + Organization)](#7-enable-github-copilot-enterprise--organization)
+- [8️⃣ Critical Post-Enablement: SSO Authorization for Credentials (Required)](#8-critical-post-enablement-sso-authorization-for-credentials-required)
+- [✅ Pre-Flight / Validation Checklist](#-pre-flight--validation-checklist)
+- [🎯 Success Criteria](#-success-criteria)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +43,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -554,6 +585,10 @@ After completing this guide, you should have:
 ---
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -567,9 +602,15 @@ After completing this guide, you should have:
 | **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
 | **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: What is the difference between an SP Connection (PingFederate) and an Application (PingOne) for this setup?
 **A:** An SP Connection in PingFederate (self-managed) is the equivalent of an Application in PingOne (cloud). Both define the SAML trust relationship between Ping and GitHub. In PingFederate, you configure SP Connections under Identity Provider > SP Connections. In PingOne, you configure Applications under Connections > Applications. The SAML values (Entity ID, ACS URL, Sign-on URL) are the same — the admin UI and navigation differ.
@@ -608,6 +649,8 @@ After completing this guide, you should have:
 
 ### Q: How do I test the SAML configuration before rolling out to all users?
 **A:** Enable SAML in GitHub org settings without enforcing it. Use the "Test SAML configuration" button to validate the flow with your PingFederate credentials. Assign a pilot group in PingFederate (via access control policy on the SP Connection) and have them authenticate at `https://github.com/orgs/YOUR_ORG/sso`. Once validated, proceed with enforcement.
+
+</details>
 
 ---
 

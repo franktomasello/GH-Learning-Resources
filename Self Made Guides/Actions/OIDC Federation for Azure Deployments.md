@@ -4,6 +4,30 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Create an App Registration in Entra ID](#1-create-an-app-registration-in-entra-id)
+- [2️⃣ Assign Azure RBAC Roles for Deployment Targets](#2-assign-azure-rbac-roles-for-deployment-targets)
+- [3️⃣ Add Federated Credential to the App Registration](#3-add-federated-credential-to-the-app-registration)
+- [4️⃣ Federated Credential Issuer (GitHub.com vs GHE.com)](#4-federated-credential-issuer-githubcom-vs-ghecom)
+- [5️⃣ Scope Access by Org, Repo, Branch, or Environment](#5-scope-access-by-org-repo-branch-or-environment)
+- [6️⃣ Configure the GitHub Actions Workflow](#6-configure-the-github-actions-workflow)
+- [7️⃣ GHE.com (DRUS) Configuration](#7-ghecom-drus-configuration)
+- [8️⃣ Benefits Summary](#8-benefits-summary)
+- [9️⃣ Updating OIDC Trust When Migrating from GitHub.com to GHE.com](#9-updating-oidc-trust-when-migrating-from-githubcom-to-ghecom)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +42,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -307,6 +337,10 @@ No changes are needed in the workflow YAML itself. The `azure/login` action auto
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -320,9 +354,15 @@ No changes are needed in the workflow YAML itself. The `azure/login` action auto
 | **OIDC token is unavailable** | The workflow lacks `permissions: id-token: write` or is running from an event where the job cannot request a token. | Add the id-token permission at workflow or job scope and test with the OIDC debugger before creating cloud trust conditions. |
 | **Azure federated credential rejects the token** | Issuer, audience, subject, branch, environment, or GHE.com token issuer does not match the credential. | Compare the live token claims to the federated credential and update the Azure issuer/subject/audience exactly, including GHE.com issuer differences. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: I am getting "AADSTS700016: Application not found" when my workflow tries to log in to Azure. What is wrong?
 **A:** This error means Azure cannot find the App Registration. Verify that the `client-id` (Application ID) and `tenant-id` (Directory ID) stored in your GitHub secrets are correct and correspond to an active App Registration in the correct Entra ID tenant. Copy-paste errors and extra whitespace in secret values are common causes.
@@ -351,6 +391,8 @@ No changes are needed in the workflow YAML itself. The `azure/login` action auto
 
 ### Q: Do I need to store any Azure credentials as GitHub secrets with OIDC?
 **A:** You store the Application (client) ID, Directory (tenant) ID, and Subscription ID as GitHub secrets -- but these are identifiers, not credentials. No client secrets, certificates, or passwords are needed. The OIDC exchange generates a short-lived token at runtime without any stored credential, which is the primary security advantage of this approach.
+
+</details>
 
 ## 🔗 Related Guides
 

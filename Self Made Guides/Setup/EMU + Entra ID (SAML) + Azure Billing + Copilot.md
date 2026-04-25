@@ -4,6 +4,32 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [📋 Overview](#-overview)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [1️⃣ Create & Configure the EMU Setup User](#1-create--configure-the-emu-setup-user)
+- [2️⃣ Create the Entra ID Enterprise Application](#2-create-the-entra-id-enterprise-application)
+- [3️⃣ Enable SAML SSO in GitHub](#3-enable-saml-sso-in-github)
+- [4️⃣ Configure SCIM Provisioning](#4-configure-scim-provisioning)
+- [5️⃣ Attach Azure Subscription for Billing](#5-attach-azure-subscription-for-billing)
+- [6️⃣ Enable GitHub Copilot](#6-enable-github-copilot)
+- [7️⃣ Organization Structure Guidance](#7-organization-structure-guidance)
+- [📝 Quick Reference Worksheet](#-quick-reference-worksheet)
+- [✅ Pre-Flight Checklist](#-pre-flight-checklist)
+- [👥 Example Initial Group Model](#-example-initial-group-model)
+- [🎯 Success Criteria](#-success-criteria)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +44,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -457,6 +489,10 @@ After completing this guide, you should have:
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -470,9 +506,15 @@ After completing this guide, you should have:
 | **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
 | **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: The setup user activation link does not work — what is wrong?
 **A:** The most common cause is an email conflict. If the email address provided for the setup user is already associated as a primary email on another GitHub account, the activation link will silently fail. Find the existing GitHub account using that email, change its primary email to something else, and then retry the activation link. If the link has expired, contact GitHub Support to resend it.
@@ -511,6 +553,8 @@ After completing this guide, you should have:
 
 ### Q: The setup user is locked out of 2FA — how do I regain access?
 **A:** Use the personal 2FA recovery codes that were saved when 2FA was first enabled on the setup user. If those are lost, use the enterprise SSO recovery codes to access the enterprise and contact GitHub Support to reset the setup user's 2FA. This is why securely storing both sets of recovery codes during initial setup is critical.
+
+</details>
 
 ---
 

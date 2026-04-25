@@ -4,6 +4,26 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [📋 Overview](#-overview)
+- [1️⃣ Enable Copilot Coding Agent](#1-enable-copilot-coding-agent)
+- [2️⃣ Scope Agent to Approved Repositories](#2-scope-agent-to-approved-repositories)
+- [3️⃣ Configure MCP (Model Context Protocol)](#3-configure-mcp-model-context-protocol)
+- [4️⃣ Security Review for MCP](#4-security-review-for-mcp)
+- [5️⃣ Custom Instructions for Agent Quality](#5-custom-instructions-for-agent-quality)
+- [6️⃣ Monitor Agent Usage](#6-monitor-agent-usage)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +38,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -176,6 +202,10 @@ Enterprise → AI controls → Insights
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -189,9 +219,15 @@ Enterprise → AI controls → Insights
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: The coding agent is not creating PRs — what should we check?
 **A:** Verify three things: (1) the coding agent is enabled at both the enterprise AND organization level (enterprise policies act as a ceiling), (2) the required premium model is available and not disabled in model settings, and (3) the repository has proper permissions — the agent needs write access to create branches and PRs.
@@ -225,6 +261,8 @@ Enterprise → AI controls → Insights
 
 ### Q: Is it safe to enable MCP servers from third-party sources?
 **A:** Treat MCP server approval as a governance decision. Run through the security review checklist before enabling any MCP server: assess what tools/APIs it accesses, what credentials it requires, what network access it needs, and whether it complies with your data classification policy. Have your security team review before approving.
+
+</details>
 
 ---
 

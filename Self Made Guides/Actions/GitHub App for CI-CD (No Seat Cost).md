@@ -4,6 +4,29 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Why GitHub Apps Over Machine Users](#1-why-github-apps-over-machine-users)
+- [2️⃣ Create a GitHub App](#2-create-a-github-app)
+- [3️⃣ Configure Permissions](#3-configure-permissions)
+- [4️⃣ Install the App to Your Organization](#4-install-the-app-to-your-organization)
+- [5️⃣ Generate Installation Access Token in CI/CD](#5-generate-installation-access-token-in-cicd)
+- [6️⃣ Alternative: GITHUB_TOKEN for Actions-Only Workflows](#6-alternative-github_token-for-actions-only-workflows)
+- [7️⃣ Machine User Account (Last Resort)](#7-machine-user-account-last-resort)
+- [8️⃣ EMU (Enterprise Managed Users) Considerations](#8-emu-enterprise-managed-users-considerations)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +41,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -306,6 +335,10 @@ jobs:
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -319,9 +352,15 @@ jobs:
 | **OIDC token is unavailable** | The workflow lacks `permissions: id-token: write` or is running from an event where the job cannot request a token. | Add the id-token permission at workflow or job scope and test with the OIDC debugger before creating cloud trust conditions. |
 | **Azure federated credential rejects the token** | Issuer, audience, subject, branch, environment, or GHE.com token issuer does not match the credential. | Compare the live token claims to the federated credential and update the Azure issuer/subject/audience exactly, including GHE.com issuer differences. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: My workflow fails with "Resource not accessible by integration" when using a GitHub App token. What is wrong?
 **A:** This error means the App does not have the required permission for the API endpoint being called, OR the App is not installed on the target repository. Check two things: (1) the App's permissions in its settings include the necessary access (e.g., Contents: Read & Write for pushing code), and (2) the App is installed on the specific repo you are trying to access (check Org Settings > Developer settings > GitHub Apps > [Your App] > Install App).
@@ -350,6 +389,8 @@ jobs:
 
 ### Q: How long do GitHub App installation tokens last, and do I need to handle rotation?
 **A:** Installation tokens are valid for approximately 1 hour and are automatically generated fresh on each workflow run by the `actions/create-github-app-token` action. You do not need to manually rotate them. This short lifetime is a key security advantage over PATs, which can be long-lived and require manual rotation.
+
+</details>
 
 ## 🔗 Related Guides
 

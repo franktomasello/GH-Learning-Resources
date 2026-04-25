@@ -4,6 +4,31 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ GEI Setup](#1-gei-setup)
+- [2️⃣ Migrating from Azure DevOps](#2-migrating-from-azure-devops)
+- [3️⃣ Migrating from GitLab](#3-migrating-from-gitlab)
+- [4️⃣ Migrating from Bitbucket Server](#4-migrating-from-bitbucket-server)
+- [5️⃣ GitHub-to-GitHub Migration (e.g., Standard to DRUS/GHE.com)](#5-github-to-github-migration-eg-standard-to-drusghecom)
+- [6️⃣ What GEI Migrates vs. What Needs Manual Reconfiguration](#6-what-gei-migrates-vs-what-needs-manual-reconfiguration)
+- [7️⃣ Actions Importer: Convert CI/CD Pipelines to GitHub Actions](#7-actions-importer-convert-cicd-pipelines-to-github-actions)
+- [8️⃣ Manual Mirror Push (Simple Git-Only Migration)](#8-manual-mirror-push-simple-git-only-migration)
+- [9️⃣ Post-Migration Checklist](#9-post-migration-checklist)
+- [🔟 Phased Migration Approach](#-phased-migration-approach)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📚 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +43,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -348,6 +379,10 @@ gh gei reclaim-mannequin \
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -361,9 +396,15 @@ gh gei reclaim-mannequin \
 | **Mannequin or placeholder users remain after migration** | Source identities were not mapped to GitHub users during migration. | Export mannequins, build an owner-approved mapping file, reclaim mannequins to the correct target accounts, and document any intentionally unmapped identities. |
 | **Actions Importer output is invalid or incomplete** | The source pipeline uses tasks, service connections, templates, or approvals that do not have a direct Actions equivalent. | Use audit and dry-run output, manually rewrite unsupported tasks, recreate secrets/environments/service connections, and test generated workflows in a branch before cutover. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: GEI migration fails with a timeout error on a large repository. How do I resolve this?
 **A:** Large repositories can exceed the default timeout. Try using `--queue-only` to queue the migration and let it run asynchronously, then check status with `gh gei wait-for-migration`. For very large repos, also try setting `--target-repo-visibility` explicitly. If the issue persists, consider splitting the migration (e.g., migrate git history first with `git push --mirror`, then use GEI for metadata).
@@ -392,6 +433,8 @@ gh gei reclaim-mannequin \
 
 ### Q: Can I do a dry-run or test migration before the real cutover?
 **A:** Yes. Run GEI against a test target organization first to validate the migration without affecting production. For Actions Importer, use `gh actions-importer dry-run` to generate converted workflow YAML without committing it. The phased approach in Section 10 of this guide (Pilot > Org-by-Org Rollout > Cutover > Decommission) is recommended for production migrations.
+
+</details>
 
 ## 🔗 Related Guides
 

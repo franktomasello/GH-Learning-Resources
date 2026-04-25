@@ -4,6 +4,27 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Access the Enterprise Audit Log](#1-access-the-enterprise-audit-log)
+- [2️⃣ Audit Log Streaming (SIEM Integration)](#2-audit-log-streaming-siem-integration)
+- [3️⃣ Audit Log API](#3-audit-log-api)
+- [4️⃣ Git Events Logging](#4-git-events-logging)
+- [5️⃣ IP Allow Lists](#5-ip-allow-lists)
+- [6️⃣ Compliance Checklist](#6-compliance-checklist)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +39,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -197,6 +224,10 @@ Enterprise → Settings → Authentication security → IP allow list
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -209,9 +240,15 @@ Enterprise → Settings → Authentication security → IP allow list
 | **Ruleset blocks a push or merge unexpectedly** | A branch/tag/push ruleset or legacy branch protection rule targets the ref. | Open the repository rules view for the affected branch/tag, identify the active rule, and either comply with the rule or request a bypass from the owner. |
 | **Repository transfer or org rename leaves broken references** | Profile URLs, marketplace/action namespaces, webhooks, secrets, environments, and external integrations may not redirect or transfer. | Inventory dependent systems before the change, update remote URLs and integration settings after the change, and validate webhooks, Actions, Apps, and security configurations. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: I configured audit log streaming but events are not appearing in my SIEM. What should I check?
 **A:** Verify the endpoint URL is correct and accessible, confirm the authentication credentials (API token, SAS URL, etc.) are valid and not expired, and ensure streaming is enabled (not paused) in the enterprise settings. Also note that audit log streaming only captures events going forward from the moment it is enabled -- it does not backfill historical events. Check your SIEM's ingestion logs for connection errors.
@@ -240,6 +277,8 @@ Enterprise → Settings → Authentication security → IP allow list
 
 ### Q: Can we use the audit log API to build custom compliance dashboards?
 **A:** Yes, both the REST API and GraphQL API support querying audit log events programmatically. Use the REST endpoint at `/enterprises/{enterprise}/audit-log` with query parameters to filter by action, actor, date, and organization. Pipe results into your dashboard tooling or data warehouse for custom compliance reporting.
+
+</details>
 
 ## 🔗 Related Guides
 

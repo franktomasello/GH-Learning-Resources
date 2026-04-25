@@ -4,6 +4,29 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Create Cost Centers](#1-create-cost-centers)
+- [2️⃣ Assign Resources to Cost Centers](#2-assign-resources-to-cost-centers)
+- [3️⃣ Cost Center Scope and Limitations](#3-cost-center-scope-and-limitations)
+- [4️⃣ Patterns for Team-Level Billing](#4-patterns-for-team-level-billing)
+- [5️⃣ SKU-Level Budgets for Premium Requests](#5-sku-level-budgets-for-premium-requests)
+- [6️⃣ Set Budgets and Hard Stops](#6-set-budgets-and-hard-stops)
+- [7️⃣ Connect an Azure Subscription](#7-connect-an-azure-subscription)
+- [8️⃣ Export Usage Reports for Finance Reconciliation](#8-export-usage-reports-for-finance-reconciliation)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +41,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -305,6 +334,10 @@ Enterprise → Billing and licensing → Usage report
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -317,9 +350,15 @@ Enterprise → Billing and licensing → Usage report
 | **Azure subscription is not listed or connection fails** | The Azure user lacks subscription owner rights or tenant-wide consent is required. | Sign in with an Azure subscription owner who can grant consent, or have an Entra global administrator approve the GitHub Subscription Permission Validation app, then repeat the Add Azure Subscription flow. |
 | **Admin approval required during Azure billing connection** | The tenant blocks user consent for the GitHub billing app. | Use the tenant admin consent workflow or have a Global Administrator grant consent, then return to GitHub and select the subscription again. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: My cost center is showing $0 usage even though the assigned organizations are actively using GitHub. Why?
 **A:** First, verify that the expected organizations, repositories, or users are assigned to the cost center (Enterprise > Billing and licensing > Cost centers > [Your cost center] > Resources). Usage data can take time to appear in cost center reports after resources are assigned. If the resources were just added, check again after the next usage/billing data refresh.
@@ -348,6 +387,8 @@ Enterprise → Billing and licensing → Usage report
 
 ### Q: How often are usage reports updated, and can I automate the export?
 **A:** Usage reports in the GitHub enterprise billing dashboard are updated daily. You can manually download CSV exports from Enterprise > Billing and licensing > Usage report. For automation, use the GitHub billing REST API to programmatically retrieve usage data and feed it into your finance systems or data warehouse.
+
+</details>
 
 ## 🔗 Related Guides
 

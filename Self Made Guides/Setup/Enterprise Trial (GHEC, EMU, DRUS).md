@@ -4,6 +4,28 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [1️⃣ Start the Trial](#1-start-the-trial)
+- [2️⃣ Complete the Setup Email](#2-complete-the-setup-email)
+- [3️⃣ Configure Identity Provider (EMU & DRUS Only)](#3-configure-identity-provider-emu--drus-only)
+- [4️⃣ Configure SAML SSO (Standard GHEC Only)](#4-configure-saml-sso-standard-ghec-only)
+- [5️⃣ Request Add-On Trials](#5-request-add-on-trials)
+- [6️⃣ Trial Duration & Extensions](#6-trial-duration--extensions)
+- [🚀 Tips for a Successful Trial](#-tips-for-a-successful-trial)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +40,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -228,6 +256,10 @@ Organization → Settings → Advanced Security → Configurations
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -244,9 +276,15 @@ Organization → Settings → Advanced Security → Configurations
 | **Trial feature is missing** | The add-on trial was not activated for the selected enterprise/org or the plan type does not support it. | Confirm the exact enterprise/org with GitHub Sales or your Solutions Engineer, then recheck the documented settings page after activation. |
 | **Trial ends sooner than expected after billing setup** | Some billing changes can transition the account from trial behavior to paid usage. | Review the billing warning before connecting payment and confirm with GitHub account team if you need the trial to remain active. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: My setup link expired — it has been more than 7 days. How do I get a new one?
 **A:** The activation link in the setup email expires after 7 days. If it expires, you must restart the trial process by going to `https://github.com/enterprise/trial` and creating a new trial. If the enterprise name (slug) you wanted is now taken by the expired trial, contact GitHub Support or your GitHub Sales representative to have the expired trial removed so the namespace is freed up.
@@ -285,6 +323,8 @@ Organization → Settings → Advanced Security → Configurations
 
 ### Q: I set up an EMU trial but realized I need Standard GHEC instead — can I switch?
 **A:** No. The identity model (Standard vs EMU vs DRUS) is set at enterprise creation and cannot be changed. You must create a new trial with the correct type. If you need to preserve any repository data from the EMU trial, use GitHub Enterprise Importer (GEI) to migrate repos to the new enterprise. Plan the identity model decision carefully before starting the trial.
+
+</details>
 
 ---
 

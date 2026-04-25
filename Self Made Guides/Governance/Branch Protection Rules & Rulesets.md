@@ -4,6 +4,28 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [📋 Overview](#-overview)
+- [1️⃣ Classic Branch Protection (Repo-Level)](#1-classic-branch-protection-repo-level)
+- [2️⃣ Repo-Level Rulesets (Modern, Recommended)](#2-repo-level-rulesets-modern-recommended)
+- [3️⃣ Org-Level Rulesets (Enforce Across All Repos)](#3-org-level-rulesets-enforce-across-all-repos)
+- [4️⃣ Enterprise-Level Rulesets](#4-enterprise-level-rulesets)
+- [5️⃣ Finding Which Rule Is Enforcing Approval Requirements](#5-finding-which-rule-is-enforcing-approval-requirements)
+- [6️⃣ CODEOWNERS for Path-Specific Approvals](#6-codeowners-for-path-specific-approvals)
+- [7️⃣ Recommended Baseline Configuration](#7-recommended-baseline-configuration)
+- [8️⃣ Bypass Lists for Admins & Automation (Rulesets Feature)](#8-bypass-lists-for-admins--automation-rulesets-feature)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -18,12 +40,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -286,6 +314,10 @@ Ruleset → Bypass list → Add bypass
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -298,9 +330,15 @@ Ruleset → Bypass list → Add bypass
 | **Ruleset blocks a push or merge unexpectedly** | A branch/tag/push ruleset or legacy branch protection rule targets the ref. | Open the repository rules view for the affected branch/tag, identify the active rule, and either comply with the rule or request a bypass from the owner. |
 | **Repository transfer or org rename leaves broken references** | Profile URLs, marketplace/action namespaces, webhooks, secrets, environments, and external integrations may not redirect or transfer. | Inventory dependent systems before the change, update remote URLs and integration settings after the change, and validate webhooks, Actions, Apps, and security configurations. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: I created a branch protection rule or ruleset, but it does not seem to be enforcing. What should I check?
 **A:** First, verify the branch name pattern targets the correct branch (e.g., `main` vs `master`, or that a wildcard like `release/*` matches your branch names). For rulesets, confirm the enforcement status is set to "Active" -- rulesets in "Evaluate" or "Disabled" mode do not enforce. Also check whether the rule is at the repo, org, or enterprise level, as a higher-level rule may be taking precedence.
@@ -329,6 +367,8 @@ Ruleset → Bypass list → Add bypass
 
 ### Q: Can multiple rulesets apply to the same branch at the same time?
 **A:** Yes, rulesets are designed to layer. When multiple rulesets target the same branch, all rules from all matching rulesets are combined. The most restrictive setting wins -- for example, if one ruleset requires 1 approval and another requires 2, the branch will require 2 approvals. This layering works across repo-level, org-level, and enterprise-level rulesets.
+
+</details>
 
 ## 🔗 Related Guides
 

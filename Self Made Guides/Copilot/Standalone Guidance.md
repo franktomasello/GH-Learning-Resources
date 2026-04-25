@@ -4,6 +4,26 @@
 
 ---
 
+## 📑 Contents
+
+- [⚡ Quick-Start Summary](#-quick-start-summary)
+- [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
+- [✅ Prerequisites](#-prerequisites)
+- [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
+- [📋 Overview](#-overview)
+- [🔧 Phase 1: The Setup (Critical Configuration)](#-phase-1-the-setup-critical-configuration)
+- [👥 Phase 2: Add Users to the Team](#-phase-2-add-users-to-the-team)
+- [📜 Phase 3: Assign the License](#-phase-3-assign-the-license)
+- [✓ Phase 4: Verification & Limits (Triple-Checked)](#-phase-4-verification--limits-triple-checked)
+- [⚠️ Common Pitfall to Avoid](#-common-pitfall-to-avoid)
+- [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
+- [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
+- [🔗 Related Guides](#-related-guides)
+- [📝 Resources](#-resources)
+
+---
+
+
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -16,12 +36,18 @@
 
 ## ✅ Accuracy & Click-Path Notes
 
+<details>
+<summary><em>Show click-path conventions</em></summary>
+
+
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
+
+</details>
 
 ---
 
@@ -161,6 +187,10 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ## 🧯 Known Errors & Resolutions
 
+<details>
+<summary><em>Show known errors table</em></summary>
+
+
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -174,9 +204,15 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
+</details>
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
+
+<details>
+<summary><em>Show Q&A</em></summary>
+
 
 ### Q: Users in the enterprise team are consuming GHE licenses — what went wrong?
 **A:** The enterprise team was likely granted access to an organization. If the team has any org affiliation (even "Read" access), every member becomes a standard enterprise member and consumes a GHE license. Verify the team has no organization access under Enterprise > People > Enterprise teams > [your team] > Settings.
@@ -200,6 +236,8 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ### Q: A user already has Copilot through an org — will adding them to the standalone enterprise team cause double billing?
 **A:** No. GitHub's combined billing model bills per unique user. If a user is already licensed for Copilot in an org, adding them to the enterprise team generally does not double-bill. The system deduplicates based on unique user identity.
+
+</details>
 
 ---
 
