@@ -38,7 +38,7 @@
 
 ---
 
-## 0️⃣ Prerequisites (Critical)
+## ✅ Prerequisites
 
 ### People & Permissions
 

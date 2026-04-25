@@ -50,7 +50,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - AD FS does **NOT** natively support SCIM provisioning for GitHub
 - For organizations seeking full SCIM lifecycle management and cloud-native capabilities, consider migrating to **Microsoft Entra ID** (see Section 12)
 
-## 0️⃣ Prerequisites Checklist
+## ✅ Prerequisites
 
 | Requirement | Owner / Role | Notes |
 | --- | --- | --- |

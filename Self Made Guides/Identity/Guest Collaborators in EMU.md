@@ -56,7 +56,7 @@ Guest collaborators are **managed user accounts** provisioned through your IdP t
 
 ---
 
-## 1️⃣ Prerequisites
+## ✅ Prerequisites
 
 Before configuring guest collaborators, ensure you have:
 
@@ -71,7 +71,7 @@ Before configuring guest collaborators, ensure you have:
 
 ---
 
-## 2️⃣ Enable Guest Collaborator Role in Your IdP
+## 1️⃣ Enable Guest Collaborator Role in Your IdP
 
 ### A) For Entra ID
 
@@ -111,7 +111,7 @@ Azure Portal → Entra ID → Enterprise Applications
 
 ---
 
-## 3️⃣ Provision Users via SCIM with Guest Collaborator Role
+## 2️⃣ Provision Users via SCIM with Guest Collaborator Role
 
 *Users assigned the Guest Collaborator role in your IdP are automatically provisioned via SCIM.*
 
@@ -128,7 +128,7 @@ Azure Portal → Entra ID → Enterprise Applications
 
 ---
 
-## 4️⃣ Grant Access to Guest Collaborators
+## 3️⃣ Grant Access to Guest Collaborators
 
 *Guest collaborators must be explicitly added to organizations or repositories.*
 
@@ -163,7 +163,7 @@ Repository → Settings → Collaborators and teams (sidebar)
 
 ---
 
-## 5️⃣ Access Limitations for Guest Collaborators
+## 4️⃣ Access Limitations for Guest Collaborators
 
 > ⚠️ **Important:** Guest collaborators have significant access restrictions compared to regular members.
 
@@ -178,7 +178,7 @@ Repository → Settings → Collaborators and teams (sidebar)
 
 ---
 
-## 6️⃣ Best Practices
+## 5️⃣ Best Practices
 
 | Practice | Rationale |
 |----------|-----------|

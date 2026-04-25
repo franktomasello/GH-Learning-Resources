@@ -40,7 +40,7 @@ This guide walks through setting up a new GitHub Enterprise Cloud (GHEC) with En
 
 ---
 
-## 0️⃣ Prerequisites Checklist
+## ✅ Prerequisites
 
 ### Required Items
 

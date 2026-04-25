@@ -44,7 +44,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - SAML SSO is enforced at the org (and optionally at the enterprise, if you have one)
 - SCIM manages organization membership via Okta assignments (not "managed user accounts"—that is EMU)
 
-## 0️⃣ Prerequisites Checklist
+## ✅ Prerequisites
 
 | Requirement | Owner / Role | Notes |
 | --- | --- | --- |

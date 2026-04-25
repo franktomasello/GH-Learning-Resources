@@ -37,14 +37,20 @@ Key mechanics to keep in mind:
 
 ---
 
-## ✅ Before You Start (Confirm)
-- You are on GitHub Enterprise Cloud (GHEC).
-- You have the list of hyper power users (GitHub usernames / managed users).
-- You understand budget structure:
-  - Premium requests are metered, so budgets can optionally stop usage [[1]](#source-1).
-  - You can use either:
-    - Bundled premium requests budget (recommended for most orgs) [[2]](#source-2)
-    - SKU-level budgets (Copilot vs Spark vs Copilot coding agent) [[2]](#source-2)
+## ✅ Prerequisites
+
+Before starting, confirm these items are in place:
+
+| Requirement | Status |
+|-------------|--------|
+| GitHub Enterprise Cloud enterprise with Copilot Business or Copilot Enterprise active | ☐ |
+| Enterprise owner or billing admin access for AI controls, budgets, and cost centers | ☐ |
+| Premium request paid usage policy decision approved by platform/finance owners | ☐ |
+| List of hyper power users identified by GitHub username or managed user account | ☐ |
+| Cost center model agreed on for default users and hyper power users | ☐ |
+| Budget approach selected: bundled premium requests budget or SKU-level budgets | ☐ |
+
+> 💡 **Tip:** Premium requests are metered, so budgets can optionally stop usage at the limit [[1]](#source-1). Use bundled premium request budgets for most organizations, and SKU-level budgets only when you need separate controls for Copilot, Spark, or coding agent spend [[2]](#source-2).
 
 ---
 
