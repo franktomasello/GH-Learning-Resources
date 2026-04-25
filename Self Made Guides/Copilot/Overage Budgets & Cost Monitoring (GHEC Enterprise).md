@@ -1,4 +1,4 @@
-# 📊 GitHub Copilot Premium Requests — Overage Budgets & Cost Monitoring Runbook
+# 📊 GitHub Copilot Overage Budgets & Cost Monitoring Runbook
 
 > **Three approaches to budgeting: Enterprise-wide, By Organization, and By Cost Center (GHEC)**
 
@@ -13,6 +13,17 @@
 - Create cost center: `Enterprise → Billing and licensing → Cost centers → New cost center`
 - Monitor usage: `Enterprise → Billing and licensing → Usage → Premium request analytics`
 - Download report: from Usage page, click `Get usage report → Email me the report`
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -61,7 +72,7 @@ This runbook covers three approaches for setting up premium request budgets:
 
 The "Premium request paid usage" policy is the gate for whether users can go past their included allowance (and incur overage charges).
 
-> 💡 **Quick sanity check (Dec 2025):** Accounts created before Aug 22, 2025 may have had a default $0 Copilot premium request budget; beginning Dec 2, 2025, GitHub started removing those account-level $0 budgets for Enterprise/Team. Still: check Budgets & alerts and delete/edit any $0 budget if present.
+> 💡 **Quick sanity check (Dec 2025):** Accounts created before Aug 22, 2025 may have had a default $0 Copilot premium request budget; beginning Dec 2, 2025, GitHub started removing those account-level $0 budgets for Enterprise/Team. Still: check Budgets and alerts and delete/edit any $0 budget if present.
 
 ### Step 0.1 — Open Copilot Policy Controls
 
@@ -102,7 +113,7 @@ Profile Picture → Enterprise → Billing and licensing → Budgets and alerts
 4. Set the **Budget** ($ amount)
 5. Enable **Stop usage when budget limit is reached** (hard cap)
 6. Configure alerts (e.g., 75/90/100%) + recipients
-7. Click **Create budget**
+7. Click **New budget**
 
 > ⚠️ **Re-emphasis:** A new enterprise-wide budget does not cancel older applicable budgets.
 
@@ -141,7 +152,7 @@ Enterprise → Billing and licensing → Budgets and alerts
 3. **Budget scope:** Select **Organization** → choose the org
 4. Set **Budget** ($)
 5. Enable **Stop usage when budget limit is reached**
-6. Set alerts → Click **Create budget**
+6. Set alerts → Click **New budget**
 
 > ⚠️ **Re-emphasis:** Creating a new org budget does not override an existing enterprise/org/cost-center budget.
 
@@ -175,7 +186,7 @@ Profile Picture → Enterprise → Billing and licensing → Cost centers → Ne
 
 > 📝 **Note:** A resource (org/repo/user) can only be assigned to one cost center at a time; adding it elsewhere moves it.
 
-3. Click **Create cost center**
+3. Click **New cost center**
 
 ### C2) Create a Premium Request Budget for the Cost Center
 
@@ -189,7 +200,7 @@ Enterprise → Billing and licensing → Budgets and alerts → New budget
 2. **Budget scope:** Select **Cost center** → choose the cost center
 3. Set **Budget** ($)
 4. Enable **Stop usage when budget limit is reached**
-5. Set alerts → Click **Create budget**
+5. Set alerts → Click **New budget**
 
 > ⚠️ **Re-emphasis:** Adding a cost-center budget does not override existing enterprise/org budgets.
 
@@ -203,12 +214,27 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 - Group/filter by cost center
 - Optional export: **Get usage report** → **Email me the report**
 
+## 🧯 Known Errors & Resolutions
+
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
+| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
+| **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
+| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
 
 ### Q: I created a new budget but users are still being blocked — why?
-**A:** Creating a new budget does not override existing budgets. If any applicable budget with "Stop usage when budget limit is reached" enabled is exhausted, premium requests are blocked. Check the Budgets & alerts page for all active budgets and delete or edit any conflicting ones (including legacy $0 budgets).
+**A:** Creating a new budget does not override existing budgets. If any applicable budget with "Stop usage when budget limit is reached" enabled is exhausted, premium requests are blocked. Check the Budgets and alerts page for all active budgets and delete or edit any conflicting ones (including legacy $0 budgets).
 
 ---
 
@@ -254,4 +280,4 @@ Enterprise → Billing and licensing → Usage → Premium request analytics
 
 ---
 
-*Last updated: December 2025*
+*Last updated: April 2026*

@@ -1,4 +1,4 @@
-# 🪞 Internal-to-Public Repository Mirroring Runbook
+# 🪞 GitHub Internal-to-Public Repository Mirroring Runbook
 
 > **Complete guide to mirroring internal repositories to public GitHub.com organizations, especially for EMU enterprises that cannot host public repos**
 
@@ -13,6 +13,17 @@
 - **Add workflow:** Create `.github/workflows/mirror-to-public.yml` in internal repo
 - **Enable secret scanning:** `Internal Repo → Settings → Security → Advanced Security → Secret Protection → Enable`
 - **Add branch protection:** `Internal Repo → Settings → Rules → Rulesets → New branch ruleset → Require PR reviews`
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -210,6 +221,20 @@ Internal Repository → Settings → Rules → Rulesets
 
 > ✅ **Result:** No code reaches the public mirror without at least one reviewer approving it.
 
+## 🧯 Known Errors & Resolutions
+
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **Push to public mirror is denied** | The token, deploy key, or GitHub App installation lacks write access to the public target repository. | Grant only the required repository write permission, update the Actions secret, and test with a non-production branch first. |
+| **Mirror workflow publishes more than intended** | The workflow mirrors all refs/history or runs on the wrong trigger. | Restrict triggers and refspecs, require PR approval before the mirror branch, and treat the public target as read-only. |
+| **Secret scanning or push protection blocks the mirror** | The outgoing history contains a supported secret pattern. | Stop the workflow, revoke the exposed secret, remove it from history or choose a clean release branch, then rerun after security review. |
+| **Public repository history is overwritten unexpectedly** | A force mirror push was used against a target that had independent commits. | Restore from the target repository backup or reflog if available, then enforce that the public target receives changes only from the mirror workflow. |
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
@@ -254,7 +279,7 @@ Internal Repository → Settings → Rules → Rulesets
 
 ## 📚 Resources
 
-- [actions/checkout](https://github.com/actions/checkout)
+- [actions/checkout](https://github.com/actions/checkout/tree/main)
 - [Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
 
 ---

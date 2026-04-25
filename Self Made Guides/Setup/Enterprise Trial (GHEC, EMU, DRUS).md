@@ -1,4 +1,4 @@
-# 🧪 GitHub Enterprise Trial Setup Runbook (GHEC, EMU, DRUS)
+# 🧪 GitHub Enterprise Trial (GHEC, EMU & DRUS) Setup Runbook
 
 > **Complete guide to starting a GitHub Enterprise Cloud trial — Standard GHEC, EMU (managed users), or Data Residency US (DRUS)**
 
@@ -13,6 +13,17 @@
 - **IdP (EMU/DRUS only):** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM before inviting users
 - **Add-ons:** Contact your GitHub SE/CSM to request Copilot Business (50 seats) or GHAS trial add-ons
 - **Extend:** Request extension before day 25 → Contact GitHub SE/CSM/Sales
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -203,6 +214,24 @@ Organization → Settings → Advanced Security → Configurations
 4. **Invite a small pilot group** first to validate your IdP integration before broad rollout
 5. **Document your configuration decisions** — they carry over if you convert to a paid plan
 
+## 🧯 Known Errors & Resolutions
+
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **SAML test fails with NameID, recipient, audience, or signature errors** | Required SAML attributes, ACS URL, Entity ID, certificate, clock sync, or signing algorithm do not match GitHub requirements. | Compare every SAML value with the GitHub settings page, send a stable email/NameID, use SHA-256 signing, refresh the certificate, and retest before enforcing. |
+| **SCIM test connection fails** | Tenant URL, bearer token, SCIM endpoint, token owner, or IdP provisioning mode is incorrect. | Regenerate the SCIM token from the correct GitHub setup/admin account, paste the exact tenant URL, and confirm the IdP provisioning test succeeds before assigning users. |
+| **Provisioned users are missing from GitHub** | Users or groups are not assigned to the IdP app, attribute mappings fail, or provisioning cycles have not completed. | Review IdP provisioning logs, fix mapping errors, assign a small pilot group, and wait for the next incremental provisioning cycle. |
+| **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
+| **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
+| **Trial activation link expired or fails** | The setup email was not used in time or was opened by the wrong account. | Ask the GitHub account team or trial flow owner to resend activation and complete setup with the intended enterprise owner identity. |
+| **Trial feature is missing** | The add-on trial was not activated for the selected enterprise/org or the plan type does not support it. | Confirm the exact enterprise/org with GitHub Sales or your Solutions Engineer, then recheck the documented settings page after activation. |
+| **Trial ends sooner than expected after billing setup** | Some billing changes can transition the account from trial behavior to paid usage. | Review the billing warning before connecting payment and confirm with GitHub account team if you need the trial to remain active. |
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
@@ -228,7 +257,7 @@ Organization → Settings → Advanced Security → Configurations
 ---
 
 ### Q: I requested a Copilot or GHAS add-on trial, but it is not showing up — what should I check?
-**A:** Add-on trials (Copilot Business, GHAS) must be activated by your GitHub Sales representative or Solutions Engineer — they are not self-service. After requesting, allow 1-2 business days for activation. Once activated, Copilot appears under Enterprise > Settings > AI controls > Copilot, and GHAS appears under Organization > Settings > Advanced Security. If it still does not appear, confirm with your GitHub contact that the add-on was applied to the correct enterprise or org.
+**A:** Add-on trials (Copilot Business, GHAS) must be activated by your GitHub Sales representative or Solutions Engineer — they are not self-service. After requesting, allow 1-2 business days for activation. Once activated, Copilot appears under Enterprise > AI controls > Copilot, and GHAS appears under Organization > Settings > Advanced Security. If it still does not appear, confirm with your GitHub contact that the add-on was applied to the correct enterprise or org.
 
 ---
 
@@ -262,7 +291,7 @@ Organization → Settings → Advanced Security → Configurations
 | Resource | Link |
 |----------|------|
 | **Start a trial** | [github.com/enterprise/trial](https://github.com/enterprise/trial) |
-| **Trial setup documentation** | [docs.github.com](https://docs.github.com/en/enterprise-cloud@latest/admin/setting-up-your-enterprise/setting-up-a-trial-of-github-enterprise-cloud) |
+| **Trial setup documentation** | [docs.github.com](https://docs.github.com/en/get-started/signing-up-for-github/setting-up-a-trial-of-github-enterprise-cloud) |
 
 ---
 

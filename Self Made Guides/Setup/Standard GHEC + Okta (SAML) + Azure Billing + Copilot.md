@@ -1,4 +1,4 @@
-# 🚀 Guide to Setup GHEC (Standard / Non-EMU) + Okta (SAML) + Attach Azure Subscription + Turn on Copilot
+# 🚀 GitHub Standard GHEC + Okta (SAML), Azure Billing & Copilot Setup Runbook
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Okta (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
@@ -11,8 +11,19 @@
 - **Okta:** Applications → Browse App Catalog → "GitHub Enterprise Cloud - Organization" → Add Integration → Set org name → Sign On tab → Capture SSO URL, Issuer, X.509 cert
 - **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste Okta values → Test → Save → Enforce SAML SSO
 - **SCIM:** Sign in as setup user → Visit `/orgs/YOUR_ORG/sso` → Okta App → Provisioning → Enable API Integration → Authenticate with GitHub
-- **Billing:** Org/Enterprise → Billing & Licensing → Payment information → Add Azure Subscription → Accept → Connect
+- **Billing:** Org/Enterprise → Billing and licensing → Payment information → Add Azure Subscription → Accept → Connect
 - **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -276,7 +287,7 @@ GitHub
     → Org list: https://github.com/settings/organizations
     → Enterprise list: https://github.com/settings/enterprises
       → Open the target org/enterprise
-        → Billing & Licensing
+        → Billing and licensing
           → Payment information
             → Metered billing via Azure
               → Add Azure Subscription
@@ -289,7 +300,7 @@ GitHub
     - Org list: `https://github.com/settings/organizations`
     - Enterprise list: `https://github.com/settings/enterprises`
 2. Open the target org/enterprise
-3. Click **Billing & Licensing:**
+3. Click **Billing and licensing:**
     - For orgs: in the left sidebar under settings (label can vary slightly by UI)
     - For enterprises: a top-level tab
 4. Click **Payment information**
@@ -475,8 +486,22 @@ After completing this guide, you should have:
 - ✅ Pilot users provisioned and able to access GitHub via SSO
 
 ---
+## 🧯 Known Errors & Resolutions
 
-_Last updated: February 2026_
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **SAML test fails with NameID, recipient, audience, or signature errors** | Required SAML attributes, ACS URL, Entity ID, certificate, clock sync, or signing algorithm do not match GitHub requirements. | Compare every SAML value with the GitHub settings page, send a stable email/NameID, use SHA-256 signing, refresh the certificate, and retest before enforcing. |
+| **SCIM test connection fails** | Tenant URL, bearer token, SCIM endpoint, token owner, or IdP provisioning mode is incorrect. | Regenerate the SCIM token from the correct GitHub setup/admin account, paste the exact tenant URL, and confirm the IdP provisioning test succeeds before assigning users. |
+| **Provisioned users are missing from GitHub** | Users or groups are not assigned to the IdP app, attribute mappings fail, or provisioning cycles have not completed. | Review IdP provisioning logs, fix mapping errors, assign a small pilot group, and wait for the next incremental provisioning cycle. |
+| **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
+| **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
+
+---
 
 ## ❓ Common Questions & Troubleshooting
 
@@ -537,3 +562,7 @@ _Last updated: February 2026_
 - [About identity and access management with SAML single sign-on - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-identity-and-access-management-with-saml-single-sign-on)
 - [Configuring SAML SSO and SCIM using Okta - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/configuring-saml-single-sign-on-and-scim-using-okta)
 - [About SCIM for organizations - GitHub Docs](https://docs.github.com/en/organizations/managing-saml-single-sign-on-for-your-organization/about-scim-for-organizations)
+
+---
+
+*Last updated: April 2026*

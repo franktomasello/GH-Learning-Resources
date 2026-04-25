@@ -11,8 +11,19 @@
 - **Identity:** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM (EMU) or SAML SSO (Standard)
 - **Governance:** Enterprise → Settings → Policies → Set repo visibility defaults, rulesets, Actions policies, PAT policies, App policies
 - **Security:** Org → Settings → Advanced Security → Configurations → Apply recommended config (secret scanning + push protection + CodeQL)
-- **Billing:** Enterprise → Billing → Payment information → Connect Azure subscription → Create cost centers → Set budgets with alerts
+- **Billing:** Enterprise → Billing and licensing → Payment information → Connect Azure subscription → Create cost centers → Set budgets with alerts
 - **Copilot:** Enterprise → AI controls → Copilot → Enable access → Configure models, content exclusions, custom instructions
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -230,7 +241,7 @@ Organization → Security (sidebar) → Assessments
   → Get started → For all repositories (or Configure in settings)
 ```
 
-> 💡 **Tip:** Use the Organization-level Security Configurations to apply consistent security settings across all repos. See the [GitHub Secret Protection Enablement Runbook](GitHub%20Secret%20Protection%20Enablement%20Runbook.md) for detailed steps.
+> 💡 **Tip:** Use the Organization-level Security Configurations to apply consistent security settings across all repos. See the [GitHub Secret Protection Enablement Runbook](../Security/Secret%20Protection%20Enablement.md) for detailed steps.
 
 ---
 
@@ -279,7 +290,7 @@ Organization → Settings → Advanced Security → Configurations
 **Navigation:**
 
 ```
-Enterprise → Settings → Billing → Payment information
+Enterprise → Billing and licensing → Payment information
   → Connect Azure subscription (or configure EA billing)
 ```
 
@@ -292,8 +303,8 @@ Enterprise → Settings → Billing → Payment information
 **Navigation:**
 
 ```
-Enterprise → Settings → Billing → Cost centers
-  → Create cost center → Name → Assign organizations or users
+Enterprise → Billing and licensing → Cost centers
+  → New cost center → Name → Assign organizations, repositories, or users
 ```
 
 | Cost Center Example | Assigned To |
@@ -304,13 +315,13 @@ Enterprise → Settings → Billing → Cost centers
 
 ---
 
-### C) Set Budgets and Spending Limits
+### C) Set Budgets and Hard Stops
 
 **Navigation:**
 
 ```
-Enterprise → Settings → Billing → Budgets
-  → Create budget → Set amount → Assign to cost center
+Enterprise → Billing and licensing → Budgets and alerts
+  → New budget → Set amount → Assign to cost center
     → Configure alerts (50%, 75%, 100% thresholds)
 ```
 
@@ -325,7 +336,7 @@ Enterprise → Settings → Billing → Budgets
 **Navigation:**
 
 ```
-Enterprise → Settings → AI controls → Copilot → Access
+Enterprise → AI controls → Copilot → Access
   → Enable for: All organizations / Selected organizations
     → Assign seats: All members / Selected members
 ```
@@ -337,7 +348,7 @@ Enterprise → Settings → AI controls → Copilot → Access
 **Navigation:**
 
 ```
-Enterprise → Settings → AI controls → Copilot → Models
+Enterprise → AI controls → Copilot → Models
   → Enable or disable specific models
 ```
 
@@ -348,7 +359,7 @@ Enterprise → Settings → AI controls → Copilot → Models
 **Navigation:**
 
 ```
-Enterprise → Settings → AI controls → Copilot → Content exclusions
+Enterprise → AI controls → Copilot → Content exclusions
   → Add exclusion rules (by repository or file path patterns)
 ```
 
@@ -361,7 +372,7 @@ Enterprise → Settings → AI controls → Copilot → Content exclusions
 **Navigation:**
 
 ```
-Enterprise → Settings → AI controls → Copilot → Custom instructions
+Enterprise → AI controls → Copilot → Custom instructions
   → Add coding guidelines, style rules, or organizational standards
 ```
 
@@ -383,9 +394,24 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 | 8 | **Code scanning active** | Open a PR with a known vulnerability pattern | CodeQL flags the issue |
 | 9 | **Copilot available** | Open VS Code with Copilot extension, sign in | Copilot provides suggestions |
 | 10 | **Billing connected** | Check Enterprise → Billing | Azure subscription or EA is active, usage is tracked |
-| 11 | **Cost centers reporting** | Check Enterprise → Billing → Cost centers | Usage is allocated to the correct cost centers |
+| 11 | **Cost centers reporting** | Check Enterprise → Billing and licensing → Cost centers | Usage is allocated to the correct cost centers |
 
 > ✅ **Result:** If all validation steps pass, your GitHub Enterprise Cloud environment is scaffolded and ready for onboarding teams.
+
+## 🧯 Known Errors & Resolutions
+
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **SAML test fails with NameID, recipient, audience, or signature errors** | Required SAML attributes, ACS URL, Entity ID, certificate, clock sync, or signing algorithm do not match GitHub requirements. | Compare every SAML value with the GitHub settings page, send a stable email/NameID, use SHA-256 signing, refresh the certificate, and retest before enforcing. |
+| **SCIM test connection fails** | Tenant URL, bearer token, SCIM endpoint, token owner, or IdP provisioning mode is incorrect. | Regenerate the SCIM token from the correct GitHub setup/admin account, paste the exact tenant URL, and confirm the IdP provisioning test succeeds before assigning users. |
+| **Provisioned users are missing from GitHub** | Users or groups are not assigned to the IdP app, attribute mappings fail, or provisioning cycles have not completed. | Review IdP provisioning logs, fix mapping errors, assign a small pilot group, and wait for the next incremental provisioning cycle. |
+| **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
+| **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
 
 ---
 
@@ -422,7 +448,7 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 ---
 
 ### Q: How should we handle cost allocation across multiple business units?
-**A:** Use GitHub's Cost Centers feature (Enterprise > Billing > Cost centers). Create a cost center for each business unit or department and assign organizations or specific user groups to each. This allows you to track and allocate metered usage (Copilot, Actions, Packages, GHAS) per cost center. Set spending budgets with alerts at 50%, 75%, and 100% thresholds to prevent surprise overages.
+**A:** Use GitHub's Cost Centers feature (Enterprise > Billing and licensing > Cost centers). Create a cost center for each business unit or department and assign the organizations, repositories, or users that should carry that spend. User-scoped cost centers are especially useful for Copilot seats and premium requests; repository-scoped cost centers are useful for repository-driven metered usage such as Actions. Set budgets with alerts at 50%, 75%, and 100% thresholds to prevent surprise overages.
 
 ---
 
@@ -446,7 +472,7 @@ Enterprise → Settings → AI controls → Copilot → Custom instructions
 ## 📝 Resources
 
 - [About GitHub Enterprise Cloud](https://docs.github.com/en/enterprise-cloud@latest/admin/overview/about-github-enterprise-cloud)
-- [Setting up your enterprise](https://docs.github.com/en/enterprise-cloud@latest/admin/setting-up-your-enterprise)
+- [Getting started with GitHub Enterprise Cloud](https://docs.github.com/en/get-started/onboarding/getting-started-with-github-enterprise-cloud)
 - [Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users)
 
 ---

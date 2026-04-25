@@ -1,4 +1,4 @@
-# 🚚 Migration to GitHub (GEI & Actions Importer) Runbook
+# 🚚 GitHub Migration with GEI & Actions Importer Runbook
 
 > **Complete guide to migrating repositories, CI/CD pipelines, and history to GitHub using GitHub Enterprise Importer (GEI), Actions Importer, and git mirror push**
 
@@ -13,6 +13,17 @@
 - **Migrate single repo:** `gh gei migrate-repo --source-repo "repo" --github-target-org "Org"`
 - **Install Actions Importer:** `gh extension install github/gh-actions-importer`
 - **Reclaim mannequins:** `gh gei reclaim-mannequin --github-target-org "Org" --csv`
+
+---
+
+## ✅ Accuracy & Click-Path Notes
+
+- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
+- When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
+- If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
 
 ---
 
@@ -323,6 +334,21 @@ gh gei reclaim-mannequin \
 | Revoke source PATs | Remove migration credentials |
 | Decommission old platform | After confirmation period |
 
+## 🧯 Known Errors & Resolutions
+
+> This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
+
+| Error or symptom | Likely cause | Resolution |
+|------------------|--------------|------------|
+| **Page, tab, or button is missing** | Wrong account context, missing admin role, unavailable plan/add-on, or feature rollout not enabled for the selected enterprise/org/repo. | Switch to the correct account and scope, confirm the prerequisite role, verify licensing or add-on activation, then refresh the page. If the control is still absent, use the direct settings URL from the relevant GitHub Docs page and confirm the feature is available for your plan. |
+| **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
+| **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
+| **401, 403, missing permissions, or SAML enforcement error** | The source or target token lacks required scopes/roles or has not been authorized for a SAML-protected organization. | Upgrade the GEI or Actions Importer CLI extension, create tokens with the required scopes, authorize them for SSO, and verify source/target org ownership or migrator roles. |
+| **404 Not Found during migration** | The source URL, org slug, repo name, API endpoint, or target org is wrong or inaccessible. | Copy the exact source and target slugs from the UI, verify the API URL for GHE.com or GHES, and run a small pilot migration before the production batch. |
+| **Archive generation failed, timeout, or large repository failure** | Repository size, LFS objects, unreachable source storage, or transient source export failure. | Retry once with the latest CLI, inspect the verbose migration log, reduce repository size where possible, and migrate a comparable repository to isolate source-specific data issues. |
+| **Mannequin or placeholder users remain after migration** | Source identities were not mapped to GitHub users during migration. | Export mannequins, build an owner-approved mapping file, reclaim mannequins to the correct target accounts, and document any intentionally unmapped identities. |
+| **Actions Importer output is invalid or incomplete** | The source pipeline uses tasks, service connections, templates, or approvals that do not have a direct Actions equivalent. | Use audit and dry-run output, manually rewrite unsupported tasks, recreate secrets/environments/service connections, and test generated workflows in a branch before cutover. |
+
 ---
 
 ## ❓ Common Questions & Troubleshooting
@@ -370,7 +396,7 @@ gh gei reclaim-mannequin \
 ## 📚 Resources
 
 - [GitHub Enterprise Importer Documentation](https://docs.github.com/en/migrations/using-github-enterprise-importer)
-- [GitHub Actions Importer Documentation](https://docs.github.com/en/actions/migrating-to-github-actions/using-github-actions-importer)
+- [GitHub Actions Importer Documentation](https://docs.github.com/en/actions/tutorials/migrate-to-github-actions/automated-migrations/azure-devops-migration)
 
 ---
 
