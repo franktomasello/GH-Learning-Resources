@@ -34,11 +34,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **GitHub:** Sign in as `SHORT-CODE_admin` → Enterprise → Identity provider → Single sign-on → Enable OIDC configuration → Save (redirects to Entra)
+- **GitHub:** Sign in as `SHORTCODE_admin` → Enterprise → Identity provider → Single sign-on → Enable OIDC configuration → Save (redirects to Entra)
 - **Entra ID:** Sign in as Global Admin → Consent on behalf of organization → Accept (auto-creates the OIDC Enterprise App)
-- **SCIM:** As `SHORT-CODE_admin`, generate PAT with `scim:enterprise` scope → Entra App → Provisioning → Automatic → Enter Tenant URL + token → Test Connection
-- **Billing:** Enterprise → Billing and licensing → Payment information → Add Azure Subscription → Accept → Connect
-- **Copilot:** Enterprise → AI controls → Copilot → Enable access → Org Settings → Copilot → Access → Assign seats
+- **SCIM:** As `SHORTCODE_admin`, generate PAT with `scim:enterprise` scope → Entra App → Provisioning → Automatic → Enter Tenant URL + token → Test Connection
+- **Billing:** Enterprise → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription → Accept → Connect
+- **Copilot:** Enterprise → AI controls → Copilot → Enable access → (assign seats at Org → Settings → Copilot → Access, or directly at Enterprise → Billing & Licensing → Licensing)
 
 ---
 
@@ -48,7 +48,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub and Microsoft documentation in July 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -74,11 +74,14 @@
 
 ### People & Permissions
 
-| Role | Required Permissions |
-|------|---------------------|
-| **GitHub** | Access to the setup user (`@SHORT-CODE_admin`) email to set the initial password |
-| **Microsoft Entra ID** | A **Global Administrator** to consent to the "GitHub Enterprise Managed User (OIDC)" app during SSO setup |
-| **Azure Billing** | A user who can provide **tenant-wide admin consent** AND has **Owner** rights on the target Azure Subscription |
+| Requirement | Who / Role needed | ✓ |
+|------|---------------------|:--:|
+| **GitHub enterprise access** | Access to the setup user (`@SHORTCODE_admin`) email to set the initial password. The setup user is a GitHub **enterprise owner**. | ☐ |
+| **Entra OIDC consent** | A Microsoft Entra **Global Administrator** to consent to the "GitHub Enterprise Managed User (OIDC)" app during SSO setup | ☐ |
+| **Entra SCIM provisioning** | Microsoft Entra **Application Administrator, Cloud Application Administrator, or Application Owner** (of the OIDC app) to configure provisioning and assignments | ☐ |
+| **GitHub billing connection** | A GitHub **enterprise owner** to start the Azure metered billing connection | ☐ |
+| **Azure billing** | A user with **Owner** permission on the target Azure Subscription **AND** able to provide **tenant-wide admin consent** (or coordinate with a Global Administrator) | ☐ |
+| **GitHub Copilot** | A GitHub **enterprise owner** to manage Copilot access, policies, and seats | ☐ |
 
 > ⚠️ **Important:** Being an Entra Global Admin alone is **not sufficient** for the billing step. You must also have Owner permissions on the specific Azure Subscription resource.
 
@@ -106,10 +109,10 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub EMU setup user (`SHORT-CODE_admin`)** | Starts OIDC SSO from GitHub and creates the SCIM token. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → OIDC single sign-on → Enable OIDC configuration → Save → complete Entra redirect. For SCIM: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → select `scim:enterprise` → Generate token. Handoff: SCIM token and Tenant URL. |
+| **GitHub EMU setup user (`SHORTCODE_admin`)** | Starts OIDC SSO from GitHub and creates the SCIM token. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → OIDC single sign-on → Enable OIDC configuration → Save → complete Entra redirect. For SCIM: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic) → select `scim:enterprise` → Generate token. Handoff: SCIM token and Tenant URL. |
 | **Microsoft Entra Global Administrator** | Consents to the GitHub Enterprise Managed User (OIDC) application. | During the GitHub redirect, sign in as Global Administrator → review Permissions requested → Consent on behalf of your organization if shown → Accept. If consent is blocked: Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub Enterprise Managed User (OIDC)] → Review permissions and consent → Approve. Handoff: OIDC enterprise app exists and consent is granted. |
-| **Microsoft Entra Cloud Application Administrator or Application Administrator** | Configures SCIM provisioning and app assignments after OIDC consent. | Microsoft Entra admin center → Entra ID → Enterprise apps → GitHub Enterprise Managed User (OIDC) → Provisioning → New configuration or Get started → Provisioning Mode: Automatic → Admin Credentials → Tenant URL and Secret Token → Test Connection → Create or Save → Users and groups → Add user/group → Assign → Provisioning → Start provisioning. Handoff: successful test connection, assigned pilot group, and provisioning logs. |
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **Microsoft Entra Application Administrator, Cloud Application Administrator, or Application Owner** | Configures SCIM provisioning and app assignments after OIDC consent. | Microsoft Entra admin center → Entra ID → Enterprise apps → GitHub Enterprise Managed User (OIDC) → Provisioning → + New configuration (older tenants: Get started, Provisioning Mode: Automatic) → Admin Credentials → Tenant URL and Secret Token → Test Connection → Create (older UI: Save) → Users and groups → Add user/group → Assign → Provisioning → Start provisioning. Handoff: successful test connection, assigned pilot group, and provisioning logs. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -117,17 +120,20 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 1️⃣ Create/Secure the EMU Setup User
 
-*The setup user (`@SHORT-CODE_admin`) is the only local account that can bypass SSO in emergencies.*
+*The setup user (`@SHORTCODE_admin`) is the only local account that can bypass SSO in emergencies.*
+
+**👤 Role:** EMU setup user (`SHORTCODE_admin`) · **📍 Portal:** GitHub
+
+**Navigate:** Profile photo → **Settings** → **Password and authentication**
 
 ### Steps
 
-1. Open the "setup user invite" email in a **private/incognito browser window**
-2. Set a strong password (store in secure vault)
-3. **Immediately enable 2FA:**
-   - Navigate to: Profile picture → **Settings** → **Password and authentication**
-   - Configure a TOTP app (recommended) or other 2FA method
-   - Download and securely store your **personal 2FA recovery codes**
-4. Store credentials in a secure company vault (e.g., 1Password, LastPass, Azure Key Vault)
+1. Open the "setup user invite" email in a **private/incognito browser window**.
+2. Set a strong password (store in a secure vault).
+3. **Immediately enable 2FA:** go to Profile photo → **Settings** → **Password and authentication**, configure a TOTP app (recommended) or other 2FA method, then **Download** and securely store your **personal 2FA recovery codes**.
+4. Store credentials in a secure company vault (e.g., 1Password, LastPass, Azure Key Vault).
+
+> 🔐 **Note on the shortcode:** The username is your enterprise **shortcode** + `_admin` (e.g., `octocorp_admin`). The shortcode is chosen (or randomly assigned) at creation and **cannot be changed later**.
 
 > ⚠️ **Critical (January 2025 Change):** All subsequent logins for the setup user require either a successful 2FA challenge OR use of an enterprise recovery code. If you do not save your enterprise recovery codes (generated in Step 3), you will be locked out.
 
@@ -137,13 +143,11 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 2️⃣ Create the SCIM Token
 
-*This token allows Microsoft Entra ID to provision users to GitHub via SCIM.*
+*This token allows Microsoft Entra ID to provision users to GitHub via SCIM. It must be created while signed in as the setup user, who is an enterprise owner.*
 
-### Navigation (GitHub)
+**👤 Role:** EMU setup user (`SHORTCODE_admin`) · **📍 Portal:** GitHub
 
-```
-Profile Picture → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)
-```
+**Navigate:** Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**
 
 ### Token Configuration
 
@@ -153,8 +157,8 @@ Profile Picture → Settings → Developer settings → Personal access tokens �
 | **Expiration** | **No expiration** ⚠️ If this expires, provisioning stops entirely |
 | **Scopes** | Select **only** `scim:enterprise` |
 
-1. Click **Generate token**
-2. **Copy the token immediately** — you cannot view it again
+1. Click **Generate token**.
+2. **Copy the token immediately** — it is shown only once and cannot be viewed again.
 
 > 📝 **Store this token securely.** You will need it when configuring provisioning in Microsoft Entra ID (Step 4).
 
@@ -164,31 +168,28 @@ Profile Picture → Settings → Developer settings → Personal access tokens �
 
 *Connects identity so users can authenticate via your IdP.*
 
-### Navigation (GitHub)
+**👤 Role:** EMU setup user (`SHORTCODE_admin`), then Entra **Global Administrator** · **📍 Portal:** GitHub → Microsoft Entra
 
-```
-Profile Picture → Your enterprises → Select enterprise → Identity provider tab → Single sign-on configuration
-```
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
-### Steps
+### Steps (in GitHub)
 
-1. Under "OIDC single sign-on", select **Enable OIDC configuration**
-2. Click **Save** — you will be redirected to Microsoft
+1. Under **OIDC single sign-on**, select **Enable OIDC configuration**.
+2. Click **Save** — GitHub redirects you to Microsoft Entra.
 
 ### In Microsoft Entra ID (during redirect)
 
-3. Sign in as a user with **Global Administrator** rights
-4. Review the permissions requested for "GitHub Enterprise Managed Users with OIDC"
-5. ✅ Check **"Consent on behalf of your organization"**
-6. Click **Accept**
+3. Sign in as a user with **Global Administrator** rights.
+4. Review the permissions requested for the **GitHub Enterprise Managed User (OIDC)** application.
+5. Enable **Consent on behalf of your organization**.
+6. Click **Accept**.
 
 ### Back in GitHub
 
-7. **Save your Enterprise Recovery Codes:**
-   - Click **Download**, **Print**, or **Copy**
-   - Store these securely — they are separate from your personal 2FA codes
-   - These codes allow emergency access if your IdP becomes unavailable
-8. Click **Enable OIDC Authentication**
+7. **Save your enterprise recovery codes:** click **Download**, **Print**, or **Copy**. Store them securely — they are separate from your personal 2FA codes and allow emergency access if your IdP becomes unavailable.
+8. Click **Enable OIDC Authentication**.
+
+> 💡 **Why OIDC:** OIDC supports Microsoft Entra **Conditional Access**, which SAML does not pass to GitHub. After consent, a **GitHub Enterprise Managed User (OIDC)** enterprise app appears in the tenant; you configure SCIM provisioning on that same app (Step 4).
 
 > ✅ **Verification:** After completing this step, the setup user can still access the enterprise using their local credentials, but all other users will authenticate via Entra ID.
 
@@ -209,19 +210,22 @@ Profile Picture → Your enterprises → Select enterprise → Identity provider
 
 ### 4B) Configure Microsoft Entra ID
 
-1. Go to [entra.microsoft.com](https://entra.microsoft.com/) → **Enterprise applications**
-2. Select **GitHub Enterprise Managed User (OIDC)** (created automatically during Step 3)
-3. Click the **Provisioning** tab → **Get started**
-4. Set **Provisioning Mode** to **Automatic**
-5. Under **Admin Credentials**:
+**👤 Role:** Entra **Application Administrator, Cloud Application Administrator, or Application Owner** · **📍 Portal:** Microsoft Entra
+
+**Navigate:** Microsoft Entra admin center → **Entra ID** → **Enterprise apps** → **GitHub Enterprise Managed User (OIDC)** → **Provisioning**
+
+1. In the Microsoft Entra admin center, open **Enterprise apps**.
+2. Select **GitHub Enterprise Managed User (OIDC)** (created automatically during Step 3).
+3. Click the **Provisioning** tab, then click **+ New configuration** (older tenants show **Get started** and a **Provisioning Mode** dropdown — set it to **Automatic**).
+4. Under **Admin Credentials**, enter:
 
 | Field | Value |
 |-------|-------|
 | **Tenant URL** | Your URL from Step 4A |
 | **Secret Token** | The PAT created in Step 2 |
 
-6. Click **Test Connection** — must show success ✅
-7. Click **Save**
+5. Click **Test Connection** — must show success ✅.
+6. Click **Create** (older UI: **Save**).
 
 ### 4C) Configure Provisioning Settings
 
@@ -234,10 +238,12 @@ Click **Save**
 
 ### 4D) Assign Users and Groups
 
-1. Go to **Users and groups** tab in the Entra application
-2. Click **Add user/group**
-3. Add a test user or pilot group
-4. For users who need Enterprise Owner role, set the **Role** attribute accordingly
+1. Go to the **Users and groups** tab in the Entra application.
+2. Click **Add user/group**.
+3. Add a test user or pilot group, then click **Assign**.
+4. For users who need the enterprise owner role, assign the app role **Enterprise Owner** (via app role assignment). Assign at least one user this role so a managed admin exists.
+
+> 📌 **Constraint:** Role-based (app role) assignment requires the provisioning **Scope** to be **Sync only assigned users and groups** (set in Step 4C).
 
 ### 4E) Initial Sync
 
@@ -301,25 +307,25 @@ Click **Create team**
 
 *Required for metered billing: Copilot, Actions minutes, Packages storage, GHAS, and Codespaces.*
 
+**👤 Role:** GitHub **enterprise owner** (in GitHub) + Azure **subscription Owner** with tenant-wide admin consent (in Microsoft) · **📍 Portal:** GitHub → Microsoft
+
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Billing & Licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**
+
 ### Prerequisites Check
 
+- [ ] You are a GitHub **enterprise owner** (a billing manager cannot connect a subscription)
 - [ ] Tenant-wide admin consent capability in Azure
-- [ ] Owner permissions on the target Azure Subscription
-
-### Navigation
-
-```
-Enterprise → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription
-```
+- [ ] **Owner** permission on the target Azure Subscription
 
 ### Azure Connection Flow
 
-1. Sign in with your Microsoft account
-2. Review the **"Permissions requested"** prompt
-3. Click **Accept**
-4. Under **"Select a subscription"**, choose the Azure Subscription ID
-5. Check the confirmation box
-6. Click **Connect**
+1. Click **Add Azure Subscription**.
+2. Sign in with your Microsoft account.
+3. Review the **Permissions requested** prompt.
+4. Click **Accept**.
+5. Under **Select a subscription**, choose the Azure Subscription.
+6. Check the confirmation box.
+7. Click **Connect**.
 
 > ⚠️ **Troubleshooting:** If you see "You need admin approval" instead of the permissions prompt, work with your Azure AD Global Administrator to grant consent or configure an [admin consent workflow](https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/configure-admin-consent-workflow).
 
@@ -332,14 +338,17 @@ Enterprise → Billing and licensing → Payment information → Metered billing
 
 ## 8️⃣ Enable Copilot & Assign Seats
 
-*Two methods available: Organization Teams (traditional) or Enterprise Teams (public preview)*
+*Copilot plans referenced here are **Copilot Business** and **Copilot Enterprise**. You can assign seats via organization teams (traditional) or directly at the enterprise level.*
+
+> ✅ **GA status (verified):** Managing **Copilot Business at the enterprise level is generally available (GA)** since 2025-10-28. Enterprise owners can assign Copilot Business licenses directly at the enterprise account — to individual users and/or to enterprise teams — without granting organization access. Only **enterprise teams** (the membership construct) remain in **public preview**. A user assigned via multiple sources still consumes only **one** license (highest tier).
 
 ### Phase A: Enable Copilot at Enterprise Level
 
-**Navigation:**
-```
-Enterprise → AI controls → Copilot
-```
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **AI controls** → **Copilot**
+
+> 📌 **Constraint:** **AI controls** is a **top-of-page tab** on the enterprise account, not an item under **Settings**.
 
 **Configuration:**
 
@@ -350,36 +359,33 @@ Enterprise → AI controls → Copilot
 | **Copilot Chat** | Enable for full functionality |
 | **Copilot in the CLI** | Enable as needed |
 
-Click **Save**
+Click **Save**.
 
-> ⚠️ **Important:** If this policy is not enabled, you cannot assign Copilot seats at the organization level.
+> ⚠️ **Important:** If access is not enabled here, you cannot assign Copilot seats at the organization level.
 
 ### Phase B: Assign Seats
 
 #### Option 1: Via Organization Teams (Traditional Method)
 
-**Navigation:**
-```
-Organization → Settings → Copilot → Access
-```
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-1. Click **Allow this organization to assign seats**
-2. Click **Start adding seats**
-3. Select **Purchase for selected members**
-4. Select the team created in Step 6
-5. Click **Continue to purchase** → **Purchase seats**
+**Navigate:** Profile photo → **Your organizations** → *[organization]* → **Settings** → **Copilot** → **Access**
 
-#### Option 2: Via Enterprise Teams (Public Preview)
+1. Click **Allow this organization to assign seats**.
+2. Click **Start adding seats**.
+3. Select **Purchase for selected members**.
+4. Select the team created in Step 6.
+5. Click **Continue to purchase** → **Purchase seats**.
 
-*Allows assigning Copilot licenses at the enterprise level, without requiring organization membership.*
+#### Option 2: Directly at the Enterprise Level
 
-**Navigation:**
-```
-Enterprise → People → Enterprise teams → [Create/Select team]
-Enterprise → Billing and licensing → Licensing → Copilot Business → Add seats → Add enterprise teams
-```
+*Assign Copilot Business licenses directly at the enterprise account (GA) — to individual users and/or to enterprise teams — without requiring organization membership. Enterprise **teams** as a membership construct are still in public preview.*
 
-> 💡 **When to use Enterprise Teams:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business** → **Add seats**
+
+> 💡 **When to assign at the enterprise level:**
 > - Users who need Copilot but not full GitHub Enterprise Cloud licenses
 > - Simplified management for large enterprises
 > - Direct IdP group synchronization at enterprise level
@@ -404,7 +410,7 @@ Run through these checks to confirm successful setup:
 | **OIDC SSO** | Have a provisioned user attempt to sign in | Redirects to Entra ID, successfully authenticates |
 | **SCIM Provisioning** | Check Enterprise → People tab | Test users appear with `_shortcode` suffix |
 | **Group Sync** | Check Organization → Teams | IdP group members appear in linked team |
-| **Azure Billing** | Enterprise → Billing and licensing → Payment information | Azure Subscription ID displayed |
+| **Azure Billing** | Enterprise → Billing & Licensing → Payment information | Azure Subscription ID displayed |
 | **Copilot Access** | User opens VS Code with GitHub Copilot extension | Copilot icon active, suggestions working |
 
 ### Troubleshooting Quick Reference
@@ -414,7 +420,7 @@ Run through these checks to confirm successful setup:
 | Users not provisioning | SCIM token expired or invalid | Regenerate PAT with `scim:enterprise` scope |
 | SSO redirect fails | Entra app misconfigured | Verify OIDC app settings in Entra admin center |
 | "Admin approval required" for Azure | Insufficient Azure AD permissions | Request tenant-wide admin consent |
-| Copilot not activating | Policy not enabled at enterprise level | Enable in Enterprise → Policies → Copilot |
+| Copilot not activating | Policy not enabled at enterprise level | Enable access at Enterprise → **AI controls** → **Copilot** |
 | Team membership not syncing | Nested groups in Entra | Flatten group structure or add users directly |
 
 ## 🧯 Known Errors & Resolutions
@@ -534,7 +540,8 @@ Run through these checks to confirm successful setup:
 | Date | Version | Changes |
 |------|---------|----------|
 | December 2025 | 2.0 | Verified against current documentation; updated OIDC navigation path; clarified Azure permissions; added Enterprise Teams option for Copilot; fixed source references |
+| July 2026 | 2.1 | Verified all click paths, roles, and SSO/SCIM/billing/Copilot steps against current GitHub, Microsoft Entra, Okta, and Ping docs; standardized formatting. |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: July 2026*

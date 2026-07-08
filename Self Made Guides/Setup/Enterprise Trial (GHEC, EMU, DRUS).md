@@ -30,10 +30,12 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Start trial:** Browse to `github.com/enterprise/trial` → Sign in → Choose trial type (Standard GHEC / EMU / DRUS) → Enter enterprise name → Create enterprise
+- **Start trial:** Browse to `github.com/enterprise/trial` → Sign in → Choose trial type (Standard GHEC / EMU / DRUS) → Enter enterprise name → **Create enterprise**
 - **Activate:** Open setup email within 7 days → Click activation link → Complete on-screen prompts
-- **IdP (EMU/DRUS only):** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM before inviting users
-- **Add-ons:** Contact your GitHub SE/CSM to request Copilot Business (50 seats) or GHAS trial add-ons
+- **IdP (EMU/DRUS only):** Profile photo → **Your enterprises** → *[enterprise]* → **Identity provider** → **Single sign-on configuration** → configure SAML/OIDC + SCIM before inviting users
+- **Standard GHEC SSO (optional):** Enterprise or Organization → **Settings** → **Authentication security** → **SAML single sign-on** (Standard GHEC only — not EMU/DRUS)
+- **Add-ons:** Contact your GitHub SE/CSM to request a Copilot Business trial allotment (commonly up to 50 seats — confirm current terms with your GitHub account team) or a GHAS trial add-on
+- **Copilot seats:** Enterprise → **AI controls** → **Copilot**
 - **Extend:** Request extension before day 25 → Contact GitHub SE/CSM/Sales
 
 ---
@@ -44,7 +46,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub and Microsoft documentation in July 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -74,8 +76,8 @@ Use this table to assign provider-side work before following the numbered steps.
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
 | **GitHub trial requester or enterprise owner** | Starts the trial and decides which identity model will be tested. | GitHub Enterprise trial page or GitHub sales-provided setup link → enter organization and enterprise details → select Standard GHEC, EMU, DRUS/GHE.com as applicable → complete setup email → GitHub → profile photo → Your enterprises → [trial enterprise]. Handoff: enterprise URL, trial type, and setup user invitation. |
-| **Microsoft Entra, Okta, or PingFederate admin** | Completes the provider-side app setup for EMU or DRUS trials. | Entra: Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Single sign-on and Provisioning. Okta: Okta Admin Console → Applications → Browse App Catalog → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Sign On and Provisioning. PingFederate: Administrative Console → Applications → SP Connections → GitHub EMU Connector or GitHub SAML SP connection → Browser SSO and Outbound Provisioning. Handoff: SSO values, SCIM status, and pilot group. |
-| **Azure subscription Owner and Microsoft Entra consent approver, if testing Azure billing** | Provides the subscription and consent needed for metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner. Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then Microsoft sign-in → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
+| **Microsoft Entra, Okta, or PingFederate admin** | Completes the provider-side app setup for EMU or DRUS trials. | Entra: Microsoft Entra admin center → **Entra ID** → **Enterprise apps** → **New application** → **GitHub Enterprise Managed User** (SAML) or **GitHub Enterprise Managed User (OIDC)** → **Single sign-on** and **Provisioning**. Okta: Okta Admin Console → **Applications** → **Browse App Catalog** → **GitHub Enterprise Managed User** (github.com) or **GitHub Enterprise Managed User - GHE.com** (DRUS) → **Sign On** and **Provisioning**. PingFederate: Administrative Console → **Applications** → **SP Connections** → GitHub EMU SP connection → **Browser SSO** and **Outbound Provisioning**. GitHub-side SSO values are set at Profile photo → **Your enterprises** → *[enterprise]* → **Identity provider** → **Single sign-on configuration**. Handoff: SSO values, SCIM status, and pilot group. |
+| **Azure subscription Owner and Microsoft Entra consent approver, if testing Azure billing** | Provides the subscription and consent needed for metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner. Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then Microsoft sign-in → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
 
 ---
 
@@ -93,18 +95,14 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 
 ## 1️⃣ Start the Trial
 
-### Navigate to the Trial Page
+**👤 Role:** GitHub trial requester (becomes enterprise owner) · **📍 Portal:** GitHub
 
-**Navigation:**
-
-```
-Browser → https://github.com/enterprise/trial
-```
+**Navigate:** Browser → `https://github.com/enterprise/trial`
 
 **Steps:**
 
-1. Click **Start a free trial**
-2. Sign in with an existing GitHub account (or create one)
+1. Click **Start a free trial**.
+2. Sign in with an existing GitHub account (or create one).
 3. Choose your trial type:
 
 | Option | What You Get |
@@ -113,22 +111,25 @@ Browser → https://github.com/enterprise/trial
 | **Enterprise Managed Users** | EMU enterprise — all accounts provisioned via IdP |
 | **Enterprise Managed Users with Data Residency** | DRUS — EMU with US data residency |
 
-4. Enter your **enterprise name** (this becomes your enterprise slug)
-5. Click **Create enterprise**
+4. Enter your **enterprise name** (this becomes your enterprise slug).
+5. Click **Create enterprise**.
 
 > ✅ **Result:** A setup email is sent to the email address associated with your GitHub account.
+> 📌 **Constraint:** The enterprise slug is globally unique and **cannot be changed** after creation.
 
 ---
 
 ## 2️⃣ Complete the Setup Email
 
+**👤 Role:** GitHub trial requester · **📍 Portal:** GitHub (email + browser)
+
 > ⚠️ **Important:** The setup link in the email expires after **7 days**. If it expires, you must restart the trial process.
 
 **Steps:**
 
-1. Open the setup email from GitHub
-2. Click the activation link
-3. Follow the on-screen prompts to finalize enterprise creation
+1. Open the setup email from GitHub.
+2. Click the activation link.
+3. Follow the on-screen prompts to finalize enterprise creation.
 
 > ✅ **Result:** Your enterprise is created and you are the enterprise owner.
 
@@ -136,60 +137,59 @@ Browser → https://github.com/enterprise/trial
 
 ## 3️⃣ Configure Identity Provider (EMU & DRUS Only)
 
+**👤 Role:** GitHub **setup user** (`SHORTCODE_admin`, an enterprise owner) · **📍 Portal:** GitHub + your IdP (Entra / Okta / Ping)
+
 > ⚠️ **Prerequisite:** For EMU and DRUS trials, you **must** configure SCIM provisioning and SAML/OIDC in your IdP **before** inviting any users.
+> 📌 **Constraint:** EMU and DRUS use the **Identity provider** path below — **not** `Settings → Authentication security` (that path is for Standard GHEC only, see Step 4). EMU has **no** "Require SAML authentication" checkbox and no backup username/password sign-in.
 
-### A) Configure SAML/OIDC Single Sign-On
+### A) Configure SAML Single Sign-On (EMU/DRUS)
 
-**Navigation:**
-
-```
-Enterprise → Settings → Authentication security
-  → SAML single sign-on → Configure
-```
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
 **Steps:**
 
-1. Enter your IdP's **Sign on URL**, **Issuer**, and **Public certificate**
-2. Test the SAML configuration
-3. Enable SAML SSO
+1. Under **SAML single sign-on**, click **Add SAML configuration**.
+2. Enter your IdP's **Sign on URL**, **Issuer**, and **Public Certificate**, then choose the **Signature Method** and **Digest Method** (SHA-256 recommended).
+3. Click **Test SAML configuration** — this must pass before you can save.
+4. Click **Save SAML settings**.
+5. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
+
+> 🔐 **Security-critical:** The SSO recovery codes are your break-glass access if the IdP is unavailable. Store them in your secrets manager before leaving this page.
+> 💡 **OIDC (Entra only):** Instead of SAML, you can select **Enable OIDC configuration** under **OIDC single sign-on**, click **Save**, consent as a **Global Administrator** with **Consent on behalf of your organization**, save the recovery codes, then click **Enable OIDC Authentication**. OIDC additionally passes Microsoft Entra **Conditional Access** to GitHub.
 
 ### B) Configure SCIM Provisioning
 
 **Steps:**
 
-1. In your IdP (Entra ID, Okta, etc.), configure the GitHub EMU SCIM application
-2. Map required user attributes (username, email, display name)
-3. Assign users and groups in the IdP
-4. Start provisioning — users are created automatically in GitHub
+1. Sign in as the **setup user**, then create the SCIM token: Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** with the **`scim:enterprise`** scope and **No expiration**. Copy it immediately (shown once).
+2. In your IdP (Entra ID, Okta, etc.), configure the GitHub EMU SCIM application using the **Tenant URL** and the token above as the **Secret Token** / **Bearer Token**.
+3. Map required user attributes (username, email, display name).
+4. Assign users and groups in the IdP (use **Sync only assigned users and groups**; assign at least one user the **Enterprise Owner** role so a managed admin exists).
+5. Start provisioning — users are created automatically in GitHub.
 
 > 💡 **Tip:** Do not manually create user accounts in an EMU enterprise. All user lifecycle management flows through SCIM.
+> 📌 **Constraint:** Use **one IdP** for both SSO and SCIM. Mixing IdPs (e.g., Okta for SSO and Entra for SCIM) is not supported.
 
 ---
 
 ## 4️⃣ Configure SAML SSO (Standard GHEC Only)
 
-*For standard GHEC, SAML SSO can be configured at the organization level or the enterprise level. Enterprise-level SAML is also supported and, when configured, overrides any org-level SAML settings.*
+**👤 Role:** GitHub **enterprise owner** or **organization owner** · **📍 Portal:** GitHub
 
-**Navigation (org-level):**
+> 📌 **Constraint:** This step applies to **Standard GHEC only**. EMU and DRUS enterprises use the **Identity provider** path in Step 3, not `Settings → Authentication security`.
 
-```
-Organization → Settings → Authentication security
-  → SAML single sign-on → Enable SAML authentication
-```
+*For Standard GHEC, SAML SSO can be configured at the organization level or the enterprise level. Enterprise-level SAML is also supported and, when configured, overrides any org-level SAML settings.*
 
-**Navigation (enterprise-level — recommended):**
+**Navigate (org-level):** Profile photo → **Your organizations** → *[organization]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
-```
-Enterprise → Settings → Authentication security
-  → SAML single sign-on → Enable SAML authentication
-```
+**Navigate (enterprise-level — recommended):** Profile photo → **Your enterprises** → *[enterprise]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Steps:**
 
-1. Enter your IdP's **Sign on URL**, **Issuer**, and **Public certificate**
-2. Test the SAML configuration
-3. Click **Enable SAML authentication**
-4. (Optional) Check **Require SAML SSO authentication** to enforce for all members
+1. Enter your IdP's **Sign on URL**, **Issuer**, and **Public certificate**.
+2. Test the SAML configuration.
+3. Click **Enable SAML authentication**.
+4. (Optional) Check **Require SAML SSO authentication** to enforce it for all members.
 
 > ✅ **Result:** Organization members must authenticate via your IdP to access org resources.
 
@@ -201,33 +201,29 @@ Enterprise → Settings → Authentication security
 
 ### A) Copilot Business Trial
 
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
 **Steps:**
 
-1. Contact your GitHub Sales representative or Solutions Engineer
-2. Request a Copilot Business trial (up to **50 seats**)
-3. Once activated, assign seats:
+1. Contact your GitHub Sales representative or Solutions Engineer.
+2. Request a Copilot Business trial (commonly a **trial allotment of up to 50 seats** — confirm current terms with your GitHub account team).
+3. Once activated, assign seats.
 
-**Navigation:**
+**Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** → **Copilot** → manage **access** (enable for all orgs / specific orgs) and assign seats
 
-```
-Enterprise → Settings → Copilot → Access management
-  → Enable for specific organizations → Assign seats
-```
+> 💡 **Tip:** **AI controls** is a top-of-page enterprise tab, not under **Settings**. Managing Copilot Business at the enterprise level is generally available; only enterprise **teams** (the membership construct) remain in public preview.
 
 ### B) GitHub Advanced Security (GHAS) Trial
 
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
+
 **Steps:**
 
-1. Contact your GitHub Sales representative or Solutions Engineer
-2. Request a GHAS trial add-on
-3. Once activated, enable security features:
+1. Contact your GitHub Sales representative or Solutions Engineer.
+2. Request a GHAS trial add-on.
+3. Once activated, enable security features.
 
-**Navigation:**
-
-```
-Organization → Settings → Advanced Security → Configurations
-  → Apply GitHub recommended configuration
-```
+**Navigate:** Profile photo → **Your organizations** → *[organization]* → **Settings** → **Advanced Security** → **Configurations** → **Apply** the GitHub-recommended configuration
 
 > 💡 **Tip:** Request add-on trials early in your evaluation period so you have maximum time to test.
 
@@ -347,4 +343,4 @@ Organization → Settings → Advanced Security → Configurations
 
 ---
 
-*Last updated: April 2026*
+*Last updated: July 2026*

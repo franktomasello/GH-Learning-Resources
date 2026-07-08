@@ -46,7 +46,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub and Microsoft documentation in July 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -76,9 +76,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub source enterprise owner and target EMU setup user** | Coordinates the move from personal-account enterprise identity to managed-user enterprise identity. | Source: GitHub → profile photo → Your enterprises → [source enterprise] → People, Organizations, Policies, Billing and licensing → export inventory. Target: GitHub → profile photo → Your enterprises → [EMU enterprise] → Identity provider → Single sign-on configuration → configure SSO and SCIM before repository migration. Handoff: source inventory, target enterprise slug, recovery codes, and migration freeze window. |
+| **GitHub source enterprise owner and target EMU setup user** | Coordinates the move from personal-account enterprise identity to managed-user enterprise identity. | Source: GitHub → profile photo → Your enterprises → [source enterprise] → People, Organizations, Policies, Billing & Licensing → export inventory. Target: GitHub → profile photo → Your enterprises → [EMU enterprise] → Identity provider → Single sign-on configuration → configure SSO and SCIM before repository migration. Handoff: source inventory, target enterprise slug, recovery codes, and migration freeze window. |
 | **Microsoft Entra, Okta, or PingFederate admin** | Builds the new EMU IdP app and provisioning scope before users are migrated. | Entra: Enterprise apps → New application → GitHub Enterprise Managed User → Single sign-on and Provisioning. Okta: Applications → Browse App Catalog → GitHub Enterprise Managed User → Sign On and Provisioning. PingFederate: Applications → SP Connections → GitHub EMU Connector → Browser SSO and Outbound Provisioning. Handoff: SSO test, SCIM test, pilot users, and role mappings. |
-| **Azure subscription Owner and Entra consent approver, if Azure billing is retained** | Reconnects or approves metered billing for the target enterprise. | GitHub → profile photo → Your enterprises → [target enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription; Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner; Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → approve if required. Handoff: target enterprise connected subscription ID. |
+| **Azure subscription Owner and Entra consent approver, if Azure billing is retained** | Reconnects or approves metered billing for the target enterprise. | GitHub → profile photo → Your enterprises → [target enterprise] → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription; Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner; Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → approve if required. Handoff: target enterprise connected subscription ID. |
 
 ---
 
@@ -115,63 +115,102 @@ Before starting, catalog everything in your current enterprise:
 
 ## 2️⃣ Create the New EMU Enterprise
 
-1. Work with your GitHub account team to provision a new EMU enterprise
-2. Receive the **setup user** account (`SHORTCODE_admin`)
-3. In a private/incognito window:
-   - Set password for the setup user
-   - Enable 2FA
-   - Save recovery codes securely
+**👤 Role:** GitHub **enterprise owner** (setup user) · **📍 Portal:** GitHub
 
-```
-GitHub (as SHORTCODE_admin)
-  → Profile picture → Your enterprises
-    → Select your enterprise
-      → Settings → Authentication security
-```
+**Navigate:** Profile photo → **Your enterprises** → *[your EMU enterprise]* → **Identity provider** → **Single sign-on configuration**
+
+1. Work with your GitHub account team to provision a new EMU enterprise.
+2. Receive the **setup user** account (`SHORTCODE_admin`), where `SHORTCODE` is your enterprise shortcode. The shortcode is chosen at creation and cannot be changed later.
+3. In a private/incognito window, open the password-setup link GitHub emails you and:
+   - Set the password for the setup user.
+   - Enable **2FA** immediately.
+   - Save the **personal 2FA recovery codes** securely.
+4. Sign in as `SHORTCODE_admin`, click your profile photo → **Your enterprises**, select your enterprise, then click **Identity provider** at the top of the page followed by **Single sign-on configuration** to begin SSO setup (Step 3).
+
+> 🔐 **Setup user is break-glass.** Every setup-user sign-in requires a successful 2FA challenge **or** an enterprise recovery code (Jan 2025 change). Losing both sets of codes locks you out, and password resets for the setup user must go through **GitHub Support**. Use provisioned managed enterprise-owner accounts for day-to-day admin.
 
 ## 3️⃣ Configure Identity Provider
 
+> 📌 **One IdP only.** You must use the SAME identity provider for both SSO (SAML/OIDC) and SCIM provisioning for a given enterprise. Mixing providers (for example Okta for SSO and Entra for SCIM, in either direction) is not supported.
+
 ### For Microsoft Entra ID (OIDC — Recommended)
 
-```
-Microsoft Entra Admin Center
-  → Enterprise applications → + New application
-    → Search: "GitHub Enterprise Managed User (OIDC)"
-      → Create
-        → Single sign-on → OIDC
-          → Configure tenant ID and client credentials
-```
+**👤 Role:** GitHub **enterprise owner** (setup user) + Entra **Global Administrator** (for consent) · **📍 Portal:** GitHub → Microsoft Entra
 
-### For Okta / PingFederate (SAML)
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
-```
-IdP Admin Console
-  → Applications → Add Application
-    → Search: "GitHub Enterprise Managed User"
-      → Configure SAML SSO
-        → Set Entity ID, ACS URL, Sign-on URL
-```
+OIDC is enabled from the GitHub side first — you do NOT manually create a gallery app or enter client credentials. GitHub redirects to Entra for admin consent, and the enterprise app is created automatically.
+
+1. Signed in as the setup user, go to **Identity provider** → **Single sign-on configuration**.
+2. Under **OIDC single sign-on**, select **Enable OIDC configuration**.
+3. Click **Save** — GitHub redirects you to Microsoft Entra.
+4. Sign in as a user with **Global Administrator** rights, enable **Consent on behalf of your organization**, and click **Accept**.
+5. Back in GitHub, **Download**, **Print**, or **Copy** the enterprise recovery codes and store them securely.
+6. Click **Enable OIDC Authentication**.
+
+> 💡 **OIDC adds Conditional Access.** After consent, a **GitHub Enterprise Managed User (OIDC)** enterprise app appears in the tenant. Configure SCIM provisioning on that same app (Step 4). OIDC passes Microsoft Entra **Conditional Access** policies to GitHub; SAML does not. For full detail see the dedicated *EMU + Entra ID (OIDC)* setup guide.
+
+### For SAML (Entra, Okta, or PingFederate)
+
+**👤 Role:** GitHub **enterprise owner** (setup user) · **📍 Portal:** GitHub
+
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
+
+1. Signed in as the setup user, go to **Identity provider** → **Single sign-on configuration**.
+2. Under **SAML single sign-on**, click **Add SAML configuration**.
+3. Enter the **Sign on URL**, **Issuer**, and **Public Certificate** from your IdP, then choose a **Signature Method** and **Digest Method** (SHA-256 recommended).
+4. Click **Test SAML configuration** — this must pass before you can save.
+5. Click **Save SAML settings**.
+6. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
+
+> ⚠️ **No "Require SAML authentication" checkbox in EMU.** Unlike standard GitHub Enterprise Cloud, EMU has no "Require SAML authentication" toggle and no backup username/password sign-in. Do not look for `Settings → Authentication security` — that path does not apply to EMU.
+
+On the IdP side, enter the SAML SP values GitHub expects:
+
+| Value | GitHub.com | GHE.com (data residency) |
+|-------|-----------|--------------------------|
+| Identifier / Entity ID | `https://github.com/enterprises/{SLUG}` (no trailing slash) | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}` |
+| Reply URL / ACS | `https://github.com/enterprises/{SLUG}/saml/consume` | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}/saml/consume` |
+| Sign-on URL | `https://github.com/enterprises/{SLUG}/sso` | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}/sso` |
 
 ## 4️⃣ Configure SCIM Provisioning
 
-```
-IdP Admin Console
-  → Enterprise Application → Provisioning
-    → Automatic provisioning
-      → Tenant URL: from GitHub enterprise settings
-      → Secret token: generate from GitHub setup user
-        → Test connection → Start provisioning
-```
+### Create the SCIM token in GitHub
 
-### Map Required Attributes
+**👤 Role:** GitHub **enterprise owner** (setup user) · **📍 Portal:** GitHub
+
+**Navigate:** Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+
+1. Signed in as the setup user, click **Generate new token (classic)**.
+2. Give it the **`scim:enterprise`** scope only.
+3. Set **Expiration** to **No expiration** (GitHub recommends none; if the token expires, provisioning stops).
+4. Click **Generate token** and copy it immediately — it is shown only once.
+
+> 🔐 The SCIM token must be created while signed in as the setup user (an enterprise owner). Use the SCIM **Tenant URL** for your host:
+> - GitHub.com: `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}`
+> - GHE.com: `https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}`
+
+### Configure provisioning in your IdP
+
+**👤 Role:** Entra **Application Administrator, Cloud Application Administrator, or Application Owner** (or equivalent Okta/Ping admin) · **📍 Portal:** Entra / Okta / Ping
+
+**Navigate (Entra):** Enterprise app → **Provisioning** → **+ New configuration**
+
+1. Open your EMU enterprise app and go to the **Provisioning** tab, then click **+ New configuration** (older tenants show **Get started** and a **Provisioning Mode = Automatic** dropdown).
+2. Enter the **Tenant URL** and **Secret Token** (the `scim:enterprise` PAT).
+3. Click **Test Connection**, then **Create** (older UI: **Save**).
+4. Open **Properties** to enable notification emails and accidental-deletion prevention, review **Attribute Mapping** (Users, Groups), then click **Start provisioning** from the Overview page.
+
+### Required attributes
 - `userName` → UPN or custom attribute
 - `emails` → user.mail or user.userPrincipalName
 - `displayName` → user.displayName
 
-### Assign Users and Groups
-- Assign users to the Enterprise Application in your IdP
-- Map IdP groups to GitHub teams
-- Include **Enterprise Owner** role for at least one admin user
+### Assign users, groups, and the Enterprise Owner role
+- Set scope to **Sync only assigned users and groups**, then assign users/groups under **Users and groups**.
+- Assign at least one user the **Enterprise Owner** app role (via app role assignment) so a managed admin exists after cutover. Role-based assignment requires the **Sync only assigned users and groups** scope.
+
+> 📌 Entra does not provision nested groups (direct members only). Incremental sync runs roughly every 40 minutes; use **Provision on demand** to test. Keep additions under ~1,000 users/hour to avoid SCIM rate limits.
 
 ## 5️⃣ Migrate Repositories
 
@@ -210,12 +249,14 @@ gh gei migrate-org \
 
 ## 6️⃣ Recreate Organization Structure
 
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
 - [ ] Create organizations matching your governance model
 - [ ] Set up teams with appropriate repo access
 - [ ] Configure repository visibility (private/internal)
 - [ ] Apply rulesets at org level
-- [ ] Configure Copilot policies and access
-- [ ] Set up cost centers and billing
+- [ ] Configure **Copilot** access and policies — as an enterprise owner, go to Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** (a top-of-page tab, not under Settings) → **Copilot** in the sidebar to manage access (all orgs / specific orgs / disabled) and policies. Managing **Copilot Business** at the enterprise level is generally available (GA since Oct 2025); enterprise **teams** as a membership construct remain in public preview.
+- [ ] Set up cost centers and connect billing — to connect metered billing, you must be an **enterprise owner**: Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**. On the Azure side you need **Owner** permission on the target subscription plus tenant-wide admin consent.
 
 ## 7️⃣ Update Integrations
 
@@ -340,4 +381,4 @@ gh gei migrate-org \
 
 ---
 
-*Last updated: April 2026*
+*Last updated: July 2026*
