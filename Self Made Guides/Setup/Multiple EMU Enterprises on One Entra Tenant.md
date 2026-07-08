@@ -91,7 +91,7 @@ Multiple EMU enterprises CAN connect to a single Entra ID tenant. Each EMU enter
 For each EMU enterprise, create a dedicated Entra enterprise application:
 
 1. Click **New application**.
-2. **For a SAML enterprise:** search the gallery for **GitHub Enterprise Managed User**, select it, click **Create**, then rename it distinctly using the enterprise slug (e.g., **GitHub EMU - Enterprise A**).
+2. **For a SAML enterprise:** click **Browse Microsoft Entra Gallery**, then in the search box type **GitHub Enterprise Managed User**, select the result, and click **Create** (wait for the app to finish provisioning before continuing). Then rename it distinctly using the enterprise slug (e.g., **GitHub EMU - Enterprise A**).
 3. **For the OIDC enterprise:** do **not** gallery-add the app. The **GitHub Enterprise Managed User (OIDC)** enterprise application is created in your tenant automatically when you **Enable OIDC configuration** in GitHub and a **Global Administrator** consents (see Step 2). Afterward, open that app under **Enterprise apps** to configure provisioning.
 4. Repeat for each enterprise (**GitHub EMU - Enterprise B**, etc.).
 
@@ -103,11 +103,19 @@ For each EMU enterprise, create a dedicated Entra enterprise application:
 
 **Navigate (GitHub side):** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
-Each enterprise application has its own SAML or OIDC configuration pointing to its respective EMU enterprise. Configure the GitHub side signed in as that enterprise's setup user:
+Each enterprise application has its own SAML or OIDC configuration pointing to its respective EMU enterprise. For SAML, configure the Entra side FIRST to produce the values GitHub needs, then complete the GitHub side signed in as that enterprise's setup user:
 
-1. **SAML:** Under **SAML single sign-on**, click **Add SAML configuration**, enter **Sign on URL**, **Issuer**, and **Public Certificate**, choose **Signature Method** and **Digest Method** (SHA-256 recommended), click **Test SAML configuration**, then **Save SAML settings**, and immediately **Download / Print / Copy** the enterprise **SSO recovery codes**.
-2. **OIDC** (for the single permitted Entra OIDC integration): under **OIDC single sign-on**, select **Enable OIDC configuration**, click **Save**, complete **Global Administrator** consent in Microsoft Entra (**Consent on behalf of your organization** → **Accept**), save the recovery codes, then click **Enable OIDC Authentication**.
-3. On the Entra side, open the matching enterprise application → **Single sign-on** → **SAML** and enter that enterprise's SP values from the tables below.
+1. On the Entra side, open the matching enterprise application → **Single sign-on** → **SAML**.
+2. In the **Basic SAML Configuration** tile, click **Edit** (the pencil icon).
+3. Under **Identifier (Entity ID)**, delete the pre-filled default value, then click **Add identifier** and enter the enterprise's Entity ID from the table below (ensure NO trailing slash).
+4. Under **Reply URL (Assertion Consumer Service URL)**, enter the Reply URL from the table below.
+5. Under **Sign on URL**, enter the Sign-on URL from the table below.
+6. Click **Save**, then click **X** to close the panel.
+7. In the **Attributes & Claims** section, click **Edit** and confirm the **Unique User Identifier (Name ID)** claim is set to a stable value (for example `user.userprincipalname` or `user.mail`). The gallery app pre-sets the required claims — confirm them, then close the panel.
+8. In the **SAML Certificates** section, under **Certificate (Base64)**, click **Download** and save the certificate file — its contents are the **Public Certificate** you paste into GitHub.
+9. In the **Set up [app name]** section, click the copy icon next to **Login URL** (this is GitHub's **Sign on URL**) and next to **Microsoft Entra Identifier** (this is GitHub's **Issuer**).
+10. **GitHub side (SAML):** Under **SAML single sign-on**, click **Add SAML configuration**, enter **Sign on URL**, **Issuer**, and **Public Certificate** (the three values you collected above), choose **Signature Method** and **Digest Method** (SHA-256 recommended), click **Test SAML configuration**, then **Save SAML settings**, and immediately **Download / Print / Copy** the enterprise **SSO recovery codes**.
+11. **GitHub side (OIDC)** (for the single permitted Entra OIDC integration): under **OIDC single sign-on**, select **Enable OIDC configuration**, click **Save**, complete **Global Administrator** consent in Microsoft Entra (**Consent on behalf of your organization** → **Accept**), save the recovery codes, then click **Enable OIDC Authentication**.
 
 > ⚠️ **Gotcha:** EMU has NO "Require SAML authentication" checkbox and no backup username/password sign-in — that is the standard-GHEC flow. The Entra gallery app also pre-fills a different Identifier format; overwrite it with the exact Entity ID below and ensure there is NO trailing slash.
 
@@ -140,10 +148,13 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 3. Enter the **Tenant URL** for this enterprise: `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}` (github.com) or `https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}` (GHE.com).
 4. Enter the **Secret Token** — the personal access token (classic) with **`scim:enterprise`** scope created by THIS enterprise's setup user.
 5. Click **Test Connection**, then **Create** (older UI: **Save**).
-6. Open **Properties** to enable notification emails and accidental-deletion prevention, review **Attribute Mapping** (Users, Groups), then click **Start provisioning** from the Overview page.
-7. Repeat with each other enterprise's Tenant URL and Secret Token in its own dedicated app.
+6. On the app's **Overview** page, open **Properties** (click the **Edit** pencil), enable **Send an email notification when a failure occurs** and enable **Prevent accidental deletion**, then click **Apply**.
+7. Under **Mappings**, open **Provision Microsoft Entra ID Users**, review the attribute mappings, and click **Save** if you change anything. Then open **Provision Microsoft Entra ID Groups**, review, and click **Save** if changed.
+8. Before starting full provisioning, click **Provision on demand**, search for one assigned test user, click **Provision**, and confirm the result shows success and the user is created in the correct enterprise. Fix any mapping errors before continuing.
+9. Click **Start provisioning** from the Overview page.
+10. Repeat with each other enterprise's Tenant URL and Secret Token in its own dedicated app.
 
-> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token is scoped to a single enterprise and must be generated by that enterprise's setup user: profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → scope **`scim:enterprise`** → **No expiration**. Copy it immediately (shown once).
+> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token is scoped to a single enterprise and must be generated by that enterprise's setup user: profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → enter a **Note** (a descriptive name, e.g. `EMU-<slug>-SCIM`), set **Expiration** to **No expiration**, check ONLY the **`scim:enterprise`** scope, scroll down and click **Generate token**, then copy the token immediately (it is shown only once).
 
 ## 4️⃣ Scope User Populations Using Entra Groups
 
@@ -151,10 +162,13 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 
 **Navigate:** **Microsoft Entra admin center** → **Entra ID** → **Enterprise apps** → *[GitHub EMU app]* → **Users and groups**
 
-1. In the app's Provisioning **Settings**, set **Scope** to **Sync only assigned users and groups**.
-2. Open **Users and groups** → **Add user/group**.
+1. Open the app → **Provisioning** → expand **Settings** → open the **Scope** dropdown → select **Sync only assigned users and groups** → click **Save**.
+2. Open the **Users and groups** tab → **Add user/group**.
 3. Select the Entra group scoped to THIS enterprise, then assign it.
-4. Assign at least one user the **Enterprise Owner** app role (via app role assignment) so a managed enterprise owner exists in that enterprise.
+4. Under **Users and groups**, click **Add user/group** again to create the enterprise owner assignment.
+5. Under **Users**, click **None Selected**, pick the user who will be the admin, and click **Select**.
+6. Under **Select a role**, click **None Selected**, choose **Enterprise Owner**, and click **Select**.
+7. Click **Assign**. (This must be a user, not a group, for the Enterprise Owner role — so a managed enterprise owner exists in that enterprise.)
 
 > 📌 **Constraint:** Entra provisions only direct group members (nested groups are not provisioned). Role-based assignment of the **Enterprise Owner** role requires **Scope = Sync only assigned users and groups**.
 

@@ -116,10 +116,12 @@ The setup user's username is your enterprise **shortcode** + `_admin` (e.g., `oc
 ### Process
 
 1. GitHub emails an invite to set the password for `SHORTCODE_admin`.
-2. In a **private/incognito window**:
-   - **Set password**.
-   - **Enable 2FA** immediately.
-   - **Save** the personal 2FA recovery codes securely.
+2. In a **private/incognito window**, **Set password**.
+3. Enable two-factor authentication. **Navigate:** Profile photo → **Settings** → **Password and authentication** → **Two-factor authentication**.
+   1. Click **Enable two-factor authentication**.
+   2. Choose a method (**Set up using an app** / TOTP recommended) and scan the QR / enter the key in your authenticator.
+   3. Enter the 6-digit code to **complete the challenge**.
+   4. On the recovery-codes screen, click **Download** (or **Copy** / **Print**) to save the personal 2FA recovery codes, then click **I have saved my recovery codes** / **Done**.
 
 ### Important Notes
 
@@ -153,8 +155,9 @@ Microsoft Entra Admin Center
 
 ### SAML Configuration
 
-1. Navigate to **Single sign-on** → Select **SAML**
-2. Edit **Basic SAML Configuration**
+1. Navigate to **Single sign-on** → Select **SAML**.
+2. Click the **Edit** (pencil) on **Basic SAML Configuration**.
+3. Under **Identifier (Entity ID)**, **delete the pre-filled default value**, then click **Add identifier** and enter the value from the table below (ensure **no trailing slash**).
 
 ### SAML Values
 
@@ -176,20 +179,35 @@ Microsoft Entra Admin Center
 
 > **⚠️ Critical:** The Identifier format differs from the application's suggested format. Ensure the Identifier **does not** contain a trailing slash.
 
+4. Enter **Reply URL (ACS URL)** and **Sign on URL** from the table above.
+5. Click **Save** at the top of the **Basic SAML Configuration** panel, then click **X** to close the panel.
+
+### Verify Attributes & Claims
+
+**Navigate:** the EMU app → **Single sign-on** → section **Attributes & Claims** → **Edit**
+
+1. Confirm the **Unique User Identifier (Name ID)** claim maps to a stable value (e.g., `user.userprincipalname` or `user.mail`).
+2. Confirm the gallery-app's pre-set required claims are present.
+3. Click **Save** / close the panel.
+
 ### Download Required Items
 
-From the Entra Enterprise App:
+From the Entra Enterprise App **Single sign-on** page:
 
-1. **SAML certificate (Base64)** — Download this file
-2. **Login URL** — Copy this value
-3. **Microsoft Entra Identifier** — Copy this value
+1. In the **SAML Certificates** section, under **Certificate (Base64)**, click **Download**.
+2. In the **Set up [app name]** section, click **Copy** next to **Login URL**.
+3. In the same section, click **Copy** next to **Microsoft Entra Identifier**.
 
 ### Assign Users
 
 **Navigate:** the EMU app → **Users and groups** → **Add user/group**
 
-1. Assign one or more users (or groups) to the application.
-2. For each assignment, set the app role to **Enterprise Owner** so at least one managed admin is provisioned. The SCIM `roles` attribute maps this app role to the GitHub **enterprise owner** role (via app role assignment / `AppRoleAssignmentComplex`).
+1. Click **Add user/group**.
+2. Under **Users**, click **None Selected**, pick the user(s)/group(s), click **Select**.
+3. Under **Select a role**, click **None Selected**, choose **Enterprise Owner** (for the first admin) or the member role, click **Select**.
+4. Click **Assign**.
+
+The SCIM `roles` attribute maps the **Enterprise Owner** app role to the GitHub **enterprise owner** role (via app role assignment / `AppRoleAssignmentComplex`). Assign at least one user the **Enterprise Owner** role so a managed admin is provisioned.
 
 > 📌 **Role-based assignment requires scoping:** Assigning the **Enterprise Owner** app role only takes effect when the provisioning **Scope** is set to **Sync only assigned users and groups** (configured in Step 4). Assign at least one user the **Enterprise Owner** role so a managed admin exists in the enterprise.
 
@@ -254,6 +272,8 @@ GitHub (as SHORTCODE_admin)
 - **Expiration:** No expiration
 - **Scope:** Select `scim:enterprise` only
 
+After setting **Note**, **Expiration = No expiration**, and checking only **`scim:enterprise`**, scroll to the bottom and click **Generate token**. Then immediately **Copy** the token (it is shown only once).
+
 **🔑 Important:** Copy the token immediately after generation. You won't be able to see it again.
 
 ### 4B — Configure Provisioning in Entra
@@ -270,7 +290,7 @@ GitHub (as SHORTCODE_admin)
    - **Secret Token:** The personal access token (classic) created in step 4A.
 3. Click **Test Connection**.
 4. Click **Create** (older UI: **Save**).
-5. Open **Properties** to enable notification emails and accidental-deletion prevention, then review **Attribute Mapping** (Users and Groups).
+5. From the app's **Overview**, open **Properties** and click the **Edit** (pencil). Enable **Send an email notification when a failure occurs** (add a notification email) and **Prevent accidental deletions** (set a threshold), then click **Save**. Next, review **Attribute Mapping** (Users and Groups) in step 4C.
 
 #### Tenant URL Values
 
@@ -281,17 +301,19 @@ GitHub (as SHORTCODE_admin)
 
 ### 4C — Configure Attribute Mappings
 
-1. Under **Mappings**, select **Synchronize Microsoft Entra users to GitHub Enterprise Managed User**
-2. Review default attribute mappings (typically work for most scenarios)
-3. Ensure **Provisioning Status** is set to **On** under Settings
+1. Under **Mappings**, select **Provision Microsoft Entra ID Users** (Synchronize Microsoft Entra users to GitHub Enterprise Managed User).
+2. Review the mapping and click **Save**.
+3. Back under **Mappings**, open **Provision Microsoft Entra ID Groups**, review it, and click **Save**.
+4. Ensure **Provisioning Status** is set to **On** under Settings.
 
 ### 4D — Assign Users/Groups for Provisioning
 
 1. Under **Provisioning → Settings**, set **Scope** to **Sync only assigned users and groups** (required for the **Enterprise Owner** app role to take effect).
 2. Navigate to **Users and groups** in the Enterprise App.
 3. Assign users and/or groups to the application (assign the **Enterprise Owner** app role to at least one user).
-4. From the app's **Overview** page, click **Start provisioning**.
-5. Entra will SCIM-provision these members into the EMU enterprise.
+4. Test one user first: open **Provisioning → Provision on demand**, search for and select one assigned test user, click **Provision**, and confirm all steps report success before continuing.
+5. From the app's **Overview** page, click **Start provisioning**.
+6. Entra will SCIM-provision these members into the EMU enterprise.
 
 #### Provisioning Notes
 
@@ -332,6 +354,7 @@ Connect your Azure subscription so GitHub usage (Copilot, Actions, Codespaces, e
 5. Click **Select a subscription** and choose your Azure subscription.
 6. Check the confirmation box.
 7. Click **Connect**.
+8. Confirm the connected **subscription ID** now appears on the **Payment information** page.
 
 > **💡 Admin Consent:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, configure an admin consent workflow in Azure or work with your Microsoft Entra **Global Administrator**.
 
@@ -357,6 +380,8 @@ Under **Access**, choose:
 - **All organizations** — Enable for all organizations in the enterprise
 - **Specific organizations** — Select which organizations can use Copilot
 
+For **Specific organizations**, select the organizations to enable. Then click **Save** to commit the access setting.
+
 The Copilot plans referenced are **Copilot Business** and **Copilot Enterprise**.
 
 ### 6B — Configure Copilot Policies
@@ -375,6 +400,8 @@ For each policy, select:
 - **Enabled/Allowed** — Feature is on for all organizations
 - **Disabled/Blocked** — Feature is off for all organizations
 - **No policy** — Delegate decision to organization owners
+
+After setting each policy (Enabled/Allowed, Disabled/Blocked, or No policy), click **Save** to apply the policy configuration.
 
 ### 6C — Assign Copilot Seats
 

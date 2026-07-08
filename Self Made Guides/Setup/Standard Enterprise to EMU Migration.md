@@ -123,8 +123,8 @@ Before starting, catalog everything in your current enterprise:
 2. Receive the **setup user** account (`SHORTCODE_admin`), where `SHORTCODE` is your enterprise shortcode. The shortcode is chosen at creation and cannot be changed later.
 3. In a private/incognito window, open the password-setup link GitHub emails you and:
    - Set the password for the setup user.
-   - Enable **2FA** immediately.
-   - Save the **personal 2FA recovery codes** securely.
+   - Enable **2FA**: click your profile photo → **Settings** → **Password and authentication** → under **Two-factor authentication** click **Enable two-factor authentication** → choose **Set up using an app** (TOTP authenticator recommended) → scan the QR code and enter the 6-digit code to complete the challenge.
+   - Save the **personal 2FA recovery codes**: on the recovery-codes screen click **Download** (and **Copy**) to store them in your vault.
 4. Sign in as `SHORTCODE_admin`, click your profile photo → **Your enterprises**, select your enterprise, then click **Identity provider** at the top of the page followed by **Single sign-on configuration** to begin SSO setup (Step 3).
 
 > 🔐 **Setup user is break-glass.** Every setup-user sign-in requires a successful 2FA challenge **or** an enterprise recovery code (Jan 2025 change). Losing both sets of codes locks you out, and password resets for the setup user must go through **GitHub Support**. Use provisioned managed enterprise-owner accounts for day-to-day admin.
@@ -156,12 +156,13 @@ OIDC is enabled from the GitHub side first — you do NOT manually create a gall
 
 **Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
-1. Signed in as the setup user, go to **Identity provider** → **Single sign-on configuration**.
-2. Under **SAML single sign-on**, click **Add SAML configuration**.
-3. Enter the **Sign on URL**, **Issuer**, and **Public Certificate** from your IdP, then choose a **Signature Method** and **Digest Method** (SHA-256 recommended).
-4. Click **Test SAML configuration** — this must pass before you can save.
-5. Click **Save SAML settings**.
-6. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
+1. First, in your IdP create the EMU SAML app and capture its artifacts. **Entra:** **Entra ID → Enterprise apps → New application → Browse gallery →** search **GitHub Enterprise Managed User → Create → Single sign-on → SAML**; in **SAML Certificates** click **Download** (Certificate Base64) and in **Set up [app]** copy the **Login URL** (= GitHub **Sign on URL**) and **Microsoft Entra Identifier** (= GitHub **Issuer**). **Okta/Ping:** open **View SAML setup instructions** / **More details** and download the **X.509 signing certificate** and copy the **Sign on URL** and **Issuer**. See the dedicated *EMU + Entra/Okta/PingFederate (SAML)* setup guide for the full app build. Then return here and paste those three values into GitHub.
+2. Signed in as the setup user, go to **Identity provider** → **Single sign-on configuration**.
+3. Under **SAML single sign-on**, click **Add SAML configuration**.
+4. Enter the **Sign on URL**, **Issuer**, and **Public Certificate** from your IdP, then choose a **Signature Method** and **Digest Method** (SHA-256 recommended).
+5. Click **Test SAML configuration** — this must pass before you can save.
+6. Click **Save SAML settings**.
+7. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
 
 > ⚠️ **No "Require SAML authentication" checkbox in EMU.** Unlike standard GitHub Enterprise Cloud, EMU has no "Require SAML authentication" toggle and no backup username/password sign-in. Do not look for `Settings → Authentication security` — that path does not apply to EMU.
 
@@ -182,9 +183,10 @@ On the IdP side, enter the SAML SP values GitHub expects:
 **Navigate:** Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
 
 1. Signed in as the setup user, click **Generate new token (classic)**.
-2. Give it the **`scim:enterprise`** scope only.
-3. Set **Expiration** to **No expiration** (GitHub recommends none; if the token expires, provisioning stops).
-4. Click **Generate token** and copy it immediately — it is shown only once.
+2. In the **Note** field, enter a descriptive name (e.g., `EMU SCIM provisioning`).
+3. Give it the **`scim:enterprise`** scope only.
+4. Set **Expiration** to **No expiration** (GitHub recommends none; if the token expires, provisioning stops).
+5. Click **Generate token** and copy it immediately — it is shown only once.
 
 > 🔐 The SCIM token must be created while signed in as the setup user (an enterprise owner). Use the SCIM **Tenant URL** for your host:
 > - GitHub.com: `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}`
@@ -199,7 +201,9 @@ On the IdP side, enter the SAML SP values GitHub expects:
 1. Open your EMU enterprise app and go to the **Provisioning** tab, then click **+ New configuration** (older tenants show **Get started** and a **Provisioning Mode = Automatic** dropdown).
 2. Enter the **Tenant URL** and **Secret Token** (the `scim:enterprise` PAT).
 3. Click **Test Connection**, then **Create** (older UI: **Save**).
-4. Open **Properties** to enable notification emails and accidental-deletion prevention, review **Attribute Mapping** (Users, Groups), then click **Start provisioning** from the Overview page.
+4. On the **Overview** page open **Properties**, click the **Edit** (pencil) icon, enable **Send an email notification when a failure occurs** and **Prevent accidental deletion**, then click **Apply** to save.
+5. Under **Mappings**, open **Provision Microsoft Entra ID Users**, confirm the required attributes, and click **Save**. Then open **Provision Microsoft Entra ID Groups**, confirm the mappings, and click **Save**.
+6. Click **Start provisioning** from the **Overview** page.
 
 ### Required attributes
 - `userName` → UPN or custom attribute
@@ -208,13 +212,15 @@ On the IdP side, enter the SAML SP values GitHub expects:
 
 ### Assign users, groups, and the Enterprise Owner role
 - Set scope to **Sync only assigned users and groups**, then assign users/groups under **Users and groups**.
-- Assign at least one user the **Enterprise Owner** app role (via app role assignment) so a managed admin exists after cutover. Role-based assignment requires the **Sync only assigned users and groups** scope.
+- Assign at least one user the **Enterprise Owner** app role so a managed admin exists after cutover: open the app → **Users and groups** → **Add user/group** → under **Users** pick the account(s) → under **Select a role** choose **Enterprise Owner** → click **Select** → **Assign**. Repeat with the member role for regular users. (Role selection appears only when scope is **Sync only assigned users and groups**.)
 
 > 📌 Entra does not provision nested groups (direct members only). Incremental sync runs roughly every 40 minutes; use **Provision on demand** to test. Keep additions under ~1,000 users/hour to avoid SCIM rate limits.
 
 ## 5️⃣ Migrate Repositories
 
 ### Using GitHub Enterprise Importer (GEI)
+
+Authenticate first: run `gh auth login` and set the source and target personal access tokens, e.g. `export GH_SOURCE_PAT=<source-org-token>` and `export GH_TARGET_PAT=<EMU-org-token>` (or pass `--github-source-pat` / `--github-target-pat`). Both tokens need the org/repo migration scopes.
 
 ```bash
 # Install GEI
@@ -255,8 +261,8 @@ gh gei migrate-org \
 - [ ] Set up teams with appropriate repo access
 - [ ] Configure repository visibility (private/internal)
 - [ ] Apply rulesets at org level
-- [ ] Configure **Copilot** access and policies — as an enterprise owner, go to Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** (a top-of-page tab, not under Settings) → **Copilot** in the sidebar to manage access (all orgs / specific orgs / disabled) and policies. Managing **Copilot Business** at the enterprise level is generally available (GA since Oct 2025); enterprise **teams** as a membership construct remain in public preview.
-- [ ] Set up cost centers and connect billing — to connect metered billing, you must be an **enterprise owner**: Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**. On the Azure side you need **Owner** permission on the target subscription plus tenant-wide admin consent.
+- [ ] Configure **Copilot** access and policies — as an enterprise owner, go to Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** (a top-of-page tab, not under Settings) → **Copilot** in the sidebar to manage access (all orgs / specific orgs / disabled) and policies. On **Copilot** set **Access** (All organizations / Specific organizations / Disabled) and click **Save**; open the **Policies** tab, set each policy, and click **Save**. To assign seats (GA), go to **Billing & Licensing → Licensing → Copilot Business** and assign licenses to individual users and/or enterprise teams. Managing **Copilot Business** at the enterprise level is generally available (GA since Oct 2025); enterprise **teams** as a membership construct remain in public preview.
+- [ ] Set up cost centers and connect billing — to connect metered billing, you must be an **enterprise owner**: Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**. On the Azure side you need **Owner** permission on the target subscription plus tenant-wide admin consent. After clicking **Add Azure Subscription**, sign in to Microsoft, review **Permissions requested** and click **Accept**; under **Select a subscription** choose the target subscription, check the confirmation checkbox, and click **Connect**. Confirm the subscription ID now appears on **Payment information**.
 
 ## 7️⃣ Update Integrations
 

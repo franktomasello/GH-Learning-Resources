@@ -130,7 +130,12 @@ Use this table to assign provider-side work before following the numbered steps.
 
 1. Open the "setup user invite" email in a **private/incognito browser window**.
 2. Set a strong password (store in a secure vault).
-3. **Immediately enable 2FA:** go to Profile photo → **Settings** → **Password and authentication**, configure a TOTP app (recommended) or other 2FA method, then **Download** and securely store your **personal 2FA recovery codes**.
+3. **Immediately enable 2FA:** go to Profile photo → **Settings** → **Password and authentication**, then:
+   1. Under **Two-factor authentication**, click **Enable two-factor authentication**.
+   2. Choose **Set up using an app**.
+   3. Scan the displayed **QR code** with your authenticator app (or click **enter this text code** to copy the setup key).
+   4. Enter the **6-digit code** from the app and click **Continue**.
+   5. On the **recovery codes** screen, click **Download** (and/or **Copy** / **Print**), store them in your vault, then click **I have saved my recovery codes** to finish.
 4. Store credentials in a secure company vault (e.g., 1Password, LastPass, Azure Key Vault).
 
 > 🔐 **Note on the shortcode:** The username is your enterprise **shortcode** + `_admin` (e.g., `octocorp_admin`). The shortcode is chosen (or randomly assigned) at creation and **cannot be changed later**.
@@ -157,8 +162,11 @@ Use this table to assign provider-side work before following the numbered steps.
 | **Expiration** | **No expiration** ⚠️ If this expires, provisioning stops entirely |
 | **Scopes** | Select **only** `scim:enterprise` |
 
-1. Click **Generate token**.
-2. **Copy the token immediately** — it is shown only once and cannot be viewed again.
+1. In the **Note** field, type `SCIM Token for Entra ID`.
+2. Open the **Expiration** dropdown and select **No expiration** (confirm the warning).
+3. In the scopes list, check the box for **`scim:enterprise`** only (leave all other scopes unchecked).
+4. **Scroll to the bottom** and click **Generate token**.
+5. Click the **copy** icon to copy the token immediately — it is shown only once and cannot be viewed again.
 
 > 📝 **Store this token securely.** You will need it when configuring provisioning in Microsoft Entra ID (Step 4).
 
@@ -226,22 +234,41 @@ Use this table to assign provider-side work before following the numbered steps.
 
 5. Click **Test Connection** — must show success ✅.
 6. Click **Create** (older UI: **Save**).
+7. On the provisioning **Overview**, click **Edit provisioning** (or open **Provisioning → Properties**) and click the **pencil**. Enable **Send an email notification when a failure occurs** and enter a recipient address; enable **Prevent accidental deletion** and set a threshold. Click **Apply** (or **Save**).
+
+### 4x) Review Attribute Mappings
+
+**👤 Role:** Entra **Application Administrator, Cloud Application Administrator, or Application Owner** · **📍 Portal:** Microsoft Entra
+
+**Navigate:** Microsoft Entra admin center → **Entra ID** → **Enterprise apps** → **GitHub Enterprise Managed User (OIDC)** → **Provisioning** → **Mappings**
+
+1. In the app, open **Provisioning → Mappings** (or **Attribute Mapping**).
+2. Click **Provision Microsoft Entra ID Users**, confirm the required attributes (userName, emails, name, externalId), then click **Save**.
+3. Click **Provision Microsoft Entra ID Groups**, confirm the group mappings, then click **Save**.
 
 ### 4C) Configure Provisioning Settings
+
+**👤 Role:** Entra **Application Administrator, Cloud Application Administrator, or Application Owner** · **📍 Portal:** Microsoft Entra
+
+**Navigate:** Microsoft Entra admin center → **Entra ID** → **Enterprise apps** → **GitHub Enterprise Managed User (OIDC)** → **Provisioning** → **Settings**
 
 | Setting | Value |
 |---------|-------|
 | **Scope** | Sync only assigned users and groups |
 | **Provisioning Status** | **On** |
 
-Click **Save**
+1. In the app, open **Provisioning**, then expand the **Settings** section.
+2. Open the **Scope** dropdown and select **Sync only assigned users and groups**. *(Required — the Enterprise Owner app role assigned in Step 4D only provisions when Scope is set to this.)*
+3. Click **Save**.
+4. Return to **Provisioning → Overview** and click **Start provisioning** to begin the first sync cycle. *(In the older UI, set **Provisioning Status** to **On** and click **Save** first.)*
 
 ### 4D) Assign Users and Groups
 
 1. Go to the **Users and groups** tab in the Entra application.
 2. Click **Add user/group**.
-3. Add a test user or pilot group, then click **Assign**.
-4. For users who need the enterprise owner role, assign the app role **Enterprise Owner** (via app role assignment). Assign at least one user this role so a managed admin exists.
+3. Under **Users and groups**, click **None Selected**, pick your test user or pilot group, and click **Select**.
+4. Click **Select a role**, choose **Enterprise Owner** for the first admin (or the member role for everyone else), and click **Select**.
+5. Click **Assign**. Assign at least one user the **Enterprise Owner** role so a managed admin exists.
 
 > 📌 **Constraint:** Role-based (app role) assignment requires the provisioning **Scope** to be **Sync only assigned users and groups** (set in Step 4C).
 
@@ -260,16 +287,13 @@ Click **Save**
 
 *EMU enterprises cannot invite or import existing organizations — you must create them fresh.*
 
-### Navigation
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Your enterprises → Select enterprise → Organizations tab → New organization
-```
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Organizations** → **New organization**
 
-### Steps
-
-1. Enter organization name (e.g., `acme-engineering`, `acme-platform`)
-2. Click **Create organization**
+1. Click **New organization**.
+2. Enter the **Organization name** (e.g., `acme-engineering`, `acme-platform`).
+3. Click **Create organization**.
 
 > 💡 **Best Practice:** Plan your organization structure before creating. Consider separating by business unit, product line, or team function.
 
@@ -279,21 +303,14 @@ Profile Picture → Your enterprises → Select enterprise → Organizations tab
 
 *This is the "Golden Path" for automated permissions management.*
 
-### Navigation
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Your organizations → Select organization → Teams tab → New team
-```
+**Navigate:** Profile photo → **Your organizations** → *[organization]* → **Teams** → **New team**
 
-### Configuration
-
-| Field | Value |
-|-------|-------|
-| **Team name** | e.g., `developers`, `platform-engineers` |
-| **Description** | Optional but recommended |
-| **Identity Provider Groups** | Select the synced Entra group from dropdown |
-
-Click **Create team**
+1. Click **New team**.
+2. Enter the **Team name** (e.g., `developers`, `platform-engineers`) and an optional **Description**.
+3. Under **Identity Provider Groups**, select the synced Entra group from the dropdown.
+4. Click **Create team**.
 
 ### Important Constraints
 
@@ -359,7 +376,10 @@ Click **Create team**
 | **Copilot Chat** | Enable for full functionality |
 | **Copilot in the CLI** | Enable as needed |
 
-Click **Save**.
+Set **Access** and the individual **Policies** as two separate, separately-saved actions:
+
+1. **Access:** on the **Copilot** page set **Access** (All organizations / Specific organizations — select the orgs — / Disabled) and click **Save**.
+2. **Policies:** click the **Policies** tab, set each policy (Suggestions matching public code, Copilot Chat, Copilot in the CLI, etc.) to Enabled/Disabled/No policy, and click **Save** on that tab.
 
 > ⚠️ **Important:** If access is not enabled here, you cannot assign Copilot seats at the organization level.
 
@@ -384,6 +404,11 @@ Click **Save**.
 **👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
 **Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business** → **Add seats**
+
+1. Click **Add seats** on the **Copilot Business** licensing page.
+2. Search for and select the **users** and/or **enterprise teams** to license.
+3. Review the seat count, then click **Confirm** / **Assign** to commit.
+4. Verify the assigned users now show a Copilot Business seat on the Licensing page.
 
 > 💡 **When to assign at the enterprise level:**
 > - Users who need Copilot but not full GitHub Enterprise Cloud licenses

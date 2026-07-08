@@ -111,13 +111,19 @@ Use this table to assign provider-side work before following the numbered steps.
 
 1. GitHub emails an invite to set the password for SHORTCODE_admin
 2. In a private/incognito window:
-   - Set password
-   - Enable 2FA
+   - Set password (store it in your password vault)
+   - **Enable 2FA:**
+     1. Click your profile photo → **Settings** → **Password and authentication**.
+     2. Under **Two-factor authentication**, click **Enable two-factor authentication**.
+     3. Choose a method (**Set up using an app** / TOTP recommended), scan the QR code in your authenticator app, then enter the 6-digit code and click **Continue** / **Verify** to complete the challenge.
+     4. On the recovery-codes screen click **Download** (or **Copy** / **Print**) to save your **personal 2FA recovery codes**, then click **I have saved my recovery codes**.
    - Save recovery codes securely
 
 ### Important Notes
 
 > ⚠️ **Setup User Purpose:** This account is primarily for SCIM provisioning via token and recovery scenarios. Day-to-day enterprise administration should be done with provisioned managed user accounts.
+
+> 🔐 **Sign-in requirement (Jan 2025):** Every future sign-in as `SHORTCODE_admin` requires a successful 2FA challenge OR an **enterprise SSO recovery code**. Losing both the personal 2FA recovery codes and the enterprise recovery codes locks you out. The setup user's password cannot be reset by the normal email flow — reset must go through **GitHub Support**.
 
 > 🚨 **Email Conflict:** If the provided email address is already associated as a primary email with an existing GitHub account, the activation link will not work. Modify the existing account's primary email first.
 
@@ -138,6 +144,12 @@ PingFederate Admin Console
           → Connection Options: Browser SSO
             → Continue through wizard
 ```
+
+Complete and commit the SP connection:
+
+1. Click **Next** on each wizard screen (**Connection Type**, **Connection Options**, **Assertion Creation**, **Protocol Settings**, **Credentials**).
+2. On the final **Activation & Summary** screen, set **Connection Status = Active**.
+3. Click **Save** / **Done** to commit the SP connection.
 
 #### Configure the SP Connection
 
@@ -183,6 +195,8 @@ PingFederate Admin Console
           → Binding: POST
           → Endpoint URL: (ACS URL from SAML Values table below)
 ```
+
+1. Under **Browser SSO → Protocol Settings → Signature Policy**, set **Signature Algorithm = RSA-SHA256** and **Digest Algorithm = SHA-256**, then click **Next** / **Done**. (These must match the **Signature Method** and **Digest Method** you select on the GitHub side in Step 3.)
 
 ### Option B — PingOne (Cloud)
 
@@ -392,6 +406,11 @@ PingFederate Admin Console
             → Save
 ```
 
+After enabling the Create/Update/Deactivate actions, activate the channel:
+
+1. Click through **Manage Channels → [GitHub channel] → Activation & Summary** → set **Channel Status = Active** → click **Done** → click **Save** to activate outbound provisioning.
+2. Then run a **Provision on demand** / pilot test on one user before assigning the full group.
+
 ### 4B (Alt) — Configure SCIM in PingOne (Cloud)
 
 ```
@@ -561,6 +580,8 @@ Under **Access management**, choose:
 
 Select the Copilot tier (**Copilot Business** or **Copilot Enterprise**) for each enabled organization.
 
+After choosing the access level (for **Specific organizations**, check the box next to each organization that should have Copilot), click **Save** to apply the access setting.
+
 > 💡 **Enterprise-level Copilot Business (GA):** Since October 2025, managing Copilot Business at the enterprise level is generally available — enterprise owners can assign Copilot Business licenses directly at the enterprise account, to individual users and/or to enterprise teams, without granting org access. Only **enterprise teams** (the membership construct) remain in public preview. A user assigned via multiple sources consumes **one** license (highest tier).
 
 ### 6B — Configure Copilot Policies
@@ -580,9 +601,21 @@ For each policy, select:
 - **Disabled/Blocked** — Feature is off for all organizations
 - **No policy** — Delegate the decision to organization owners
 
+3. Click **Save** to apply the policy changes.
+
 ### 6C — Assign Copilot Seats
 
 Copilot Business licenses can be assigned directly at the enterprise level (see the GA note above). Organizations can also assign seats the traditional way:
+
+**Enterprise route (GA):**
+
+**Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business**
+
+1. Click **Assign licenses** (or **Add users**).
+2. Select individual users and/or **enterprise teams**.
+3. Click **Assign** / **Confirm** to grant the seats (no org access required).
+
+**Organization route:**
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
@@ -590,6 +623,7 @@ Copilot Business licenses can be assigned directly at the enterprise level (see 
 
 1. Click **Add members** (or enable for all members).
 2. Select the members or teams to receive seats.
+3. Click **Add** / **Confirm** to assign the seats; the selected members now appear in the Copilot **Access** list.
 
 Organization owners can assign Copilot seats to individual members or teams.
 

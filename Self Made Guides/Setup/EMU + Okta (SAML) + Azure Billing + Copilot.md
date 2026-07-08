@@ -114,10 +114,15 @@ The setup user's username is your enterprise **shortcode** + `_admin` (for examp
 ### Process
 
 1. GitHub emails an invite to set the password for `SHORTCODE_admin`.
-2. In a private/incognito window:
-   - Set the password.
-   - Enable **2FA** immediately.
-   - Save the **personal 2FA recovery codes** securely.
+2. In a private/incognito window, set the password, then enable 2FA immediately:
+
+**Navigate:** Profile photo → **Settings** → **Password and authentication**
+
+1. Under **Two-factor authentication**, click **Enable two-factor authentication**.
+2. Choose a method — **Set up using an app** (TOTP authenticator app recommended).
+3. Scan the QR code (or enter the setup key) in your authenticator app, then enter the 6-digit code to **complete the challenge**.
+4. On the **recovery codes** screen, click **Download** (or **Copy**/**Print**) to save your **personal 2FA recovery codes**.
+5. Click **I have saved my recovery codes** / **Continue** to finish. Store the codes in your vault.
 
 ### Important Notes
 
@@ -148,12 +153,15 @@ The setup user's username is your enterprise **shortcode** + `_admin` (for examp
 Okta Admin Console
   → Applications
     → Applications
-      → GitHub Enterprise Managed User
+      → GitHub Enterprise Managed User (app)
         → Sign On (tab)
-          → Next to "Enterprise Name"
-            → Type: [your enterprise slug, e.g., "octocorp"]
-            → Save
+          → Edit (top-right of the Settings/SAML section)
+            → Enterprise Name (field)
+              → Type: [your enterprise slug, e.g., "octocorp"]
+              → Save
 ```
+
+> 📌 **Note:** On the **Sign On** tab the SAML settings are read-only until you click **Edit**; the **Enterprise Name** field only becomes editable after that.
 
 > 💡 **Note:** Enter your enterprise **slug** (e.g., "octocorp" if your enterprise URL is `github.com/enterprises/octocorp` or `octocorp.ghe.com`).
 
@@ -175,8 +183,10 @@ Okta Admin Console
         → Sign On (tab)
           → Under "SAML 2.0"
             → More details (click)
-              → Copy: Sign on URL, Issuer, Signing certificate
+              → copy Sign on URL and Issuer, and click Download certificate (X.509 signing certificate)
 ```
+
+> 💡 **Tip:** The X.509 signing certificate is exposed as a **Download certificate** button/link (a `.cert`/`.pem` file), not plain copyable text like the URLs — click **Download certificate** (or open its contents and copy the full certificate text) for pasting into GitHub's **Public Certificate** field in Step 3. On the **Sign On** tab you can also click **View SAML setup instructions** to see all three values together.
 
 ### SAML Values (GitHub SP values)
 
@@ -240,7 +250,7 @@ Okta Admin Console
    - **Digest Method** — Choose from the dropdown (SHA-256 recommended).
 3. Click **Test SAML configuration** to validate the setup (it must pass before you can save).
 4. Click **Save SAML settings**.
-5. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
+5. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely, then click **I have saved my recovery codes** (or **Continue**/**Done**) to dismiss the recovery-codes screen and finish enabling SAML.
 
 > 🔐 **Critical:** Recovery codes are essential for break-glass scenarios if your IdP becomes unavailable.
 
@@ -415,6 +425,10 @@ Under **Access**, choose:
 
 Select the Copilot plan (**Copilot Business** or **Copilot Enterprise**) for each enabled organization.
 
+1. After setting **Access** (and, for **Specific organizations**, checking the boxes for the organizations that may use Copilot and selecting the plan **Copilot Business** or **Copilot Enterprise**), click **Save** to commit the access setting.
+
+> ⚠️ **Commit required:** If you set the toggle and navigate away without clicking **Save**, the change is never applied and Copilot stays off.
+
 > 💡 **Tip:** Managing **Copilot Business** at the enterprise level is generally available (GA since October 2025). Enterprise owners can assign Copilot Business licenses directly at the enterprise account — to individual users and/or enterprise teams — without granting org access, via the dedicated Copilot Business licensing page (**Billing & Licensing / Licensing**). A user assigned via multiple sources still consumes only **one** license (the highest tier). Note that **enterprise teams** (the membership construct) remain in public preview.
 
 ### 6B — Configure Copilot Policies
@@ -436,17 +450,29 @@ For each policy, select:
 - **Disabled/Blocked** — Feature is off for all organizations
 - **No policy** — Delegate the decision to organization owners
 
+1. After setting each policy (public-code matching, Copilot Chat, Copilot in the CLI, and any other feature policy) to **Enabled/Allowed**, **Disabled/Blocked**, or **No policy**, click **Save** to apply the policy changes.
+
 ### 6C — Assign Copilot Seats
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-After enabling at the enterprise level, organization owners assign seats at the org level:
+After enabling at the enterprise level, assign seats by either route.
+
+**Route A — Organization level** (organization owner):
 
 **Navigate:** Profile photo → **Your organizations** → *[your organization]* → **Settings** → **Copilot** → **Access**
 
-Organization owners can add members or teams, or enable Copilot for all members.
+1. Click **Add people** (or **Add teams**).
+2. Select the users or teams to license.
+3. Click **Add** to assign the seats. *(Or toggle Copilot on for all members.)*
 
-> 💡 **Tip:** Enterprise owners can alternatively assign **Copilot Business** licenses directly at the enterprise account (see 6A) without granting org access.
+**Route B — Enterprise level** (enterprise owner, GA — no org membership required):
+
+**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business**
+
+1. Click **Add seats**.
+2. Select individual users and/or **enterprise teams**.
+3. Review the count and click **Confirm** to assign the licenses.
 
 ---
 

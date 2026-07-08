@@ -141,15 +141,38 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 
 > ⚠️ **Prerequisite:** For EMU and DRUS trials, you **must** configure SCIM provisioning and SAML/OIDC in your IdP **before** inviting any users.
 > 📌 **Constraint:** EMU and DRUS use the **Identity provider** path below — **not** `Settings → Authentication security` (that path is for Standard GHEC only, see Step 4). EMU has **no** "Require SAML authentication" checkbox and no backup username/password sign-in.
+> 💡 **Tip:** For the exact IdP-side app-creation and provisioning clicks, follow your IdP's dedicated EMU guide (see [Related Guides](#-related-guides)) alongside this section.
+
+### 0) Activate and Secure the EMU Setup User
+
+**👤 Role:** GitHub **setup user** (`SHORTCODE_admin`) · **📍 Portal:** GitHub
+
+> 📌 **Constraint:** GitHub creates a setup user named after your enterprise shortcode plus `_admin` (e.g., `octocorp_admin`). This account owns the SCIM token and is your break-glass access. Secure it **before** configuring SSO/SCIM below.
+
+**Steps:**
+
+1. Open the **setup user invitation email** GitHub sends for the EMU/DRUS enterprise **in a private / incognito browser window** (keeps it separate from your personal GitHub session).
+2. Click the invite link and **set the password**; save it to your secrets vault.
+3. Go to profile photo → **Settings** → **Password and authentication** → under **Two-factor authentication** click **Enable two-factor authentication** → choose **Set up using an app** (TOTP recommended) → scan the code and **complete the challenge**.
+4. Click **Download** (or copy/print) the personal **2FA recovery codes** and store them in your vault.
+
+> 🔐 **Security-critical:** Every future setup-user sign-in needs a 2FA challenge **or** an enterprise recovery code; losing both locks you out. Password reset for the setup user must go through **GitHub Support**.
 
 ### A) Configure SAML Single Sign-On (EMU/DRUS)
 
 **Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
 
+> 📌 **First, capture the three SAML artifacts from your IdP** (Entra example). In the **GitHub Enterprise Managed User** enterprise app → **Single sign-on → SAML**:
+> - Under **Basic SAML Configuration → Edit**, enter **Identifier** `https://github.com/enterprises/{SLUG}` (no trailing slash), **Reply URL** `https://github.com/enterprises/{SLUG}/saml/consume`, **Sign on URL** `https://github.com/enterprises/{SLUG}/sso` (GHE.com: swap in the `{SUBDOMAIN}.ghe.com` forms) → **Save**.
+> - Under **SAML Certificates**, click **Download** on **Certificate (Base64)** (this is the **Public Certificate**).
+> - Under **Set up [app]**, copy the **Login URL** (= **Sign on URL**) and **Microsoft Entra Identifier** (= **Issuer**).
+>
+> Paste those three values into the GitHub fields in step 2 below.
+
 **Steps:**
 
 1. Under **SAML single sign-on**, click **Add SAML configuration**.
-2. Enter your IdP's **Sign on URL**, **Issuer**, and **Public Certificate**, then choose the **Signature Method** and **Digest Method** (SHA-256 recommended).
+2. Enter your IdP's **Sign on URL**, **Issuer**, and **Public Certificate** (the three artifacts captured above), then choose the **Signature Method** and **Digest Method** (SHA-256 recommended).
 3. Click **Test SAML configuration** — this must pass before you can save.
 4. Click **Save SAML settings**.
 5. Immediately **Download**, **Print**, or **Copy** your enterprise **SSO recovery codes** and store them securely.
@@ -159,14 +182,26 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 
 ### B) Configure SCIM Provisioning
 
+The **SCIM Tenant URL** you paste into the IdP is:
+
+| Platform | Tenant URL |
+|----------|-----------|
+| **GitHub.com (EMU)** | `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}` |
+| **GHE.com (DRUS)** | `https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}` |
+
 **Steps:**
 
 1. Sign in as the **setup user**, then create the SCIM token: Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** with the **`scim:enterprise`** scope and **No expiration**. Copy it immediately (shown once).
-2. In your IdP (Entra ID, Okta, etc.), configure the GitHub EMU SCIM application using the **Tenant URL** and the token above as the **Secret Token** / **Bearer Token**.
-3. Map required user attributes (username, email, display name).
-4. Assign users and groups in the IdP (use **Sync only assigned users and groups**; assign at least one user the **Enterprise Owner** role so a managed admin exists).
-5. Start provisioning — users are created automatically in GitHub.
+2. In your IdP, open the **GitHub Enterprise Managed User** app → **Provisioning** tab → **+ New configuration** (older tenants: **Get started** → **Provisioning Mode = Automatic**).
+3. Paste the **SCIM Tenant URL** above into **Tenant URL** and the token from step 1 into **Secret Token** / **Bearer Token** → click **Test Connection** → confirm it succeeds → click **Create** (older UI: **Save**).
+4. Go to **Overview → Properties** (pencil) → enable notification emails + accidental-deletion prevention → **Apply**.
+5. Review **Attribute Mapping → Users** (username, email, display name) → **Save**, then **Attribute Mapping → Groups** → **Save**.
+6. Set **Scope = Sync only assigned users and groups**.
+7. Under **Users and groups → Add user/group**, assign users and give at least one the **Enterprise Owner** app role so a managed admin exists.
+8. Test one user with **Provision on demand** and confirm the user appears in GitHub before full rollout.
+9. Go to **Overview → Start provisioning** — assigned users are created automatically in GitHub.
 
+> ✅ **Verification:** Always confirm **Test Connection** succeeds and that your **Provision on demand** test user lands in GitHub before starting full provisioning — otherwise failures surface only after you invite users.
 > 💡 **Tip:** Do not manually create user accounts in an EMU enterprise. All user lifecycle management flows through SCIM.
 > 📌 **Constraint:** Use **one IdP** for both SSO and SCIM. Mixing IdPs (e.g., Okta for SSO and Entra for SCIM) is not supported.
 
@@ -187,10 +222,12 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 **Steps:**
 
 1. Enter your IdP's **Sign on URL**, **Issuer**, and **Public certificate**.
-2. Test the SAML configuration.
+2. Click **Test SAML configuration** and confirm it passes.
 3. Click **Enable SAML authentication**.
-4. (Optional) Check **Require SAML SSO authentication** to enforce it for all members.
+4. Click **Download** (or Print/Copy) to save the enterprise/org **SAML recovery codes** to your vault, then confirm/close the prompt.
+5. (Optional) Check **Require SAML SSO authentication** to enforce it for all members.
 
+> 🔐 **Security-critical:** Enabling SAML generates one-time recovery codes on save — download them now. They are your break-glass access if the IdP is unavailable.
 > ✅ **Result:** Organization members must authenticate via your IdP to access org resources.
 
 ---
@@ -207,11 +244,18 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 
 1. Contact your GitHub Sales representative or Solutions Engineer.
 2. Request a Copilot Business trial (commonly a **trial allotment of up to 50 seats** — confirm current terms with your GitHub account team).
-3. Once activated, assign seats.
+3. Once activated, configure **access** and then **assign seats** (two separate pages):
 
-**Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** → **Copilot** → manage **access** (enable for all orgs / specific orgs) and assign seats
+**(a) Access — Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **AI controls** → **Copilot**
 
-> 💡 **Tip:** **AI controls** is a top-of-page enterprise tab, not under **Settings**. Managing Copilot Business at the enterprise level is generally available; only enterprise **teams** (the membership construct) remain in public preview.
+1. Set **Access** (All organizations / Specific organizations / Disabled; for **Specific organizations**, select the orgs) → click **Save**.
+2. Open the **Policies** tab → set each policy (public-code matching, Copilot Chat, CLI, etc.) → click **Save**.
+
+**(b) Seats — Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business**
+
+1. **Assign** Copilot Business licenses to individual users and/or enterprise teams.
+
+> 💡 **Tip:** **AI controls** is a top-of-page enterprise tab, not under **Settings**. The **AI controls → Copilot** page manages access and policies; actual seat/license assignment is on the **Billing & Licensing → Licensing → Copilot Business** page. Managing Copilot Business at the enterprise level is generally available (GA, Oct 2025); only enterprise **teams** (the membership construct) remain in public preview.
 
 ### B) GitHub Advanced Security (GHAS) Trial
 
@@ -331,6 +375,10 @@ This runbook covers every step to initiate and configure a GitHub Enterprise Clo
 | Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
 | Data Residency Decision Guide | `Setup/Data Residency Decision Guide (DRUS vs Standard vs GHES).md` |
 | EMU Benefits and Advantages | `Identity/EMU Benefits and Advantages.md` |
+| EMU + Entra ID (SAML) + Azure Billing + Copilot | `Setup/EMU + Entra ID (SAML) + Azure Billing + Copilot.md` |
+| EMU + Entra ID (OIDC) + Azure Billing + Copilot | `Setup/EMU + Entra ID (OIDC) + Azure Billing + Copilot.md` |
+| EMU + Okta (SAML) + Azure Billing + Copilot | `Setup/EMU + Okta (SAML) + Azure Billing + Copilot.md` |
+| EMU + PingFederate (SAML) + Azure Billing + Copilot | `Setup/EMU + PingFederate (SAML) + Azure Billing + Copilot.md` |
 
 ---
 
