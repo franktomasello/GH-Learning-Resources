@@ -10,13 +10,13 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Enable Copilot for Specific Organizations (Enterprise Level)](#1-enable-copilot-for-specific-organizations-enterprise-level)
-- [2️⃣ Assign Seats to Specific Users (Organization Level)](#2-assign-seats-to-specific-users-organization-level)
-- [3️⃣ Team-Based Assignment for Pilots](#3-team-based-assignment-for-pilots)
-- [4️⃣ Enable Copilot for All Members (Organization Level)](#4-enable-copilot-for-all-members-organization-level)
-- [5️⃣ Mixed Plans: Business + Enterprise in the Same Enterprise](#5-mixed-plans-business--enterprise-in-the-same-enterprise)
-- [6️⃣ Resolving Duplicate Tier Assignments](#6-resolving-duplicate-tier-assignments)
-- [7️⃣ Copilot Enterprise vs Business Assignment at the Enterprise Level](#7-copilot-enterprise-vs-business-assignment-at-the-enterprise-level)
+- [1️⃣ Enable Copilot for Specific Organizations (Enterprise Level)](#1️⃣-enable-copilot-for-specific-organizations-enterprise-level)
+- [2️⃣ Assign Seats to Specific Users (Organization Level)](#2️⃣-assign-seats-to-specific-users-organization-level)
+- [3️⃣ Team-Based Assignment for Pilots](#3️⃣-team-based-assignment-for-pilots)
+- [4️⃣ Enable Copilot for All Members (Organization Level)](#4️⃣-enable-copilot-for-all-members-organization-level)
+- [5️⃣ Mixed Plans: Business + Enterprise in the Same Enterprise](#5️⃣-mixed-plans-business--enterprise-in-the-same-enterprise)
+- [6️⃣ Resolving Duplicate Tier Assignments](#6️⃣-resolving-duplicate-tier-assignments)
+- [7️⃣ Copilot Enterprise vs Business Assignment at the Enterprise Level](#7️⃣-copilot-enterprise-vs-business-assignment-at-the-enterprise-level)
 - [🚀 Quick Pilot Rollout Recipe](#-quick-pilot-rollout-recipe)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -46,8 +46,8 @@
 
 
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -376,7 +376,7 @@ Enterprise → AI controls → Copilot → Access
 | Guide | Location |
 |-------|----------|
 | Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
-| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| AI Credits Budget & Overage Planning | `Copilot/AI Credits Budget & Overage Planning.md` |
 | Measuring Adoption & ROI | `Copilot/Measuring Adoption & ROI.md` |
 | Enterprise Trial (GHEC, EMU, DRUS) | `Setup/Enterprise Trial (GHEC, EMU, DRUS).md` |
 

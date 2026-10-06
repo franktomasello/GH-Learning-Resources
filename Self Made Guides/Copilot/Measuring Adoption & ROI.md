@@ -10,13 +10,13 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Built-In Metrics at the Enterprise Level](#1-built-in-metrics-at-the-enterprise-level)
-- [2️⃣ Organization-Level Metrics](#2-organization-level-metrics)
-- [3️⃣ Key Metrics to Track](#3-key-metrics-to-track)
-- [4️⃣ Copilot Metrics API](#4-copilot-metrics-api)
-- [5️⃣ ROI Indicators](#5-roi-indicators)
-- [6️⃣ Running a Copilot Pilot](#6-running-a-copilot-pilot)
-- [7️⃣ Executive Reporting Framework](#7-executive-reporting-framework)
+- [1️⃣ Built-In Metrics at the Enterprise Level](#1️⃣-built-in-metrics-at-the-enterprise-level)
+- [2️⃣ Organization-Level Metrics](#2️⃣-organization-level-metrics)
+- [3️⃣ Key Metrics to Track](#3️⃣-key-metrics-to-track)
+- [4️⃣ Copilot Metrics API](#4️⃣-copilot-metrics-api)
+- [5️⃣ ROI Indicators](#5️⃣-roi-indicators)
+- [6️⃣ Running a Copilot Pilot](#6️⃣-running-a-copilot-pilot)
+- [7️⃣ Executive Reporting Framework](#7️⃣-executive-reporting-framework)
 - [🚀 Quick Metrics Setup Recipe](#-quick-metrics-setup-recipe)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -45,8 +45,8 @@
 
 
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -425,7 +425,7 @@ The Copilot metrics API provides programmatic access to usage data:
 | Guide | Location |
 |-------|----------|
 | Seat Assignment & Enablement | `Copilot/Seat Assignment & Enablement.md` |
-| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| AI Credits Budget & Overage Planning | `Copilot/AI Credits Budget & Overage Planning.md` |
 | Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
 
 ---

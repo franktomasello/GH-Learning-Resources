@@ -11,14 +11,14 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Create Cost Centers](#1-create-cost-centers)
-- [2️⃣ Assign Resources to Cost Centers](#2-assign-resources-to-cost-centers)
-- [3️⃣ Cost Center Scope and Limitations](#3-cost-center-scope-and-limitations)
-- [4️⃣ Patterns for Team-Level Billing](#4-patterns-for-team-level-billing)
-- [5️⃣ SKU-Level Budgets for Premium Requests](#5-sku-level-budgets-for-premium-requests)
-- [6️⃣ Set Budgets and Hard Stops](#6-set-budgets-and-hard-stops)
-- [7️⃣ Connect an Azure Subscription](#7-connect-an-azure-subscription)
-- [8️⃣ Export Usage Reports for Finance Reconciliation](#8-export-usage-reports-for-finance-reconciliation)
+- [1️⃣ Create Cost Centers](#1️⃣-create-cost-centers)
+- [2️⃣ Assign Resources to Cost Centers](#2️⃣-assign-resources-to-cost-centers)
+- [3️⃣ Cost Center Scope and Limitations](#3️⃣-cost-center-scope-and-limitations)
+- [4️⃣ Patterns for Team-Level Billing](#4️⃣-patterns-for-team-level-billing)
+- [5️⃣ SKU-Level Budgets for Premium Requests](#5️⃣-sku-level-budgets-for-premium-requests)
+- [6️⃣ Set Budgets and Hard Stops](#6️⃣-set-budgets-and-hard-stops)
+- [7️⃣ Connect an Azure Subscription](#7️⃣-connect-an-azure-subscription)
+- [8️⃣ Export Usage Reports for Finance Reconciliation](#8️⃣-export-usage-reports-for-finance-reconciliation)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -46,8 +46,8 @@
 
 
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -73,7 +73,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile picture → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -394,7 +394,7 @@ Enterprise → Billing and licensing → Usage report
 
 | Guide | Location |
 |-------|----------|
-| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| AI Credits Budget & Overage Planning | `Copilot/AI Credits Budget & Overage Planning.md` |
 | Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
 | Visual Studio Subscription to GitHub Enterprise Linking | `Billing/Visual Studio Subscription to GitHub Enterprise Linking.md` |
 | Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |

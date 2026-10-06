@@ -11,12 +11,12 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [🏗️ Supported Providers](#-supported-providers)
-- [1️⃣ Configure BYOK at the Enterprise Level](#1-configure-byok-at-the-enterprise-level)
-- [2️⃣ Set Policies for BYOK Model Access](#2-set-policies-for-byok-model-access)
-- [3️⃣ What BYOK Does](#3-what-byok-does)
-- [4️⃣ What BYOK Does NOT Do](#4-what-byok-does-not-do)
-- [5️⃣ Use Cases for Public Sector and Regulated Industries](#5-use-cases-for-public-sector-and-regulated-industries)
+- [🏗️ Supported Providers](#️-supported-providers)
+- [1️⃣ Configure BYOK at the Enterprise Level](#1️⃣-configure-byok-at-the-enterprise-level)
+- [2️⃣ Set Policies for BYOK Model Access](#2️⃣-set-policies-for-byok-model-access)
+- [3️⃣ What BYOK Does](#3️⃣-what-byok-does)
+- [4️⃣ What BYOK Does NOT Do](#4️⃣-what-byok-does-not-do)
+- [5️⃣ Use Cases for Public Sector and Regulated Industries](#5️⃣-use-cases-for-public-sector-and-regulated-industries)
 - [🚀 Quick BYOK Setup Recipe](#-quick-byok-setup-recipe)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -45,8 +45,8 @@
 
 
 - Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -72,7 +72,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner** | Configures the BYOK provider and access policy in GitHub Copilot. | GitHub → profile photo → Your enterprises → [enterprise] → Settings → Copilot → Policies → Model management → Configure BYOK → Add provider → select provider → enter required key and endpoint fields → Test connection → Save → set access policy to all organizations or selected organizations. Handoff: provider status shows saved and test succeeds. |
+| **GitHub enterprise owner** | Configures the BYOK provider and access policy in GitHub Copilot. | GitHub → profile picture → Your enterprises → [enterprise] → Settings → Copilot → Policies → Model management → Configure BYOK → Add provider → select provider → enter required key and endpoint fields → Test connection → Save → set access policy to all organizations or selected organizations. Handoff: provider status shows saved and test succeeds. |
 | **Azure AI Foundry resource owner, if Azure AI Foundry is the selected provider** | Provides the endpoint URL, key, deployment name, and quota confirmation for the Azure-hosted model. | Azure AI Foundry portal → Models + endpoints → [deployment] → Endpoint and keys → copy endpoint URL and key. If the model is not deployed yet: Foundry portal → Discover → Models → [model] → Deploy → Default settings or Custom settings → complete deployment → open deployment details. Handoff: endpoint URL, key, deployment name, region, and quota owner. |
 | **AI provider account owner for non-Azure providers** | Creates or rotates the provider API key and confirms billing ownership outside GitHub. | Provider admin console → API keys or access keys → Create new key → copy key once → restrict or tag it for GitHub Copilot BYOK where supported → record rotation owner and billing account. Handoff: key, endpoint if required, region if required, and rotation date. |
 
@@ -308,7 +308,7 @@ Enterprise → Settings → Copilot → Policies
 |-------|----------|
 | Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
 | Data Residency Decision Guide (DRUS vs Standard vs GHES) | `Setup/Data Residency Decision Guide (DRUS vs Standard vs GHES).md` |
-| Premium Request Budget & Overage Planning | `Copilot/Premium Request Budget & Overage Planning.md` |
+| AI Credits Budget & Overage Planning | `Copilot/AI Credits Budget & Overage Planning.md` |
 
 ---
 
