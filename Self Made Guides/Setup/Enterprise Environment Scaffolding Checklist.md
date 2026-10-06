@@ -2,6 +2,15 @@
 
 > **Comprehensive checklist for scaffolding a new GitHub Enterprise Cloud environment from scratch — identity, governance, security, billing, and Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Build a new GitHub Enterprise Cloud environment from scratch, in order |
+| **Use this when** | Day-one setup or a readiness review |
+| **People you need** | Enterprise owner; IdP admin; security lead; billing owner |
+| **Where you click** | GitHub, your IdP, and Azure |
+| **End result** | Identity, governance, security, billing, and Copilot configured and checked off |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -189,7 +196,9 @@ Enterprise (one per company)
 
 **Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies**
 
-> 💡 **Tip:** Guest collaborators let external users (contractors, partners) work on a limited set of repositories in an EMU enterprise. They **are still provisioned through the IdP** — the identity provider assigns the **guest collaborator** role to a managed user (an Entra app-manifest role or an Okta profile-editor role) and the user is created via SCIM. There is no GitHub-side invitation flow. The enterprise-side control lives under the top-level **Policies** tab, which governs whether org and repo admins may add collaborators.
+> 💡 **Tip:** Guest collaborators let external people (contractors, partners) work on a limited set of repositories in an EMU enterprise.
+> - They're **still provisioned through the IdP**: the IdP gives a managed user the **guest collaborator** role (an Entra app-manifest role or an Okta profile-editor role), and SCIM creates the account. There's no GitHub invitation flow.
+> - The enterprise-side control is under the top-level **Policies** tab, which decides whether org and repo admins may add collaborators.
 
 ---
 
@@ -467,11 +476,12 @@ Enterprise (one per company)
 
 > ✅ **Result:** If all validation steps pass, your GitHub Enterprise Cloud environment is scaffolded and ready for onboarding teams.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -495,7 +505,6 @@ Enterprise (one per company)
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Should we use one enterprise or multiple enterprises?
 **A:** Use one enterprise per company in almost all cases. Multiple enterprises add significant complexity: separate billing, separate audit logs, separate policy governance, and no shared visibility. Only consider multiple enterprises when you have hard compliance boundaries (e.g., FedRAMP vs non-FedRAMP workloads), completely independent IdPs that cannot federate, or legally distinct entities with no shared governance. If in doubt, start with one enterprise and use organizations for separation.
 
@@ -517,17 +526,38 @@ Enterprise (one per company)
 ---
 
 ### Q: Enterprise policies I set are not cascading to organizations as expected — what is happening?
-**A:** For most enterprise policies you either pick a specific setting — which is then enforced on every organization, so org owners can't change it — or leave the policy at **Let organizations decide**, which lets each organization owner decide. Some policies offer options that only limit what org owners can choose (for example, which repository visibilities members can create). If org owners can still change something, the enterprise policy is probably at **Let organizations decide**. Go to your enterprise → **Policies** (a top-of-page tab, not under **Settings**), open the relevant policy page, and check its value. Enterprise rulesets are layered on top of organization and repository rules — org-level rules can't relax them — but anyone on a ruleset's bypass list can still bypass it.
+**A:** Most enterprise policies work one of two ways:
+
+- **A specific setting:** enforced on every organization; org owners can't change it.
+- **Let organizations decide:** each organization owner chooses.
+
+Some policies only limit what org owners can choose (for example, which repository visibilities members can create). If org owners can still change something, the enterprise policy is probably at **Let organizations decide**.
+
+**To check:** your enterprise → **Policies** (a top-of-page tab, not under **Settings**) → open the policy page → check its value.
+
+Enterprise rulesets add on top of organization and repository rules — org rules can't relax them — but anyone on a ruleset's bypass list can still bypass it.
 
 ---
 
 ### Q: We already set up our environment but realize we chose the wrong identity model — can we switch?
-**A:** No. The identity model (Standard vs EMU vs EMU with Data Residency) is set at enterprise creation and cannot be changed. Switching requires creating a new enterprise with the correct identity model, reconfiguring identity and provisioning, and migrating all repositories using GitHub Enterprise Importer (GEI). Treat this as a 4-8 week migration project. This is why the identity model decision in Step 1 is the most important choice in this guide.
+**A:** No. The identity model (Standard, EMU, or EMU with data residency) is set when the enterprise is created and can't be changed. Switching means:
+
+1. Creating a new enterprise with the right identity model.
+2. Setting up identity and provisioning again.
+3. Migrating every repository with GitHub Enterprise Importer (GEI).
+
+Treat it as a 4–8 week migration project. That's why the identity decision in Step 1 is the most important choice in this guide.
 
 ---
 
 ### Q: How should we handle cost allocation across multiple business units?
-**A:** Use GitHub's Cost Centers feature (Enterprise → **Billing and licensing** → **Cost centers**). Create a cost center for each business unit or department and assign the organizations, repositories, or users that should carry that spend. User-scoped cost centers are especially useful for Copilot seats and metered AI usage — as of 2026-06-01 GitHub Copilot moved to usage-based billing, so Copilot consumption is now measured in **GitHub AI Credits** rather than the former "premium requests." Repository-scoped cost centers are useful for repository-driven metered usage such as Actions. Enable budget alerts — GitHub automatically emails account owners and billing managers as spending approaches and reaches the budget limit; set the budget amount and, if desired, a hard limit that blocks further usage.
+**A:** Use cost centers (Enterprise → **Billing and licensing** → **Cost centers**):
+
+1. Create a cost center for each business unit or department.
+2. Add the organizations, repositories, users, or enterprise teams whose spending it should carry.
+   - **Users or enterprise teams** suit Copilot licenses and AI-credit usage (Copilot has billed in **AI credits** since June 1, 2026).
+   - **Repositories** suit repository-driven usage such as Actions.
+3. Add budgets. GitHub emails enterprise owners and billing managers as spending nears and reaches each budget, and a budget can optionally **stop usage** at the limit.
 
 ---
 

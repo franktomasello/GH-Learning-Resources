@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Okta (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Set up standard GHEC with Okta single sign-on end to end |
+| **Use this when** | A standard (personal-account) enterprise uses Okta |
+| **People you need** | Enterprise or organization owner; Okta admin; Azure subscription owner |
+| **Where you click** | GitHub and the Okta Admin Console |
+| **End result** | SAML SSO, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -28,7 +37,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -45,7 +53,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -75,6 +82,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - SAML SSO is enforced at the org (and optionally at the enterprise, if you have one)
 - SCIM manages organization membership via Okta assignments (not "managed user accounts"—that is EMU)
 
+---
+
 ## ✅ Prerequisites
 
 | Requirement | Who / Role needed | Notes |
@@ -86,6 +95,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Dedicated GitHub "SCIM setup user" | Org Owner | GitHub recommends a dedicated user to authorize SCIM OAuth in Okta |
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -125,6 +136,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
+---
+
 ## 2️⃣ Create the Okta Application (GitHub Enterprise Cloud - Organization)
 
 **👤 Role:** Okta Admin · **📍 Portal:** Okta
@@ -155,6 +168,8 @@ In the Okta app:
     - **Sign on URL**
     - **Issuer**
     - **X.509 certificate** (public cert)
+
+---
 
 ## 3️⃣ Enable SAML SSO in GitHub
 
@@ -197,6 +212,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
+---
+
 ## 4️⃣ Enforce SAML SSO for the Organization (Required)
 
 **👤 Role:** Org Owner · **📍 Portal:** GitHub
@@ -216,6 +233,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 4. Confirm the warning and click:
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
+
+---
 
 ## 5️⃣ Configure SCIM Provisioning (Okta → GitHub Organization)
 
@@ -270,6 +289,8 @@ https://github.com/orgs/ORGANIZATION-NAME/sso
     - Add assignment → user becomes org member
     - Remove assignment → user is removed from org (per your provisioning settings)
 
+---
+
 ## 6️⃣ Attach Azure Subscription for Metered Billing
 
 **👤 Role:** GitHub Enterprise Owner (or Org Owner if connecting at org level) + Azure subscription **Owner** with tenant-wide admin consent · **📍 Portal:** GitHub + Microsoft
@@ -312,6 +333,8 @@ Enterprise list: https://github.com/settings/enterprises
 9. Click **Connect**
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+
+---
 
 ## 7️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -404,6 +427,8 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 
 > 📌 **One license per person:** someone assigned through both 7D and 7E uses **one** license (the highest tier).
 
+---
+
 ## 8️⃣ Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
 **👤 Role:** Each member (self-service) · **📍 Portal:** GitHub
@@ -429,6 +454,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 **Token nuance:**
 
 > 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
+
+---
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -468,6 +495,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - [ ] Licenses assigned to pilot cohort
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
 
+---
+
 ## 🎯 Success Criteria
 
 After completing this guide, you should have:
@@ -485,7 +514,6 @@ After completing this guide, you should have:
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -509,24 +537,37 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: I installed the wrong Okta catalog app — how do I tell EMU vs standard org?
 **A:** The correct app for standard (non-EMU) GHEC is **"GitHub Enterprise Cloud - Organization"**. The EMU app is named **"GitHub Enterprise Managed User"**. If you installed the EMU app, SCIM and SAML will target the enterprise endpoint instead of the org endpoint, and provisioning will fail. Delete the incorrect app in Okta and install "GitHub Enterprise Cloud - Organization" from the catalog.
 
 ---
 
 ### Q: The OAuth authorization for SCIM provisioning keeps failing — what is going wrong?
-**A:** Okta's standard org SCIM integration uses a third-party OAuth flow (not a PAT). The setup user must: (1) be an org owner, (2) have an active SAML session for the org (visit `https://github.com/orgs/YOUR_ORG/sso` first), and (3) complete the OAuth authorization as that user in the Okta Provisioning tab. If the authorization popup fails silently, try in an incognito window, ensure pop-ups are not blocked, and confirm the setup user can access the org.
+**A:** Okta's org SCIM integration uses a third-party OAuth flow, not a PAT. The setup user must:
+
+1. Be an org owner.
+2. Have an active SAML session for the org (visit `https://github.com/orgs/YOUR_ORG/sso` first).
+3. Complete the OAuth authorization as that user from the Okta app's **Provisioning** tab.
+
+If the authorization pop-up fails silently, try a private window, allow pop-ups, and confirm the setup user can open the org.
 
 ---
 
 ### Q: SAML enforcement removed bots and service accounts from the org — how do I avoid this?
-**A:** Before enforcing SAML, review the list of members who have not authenticated via the IdP. Bots and service accounts without external identities will be removed. To prevent this: (1) assign IdP identities to service accounts and have them complete SSO before enforcement, or (2) switch automation to use GitHub Apps, which are not affected by SAML enforcement. After enforcement, removed accounts can rejoin within three months with their previous access restored.
+**A:** Before enforcing SAML, review the members who haven't authenticated through the IdP — bots and service accounts without external identities will be removed. To prevent this, either:
+
+1. Give service accounts IdP identities and have them complete SSO before enforcement, or
+2. Move automation to GitHub Apps, which SAML enforcement doesn't affect.
+
+Removed members can be reinstated within three months with their previous access restored.
 
 ---
 
 ### Q: We forgot to save our SSO recovery codes before enforcement — what now?
-**A:** If SAML is already enforced and working, you can still access the recovery codes. Go to Organization **Settings** → **Authentication security**, and under **SAML single sign-on** click **Save your recovery codes**. Download and store them immediately. If your IdP goes down and you do not have recovery codes, you will need to contact GitHub Support for assistance, which can take time. Always store recovery codes in a secure vault accessible to at least two org owners.
+**A:** Yes, you can still get them: Organization **Settings** → **Authentication security** → under **SAML single sign-on**, click **Save your recovery codes** → download and store them.
+
+- Without recovery codes, an IdP outage means contacting GitHub Support, which takes time.
+- Store the codes in a secure vault that at least two org owners can reach.
 
 ---
 

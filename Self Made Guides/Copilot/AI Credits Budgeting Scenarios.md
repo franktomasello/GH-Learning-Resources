@@ -4,6 +4,15 @@
 
 > 📌 **Billing changed on June 1, 2026.** Premium requests and model multipliers were replaced by **AI credits** (1 credit = $0.01), charged by model and tokens used. These scenarios use the current model. See [AI Credits Budget & Overage Planning](AI%20Credits%20Budget%20%26%20Overage%20Planning.md) for the fundamentals.
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Show worked, math-checked examples of Copilot AI-credit budgets |
+| **Use this when** | A customer asks "what would this cost us?" for a specific setup |
+| **People you need** | Enterprise owner or billing manager |
+| **Where you click** | GitHub (Billing and licensing) |
+| **End result** | A scenario that matches the customer, with the numbers to back it up |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -23,7 +32,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the decisions:**
@@ -39,7 +47,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026, including the June 1, 2026 move to usage-based billing. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -222,11 +229,12 @@ Assumes the user's usage isn't offset by other users' unused credits in the shar
 
 > ⚠️ **Not retroactive:** turning on included usage controls doesn't redistribute credits already used this cycle. From then on, the cost center's members share only the credits funded by licenses attributed to that cost center.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -250,9 +258,13 @@ Assumes the user's usage isn't offset by other users' unused credits in the shar
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: We moved heavy users to Copilot Enterprise but costs went up — what happened?
-**A:** Under usage-based billing, Copilot Enterprise can't lower usage costs: its extra included credits cost exactly what you pay for them ($20 more per seat buys 2,000 more credits), and extra usage is billed at the same $0.01 per credit on both plans. If those users weren't already using more than 3,900 credits a month, the higher seat price is pure added cost. Keep Copilot Enterprise only where you need its features.
+**A:** Under usage-based billing, Copilot Enterprise can't lower usage costs:
+
+- Its extra included credits cost exactly what you pay for them ($20 more per seat buys 2,000 more credits).
+- Extra usage costs the same $0.01 per credit on both plans.
+
+If those users weren't already using more than 3,900 credits a month, the higher seat price is pure added cost. Keep Copilot Enterprise only where you need its features.
 
 ---
 

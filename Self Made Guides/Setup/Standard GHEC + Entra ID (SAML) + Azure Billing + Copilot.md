@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Microsoft Entra ID (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Set up standard GHEC with Entra ID single sign-on end to end |
+| **Use this when** | A standard (personal-account) enterprise uses Entra ID |
+| **People you need** | Enterprise or organization owner; Entra Application Administrator; Azure subscription owner |
+| **Where you click** | GitHub and the Microsoft Entra admin center |
+| **End result** | SAML SSO, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -30,7 +39,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -47,7 +55,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -77,6 +84,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - SAML SSO is enforced at the org (and optionally at the enterprise, if you have one)
 - SCIM manages organization membership via Entra ID assignments (not "managed user accounts"—that is EMU)
 
+---
+
 ## ✅ Prerequisites
 
 | Requirement | Who / Role needed | ✓ |
@@ -88,6 +97,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Dedicated GitHub "SCIM setup user" | GitHub **organization owner** — the user who authorizes the SCIM OAuth app and holds an active SAML session | ☐ |
 | Azure subscription + ability to consent | Azure **subscription Owner** + tenant-wide admin consent (or admin-consent workflow). If the subscription is in a different tenant, you may need to specify a different tenant ID during connection | ☐ |
 | Copilot plan decision | GitHub **enterprise/organization owner** — Copilot Business vs Copilot Enterprise | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -126,6 +137,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration. The SCIM OAuth authorization is tied to this user — if the user is removed from the org or loses their SAML session, provisioning can break.
 
+---
+
 ## 2️⃣ Create the Entra ID Enterprise Application (GitHub Enterprise Cloud - Organization)
 
 **👤 Role:** Entra Application Administrator, Cloud Application Administrator, or Application Owner · **📍 Portal:** Microsoft Entra admin center
@@ -147,6 +160,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 - The gallery application automatically creates the necessary app registration
 - No manual app registration is required when using the gallery app
+
+---
 
 ## 3️⃣ Configure SAML SSO in Entra ID
 
@@ -175,6 +190,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 💡 **Tip:** You can also download the **Federation Metadata XML** file which contains all these values in a single file.
 
+---
+
 ## 4️⃣ Enable & Test SAML SSO in GitHub Org Settings
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
@@ -193,7 +210,11 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 - If you are a GitHub Enterprise (enterprise account) customer and intend to require SAML at the enterprise level, complete this before org enforcement. **Enterprise SAML completely replaces org-level SAML configuration and enforces SAML SSO for every organization in the enterprise.**
 
-> 🚨 **Blocker:** If you configure/enforce SAML at the **enterprise** level, **organization-level SCIM (Step 6) is not available** and any existing org SCIM stops working. Non-EMU enterprise accounts have **no** SCIM at all (enterprise SCIM requires Enterprise Managed Users). Use **org-level** SAML + SCIM for a standalone org, or move to **Enterprise Managed Users** for enterprise-level provisioning. Do not enforce enterprise SAML if you rely on the org SCIM in Step 6.
+> 🚨 **Blocker:** If you configure or enforce SAML at the **enterprise** level:
+> - **Organization-level SCIM (Step 6) isn't available**, and any existing org SCIM stops working.
+> - Enterprises with personal accounts have **no** enterprise SCIM (that requires Enterprise Managed Users).
+>
+> So use **org-level** SAML + SCIM for a standalone organization, or move to **Enterprise Managed Users** for enterprise-level provisioning. Don't enforce enterprise SAML if you rely on org SCIM.
 
 **Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
@@ -223,6 +244,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
+---
+
 ## 5️⃣ Enforce SAML SSO for the Organization (Required)
 
 **👤 Role:** GitHub organization owner · **📍 Portal:** GitHub
@@ -243,9 +266,15 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
 
+---
+
 ## 6️⃣ Configure SCIM Provisioning (Entra ID → GitHub Organization)
 
-> 📌 **Constraint:** Standard (non-EMU) organization SCIM does **not** use a GitHub-generated token. It uses a **third-party-owned OAuth app** that a GitHub organization owner authorizes. There is no "Generate token / Enable SCIM" control in org Authentication security. Instead, Entra's **Test Connection** opens a GitHub sign-in and **authorization dialog** where you select the target org and click **Authorize** — that authorization satisfies the **Secret Token** field. This implementation of SCIM cannot be used with an enterprise account or an organization with managed users (see the Step 4A blocker).
+> 📌 **Constraint:** Standard (non-EMU) organization SCIM doesn't use a GitHub-generated token.
+> - It uses a **third-party-owned OAuth app** that a GitHub organization owner authorizes.
+> - There's no "Generate token" or "Enable SCIM" control on the organization's **Authentication security** page.
+> - Instead, Entra's **Test Connection** opens a GitHub sign-in and **authorization dialog**. Select the organization and click **Authorize** — that authorization takes the place of the **Secret Token**.
+> - This kind of SCIM can't be used with enterprise-level SAML or with an organization that has managed users (see the Step 4A blocker).
 
 ### 6A — Prepare an Active SAML Session for the Setup User (Required)
 
@@ -305,6 +334,8 @@ https://github.com/orgs/ORGANIZATION-NAME/sso
 
 > 💡 **Tip:** Entra ID runs an initial provisioning cycle when you first start provisioning. Subsequent incremental cycles run approximately every 40 minutes.
 
+---
+
 ## 7️⃣ Attach Azure Subscription for Metered Billing
 
 **👤 Role:** GitHub enterprise owner (or organization owner for org-level billing) + Azure subscription Owner · **📍 Portal:** GitHub → Microsoft
@@ -340,6 +371,8 @@ https://github.com/orgs/ORGANIZATION-NAME/sso
 9. Click **Connect**
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Entra ID global administrator.
+
+---
 
 ## 8️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -432,6 +465,8 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 
 > 📌 **One license per person:** someone assigned through both 8D and 8E uses **one** license (the highest tier).
 
+---
+
 ## 9️⃣ Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
 When SAML is enabled/enforced, users often must authorize credentials (depending on token type and whether they have a linked external identity).
@@ -456,6 +491,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 
 > 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
 
+---
+
 ## 🔟 Recovery Codes & Break-Glass Access
 
 > 🔐 **Critical:** Recovery codes are your safety net if Entra ID becomes unavailable.
@@ -471,6 +508,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - Ensure at least two org owners have access to recovery codes
 - Test recovery code access periodically
 - Regenerate codes if any are used or if personnel with access leave the organization
+
+---
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -513,6 +552,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - [ ] Licenses assigned to pilot cohort (org- or enterprise-level)
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
 
+---
+
 ## 🎯 Success Criteria
 
 After completing this guide, you should have:
@@ -530,7 +571,6 @@ After completing this guide, you should have:
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -554,7 +594,6 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Users say they cannot access org resources after SAML was enabled — but they have GitHub accounts. What is wrong?
 **A:** In standard (non-EMU) GHEC, users must link their personal GitHub account to their IdP identity by completing the SAML SSO flow at least once. Simply having a GitHub account is not enough. Direct them to `https://github.com/orgs/YOUR_ORG/sso` to authenticate. If SAML is enforced and they have not completed SSO, they will be removed from the org and must re-authenticate to rejoin (access is restored if they rejoin within three months).
 
@@ -571,22 +610,42 @@ After completing this guide, you should have:
 ---
 
 ### Q: SAML enforcement unexpectedly removed members from the org — including bots and service accounts. How do I prevent this?
-**A:** Enforcement removes any org member who has not authenticated via the IdP. Bots and service accounts that do not have IdP identities will be removed. Before enforcing, review the list of unauthenticated members GitHub shows. For service accounts, either: (1) create IdP identities for them and have them complete SSO, or (2) after enforcement, use GitHub Apps (which are not affected by SAML enforcement) instead of bot user accounts for automation.
+**A:** Enforcement removes every org member who hasn't authenticated through the IdP — including bots and service accounts without IdP identities. Before enforcing, review the list of unauthenticated members GitHub shows you. For service accounts, either:
+
+1. Create IdP identities for them and have them complete SSO, or
+2. Replace bot accounts with GitHub Apps, which SAML enforcement doesn't affect.
 
 ---
 
 ### Q: The SCIM OAuth authorization keeps dropping and provisioning stops — what do I do?
-**A:** In standard non-EMU with Entra ID, org SCIM uses a **third-party-owned OAuth app** that a GitHub org owner authorizes — there is no GitHub-generated SCIM token to copy or regenerate. The authorization is tied to the user who granted it. If that user's org membership changes or their SAML session lapses, provisioning can break. Ensure the setup user remains an active org owner. To re-establish the connection: sign in as the setup user, visit `/orgs/YOUR_ORG/sso` to refresh the SAML session, then in Entra open the app → **Provisioning** → **Test Connection** and complete the GitHub **Authorize** dialog for the org again.
+**A:** Org SCIM in standard GHEC runs on a **third-party-owned OAuth app** that a GitHub org owner authorized. There's no GitHub-generated SCIM token to copy or regenerate, and the authorization is tied to the person who granted it. Provisioning can break if that person's org membership changes or their SAML session lapses — so keep them an active org owner.
+
+To reconnect:
+
+1. Sign in as that user and visit `https://github.com/orgs/YOUR_ORG/sso` to refresh the SAML session.
+2. In Entra, open the app → **Provisioning** → **Test Connection**.
+3. Complete the GitHub **Authorize** dialog for the organization again.
 
 ---
 
 ### Q: There is an email mismatch between Entra ID and GitHub — users are getting duplicate identities. How do I resolve this?
-**A:** The SAML NameID value sent by Entra must match what GitHub expects for identity linking. If Entra sends `user.userprincipalname` but the user's GitHub account uses a different email, the link will fail or create a separate identity. Standardize on one attribute (UPN or mail) in the Entra SAML Attributes & Claims configuration. Users can add their UPN as a verified email on their GitHub account to resolve the mismatch. Check the external identity mappings under Organization > People > filter by "External identity."
+**A:** In standard GHEC, the first successful SSO links the NameID Entra sends to that person's GitHub account — their GitHub email doesn't need to match. Problems start when the NameID **changes** (for example, you switch the claim from UPN to mail): GitHub sees a different identity and the sign-in fails or conflicts.
+
+1. Pick one stable attribute (UPN **or** mail) for **Unique User Identifier (Name ID)** in the Entra app's **Attributes & Claims**, and don't change it.
+2. For an affected member: Organization → **People** → the member → **SAML identity linked** → **Revoke** → **Revoke external identity**.
+3. Ask them to sign in through SSO again to link the current identity.
 
 ---
 
 ### Q: We have an enterprise account — should we configure SAML at the enterprise level or the org level?
-**A:** If you want consistent SAML enforcement across all organizations, configure it at the enterprise level — this overrides all org-level SAML settings. If different orgs need different IdPs or you want to roll out SAML incrementally, use org-level SAML. You cannot mix both — enterprise SAML replaces org-level SAML entirely. **Important trade-off:** organization-level SCIM (Step 6) is **not available** once SAML is enforced at the enterprise level, and any existing org SCIM stops working; non-EMU enterprise accounts have no SCIM at all. If you depend on org SCIM for automated membership, keep SAML at the org level — or move to Enterprise Managed Users for enterprise-level provisioning.
+**A:**
+
+- **Enterprise-level SAML:** consistent enforcement across all organizations. It overrides org-level SAML.
+- **Org-level SAML:** different IdPs per organization, or a gradual rollout.
+
+You can't combine them for one organization — enterprise SAML replaces org SAML.
+
+**Important trade-off:** once SAML is enforced at the enterprise level, org-level SCIM (Step 6) isn't available and existing org SCIM stops working; enterprises with personal accounts have no SCIM at all. If you depend on org SCIM, keep SAML at the org level — or move to Enterprise Managed Users.
 
 ---
 

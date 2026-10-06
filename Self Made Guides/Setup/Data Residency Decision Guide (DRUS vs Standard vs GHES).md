@@ -4,6 +4,15 @@
 
 > 📌 **Naming note:** The official product name is **GitHub Enterprise Cloud with data residency**; GitHub's own recent shorthand is **GHEC-DR**. This guide uses **DRUS** ("Data Residency US") as informal shorthand for the US-region deployment to keep the decision framework concise — expect to see **GitHub Enterprise Cloud with data residency** / **GHEC-DR** in official docs.
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Choose between standard GHEC, GHE.com data residency, and GHES |
+| **Use this when** | A customer has data-location, sovereignty, or regulatory requirements |
+| **People you need** | Decision makers; security and compliance; enterprise owner |
+| **Where you click** | None — this is a decision guide |
+| **End result** | A clear deployment recommendation and its trade-offs |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -43,7 +51,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available (including the April 13, 2026 general availability of GitHub Copilot data residency for US and EU). Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -88,6 +95,8 @@ Use this table to assign provider-side work before following the numbered steps.
 | **GHEC Data Residency (DRUS)** | GitHub SaaS (ghe.com) | EMU required | Formal US data residency | SUBDOMAIN.ghe.com |
 | **GitHub Enterprise Server (GHES)** | Self-hosted | Customer-managed | Your infrastructure | Your URL |
 
+---
+
 ## 1️⃣ Decision Framework
 
 ### Choose Standard GHEC When:
@@ -110,6 +119,8 @@ Use this table to assign provider-side work before following the numbered steps.
 - Full infrastructure control required
 - Existing on-premises commitment with no cloud option
 
+---
+
 ## 2️⃣ Feature Comparison
 
 | Feature | Standard GHEC | DRUS (GHE.com) | GHES |
@@ -127,6 +138,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 📌 **Advanced Security naming:** On GHEC / GHE.com, Advanced Security was repackaged in 2025 into two standalone products — **GitHub Secret Protection** (secret scanning + push protection) and **GitHub Code Security** (code scanning / CodeQL). "GitHub Advanced Security (GHAS)" as one SKU is now legacy for GHEC and remains the bundle name only on **GHES**.
 
+---
+
 ## 3️⃣ Common Misconceptions
 
 | Misconception | Reality |
@@ -137,7 +150,11 @@ Use this table to assign provider-side work before following the numbered steps.
 | "DRUS makes Copilot US-only" | Copilot inference geography is not automatic with DRUS, but it IS controllable on GHE.com via the **Restrict Copilot to data residency models** policy (US/EU, GA Apr 2026) — an opt-in admin setting, off by default |
 | "We can switch from standard to DRUS with a toggle" | Moving to DRUS requires a full migration to a new GHE.com enterprise |
 
+---
+
 ## 4️⃣ Migration Implications
+
+**👤 Roles:** **Enterprise owner** (new GHE.com enterprise), **IdP administrator** (SSO and SCIM), migration operator (GEI), integration owners · **📍 Portals:** GHE.com, your IdP, GitHub CLI
 
 Moving from standard GHEC to DRUS requires:
 1. New enterprise provisioned on GHE.com
@@ -147,6 +164,8 @@ Moving from standard GHEC to DRUS requires:
 5. Update OIDC trust: `https://token.actions.SUBDOMAIN.ghe.com` replaces `https://token.actions.githubusercontent.com` — and expect new **subject** values, because migrated repositories are new repositories and use the immutable `repo:OWNER@ID/REPO@ID:…` format (since July 15, 2026)
 
 > 💡 **Tip:** Plan this as a migration project with 4-8 weeks timeline, not a settings change.
+
+---
 
 ## 5️⃣ Copilot Inference Geography
 
@@ -160,6 +179,8 @@ Moving from standard GHEC to DRUS requires:
 
 > 💡 **Enable it:** on the GHE.com enterprise, an enterprise owner sets **Restrict Copilot to data residency models** (and, for US government needs, **Restrict Copilot to FedRAMP models**) in the enterprise's Copilot policies under **AI controls**. The region is your enterprise's GHE.com region — there's no separate geography picker. Model choice is limited to region-certified models, which can lag new GitHub.com releases.
 
+---
+
 ## 6️⃣ FedRAMP Positioning
 
 - GitHub Enterprise Cloud has a **FedRAMP Tailored / LI-SaaS (Low) authorization** today (authorized since 2018)
@@ -168,11 +189,12 @@ Moving from standard GHEC to DRUS requires:
 - Do NOT assume DRUS by itself changes the platform's FedRAMP authorization scope
 - For the exact, current authorization scope, route through GitHub's compliance/account team
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -196,14 +218,28 @@ Moving from standard GHEC to DRUS requires:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: The customer assumes DRUS provides FedRAMP Moderate authorization — is that correct?
-**A:** No. DRUS (Data Residency US) provides formal US data residency for covered GitHub platform data. It does not itself change GitHub's FedRAMP authorization level, which is currently **FedRAMP Tailored / LI-SaaS (Low)**. Note that GitHub announced (Oct 2024) it is **pursuing FedRAMP Moderate** for GitHub Enterprise Cloud, and GHEC-DR is on a FedRAMP Moderate authorization path — but do not assume Moderate is fully in place; confirm the current scope with GitHub's compliance team. Do not equate DRUS with GCC High or IL4/IL5. DRUS addresses "where is my data stored," not "what compliance framework is the platform certified under."
+**A:** No. DRUS gives formal US data residency for covered GitHub platform data. It doesn't change GitHub's FedRAMP authorization level.
+
+- **Today:** **FedRAMP Tailored / LI-SaaS (Low)**.
+- **In progress:** GitHub announced in October 2024 that it's **pursuing FedRAMP Moderate** for GitHub Enterprise Cloud, and GHEC-DR is on that path. Don't assume Moderate is in place — confirm the current scope with GitHub's compliance team.
+- **Not equivalent:** don't equate DRUS with GCC High or IL4/IL5.
+
+In short, DRUS answers "where is my data stored?", not "which compliance framework is the platform certified under?"
 
 ---
 
 ### Q: The customer thinks data residency means Copilot inference stays in the US — is that true?
-**A:** Not automatically. Data residency (DRUS) governs where covered GitHub platform data is stored at rest; it does not by itself pin Copilot inference to the US. The remedy, though, is now a native capability: **GitHub Copilot data residency** (US & EU) went generally available on April 13, 2026. On GHE.com it's the admin-enabled **Restrict Copilot to data residency models** policy (off by default), which keeps inference processing and associated data within your enterprise's region; for US government customers the underlying model hosts / infrastructure are FedRAMP Moderate authorized. Turn that on for in-region inference. **Bring Your Own Key (BYOK)** remains a secondary option where the customer routes inference through their own API endpoint with a provider that offers region guarantees. The key nuance to convey: region-locked inference is a separate opt-in policy, not something DRUS enables on its own.
+**A:** Not automatically. Data residency (DRUS) controls where covered GitHub platform data is stored at rest. It doesn't, by itself, keep Copilot inference in the US.
+
+The fix is now built in — **GitHub Copilot data residency** (US and EU) became generally available on April 13, 2026:
+
+- **In-region inference:** on GHE.com, an enterprise owner turns on **Restrict Copilot to data residency models** (off by default). It keeps inference processing and associated data in your enterprise's region.
+- **US government:** **Restrict Copilot to FedRAMP models** limits users to FedRAMP Moderate certified models.
+- **Cost:** requests under either policy use **10% more AI credits**.
+- **Alternative:** bring your own key (BYOK) routes inference through your own provider endpoint with region guarantees.
+
+Key message for customers: in-region inference is a separate opt-in policy, not something DRUS turns on by itself.
 
 ---
 
@@ -213,12 +249,31 @@ Moving from standard GHEC to DRUS requires:
 ---
 
 ### Q: What are the key feature differences between github.com and GHE.com?
-**A:** GHE.com (DRUS) has functional parity with github.com for most features, but there can be feature lag — new features typically ship to github.com first and arrive on GHE.com later. Key differences include: the URL structure changes (e.g., `SUBDOMAIN.ghe.com` instead of `github.com`), OIDC trust issuer URLs change, package registry URLs change, and GHE.com requires EMU (standard enterprise with personal accounts is not available on GHE.com). Check GitHub's data residency feature overview documentation for the current parity status.
+**A:** GHE.com (DRUS) matches github.com for most features, but new features often reach github.com first. Key differences:
+
+- URLs change (for example `SUBDOMAIN.ghe.com` instead of `github.com`).
+- The Actions OIDC token issuer URL changes.
+- Package registry URLs change.
+- GHE.com requires EMU — enterprises with personal accounts aren't available.
+
+Check GitHub's data residency feature overview for the current differences.
 
 ---
 
 ### Q: The customer underestimates the migration effort from standard GHEC to DRUS — how do I set expectations?
-**A:** Emphasize that this is a migration, not a configuration change. The effort includes: (1) new enterprise provisioning, (2) full IdP reconfiguration, (3) repository migration via GEI, (4) updating all OIDC trust policies (the token issuer URL changes), (5) updating all API integrations (different base URL), (6) updating all package registry references, (7) updating all webhook URLs, (8) updating CI/CD pipelines, and (9) user communication and re-onboarding. Most organizations need 4-8 weeks with dedicated engineering resources. Position it as equivalent to a cloud migration.
+**A:** Make clear this is a migration, not a settings change. The work includes:
+
+1. Provisioning a new enterprise.
+2. Reconfiguring the IdP completely.
+3. Migrating repositories with GEI.
+4. Updating all OIDC trust policies (the token issuer URL changes).
+5. Updating API integrations (different base URL).
+6. Updating package registry references.
+7. Updating webhook URLs.
+8. Updating CI/CD pipelines.
+9. Communicating with and re-onboarding users.
+
+Most organizations need 4–8 weeks with dedicated engineering time. Position it like a cloud migration.
 
 ---
 
@@ -228,12 +283,26 @@ Moving from standard GHEC to DRUS requires:
 ---
 
 ### Q: Can we use DRUS for non-US data residency (e.g., EU)?
-**A:** Yes. "DRUS" is just this guide's shorthand for the US region; the product itself (**GitHub Enterprise Cloud with data residency** / **GHEC-DR**) is now generally available in multiple regions — **EU** (Azure EU regions plus EFTA countries such as Norway and Switzerland), **Australia**, **US**, and **Japan** — with more planned. Check the current GitHub data residency documentation for the latest region list. The setup process is the same — a dedicated GHE.com subdomain with EMU — but the region is chosen at enterprise creation and **cannot be changed afterward**.
+**A:** Yes. "DRUS" is just this guide's shorthand for the US region. **GitHub Enterprise Cloud with data residency** (GHEC-DR) is generally available in several regions:
+
+- **EU** (Azure EU regions plus EFTA countries such as Norway and Switzerland)
+- **Australia**
+- **US**
+- **Japan**
+
+More are planned — check GitHub's data residency docs for the latest list. Setup is the same in every region (a dedicated GHE.com subdomain with EMU), but the region is chosen when the enterprise is created and **can't be changed later**.
 
 ---
 
 ### Q: The customer conflates DRUS with Azure GCC High — how do I clarify?
-**A:** DRUS and Azure GCC High are entirely different offerings. Azure GCC High is a US government-specific Azure cloud environment meeting IL4/IL5 requirements. DRUS is GitHub's data residency offering that stores covered platform data in the US — it runs on GitHub's own infrastructure, not in Azure GCC High. On the cloud authorization front, GitHub is moving: GitHub Enterprise Cloud is **pursuing FedRAMP Moderate** (announced Oct 2024) and GHEC-DR is on a FedRAMP Moderate authorization path — so the "no GitHub cloud equivalent" framing is softening over time. However, **IL4/IL5 remain out of scope for FedRAMP Moderate**. If the customer genuinely needs IL4/IL5 today, the practical option is **GHES** deployed within their own FedRAMP-authorized boundary or GCC High environment. Confirm the current cloud authorization scope with GitHub's compliance/account team before ruling the cloud options in or out.
+**A:** They're entirely different offerings:
+
+- **Azure GCC High** is a US government Azure cloud that meets IL4/IL5 requirements.
+- **DRUS** is GitHub's data residency offering. It stores covered data in the US on GitHub's own infrastructure — not in GCC High.
+
+GitHub's cloud authorization is moving: GitHub Enterprise Cloud is **pursuing FedRAMP Moderate** (announced October 2024), and GHEC-DR is on that path. But **IL4/IL5 are out of scope for FedRAMP Moderate**.
+
+If the customer truly needs IL4/IL5 today, the practical option is **GHES** inside their own FedRAMP-authorized boundary or GCC High environment. Confirm the current authorization scope with GitHub's compliance or account team before ruling cloud options in or out.
 
 </details>
 

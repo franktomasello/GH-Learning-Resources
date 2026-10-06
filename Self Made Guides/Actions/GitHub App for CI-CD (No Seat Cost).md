@@ -2,6 +2,15 @@
 
 > **Complete guide to using GitHub Apps for CI/CD authentication instead of machine users, saving $21/user/month per seat**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Authenticate CI/CD and automation with a GitHub App instead of a machine-user account |
+| **Use this when** | A pipeline needs to clone, push, comment, or call the API beyond its own repository |
+| **People you need** | Organization owner; repository admin for secrets |
+| **Where you click** | GitHub (org settings, repo settings, workflow files) |
+| **End result** | Short-lived (1-hour) tokens, least-privilege access, and no license seat used |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -43,7 +51,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -64,6 +71,8 @@
 | Store the app's client ID and private key for workflows | **Organization owner** (org-level) or **repository administrator** (repo-level) | ☐ |
 | GitHub Actions enabled on the target repositories | Organization owner / repo admin | ☐ |
 | The permissions your CI/CD needs (Contents, Pull requests, Checks, and so on) | Pipeline owner | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -117,7 +126,7 @@ Use this table to assign provider-side work before following the numbered steps.
 | **GitHub App name** | A clear name, 34 characters max (for example `my-org-ci-bot`) |
 | **Homepage URL** | Your organization or repository URL |
 | **Webhook → Active** | **Untick** — CI/CD token generation doesn't need webhooks |
-| **Permissions** | For each permission, choose **Read-only**, **Read & write**, or **No access** (see Section 3) |
+| **Permissions** | For each permission, choose **Read-only**, **Read and write**, or **No access** (see Section 3) |
 | **Where can this GitHub App be installed?** | **Only on this account** |
 
 2. Click **Create GitHub App**.
@@ -128,18 +137,20 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 3️⃣ Configure Permissions and Create the Private Key
 
+**👤 Role:** **Organization owner** (app settings) + **organization owner** or **repository administrator** (Actions secrets and variables) · **📍 Portal:** GitHub
+
 ### Permissions
 
 Set them while creating the app, or later at app settings → **Permissions & events** (installations must approve added permissions).
 
 | Permission | Access level | Use case |
 |------------|-------------|----------|
-| **Contents** | Read & write | Clone, push commits, create releases |
-| **Pull requests** | Read & write | Create or update PRs, post comments |
-| **Checks** | Read & write | Report CI check runs |
-| **Issues** | Read & write | Create or update issues |
+| **Contents** | Read and write | Clone, push commits, create releases |
+| **Pull requests** | Read and write | Create or update PRs, post comments |
+| **Checks** | Read and write | Report CI check runs |
+| **Issues** | Read and write | Create or update issues |
 | **Actions** | Read-only | Read workflow run status |
-| **Packages** | Read & write | Publish or consume GitHub Packages |
+| **Packages** | Read and write | Publish or consume GitHub Packages |
 | **Metadata** | Read-only | Always granted automatically |
 
 > ⚠️ **Warning:** Grant only what your workflows need. Every extra permission widens what a leaked token can do.
@@ -272,6 +283,8 @@ jobs:
 
 *Only use a machine user when GitHub Apps and GITHUB_TOKEN cannot meet the requirement.*
 
+**👤 Role:** **Organization owner** (to add the account) · **📍 Portal:** GitHub (standard GHEC) or your IdP (EMU)
+
 ### When a Machine User May Be Needed
 
 | Scenario | Reason |
@@ -292,6 +305,8 @@ jobs:
 ---
 
 ## 8️⃣ EMU (Enterprise Managed Users) Considerations
+
+**👤 Role:** **Enterprise owner** / **IdP administrator** (only if a machine user is unavoidable) · **📍 Portal:** GitHub + your IdP
 
 | Factor | GitHub App | Machine User on EMU |
 |--------|------------|---------------------|
@@ -315,11 +330,12 @@ jobs:
 
 > ⚠️ **Warning:** If the IdP service account is disabled or deprovisioned, the GitHub machine user and all its PATs are immediately invalidated. Plan for IdP service account lifecycle management.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -343,9 +359,12 @@ jobs:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: My workflow fails with "Resource not accessible by integration" when using a GitHub App token. What is wrong?
-**A:** The app either lacks the permission the API call needs, or isn't installed on that repository. Check (1) app settings → **Permissions & events** (for example **Contents: Read & write** to push), and that the organization approved any newly added permissions; and (2) the installation's repository list (Org → **Settings** → under "Third-party Access", **GitHub Apps** → **Configure** next to the app). Also check whether you narrowed the token with `repositories`.
+**A:** The app is missing a permission, or it isn't installed on that repository. Check:
+
+1. **App permissions:** app settings → **Permissions & events** (for example **Contents: Read and write** to push). If you added permissions, the organization must approve them.
+2. **Installation:** Org → **Settings** → **GitHub Apps** (under "Third-party Access") → **Configure** next to the app → confirm the repository is selected.
+3. **Token scope:** if the workflow passes `repositories`, confirm this repository is listed.
 
 ---
 
@@ -373,6 +392,8 @@ jobs:
 **A:** Installation tokens expire after one hour, and the action creates a fresh one on each run — no token rotation needed. Do rotate the app's **private key** periodically: generate a new key, update `APP_PRIVATE_KEY`, then delete the old key in the app settings.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

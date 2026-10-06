@@ -2,6 +2,15 @@
 
 > **Complete guide to transferring repositories between owners and renaming organizations, including what carries over, what breaks, and post-change checklists**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Move a repository or rename an organization without breaking things |
+| **Use this when** | Reorganizing, merging teams, or rebranding |
+| **People you need** | Repository admin; organization owner; IdP admin |
+| **Where you click** | GitHub (repo and org settings) and your IdP |
+| **End result** | A completed change with redirects understood and every follow-up done |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -40,7 +48,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -63,6 +70,8 @@
 | Update SAML / SCIM after an org rename | IdP administrator | ☐ |
 | Communication plan for affected teams | Program owner | ☐ |
 | Inventory of integrations, CI/CD, SSO, packages, and external references | Platform team | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -230,11 +239,12 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 > 💡 **Tip:** Create a shared checklist from the inventory in Phase 2 and assign owners to each item. This ensures nothing is missed during the rename.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -256,7 +266,6 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: We transferred a repository but the old URL is not redirecting. What happened?
 **A:** Redirects are permanently deleted if someone creates a new repository or fork at the old `owner/repo-name` location. GitHub Pages sites aren't redirected at all. Update CI/CD configs, documentation, git remotes, and package manifests to the new URL rather than relying on redirects.
@@ -287,6 +296,8 @@ An organization rename affects every team and every repository. Treat it as a pl
 **A:** There's no undo button. You can transfer a repository back if you still have the right permissions, or rename the organization back if nobody has claimed the old name — unless GitHub permanently retired the old name. Either way, external references and integrations need updating again.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

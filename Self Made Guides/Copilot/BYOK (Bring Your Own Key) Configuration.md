@@ -2,6 +2,15 @@
 
 > **Complete guide to configuring your own AI model provider API keys for GitHub Copilot at the enterprise level**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Let Copilot use models through the customer's own AI provider account |
+| **Use this when** | The customer has an existing agreement with Microsoft Foundry, OpenAI, Anthropic, AWS Bedrock, or similar |
+| **People you need** | Enterprise owner; provider account owner |
+| **Where you click** | GitHub (AI controls) and the AI provider's console |
+| **End result** | Custom models in the Copilot model picker, billed by the provider |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -41,7 +49,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -225,11 +232,12 @@ BYOK lets you connect your own AI provider keys so Copilot can use models throug
 
 > 💡 **Customization:** Enterprise BYOK is in public preview, so supported providers and options can change. Check GitHub's documentation for the latest list.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -252,7 +260,6 @@ BYOK lets you connect your own AI provider keys so Copilot can use models throug
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: BYOK is not the same as CMK for data at rest — correct?
 **A:** Correct. BYOK in the Copilot context means bringing your own AI model provider API keys so that inference requests route through your provider account. This is completely separate from customer-managed encryption keys (CMK/BYOK) for encrypting platform data at rest.

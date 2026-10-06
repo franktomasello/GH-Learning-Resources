@@ -16,7 +16,7 @@
 
 <div align="center">
 
-[In This Repo](#-in-this-repository)&nbsp;·&nbsp;[Certification](#-certification--training)&nbsp;·&nbsp;[EMU](#-enterprise-managed-users-emu)&nbsp;·&nbsp;[Migration](#-azure-devops-to-github-migration)&nbsp;·&nbsp;[FastTrack](#-fasttrack-team-resources)&nbsp;·&nbsp;[Copilot](#-github-copilot-resources)&nbsp;·&nbsp;[Security](#-github-advanced-security)&nbsp;·&nbsp;[Maintenance](#-accuracy--maintenance)
+[In This Repo](#-in-this-repository)&nbsp;·&nbsp;[Glossary](<Self Made Guides/Glossary.md>)&nbsp;·&nbsp;[Certification](#-certification--training)&nbsp;·&nbsp;[EMU](#-enterprise-managed-users-emu)&nbsp;·&nbsp;[Migration](#-azure-devops-to-github-migration)&nbsp;·&nbsp;[FastTrack](#-fasttrack-team-resources)&nbsp;·&nbsp;[Copilot](#-github-copilot-resources)&nbsp;·&nbsp;[Security](#-github-advanced-security)&nbsp;·&nbsp;[Maintenance](#-accuracy--maintenance)
 
 </div>
 
@@ -30,6 +30,18 @@
 ## 📂 In This Repository
 
 **45 step-by-step guides** across eight focus areas, written to be followed click-by-click. Browse a folder to see its full table of contents.
+
+**Every guide follows the same layout**, so you can find your place quickly during a live customer session:
+
+| Part | Use it to |
+|------|-----------|
+| 🧭 **At a Glance** | See the goal, when to use the guide, who needs to be in the room, and the end result — in five lines |
+| ⚡ **Quick-Start Summary** | Get every click path on one screen |
+| ✅ **Prerequisites** | Confirm each requirement and the exact role that owns it before you start |
+| 1️⃣ **Numbered steps** | Follow along — each step names the **👤 role** and **📍 portal**, then lists every click in order |
+| 🧯 **Known Errors** · ❓ **Q&A** | Troubleshoot on the spot (collapsed until you need them) |
+
+New to an acronym like EMU, SCIM, or GHAS? The **[📖 Glossary](<Self Made Guides/Glossary.md>)** explains every term in plain English.
 
 | Area | Guides | What's inside |
 |------|:------:|---------------|
@@ -136,6 +148,7 @@ Resources for mastering GitHub's advanced security features and CodeQL.
 ## ✅ Accuracy & Maintenance
 
 - **October 2026:** every guide re-verified against GitHub's documentation source (and Microsoft, Okta, and Ping docs where relevant) — click paths, required roles, and prerequisites. Highlights: Copilot's move to AI credits (June 2026), Copilot cloud agent and MCP, the **Security and quality** tab rename, immutable OIDC subject claims (July 2026), GA enterprise teams, and the October 22, 2026 default-availability policy for Copilot features. A follow-up sweep on **October 6, 2026** folded in GitHub changelog items through that date (model retirements on October 19, Node 20 removal from Actions, budget-request limits for EMU, proof of presence, credential inventory exports, and more).
+- **Readability pass (October 6, 2026):** added an At a Glance box to every guide and a plain-English [Glossary](<Self Made Guides/Glossary.md>); broke long answers into numbered checks; and re-verified click paths, including the new trial sign-up flow, the self-service SAML→OIDC migration, SAML certificate rotation order, and the one-OIDC-integration-per-Entra-tenant limit.
 - Prefer official GitHub and Microsoft documentation for current product behavior. Community resources are useful but can become stale after product releases.
 - Treat private GitHub issue links and organization-owned resources as internal-only unless the reader has explicit access.
 - Recheck this list quarterly and after major GitHub Enterprise, Copilot, billing, or security launches.

@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with PingFederate/PingOne (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Set up standard GHEC with PingFederate or PingOne single sign-on end to end |
+| **Use this when** | A standard (personal-account) enterprise uses Ping |
+| **People you need** | Enterprise or organization owner; Ping admin; Azure subscription owner |
+| **Where you click** | GitHub and the PingFederate or PingOne console |
+| **End result** | SAML SSO, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -28,7 +37,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -45,7 +53,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -75,6 +82,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - SAML SSO is enforced at the org (and optionally at the enterprise, if you have one)
 - SCIM manages organization membership via PingFederate assignments (not "managed user accounts"—that is EMU)
 
+---
+
 ## ✅ Prerequisites
 
 | Requirement | Owner / Role | Notes |
@@ -86,6 +95,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Dedicated GitHub "SCIM setup user" | Org Owner | GitHub recommends a dedicated user to own the SCIM token for provisioning |
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -122,6 +133,8 @@ Use this table to assign provider-side work before following the numbered steps.
 ### Important Notes
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
+
+---
 
 ## 2️⃣ Create the PingFederate SP Connection (or PingOne Application)
 
@@ -183,6 +196,8 @@ From your PingFederate SP Connection or PingOne Application configuration, captu
 
 > 💡 **Tip:** **PingOne:** These values are available under the Application, Configuration tab, or by downloading the IdP metadata XML.
 
+---
+
 ## 3️⃣ Enable SAML SSO in GitHub
 
 **👤 Role:** GitHub org owner (Step 3B) / enterprise owner (Step 3A) · **📍 Portal:** GitHub
@@ -223,6 +238,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
+---
+
 ## 4️⃣ Enforce SAML SSO for the Organization (Required)
 
 **👤 Role:** GitHub org owner · **📍 Portal:** GitHub
@@ -243,11 +260,19 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
 
+---
+
 ## 5️⃣ Configure SCIM Provisioning (PingFederate → GitHub Organization)
 
 **👤 Role:** GitHub org owner / SCIM setup user · **📍 Portal:** GitHub + PingFederate / PingOne
 
-> 🚨 **Blocker / support constraint:** GitHub's **officially supported** identity providers for **organization-level SCIM** are **Microsoft Entra ID, Okta, and OneLogin** only. **PingOne is documented for SAML SSO only (not SCIM), and PingFederate is not listed for org SCIM at all.** Supported org SCIM is authorized through the partner IdP's GitHub-published OAuth app (authorized by an org owner) — not by handing a bearer PAT to a generic IdP. You *can* drive the org SCIM REST API from a custom client (base URL `https://api.github.com/scim/v2/organizations/ORG`, classic PAT scoped `admin:org`), but with PingFederate/PingOne this is an **unsupported/undocumented custom-integration path — proceed at your own risk**. If you need a supported turnkey integration, use Entra, Okta, or OneLogin. The steps below assume you are building the Ping → REST API path as a custom SCIM client.
+> 🚨 **Blocker / support constraint:**
+> - GitHub's **officially supported** IdPs for **organization-level SCIM** are **Microsoft Entra ID, Okta, and OneLogin** only.
+> - **PingOne** is documented for SAML SSO only (not SCIM). **PingFederate** isn't listed for org SCIM at all.
+> - Supported org SCIM is authorized through the IdP partner's GitHub-published OAuth app (authorized by an org owner) — not a bearer PAT in a generic IdP.
+> - You *can* call the org SCIM REST API from a custom client (base URL `https://api.github.com/scim/v2/organizations/ORG`, classic PAT with `admin:org`), but with Ping this is an **unsupported custom integration — proceed at your own risk**.
+>
+> For a supported turnkey integration, use Entra, Okta, or OneLogin. The steps below assume you're building the Ping → REST API path as a custom SCIM client.
 
 > 💡 **Tip:** In Standard non-EMU, SCIM manages organization membership lifecycle. A SCIM client calls GitHub's org SCIM REST API using a classic PAT owned by the dedicated setup user.
 
@@ -305,6 +330,8 @@ Authentication:              Bearer token = the classic PAT (admin:org) from Ste
     - Add assignment → user becomes org member
     - Remove assignment → user is removed from org (per your provisioning settings)
 
+---
+
 ## 6️⃣ Attach Azure Subscription for Metered Billing
 
 **👤 Role:** GitHub enterprise owner (or org owner for org-level billing) + Azure **subscription Owner** with tenant-wide admin consent · **📍 Portal:** GitHub + Azure
@@ -340,6 +367,8 @@ Authentication:              Bearer token = the classic PAT (admin:org) from Ste
 9. Click **Connect**
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+
+---
 
 ## 7️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -432,6 +461,8 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 
 > 📌 **One license per person:** someone assigned through both 7D and 7E uses **one** license (the highest tier).
 
+---
+
 ## 8️⃣ Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
 **👤 Role:** Each affected user (self-service) · **📍 Portal:** GitHub
@@ -457,6 +488,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 **Token nuance:**
 
 > 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
+
+---
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -497,6 +530,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - [ ] Licenses assigned to pilot cohort
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
 
+---
+
 ## 🎯 Success Criteria
 
 After completing this guide, you should have:
@@ -514,7 +549,6 @@ After completing this guide, you should have:
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -538,9 +572,13 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: What is the difference between an SP Connection (PingFederate) and an Application (PingOne) for this setup?
-**A:** An SP Connection in PingFederate (self-managed) is the equivalent of an Application in PingOne (cloud). Both define the SAML trust relationship between Ping and GitHub. In PingFederate, you configure SP Connections under **Applications** → **Integration** → **SP Connections** (9.x: **Identity Provider** → **SP Connections**). In PingOne, you configure them under **Applications** → **Applications**. The SAML values (Entity ID, ACS URL, Sign-on URL) are the same — the admin UI and navigation differ.
+**A:** They're the same idea in two products — both define the SAML trust between Ping and GitHub:
+
+- **PingFederate (self-managed):** **Applications** → **Integration** → **SP Connections** (9.x: **Identity Provider** → **SP Connections**).
+- **PingOne (cloud):** **Applications** → **Applications**.
+
+The SAML values (Entity ID, ACS URL, sign-on URL) are the same; only the admin screens differ.
 
 ---
 
@@ -559,8 +597,14 @@ After completing this guide, you should have:
 
 ---
 
-### Q: The signing certificate on PingFederate is about to expire — how do I rotate without downtime?
-**A:** Generate a new signing certificate in PingFederate (Security > Signing & Decryption Keys & Certificates). Before activating it as the primary cert in PingFederate, paste the new certificate into GitHub (Organization Settings > Authentication security > SAML > Public certificate > update). Save in GitHub first, then activate the new cert in PingFederate. This ensures GitHub trusts the new cert before PingFederate starts using it.
+### Q: The signing certificate on PingFederate is about to expire — how do I rotate it with minimal disruption?
+**A:** GitHub won't save a certificate until **Test SAML configuration** passes, and the test only passes once PingFederate signs with the new certificate. So swap them in this order, in one short maintenance window:
+
+1. In PingFederate, create the new signing certificate (**Security** → **Signing & Decryption Keys & Certificates**) and export it in X.509/PEM format.
+2. Make it the active signing certificate for the GitHub SP connection. From here until step 3 is done, sign-ins fail with a `digest mismatch` error.
+3. Right away, in GitHub: Organization → **Settings** → **Authentication security** → paste the new **Public Certificate** → **Test SAML configuration** → **Save**.
+
+> 💡 GitHub doesn't enforce the certificate's expiry date, so an expired certificate won't break sign-in on GitHub's side. Schedule the swap for a quiet time.
 
 ---
 
@@ -570,7 +614,10 @@ After completing this guide, you should have:
 ---
 
 ### Q: Users can authenticate via SAML but are not being provisioned into the org — what is missing?
-**A:** SAML authentication and SCIM provisioning are separate configurations. A user can authenticate via SAML but still not be an org member if SCIM provisioning is not set up or if the user is not in scope for the outbound provisioning channel. Verify that outbound provisioning is enabled on the SP Connection (PingFederate) or the Provisioning tab (PingOne), and that the user is in the correct LDAP/AD group or PingOne group assigned to the application.
+**A:** SAML sign-in and SCIM provisioning are set up separately. A user can sign in with SAML and still not be an org member if provisioning isn't set up or the user isn't in scope. Check:
+
+- Outbound provisioning is enabled on the SP connection (PingFederate) or the **Provisioning** tab (PingOne).
+- The user is in the LDAP/AD group or PingOne group assigned to the application.
 
 ---
 

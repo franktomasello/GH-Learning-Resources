@@ -2,6 +2,15 @@
 
 > **Complete guide to configuring cost centers, budgets, Azure billing, and usage reporting for GitHub Enterprise Cloud**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Charge GitHub spending to departments and keep it under control |
+| **Use this when** | Finance needs chargeback, or you're connecting Azure billing |
+| **People you need** | Enterprise owner or billing manager; Azure subscription owner |
+| **Where you click** | GitHub (Billing and licensing) and Microsoft sign-in |
+| **End result** | Cost centers, budgets with alerts, Azure billing, and usage reports for finance |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -66,6 +73,8 @@
 | Create cost centers for resources in their own organization | **Organization owner** | ☐ |
 | Connect an Azure subscription | GitHub **enterprise owner** + an Azure user who is subscription **Owner** and can give tenant-wide admin consent (or a Global Administrator) | ☐ |
 | A mapping of organizations, repositories, users, or enterprise teams to finance cost codes | Finance + platform team | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -113,6 +122,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 2️⃣ Assign Resources to Cost Centers
 
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
+
 **Navigate:** Enterprise → **Billing and licensing** → **Cost centers** → **⋯** next to the cost center → **Edit**
 
 **Steps:**
@@ -151,6 +162,8 @@ Use this table to assign provider-side work before following the numbered steps.
 ## 4️⃣ Patterns for Team-Level Billing
 
 *If you need to track costs by department or team within an organization:*
+
+**👤 Role:** **Enterprise owner** or **billing manager** (cost centers and budgets) · **📍 Portal:** GitHub
 
 ### Strategy A: Use User- or Enterprise-Team-Scoped Cost Centers
 
@@ -224,6 +237,8 @@ Enterprise → **Organizations** → **New organization**
 ---
 
 ## 6️⃣ Set Budgets and Hard Stops
+
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
 **Navigate:** Enterprise → **Billing and licensing** → **Budgets and alerts**
 
@@ -313,11 +328,12 @@ Enterprise → **Organizations** → **New organization**
 
 > 💡 **Tip:** reconcile monthly with finance. For automation, use `GET /enterprises/{enterprise}/settings/billing/usage` (summarized data).
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -339,7 +355,6 @@ Enterprise → **Organizations** → **New organization**
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: My cost center is showing $0 usage even though the assigned organizations are actively using GitHub. Why?
 **A:** Check the cost center's resources (**Cost centers** → **⋯** → **View details**) and remember the allocation rules: Actions and other usage-based products follow the **repository or organization**, while Copilot and other licenses follow the **user**. Assignments only affect usage from that point on. Also confirm you're on metered billing — cost centers don't apply to volume or subscription agreements.
@@ -370,6 +385,8 @@ Enterprise → **Organizations** → **New organization**
 **A:** Request CSVs from Enterprise → **Billing and licensing** → **Usage** → **Get usage report** (emailed). For automation, call `GET /enterprises/{enterprise}/settings/billing/usage` or `/usage/summary` — the API returns summarized data; the detailed report is web-only.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

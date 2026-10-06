@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with OneLogin (SAML), SCIM org provisioning, Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Set up standard GHEC with OneLogin single sign-on end to end |
+| **Use this when** | A standard (personal-account) enterprise uses OneLogin |
+| **People you need** | Enterprise or organization owner; OneLogin admin; Azure subscription owner |
+| **Where you click** | GitHub and the OneLogin admin portal |
+| **End result** | SAML SSO, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -30,7 +39,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -47,7 +55,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -77,6 +84,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - SAML SSO is enforced at the org (and optionally at the enterprise, if you have one)
 - SCIM manages organization membership via OneLogin assignments (not "managed user accounts"—that is EMU)
 
+---
+
 ## ✅ Prerequisites
 
 | Requirement | Owner / Role | Notes |
@@ -88,6 +97,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Dedicated GitHub "SCIM setup user" | Org Owner | A stable org owner who **authorizes** the OneLogin SCIM OAuth app; org SCIM then acts on behalf of this user. GitHub does **not** issue a SCIM token here (org SCIM is OAuth-based, not token-based). Optional — SCIM is optional for Standard GHEC |
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -123,6 +134,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
+---
+
 ## 2️⃣ Create the OneLogin Application (GitHub Organization Connector)
 
 > **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin
@@ -152,6 +165,8 @@ In the OneLogin app:
     - **Issuer URL**
     - **X.509 Certificate** (click View Details to download the public cert)
 
+---
+
 ## 3️⃣ Configure SAML (GitHub ↔ OneLogin Values)
 
 > **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin (using GitHub SP values)
@@ -174,6 +189,8 @@ Replace `YOUR_ORG` with your actual GitHub organization slug.
     - Confirm SAML Signature Algorithm is set to **SHA-256**
 3. In the OneLogin app → **Parameters** tab:
     - Verify that NameID maps to the user's email address
+
+---
 
 ## 4️⃣ Enable & Test SAML SSO in GitHub
 
@@ -226,6 +243,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
+---
+
 ## 5️⃣ Enforce SAML SSO for the Organization (Required)
 
 > ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
@@ -245,6 +264,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 4. Confirm the warning and click:
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
+
+---
 
 ## 6️⃣ Configure SCIM Provisioning (OneLogin → GitHub Organization)
 
@@ -288,6 +309,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 2. Keep mappings aligned to GitHub's SCIM guidance; avoid custom attributes until the base flow is stable.
 3. Ensure NameID / email mapping is consistent between SAML and SCIM.
 
+---
+
 ## 7️⃣ Assign Users & Groups
 
 > **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin
@@ -302,6 +325,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 3. **Validate lifecycle:**
     - Add assignment → user becomes org member (via SCIM)
     - Remove assignment → user is removed from org (per your provisioning settings)
+
+---
 
 ## 8️⃣ Attach Azure Subscription for Metered Billing
 
@@ -340,6 +365,8 @@ Enterprise list: https://github.com/settings/enterprises
 9. Click **Connect**.
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+
+---
 
 ## 9️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -432,6 +459,8 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 
 > 📌 **One license per person:** someone assigned through both 9D and 9E uses **one** license (the highest tier).
 
+---
+
 ## 🔟 Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
 When SAML is enabled/enforced, users often must authorize credentials (depending on token type and whether they have a linked external identity).
@@ -455,6 +484,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 **Token nuance:**
 
 > 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
+
+---
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -494,6 +525,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - [ ] Licenses assigned to pilot cohort
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
 
+---
+
 ## 🎯 Success Criteria
 
 After completing this guide, you should have:
@@ -511,7 +544,6 @@ After completing this guide, you should have:
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -535,29 +567,57 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: How do I connect OneLogin SCIM provisioning to a GitHub organization?
-**A:** GitHub organization SCIM does **not** use a token you generate in GitHub — it uses a third-party OAuth app that a specific GitHub user authorizes. Sign in to GitHub as the SCIM setup user and establish an active SAML session by visiting `https://github.com/orgs/YOUR_ORG/sso`. Launch the provisioning/authorization flow from the OneLogin GitHub organization app; when GitHub shows your org, click **Grant** next to the org name, then **Authorize**. Provisioning then acts on behalf of that setup user. In OneLogin, enable **Create users**, **Update users**, and **Deactivate users**, then **Save** and test by assigning a pilot user. GitHub publishes dedicated SCIM tutorials only for Okta and Entra ID; for OneLogin follow OneLogin's own GitHub connector documentation.
+**A:** GitHub organization SCIM doesn't use a token you generate in GitHub. It uses a third-party OAuth app that a specific GitHub user authorizes:
+
+1. Sign in to GitHub as the SCIM setup user and start a SAML session at `https://github.com/orgs/YOUR_ORG/sso`.
+2. Launch the provisioning authorization from the OneLogin GitHub organization app.
+3. When GitHub shows your organization, click **Grant** next to it, then **Authorize**. Provisioning now acts on behalf of that user.
+4. In OneLogin, enable **Create users**, **Update users**, and **Deactivate users**, click **Save**, and test with one pilot user.
+
+GitHub publishes SCIM tutorials only for Okta and Entra ID. For OneLogin, follow OneLogin's own GitHub connector documentation.
 
 ---
 
 ### Q: OneLogin's SAML certificate is expiring — how do I renew it?
-**A:** In OneLogin, go to the GitHub app > SSO tab > Manage Certificates. Generate a new certificate. Before activating the new cert in OneLogin, download it and paste it into GitHub (Organization Settings > Authentication security > SAML > Public certificate). Save in GitHub first. Then set the new certificate as active in OneLogin and remove the old one. This prevents a mismatch window where GitHub does not trust the new cert.
+**A:** GitHub won't save a certificate until **Test SAML configuration** passes, and the test only passes once OneLogin signs with the new certificate. So swap them in this order, in one short maintenance window:
+
+1. In OneLogin, create the new certificate (**Security** → **Certificates**) and download it.
+2. Open the GitHub app → **SSO** tab → change the **X.509 Certificate** to the new one → **Save**. From here until step 3 is done, sign-ins fail with a `digest mismatch` error.
+3. Right away, in GitHub: Organization → **Settings** → **Authentication security** → paste the new **Public Certificate** → **Test SAML configuration** → **Save**.
+4. Remove the old certificate from OneLogin when you no longer need it.
+
+> 💡 GitHub doesn't enforce the certificate's expiry date, so an expired certificate won't break sign-in on GitHub's side. Schedule the swap for a quiet time.
 
 ---
 
 ### Q: SAML assertion attribute mapping errors are preventing sign-in — what should I verify?
-**A:** In OneLogin, go to the GitHub app > Parameters tab. Verify that the NameID field maps to the user's email address (this is what GitHub uses for identity linking). Check the SSO tab to confirm the SAML Signature Algorithm is set to SHA-256 (not SHA-1, which can cause validation failures). Also verify the Issuer URL and SAML 2.0 Endpoint match what you entered in GitHub. Use the OneLogin SAML Toolkit or browser developer tools to inspect the actual assertion being sent.
+**A:** In OneLogin, open the GitHub app and check:
+
+1. **Parameters** tab: the NameID maps to a stable, unique value such as the user's email.
+2. **SSO** tab: **SAML Signature Algorithm** is **SHA-256** (SHA-1 can fail validation).
+3. The **Issuer URL** and **SAML 2.0 Endpoint** match what you entered in GitHub.
+
+Use a SAML tracer or your browser's developer tools to inspect the assertion.
 
 ---
 
 ### Q: Which OneLogin connector version should I use — there seem to be multiple?
-**A:** Use the **GitHub organization connector** from the OneLogin catalog (GitHub presents the OAuth app as **GitHub Enterprise Cloud - Organization** during authorization, though the OneLogin catalog entry may be labeled differently — confirm the current name against OneLogin's docs). Older connectors may target deprecated endpoints. If you see multiple versions, choose the one most recently updated in the catalog. Avoid connectors labeled for "GitHub Enterprise Managed User" (that is for EMU, not standard orgs). If provisioning behaves unexpectedly, check the OneLogin release notes for your connector version.
+**A:** Use the **GitHub organization connector** from the OneLogin catalog — not one labeled "GitHub Enterprise Managed User" (that's for EMU).
+
+- During authorization, GitHub shows the OAuth app as **GitHub Enterprise Cloud - Organization**; the OneLogin catalog name may differ, so confirm it against OneLogin's docs.
+- If you see several versions, choose the most recently updated one. Older connectors may target retired endpoints.
+- If provisioning behaves oddly, check OneLogin's release notes for your connector version.
 
 ---
 
 ### Q: Users are authenticated via SAML but not getting added to the org — SCIM does not seem to be working. What is wrong?
-**A:** Verify provisioning is enabled in OneLogin (GitHub app > Provisioning tab) and that Create Users, Update Users, and Deactivate Users are all checked. Confirm the SCIM OAuth app is still authorized — the setup user needs an active SAML session and must have completed the **Grant** → **Authorize** flow (org SCIM runs on that OAuth grant, not a static bearer token). Check the OneLogin Events log for provisioning errors. Also ensure the user is assigned to the GitHub app in OneLogin — SAML authentication alone does not trigger SCIM provisioning.
+**A:** Check, in order:
+
+1. Provisioning is enabled (GitHub app → **Provisioning** tab) with **Create users**, **Update users**, and **Deactivate users** all checked.
+2. The SCIM OAuth app is still authorized: the setup user has an active SAML session and completed **Grant** → **Authorize** (org SCIM runs on that grant, not a static token).
+3. The OneLogin **Events** log shows no provisioning errors.
+4. The user is assigned to the GitHub app in OneLogin — signing in with SAML alone doesn't trigger SCIM provisioning.
 
 ---
 
@@ -572,7 +632,11 @@ After completing this guide, you should have:
 ---
 
 ### Q: SCIM provisioning worked initially but has stopped syncing new users — what happened?
-**A:** The most common cause is that the OAuth authorization has been broken — for example, the setup user's SAML session expired, the setup user lost org ownership or was deactivated, or the SCIM OAuth app authorization was revoked. (Org SCIM runs on behalf of the authorizing user's OAuth grant, not a static bearer token.) Check the OneLogin Events log for HTTP 401 or 403 errors from the GitHub SCIM endpoint. To recover, sign in as the setup user, re-establish a SAML session at `https://github.com/orgs/YOUR_ORG/sso`, and re-authorize the SCIM OAuth app (**Grant** → **Authorize**).
+**A:** Usually the OAuth authorization broke — for example, the setup user's SAML session expired, they lost org ownership or were deactivated, or the SCIM OAuth app was revoked. (Org SCIM runs on that user's OAuth grant, not a static token.)
+
+1. Check the OneLogin **Events** log for HTTP 401 or 403 errors from GitHub's SCIM endpoint.
+2. Sign in as the setup user and refresh the SAML session at `https://github.com/orgs/YOUR_ORG/sso`.
+3. Re-authorize the SCIM OAuth app (**Grant** → **Authorize**).
 
 </details>
 

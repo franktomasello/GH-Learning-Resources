@@ -4,6 +4,15 @@
 
 > 📌 **Billing changed on June 1, 2026.** Premium requests and model multipliers were replaced by **AI credits** (1 credit = $0.01). The old pattern — a "$0 overage budget for everyone" plus an "allowed overage" cost center — is replaced by **user-level budgets**, which cap each person directly.
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Give a small group of heavy users more Copilot credits while everyone else stays capped |
+| **Use this when** | A few people hit their limits and need more |
+| **People you need** | Enterprise owner or billing manager |
+| **Where you click** | GitHub (Billing and licensing, People) |
+| **End result** | A power-user cost center with its own budgets, plus a universal cap for everyone else |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -27,7 +36,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026, including the June 1, 2026 move to usage-based billing. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -178,6 +185,8 @@ Each budget starts the same way: click **New budget**, then under **Budget Type*
 
 ## 5️⃣ Step 5 — Verify It's Working
 
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
+
 ### A) Verify no conflicting budgets
 
 1. On **Budgets and alerts**, confirm you see the universal budget, the `Hyper power users` user-level budget, and your spending limits — and no unexpected $0 or low budgets.
@@ -204,11 +213,12 @@ Each budget starts the same way: click **New budget**, then under **Budget Type*
 - **"Copilot Enterprise is cheaper for heavy users."** Under AI credits, Copilot Enterprise's extra included credits cost exactly what you pay for them, and extra usage is $0.01 per credit on both plans — so it's never cheaper for the same usage. See [AI Credits Budgeting Scenarios](AI%20Credits%20Budgeting%20Scenarios.md).
 - **"Premium request paid usage" policy and premium-request budgets.** These belong to the legacy model, which now applies only to existing *annual* Copilot Pro and Pro+ subscriptions until they end.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -229,7 +239,6 @@ Each budget starts the same way: click **New budget**, then under **Budget Type*
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: I added users to the "Hyper power users" cost center but they're still capped at the universal amount — why?
 **A:** Check three things: (1) the cost center user-level budget exists and was created with scope **Users** → the cost center (not scope **Cost center**, which is a spending limit instead); (2) the users are listed in the cost center's **Resources**; and (3) they don't have an individual user-level budget — an individual budget always wins, even if it's lower.

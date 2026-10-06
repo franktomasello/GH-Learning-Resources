@@ -2,6 +2,15 @@
 
 > **Complete guide to configuring branch protection at the repo, org, and enterprise level using classic rules and modern rulesets**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Protect important branches with reviews and checks |
+| **Use this when** | Setting up governance, or a merge is unexpectedly blocked |
+| **People you need** | Repository admins; organization owners; enterprise owners |
+| **Where you click** | GitHub (repo, org, and enterprise settings) |
+| **End result** | Rulesets that require reviews and checks, with a controlled bypass list |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -196,6 +203,8 @@
 
 ## 5️⃣ Finding Which Rule Is Enforcing Approval Requirements
 
+**👤 Role:** Anyone with **read** access (to view rules); repository admin, organization owner, or enterprise owner to change them · **📍 Portal:** GitHub
+
 **Fastest way (anyone with read access):**
 
 1. Open the repository's branch dropdown → **View all branches**.
@@ -261,6 +270,8 @@
 
 ## 8️⃣ Bypass Lists for Admins & Automation (Rulesets Feature)
 
+**👤 Role:** Whoever owns the ruleset — **repository administrator**, **organization owner**, or **enterprise owner** · **📍 Portal:** GitHub
+
 **Navigate (inside any ruleset):** **Bypass list** → **Add bypass**
 
 **Steps:**
@@ -291,11 +302,12 @@
 
 > ⚠️ **Important:** Keep bypass lists short and review bypasses regularly in **Rule Insights** and the audit log.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -317,7 +329,6 @@
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: I created a branch protection rule or ruleset, but it does not seem to be enforcing. What should I check?
 **A:** Check that the target matches the branch (`main` vs `master`; `release/*` doesn't match `release/a/b` because `*` stops at `/`). For rulesets, confirm **Enforcement status** is **Active** — new rulesets start as **Disabled**, and **Evaluate** only logs results. For organization rulesets, confirm the repository is in **Target repositories**. Use the branch's **shield-lock** icon to see which rulesets actually apply.
@@ -348,6 +359,8 @@
 **A:** Yes. Rulesets have no priority — all rulesets targeting a branch are aggregated, along with any classic branch protection rule. If the same rule is set differently, the most restrictive version applies (for example, 1 vs 2 required approvals → 2). This works across repository, organization, and enterprise rulesets.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

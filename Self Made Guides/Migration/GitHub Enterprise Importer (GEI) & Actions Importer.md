@@ -2,6 +2,15 @@
 
 > **Complete guide to migrating repositories, CI/CD pipelines, and history to GitHub using GitHub Enterprise Importer (GEI), Actions Importer, and git mirror push**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Migrate repositories and pipelines to GitHub |
+| **Use this when** | Moving from Azure DevOps, Bitbucket, GitLab, or another GitHub |
+| **People you need** | Organization owner or migrator; source admin |
+| **Where you click** | GitHub CLI, the source platform, and GitHub |
+| **End result** | Repositories with history and pull requests on GitHub, and converted workflows |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -28,7 +37,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -70,6 +77,8 @@
 | Source access — ADO PAT with **Work Items (Read)**, **Code (Read)**, **Identity (Read)** (full access recommended for `inventory-report`); GitLab/Bitbucket/GitHub tokens per the docs | Source admin | ☐ |
 | "Repository migrations" added to the **bypass list** of destination rulesets (or rulesets that could block history) | Org/enterprise owner | ☐ |
 | Docker (for Actions Importer) | Migration operator | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -389,11 +398,12 @@ Use `gh ado2gh`, `gh bbs2gh`, or `gh gl2gh` with the same subcommands for those 
 | Revoke source PATs | Remove migration credentials |
 | Decommission old platform | After confirmation period |
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -416,7 +426,6 @@ Use `gh ado2gh`, `gh bbs2gh`, or `gh gl2gh` with the same subcommands for those 
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: GEI migration fails with a timeout error on a large repository. How do I resolve this?
 **A:** Start it with `--queue-only` and track it with `wait-for-migration --migration-id ID`, so your terminal session doesn't have to stay open. Check the repository against the limits (40 GiB Git source, 400 MiB per file, 2 GiB per commit) with `git-sizer`, and move large files to Git LFS. Download the migration log to see where it failed.
@@ -447,6 +456,8 @@ Use `gh ado2gh`, `gh bbs2gh`, or `gh gl2gh` with the same subcommands for those 
 **A:** Yes. Run a trial migration into a test organization (the source isn't changed), validate it, then delete the test repositories. For pipelines, use `gh actions-importer dry-run`. Follow the phased approach in Section 🔟 (Pilot → Org-by-Org → Cutover → Decommission).
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

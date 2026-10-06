@@ -2,6 +2,15 @@
 
 > **Complete guide to assigning Copilot seats across enterprise, organization, and team levels including pilot rollouts and mixed-plan scenarios**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Give the right people Copilot seats |
+| **Use this when** | Starting a pilot or expanding Copilot |
+| **People you need** | Enterprise owner; organization owners |
+| **Where you click** | GitHub (Billing and licensing, org Copilot settings) |
+| **End result** | Copilot enabled for chosen organizations and seats assigned to users or teams |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -62,7 +69,7 @@
 | GitHub Enterprise Cloud enterprise with Copilot Business or Copilot Enterprise | GitHub **enterprise owner** | ☐ |
 | Turn Copilot on for organizations and choose each org's plan | GitHub **enterprise owner** | ☐ |
 | Assign seats inside an organization | GitHub **organization owner** | ☐ |
-| GitHub teams created (for team-based pilots) | GitHub **organization owner** or team maintainer | ☐ |
+| GitHub teams created (for team-based pilots) | GitHub **organization owner** (or any member, if the organization lets members create teams) | ☐ |
 
 ---
 
@@ -278,11 +285,12 @@ Review who holds a license and how it was assigned, and compare it with each org
 
 > 💡 **Customization:** UI labels can vary slightly depending on your enterprise agreement, plan, and trial status. The paths above reflect GitHub's documentation as of October 2026.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -306,9 +314,14 @@ Review who holds a license and how it was assigned, and compare it with each org
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: A user says Copilot isn't working even though we assigned them a seat — what should we check?
-**A:** Check, in order: (1) Copilot is turned on for their organization at the enterprise level (Step 1); (2) they're signed in to the right GitHub account in their IDE and have an active SSO session if the organization uses SAML; (3) their IDE and Copilot extension are up to date — older versions can show wrong usage and billing information; (4) the feature they're using is allowed by your Copilot policies; and (5) they haven't used up their AI credit budget — they can see this under **Your Copilot** → **Usage**.
+**A:** Check, in order:
+
+1. Copilot is turned on for their organization at the enterprise level (Step 1).
+2. They're signed in to the right GitHub account in their IDE, with an active SSO session if the organization uses SAML.
+3. Their IDE and Copilot extension are up to date — older versions can show wrong usage and billing information.
+4. The feature they're using is allowed by your Copilot policies.
+5. They haven't used up their AI credit budget. They can check under **Your Copilot** → **Usage**.
 
 ---
 
@@ -323,7 +336,12 @@ Review who holds a license and how it was assigned, and compare it with each org
 ---
 
 ### Q: How do we revoke a seat immediately?
-**A:** It depends where the seat came from. **Enterprise-level licenses** (direct assignment or an enterprise team): unassign the license or remove the user from the enterprise team — access is revoked **immediately**. **Organization seats:** in **Settings** → **Copilot** → **Access**, select the member's checkbox, click **Cancel seat**, then **Remove seats** in the confirmation dialog — the user keeps access until the **start of the next billing cycle**. Removing the user from the organization also revokes the organization seat.
+**A:** It depends where the seat came from:
+
+- **Enterprise-level license** (direct assignment or an enterprise team): unassign the license, or remove the user from the enterprise team. Access ends **immediately**.
+- **Organization seat:** org **Settings** → **Copilot** → **Access** → select the member's checkbox → **Cancel seat** → **Remove seats** in the dialog. The user keeps access until the **start of the next billing cycle**.
+
+Removing the user from the organization also removes the organization seat.
 
 ---
 

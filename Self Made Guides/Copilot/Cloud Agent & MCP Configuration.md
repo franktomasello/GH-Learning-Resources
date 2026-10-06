@@ -2,6 +2,15 @@
 
 > Guide to enabling, scoping, securing, and extending Copilot cloud agent (formerly "Copilot coding agent") with Model Context Protocol (MCP) servers in an enterprise
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Turn on Copilot cloud agent safely and give it extra tools through MCP |
+| **Use this when** | Piloting agents that open pull requests on their own |
+| **People you need** | Enterprise owner; organization owners; repository admins |
+| **Where you click** | GitHub (AI controls, org and repo settings) |
+| **End result** | Cloud agent enabled for chosen repos, with MCP, firewall, and review guardrails |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -45,7 +53,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -340,11 +347,12 @@ Add `.github/workflows/copilot-setup-steps.yml` with a single job named `copilot
 
 > 💡 **Tip:** Clear, detailed issues mean fewer follow-up comments and fewer sessions — the cheapest way to control cost.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -369,7 +377,6 @@ Add `.github/workflows/copilot-setup-steps.yml` with a single job named `copilot
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: Users can't assign issues to Copilot — what should we check?
 **A:** Check, in order: (1) the enterprise **Copilot Cloud Agent** policy includes the organization, (2) the organization's **Copilot cloud agent** policy is **Enabled**, (3) the repository is allowed under **Repository access**, (4) the enterprise hasn't turned on **Block Copilot cloud agent in all repositories**, and (5) the user has a Copilot license **and** write permission to the repository.

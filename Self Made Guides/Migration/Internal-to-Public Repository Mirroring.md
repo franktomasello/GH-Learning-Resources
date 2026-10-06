@@ -2,6 +2,15 @@
 
 > **Complete guide to mirroring internal repositories to public GitHub.com organizations, especially for EMU enterprises that cannot host public repos**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Publish approved internal code to a public repository safely |
+| **Use this when** | An EMU customer needs to release open source |
+| **People you need** | Public org owner; internal repository admin; release approvers |
+| **Where you click** | GitHub (internal enterprise and public GitHub.com org) |
+| **End result** | A gated, automated mirror from an approved branch to a public repo |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -22,7 +31,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -41,7 +49,6 @@
 <details>
 <summary><em>Show click-path conventions</em></summary>
 
-
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
@@ -58,7 +65,7 @@
 | Requirement | Who / Role needed | ✓ |
 |-------------|-------------------|---|
 | A separate public organization on GitHub.com (not in the EMU enterprise) and the target repository | Owner of that organization (personal account) | ☐ |
-| A GitHub App owned by the public org with **Contents: Read & write**, installed on the target repo — or a fine-grained PAT / deploy key | Public org owner | ☐ |
+| A GitHub App owned by the public org with **Contents: Read and write**, installed on the target repo — or a fine-grained PAT / deploy key | Public org owner | ☐ |
 | Store secrets, variables, and environments in the internal repository | Internal **repository administrator** | ☐ |
 | GitHub Actions enabled on the internal repository | Org owner / repo admin | ☐ |
 | Secret Protection (with push protection) on the internal repository | Repo admin / security team | ☐ |
@@ -81,6 +88,8 @@ Enterprise Managed User (EMU) enterprises do not support public repositories. Or
 ## 1️⃣ Option 1 — Separate Public Organization (Recommended Starting Point)
 
 *Create a non-EMU organization on github.com dedicated to open-source publishing*
+
+**👤 Role:** Owner of the **public** organization (a personal GitHub.com account) · **📍 Portal:** GitHub.com
 
 ### Setup
 
@@ -169,7 +178,7 @@ jobs:
 **👤 Role:** Public **organization owner**
 
 1. Public org → **Settings** → **Developer settings** → **GitHub Apps** → **New GitHub App**.
-2. Name it, set the homepage URL, untick webhook **Active**, set **Repository permissions → Contents: Read & write**, choose **Only on this account**, and click **Create GitHub App**.
+2. Name it, set the homepage URL, untick webhook **Active**, set **Repository permissions → Contents: Read and write**, choose **Only on this account**, and click **Create GitHub App**.
 3. Copy the **Client ID**, then under **Private keys** click **Generate a private key**.
 4. Click **Install App** → **Install** → **Only select repositories** → the public repo → **Install**.
 5. In the **internal** repo's `public-release` environment, add variable `PUBLIC_APP_CLIENT_ID` and secret `PUBLIC_APP_PRIVATE_KEY` (the whole `.pem`).
@@ -242,11 +251,12 @@ on:
 
 > ✅ **Result:** nothing reaches the public mirror without a reviewed PR **and** an approved deployment to `public-release`.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -269,14 +279,25 @@ on:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: The mirror workflow is failing with authentication errors. What should I check?
-**A:** First check that checkout uses `persist-credentials: false` — otherwise the internal repo's `GITHUB_TOKEN` header is sent to the public repo and you get a 403. Then confirm the app is installed on the public repo with **Contents: Read & write**, that `PUBLIC_APP_CLIENT_ID` / `PUBLIC_APP_PRIVATE_KEY` are available to the job (environment secrets need `environment: public-release`), and that `owner` and `repositories` match the public repo. For PATs or deploy keys, check they haven't expired or been removed.
+**A:** Check, in order:
+
+1. Checkout uses `persist-credentials: false`. Otherwise the internal repo's `GITHUB_TOKEN` header is sent to the public repo and you get a 403.
+2. The app is installed on the public repo with **Contents: Read and write**.
+3. `PUBLIC_APP_CLIENT_ID` and `PUBLIC_APP_PRIVATE_KEY` are available to the job (environment secrets need `environment: public-release`).
+4. `owner` and `repositories` match the public repo.
+5. For PATs or deploy keys: they haven't expired or been removed.
 
 ---
 
 ### Q: Sensitive data was accidentally pushed to the public mirror. What should we do immediately?
-**A:** Treat it as a security incident. Revoke and rotate the exposed credentials immediately — assume they're compromised. Pause the mirror workflow, rewrite the public history with `git filter-repo` and force-push (or make the repo private or delete it if the exposure is severe), and follow GitHub's "Removing sensitive data from a repository" guidance — contact GitHub Support to purge cached views and pull request refs. Then fix the internal branch before re-enabling the mirror.
+**A:** Treat it as a security incident:
+
+1. Revoke and rotate the exposed credentials immediately — assume they're compromised.
+2. Pause the mirror workflow.
+3. Rewrite the public history with `git filter-repo` and force-push — or make the repo private, or delete it, if the exposure is severe.
+4. Follow GitHub's "Removing sensitive data from a repository" guidance, and contact GitHub Support to purge cached views and pull request refs.
+5. Fix the internal branch before you re-enable the mirror.
 
 ---
 
@@ -299,6 +320,8 @@ on:
 **A:** If there are no new commits on the source branch since the last mirror run, `git push` will report "Everything up-to-date" and no changes will appear. Also verify the workflow trigger branch matches the branch you are committing to. Check the workflow run logs in the Actions tab for any error messages or skipped steps.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

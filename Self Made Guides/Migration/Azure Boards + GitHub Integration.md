@@ -2,6 +2,15 @@
 
 > Complete guide to connecting Azure Boards with GitHub for work item tracking while migrating code to GitHub
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Keep planning in Azure Boards while code lives in GitHub |
+| **Use this when** | Moving code from Azure DevOps but keeping Boards |
+| **People you need** | Azure DevOps Project Collection Administrator; GitHub repository admin |
+| **Where you click** | Azure DevOps and GitHub |
+| **End result** | Commits and pull requests linked to work items, with automatic state changes |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -22,7 +31,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -38,7 +46,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -60,6 +67,8 @@
 | Link work items | **Contributor** access to both the Boards project and the GitHub repository | ☐ |
 | Install the **Azure Boards** GitHub App on the organization | GitHub **organization owner** (or repo admin for selected repos) | ☐ |
 | SAML-protected org with a PAT connection | The PAT must be authorized for SSO | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -116,6 +125,8 @@ Keep work items in Azure Boards while hosting code in GitHub. Commits, pull requ
 ---
 
 ## 2️⃣ Link Work Items to GitHub Activity
+
+**👤 Role:** Developers with **Contributor** access to the Boards project and write access to the repository · **📍 Portal:** GitHub + Azure Boards
 
 ### Using `AB#` syntax
 
@@ -182,11 +193,12 @@ Put a keyword or state name right before the `AB#` reference in a commit message
 - Connect each repository to **one** Azure DevOps organization
 - Build an Azure DevOps dashboard that shows GitHub-linked work items
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -208,7 +220,6 @@ Put a keyword or state name right before the `AB#` reference in a commit message
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: I am using AB# syntax in commits and PRs but the links are not appearing in Azure Boards. What is wrong?
 **A:** Check that the repository is listed under **Project settings** → **GitHub connections**, that `AB#` is in the **commit message** or **PR description** (not the PR title or a comment), and that the ID is valid with no space (`AB#1234`, not `AB# 1234`). If the repo is connected to projects in more than one Azure DevOps organization, links can go to the wrong place.
@@ -239,6 +250,8 @@ Put a keyword or state name right before the `AB#` reference in a commit message
 **A:** Not with GitHub Enterprise Importer — GEI migrates repositories (code, pull requests, PR work-item links, branch policies), not Azure Boards work items. Many teams keep Boards connected long term. If you do move planning to GitHub Issues and Projects, use a script against both APIs or a third-party tool, then retire the Boards connection.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

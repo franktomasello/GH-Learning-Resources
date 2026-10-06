@@ -2,6 +2,15 @@
 
 > **Complete guide to converting Subversion (SVN) repositories to Git and pushing them to GitHub**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Convert a Subversion repository to Git and push it to GitHub |
+| **Use this when** | Retiring an SVN server |
+| **People you need** | Migration operator; SVN admin; GitHub org owner |
+| **Where you click** | Command line and GitHub |
+| **End result** | A Git repository on GitHub with full history, branches, tags, and LFS for binaries |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -26,7 +35,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the commands:**
@@ -43,7 +51,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation and tool documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -371,11 +378,12 @@ git push --tags origin
 
 > 💡 **Tip:** Post this cheat sheet in your team wiki or Slack channel. The biggest adjustment for SVN users is that Git separates `commit` (local) from `push` (remote).
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -397,7 +405,6 @@ git push --tags origin
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: `svn2git` fails because our SVN repo does not use the standard trunk/branches/tags layout. What should I do?
 **A:** Use `--rootistrunk` if the root of the SVN repo is the trunk (no branches or tags directories). For custom directory names, specify them explicitly with `--trunk`, `--branches`, and `--tags` flags. If the layout is highly non-standard, try `--no-minimize-url` or switch to `git svn clone` with manual path specifications for more control.
@@ -428,6 +435,8 @@ git push --tags origin
 **A:** Check that `svn2git` or `git svn` successfully processed all branches. Empty branches (with no unique commits) may not convert. Also verify the SVN branch/tag paths match what the conversion tool expects. After `git svn clone`, SVN branches appear as remote refs that must be explicitly converted to local branches and tags using the conversion commands in Section 3 of this guide.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

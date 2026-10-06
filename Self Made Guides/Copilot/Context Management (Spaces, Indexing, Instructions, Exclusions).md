@@ -2,6 +2,15 @@
 
 > How to give GitHub Copilot the right context for higher-quality, grounded output across your enterprise
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Give Copilot the right context so answers are accurate |
+| **Use this when** | Copilot answers feel generic, or teams are starting with Copilot |
+| **People you need** | Organization owners; repository contributors; any Copilot user (Spaces) |
+| **Where you click** | GitHub (org settings, repo files, github.com/copilot/spaces) |
+| **End result** | Instructions, exclusions, indexing, and Spaces working together |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -23,7 +32,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -41,7 +49,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -271,6 +278,8 @@ Spaces bundle repositories, files, pull requests, issues, notes, images, and upl
 
 ## 6️⃣ Putting It All Together
 
+**👤 Roles:** Enterprise owner → organization owner → repository contributors → team leads → developers (one per step below)
+
 ### Recommended setup order
 
 1. **Enterprise:** set content exclusions for sensitive paths.
@@ -289,11 +298,12 @@ Enterprise   (content exclusion — what Copilot CANNOT see)
         → Chat (ad-hoc references — #file, #codebase, @workspace)
 ```
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -316,7 +326,6 @@ Enterprise   (content exclusion — what Copilot CANNOT see)
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: How long does repository indexing take?
 **A:** First-time indexing takes up to about 60 seconds, even for a large repository. After that, the index usually updates within seconds of starting a new conversation. It's automatic — there's no indexing settings page to check.

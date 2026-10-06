@@ -2,6 +2,15 @@
 
 > **Complete guide to configuring passwordless deployments from GitHub Actions to Azure using OpenID Connect (OIDC) federation**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Deploy from GitHub Actions to Azure without storing any Azure secrets |
+| **Use this when** | Replacing client secrets in pipelines, or setting up a new Azure deployment |
+| **People you need** | Entra Application Administrator; Azure RBAC administrator; repository admin |
+| **Where you click** | Microsoft Entra admin center, Azure portal, GitHub |
+| **End result** | Workflows that log in to Azure with short-lived OIDC tokens, scoped to a branch or environment |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -27,7 +36,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -66,6 +73,8 @@
 | A GitHub repository with Actions enabled | — | ☐ |
 | Create Actions secrets or variables | **Repository administrator** (repo-level) or **organization owner** (org-level) | ☐ |
 | Know your subject format (legacy name-based or immutable ID-based) | Repository administrator — see Section 4 | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -168,6 +177,8 @@ OIDC federation eliminates the need for long-lived Azure credentials stored as G
 ---
 
 ## 4️⃣ Issuer and Subject: What Azure Must Match
+
+**👤 Role:** App **owner**, **Application Administrator**, or **Cloud Application Administrator** · **📍 Portal:** Microsoft Entra admin center
 
 Azure compares the token's **issuer**, **subject**, and **audience** to the federated credential — all three must match **exactly**.
 
@@ -319,6 +330,8 @@ No workflow YAML changes are needed — the runner requests the token from your 
 
 *Moving repositories from GitHub.com to GHE.com changes the issuer — and usually the subject.*
 
+**👤 Role:** App **owner**, **Application Administrator**, or **Cloud Application Administrator** · **📍 Portal:** Microsoft Entra admin center + GitHub
+
 ### Steps
 
 1. **Add a new federated credential** (Other issuer) on the existing app registration:
@@ -335,11 +348,12 @@ No workflow YAML changes are needed — the runner requests the token from your 
 
 > ⚠️ **Warning:** if the organization or repository name changed, the subject must use the new names (and IDs).
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -363,14 +377,22 @@ No workflow YAML changes are needed — the runner requests the token from your 
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: I am getting "AADSTS700016: Application not found" when my workflow tries to log in to Azure. What is wrong?
 **A:** This error means Azure cannot find the App Registration. Verify that the `client-id` (Application ID) and `tenant-id` (Directory ID) stored in your GitHub secrets are correct and correspond to an active App Registration in the correct Entra ID tenant. Copy-paste errors and extra whitespace in secret values are common causes.
 
 ---
 
 ### Q: My workflow fails with "No matching federated identity record found." How do I fix this?
-**A:** The token's subject (or issuer) doesn't exactly match any federated credential. The Azure error quotes the subject it received — compare it to your credentials. Common causes: the job uses `environment:` but the credential is branch-based (or the reverse), a typo or case difference, a renamed organization or repository, or the repository uses the **immutable** subject (`repo:ORG@ID/REPO@ID:...`) while the credential has the name-only form. Add a credential with the exact subject.
+**A:** The token's subject (or issuer) doesn't exactly match any federated credential. The Azure error shows the subject it received — compare it with your credentials.
+
+Common causes:
+
+- The job uses `environment:` but the credential is branch-based (or the reverse).
+- A typo or a difference in letter case.
+- The organization or repository was renamed.
+- The repository uses the **immutable** subject (`repo:ORG@ID/REPO@ID:...`) but the credential uses the name-only form.
+
+**Fix:** add a federated credential with the exact subject from the error.
 
 ---
 
@@ -393,6 +415,8 @@ No workflow YAML changes are needed — the runner requests the token from your 
 **A:** You store the Application (client) ID, Directory (tenant) ID, and Subscription ID as GitHub secrets -- but these are identifiers, not credentials. No client secrets, certificates, or passwords are needed. The OIDC exchange generates a short-lived token at runtime without any stored credential, which is the primary security advantage of this approach.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

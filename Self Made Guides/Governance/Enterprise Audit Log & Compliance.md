@@ -2,6 +2,15 @@
 
 > How to access, stream, search, and use audit logs for governance, compliance, and security monitoring
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Search, export, and stream the enterprise audit log |
+| **Use this when** | Compliance reviews, incident response, or SIEM integration |
+| **People you need** | Enterprise owner; cloud or SIEM admin |
+| **Where you click** | GitHub (enterprise Settings) and your SIEM or cloud storage |
+| **End result** | Searchable history, a working stream, and a compliance checklist |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -24,7 +33,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -261,11 +268,12 @@ Git events (`git.clone`, `git.fetch`, `git.push`) are collected automatically on
 | Actions restricted to an allowlist | Enterprise → **Policies** → **Actions** |
 | Spend and usage | Enterprise → **Billing and licensing** → **Usage** → **Get usage report** |
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -287,7 +295,6 @@ Git events (`git.clone`, `git.fetch`, `git.push`) are collected automatically on
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: I configured audit log streaming but events are not appearing in my SIEM. What should I check?
 **A:** Open **Log streaming**, edit the stream, and click **Check endpoint**. Common causes: an expired SAS URL or token, missing write permissions, a firewall blocking GitHub's `hooks` IP ranges (from the `meta` API), or a paused stream. Streaming never backfills — it only sends events from when it was enabled. Enterprise owners also get an email when the daily health check fails.
@@ -318,6 +325,8 @@ Git events (`git.clone`, `git.fetch`, `git.push`) are collected automatically on
 **A:** Yes. Use `GET /enterprises/{enterprise}/audit-log` with the `phrase` parameter (same qualifiers as the UI search) and cursor pagination, with a `read:audit_log` token. For continuous, long-term reporting, streaming into a SIEM or data lake is more reliable than polling — the API is limited to 1,750 queries per hour.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

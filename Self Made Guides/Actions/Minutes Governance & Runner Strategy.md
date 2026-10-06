@@ -2,6 +2,15 @@
 
 > **Complete guide to managing Actions minutes, controlling costs, configuring runner strategies, and governing workflow usage across your enterprise**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Control GitHub Actions cost and choose the right runners |
+| **Use this when** | Setting Actions policy for an enterprise, or minutes and spend are growing |
+| **People you need** | Enterprise owner; billing manager; org owners for org runners; Azure network owner for private networking |
+| **Where you click** | GitHub (Policies, Billing and licensing, Settings) and Azure |
+| **End result** | Budgets with alerts or hard stops, an approved-actions policy, runner groups, and a runner strategy |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -29,7 +38,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -69,6 +76,8 @@
 | Organization runners and runner groups | **Organization owner** (or "Manage organization runners and runner groups" permission) | ☐ |
 | Azure subscription, VNET, and subnet (for Azure private networking) | Azure subscription / network owner | ☐ |
 | Infrastructure for self-hosted runners (if used) | Platform team | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -313,11 +322,12 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 
 > 💡 **Tip:** run runners as a service so they restart after reboots, use ephemeral runners or ARC where possible, and never attach self-hosted runners to public repositories.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -340,7 +350,6 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: Our included minutes are exhausted mid-month. How do we avoid this recurring issue?
 **A:** Use **Get usage report** to find the repositories and SKUs using the most. Move high-volume work to self-hosted runners (free), check macOS, Windows, and larger-runner use (more expensive), add `timeout-minutes` and concurrency limits, and remember that Copilot code review and cloud agent use Actions minutes too. Turn on the 90%/100% included-usage alerts.
@@ -371,6 +380,8 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 **A:** At Enterprise → **Policies** → **Actions**, choose **Allow enterprise, and select non-enterprise, actions and reusable workflows**, select **Allow actions created by GitHub**, and list approved third-party actions (for example `azure/login@*`). Consider **Require actions to be pinned to a full-length commit SHA**, then click **Save**.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

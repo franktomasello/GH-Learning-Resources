@@ -2,6 +2,15 @@
 
 > **Complete end-to-end guide for configuring EMU with Microsoft Entra ID (OIDC), Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Stand up an EMU enterprise end to end with Entra ID (OIDC) |
+| **Use this when** | Building a new EMU enterprise on Entra ID and wanting Conditional Access |
+| **People you need** | Setup user and enterprise owner; Entra Global Administrator; Azure subscription owner |
+| **Where you click** | GitHub and the Microsoft Entra admin center |
+| **End result** | OIDC sign-in, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -29,7 +38,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -235,7 +242,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 5. Click **Test Connection** — must show success ✅.
 6. Click **Create** (older UI: **Save**).
-7. On the provisioning **Overview**, click **Edit provisioning** (or open **Provisioning → Properties**) and click the **pencil**. Enable **Send an email notification when a failure occurs** and enter a recipient address; enable **Prevent accidental deletion** and set a threshold. Click **Apply** (or **Save**).
+7. On the provisioning **Overview** page, open **Properties** and click the **pencil**. Enable **Send an email notification when a failure occurs** and enter a recipient address; enable **Prevent accidental deletion** and set a threshold. Click **Apply**.
 
 ### 4x) Review Attribute Mappings
 
@@ -472,11 +479,12 @@ Run through these checks to confirm successful setup:
 | Copilot not activating | Copilot isn't turned on for the organization, or the user has no seat | Turn the org on at Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage**, then assign a seat (Step 8C) |
 | Team membership not syncing | Nested groups in Entra | Flatten group structure or add users directly |
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -500,7 +508,6 @@ Run through these checks to confirm successful setup:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: What is the difference between OIDC and SAML for EMU, and which should I choose?
 **A:** OIDC is recommended for Entra ID because it supports Conditional Access Policies (CAP) natively — GitHub can honor Entra session policies such as IP restrictions and device compliance. SAML does not pass CAP signals to GitHub. If your organization uses Entra Conditional Access, choose OIDC. If your IdP does not support OIDC with GitHub (e.g., Okta, PingFederate), SAML is your only option.
 
@@ -522,7 +529,22 @@ Run through these checks to confirm successful setup:
 ---
 
 ### Q: How do I switch from SAML to OIDC on an existing EMU enterprise?
-**A:** Contact GitHub Support to assist with the transition. The general process involves: (1) creating the "GitHub Enterprise Managed User (OIDC)" Enterprise Application in Entra, (2) having GitHub Support disable the current SAML configuration, (3) enabling OIDC via the enterprise settings, (4) consenting as a Global Administrator, and (5) verifying SCIM continues to work with the existing token. Plan this during a maintenance window as users will briefly lose access during the switch.
+**A:** It's self-service, using GitHub's built-in migration. Plan a maintenance window — the switch can take up to an hour, and users can't reach the enterprise until it finishes.
+
+**You need:** an Entra **Global Administrator**, and an enterprise **recovery code** to sign in as the setup user.
+
+1. In Entra, open the existing **GitHub Enterprise Managed User** app → **Provisioning** → stop provisioning.
+2. If you use an IP allow list with Conditional Access location policies, disable the allow list first.
+3. Sign in to GitHub as `SHORTCODE_admin`. When prompted to continue to your IdP, click **Use a recovery code** and enter an enterprise recovery code.
+4. Enterprise → **Identity provider** → **Single sign-on configuration** → at the bottom, click **Migrate to OpenID Connect single sign-on** → read the warning → **Migrate to OIDC** → **Begin OIDC migration**.
+5. Sign in to Entra as a Global Administrator, check **Consent on behalf of your organization**, and click **Accept**.
+6. Download the **new** recovery codes GitHub shows, then click **Enable OIDC authentication**.
+7. Wait for the migration to finish (up to an hour). It's still running while **Require SAML authentication** shows as selected under **Authentication security**. Don't provision new users meanwhile.
+8. As the setup user, create a new classic PAT with **`scim:enterprise`** and **No expiration**.
+9. In Entra, open the new **GitHub Enterprise Managed User (OIDC)** app → **Provisioning** → enter the **Tenant URL** and the new token → **Test Connection** → **Save**.
+10. Copy the users and groups from the old app to the new app, provision one test user, then click **Start provisioning**.
+
+> ⚠️ **Teams:** connections between GitHub teams and IdP groups are removed and **not** restored automatically. Reconnect each team after its group is provisioned again.
 
 ---
 

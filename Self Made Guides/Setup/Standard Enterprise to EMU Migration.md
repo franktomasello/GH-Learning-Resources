@@ -2,6 +2,15 @@
 
 > Step-by-step guide to migrating from standard GitHub Enterprise Cloud (personal accounts) to Enterprise Managed Users
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Move from a personal-account enterprise to Enterprise Managed Users |
+| **Use this when** | A standard GHEC customer needs EMU-level control |
+| **People you need** | Enterprise owners (old and new); IdP admin; migration operator |
+| **Where you click** | GitHub (both enterprises), your IdP, and GitHub CLI |
+| **End result** | A new EMU enterprise with users, repos, and integrations moved over |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -27,7 +36,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -94,6 +101,8 @@ Migrating from standard GitHub Enterprise to EMU is a **one-way migration** that
 | Public repos/gists | Supported | Not supported |
 | Open-source contribution | Same account | Requires separate personal account |
 
+---
+
 ## 1️⃣ Pre-Migration Inventory
 
 Before starting, catalog everything in your current enterprise:
@@ -113,6 +122,8 @@ Before starting, catalog everything in your current enterprise:
 
 > ⚠️ **Important:** PATs from personal accounts will NOT work after migration. Plan to replace them with GitHub Apps or fine-grained PATs issued to managed accounts.
 
+---
+
 ## 2️⃣ Create the New EMU Enterprise
 
 **👤 Role:** GitHub **enterprise owner** (setup user) · **📍 Portal:** GitHub
@@ -129,6 +140,8 @@ Before starting, catalog everything in your current enterprise:
 4. Sign in as `SHORTCODE_admin`, click your profile picture → **Enterprise**, then click **Identity provider** at the top of the page followed by **Single sign-on configuration** to begin SSO setup (Step 3).
 
 > 🔐 **Setup user is break-glass.** Every setup-user sign-in requires a successful 2FA challenge **or** an enterprise recovery code (Jan 2025 change). Losing both sets of codes locks you out, and password resets for the setup user must go through **GitHub Support**. Use provisioned managed enterprise-owner accounts for day-to-day admin.
+
+---
 
 ## 3️⃣ Configure Identity Provider
 
@@ -157,7 +170,10 @@ OIDC is enabled from the GitHub side first — you do NOT manually create a gall
 
 **Navigate:** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration**
 
-1. First, in your IdP create the EMU SAML app and capture its artifacts. **Entra:** **Entra ID → Enterprise apps → New application → Browse gallery →** search **GitHub Enterprise Managed User → Create → Single sign-on → SAML**; in **SAML Certificates** click **Download** (Certificate Base64) and in **Set up [app]** copy the **Login URL** (= GitHub **Sign on URL**) and **Microsoft Entra Identifier** (= GitHub **Issuer**). **Okta/Ping:** open **View SAML setup instructions** / **More details** and download the **X.509 signing certificate** and copy the **Sign on URL** and **Issuer**. See the dedicated *EMU + Entra/Okta/PingFederate (SAML)* setup guide for the full app build. Then return here and paste those three values into GitHub.
+1. First, in your IdP, create the EMU SAML app and collect three values: **Sign on URL**, **Issuer**, and **Public Certificate**.
+   - **Entra:** **Entra ID** → **Enterprise apps** → **New application** → search **GitHub Enterprise Managed User** → **Create** → **Single sign-on** → **SAML**. Under **SAML Certificates**, click **Download** next to **Certificate (Base64)**. Under **Set up [app]**, copy **Login URL** (= GitHub **Sign on URL**) and **Microsoft Entra Identifier** (= GitHub **Issuer**).
+   - **Okta / Ping:** open **View SAML setup instructions** / **More details**, download the **X.509 signing certificate**, and copy the **Sign on URL** and **Issuer**.
+   - For the full app build, see the dedicated *EMU + Entra / Okta / PingFederate (SAML)* setup guide.
 2. Signed in as the setup user, go to **Identity provider** → **Single sign-on configuration**.
 3. Under **SAML single sign-on**, click **Add SAML configuration**.
 4. Enter the **Sign on URL**, **Issuer**, and **Public Certificate** from your IdP, then choose a **Signature Method** and **Digest Method** (SHA-256 recommended).
@@ -174,6 +190,8 @@ On the IdP side, enter the SAML SP values GitHub expects:
 | Identifier / Entity ID | `https://github.com/enterprises/{SLUG}` (no trailing slash) | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}` |
 | Reply URL / ACS | `https://github.com/enterprises/{SLUG}/saml/consume` | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}/saml/consume` |
 | Sign-on URL | `https://github.com/enterprises/{SLUG}/sso` | `https://{SUBDOMAIN}.ghe.com/enterprises/{SUBDOMAIN}/sso` |
+
+---
 
 ## 4️⃣ Configure SCIM Provisioning
 
@@ -219,6 +237,8 @@ On the IdP side, enter the SAML SP values GitHub expects:
 
 > 📌 Entra does not provision nested groups (direct members only). Incremental sync runs roughly every 40 minutes; use **Provision on demand** to test. Keep additions under ~1,000 users/hour to avoid SCIM rate limits.
 
+---
+
 ## 5️⃣ Migrate Repositories
 
 ### Using GitHub Enterprise Importer (GEI)
@@ -256,6 +276,8 @@ gh gei migrate-org \
 - OIDC trust policies
 - GitHub Apps (reinstall in new enterprise)
 
+---
+
 ## 6️⃣ Recreate Organization Structure
 
 **👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
@@ -264,8 +286,18 @@ gh gei migrate-org \
 - [ ] Set up teams with appropriate repo access
 - [ ] Configure repository visibility (private/internal)
 - [ ] Apply rulesets at org level
-- [ ] Configure **Copilot** in the new EMU enterprise (profile picture → **Enterprise**), as an enterprise owner: turn Copilot on for organizations at **Billing and licensing** → **Licensing** → Copilot **Manage** → **Organization access**; set policies at **AI controls** → **Copilot** (sidebar pages **Copilot**, **Configure features & clients**, **Agents**, **MCP** — selections apply immediately, there is no Save button); then assign seats from each org's **Settings** → **Copilot** → **Access** → **Start adding seats**, or assign Copilot Business licenses on the enterprise **Manage** page (**All members** / **Enterprise Teams** → **Assign licenses**). Enterprise teams are generally available (since June 2026) and can be synced to IdP groups.
-- [ ] Set up cost centers and connect billing — to connect metered billing, you must be an **enterprise owner**: Profile picture → **Enterprise** → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**. On the Azure side you need **Owner** permission on the target subscription plus tenant-wide admin consent. After clicking **Add Azure Subscription**, sign in to Microsoft, review **Permissions requested** and click **Accept**; under **Select a subscription** choose the target subscription, check the confirmation checkbox, and click **Connect**. Confirm the subscription ID now appears on **Payment information**.
+- [ ] Configure **Copilot** in the new EMU enterprise (profile picture → **Enterprise**), as an enterprise owner:
+  - **Turn it on for organizations:** **Billing and licensing** → **Licensing** → Copilot **Manage** → **Organization access**.
+  - **Set policies:** **AI controls** → **Copilot** (pages **Copilot**, **Configure features & clients**, **Agents**, **MCP**). Selections apply immediately — there's no Save button.
+  - **Assign seats:** each org's **Settings** → **Copilot** → **Access** → **Start adding seats**, or (Copilot Business) the enterprise **Manage** page → **All members** / **Enterprise Teams** → **Assign licenses**.
+  - Enterprise teams are generally available (since June 2026) and can sync with IdP groups.
+- [ ] Set up cost centers and connect billing. You need an **enterprise owner**, plus an Azure user with **Owner** on the subscription and tenant-wide admin consent:
+  1. Profile picture → **Enterprise** → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**.
+  2. Sign in to Microsoft, review **Permissions requested**, and click **Accept**.
+  3. Under **Select a subscription**, choose the subscription, check the confirmation box, and click **Connect**.
+  4. Confirm the subscription ID now shows on **Payment information**.
+
+---
 
 ## 7️⃣ Update Integrations
 
@@ -279,7 +311,11 @@ gh gei migrate-org \
 | CI/CD pipelines | Update repo URLs, secrets, runner configs |
 | Package registries | Update registry URLs and tokens |
 
+---
+
 ## 8️⃣ Cutover
+
+**👤 Roles:** **Enterprise owners** of both enterprises, migration operator, **IdP administrator**, team leads · **📍 Portals:** GitHub (both enterprises) + your IdP
 
 1. Set a coordinated cutover date with all teams
 2. Put old enterprise repos in **read-only** mode (archive repos)
@@ -287,6 +323,8 @@ gh gei migrate-org \
 4. Verify all users can authenticate via IdP
 5. Run validation tests on critical workflows
 6. Monitor for 2-4 weeks before decommissioning old enterprise
+
+---
 
 ## ⚠️ Critical EMU Restrictions to Communicate
 
@@ -297,11 +335,12 @@ gh gei migrate-org \
 | No external interaction | Cannot PR/issue/star outside enterprise | Separate personal GitHub.com account |
 | SCIM-only provisioning | No manual user invites | Ensure IdP admin has fast-track process |
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -325,7 +364,6 @@ gh gei migrate-org \
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Can I migrate from standard enterprise to EMU in-place without creating a new enterprise?
 **A:** No. There is no in-place conversion. EMU requires a fundamentally different identity model (IdP-provisioned accounts vs personal accounts). You must create a new EMU enterprise, configure identity and provisioning, migrate repositories using GitHub Enterprise Importer (GEI), and have users switch to their new managed accounts. Plan this as a full migration project with a coordinated cutover.
 
@@ -337,22 +375,46 @@ gh gei migrate-org \
 ---
 
 ### Q: Commit attribution in the new enterprise shows different usernames — how do we preserve history?
-**A:** GEI migrates git history faithfully (all commits, branches, tags), but commit author information is based on the git `user.email` in each commit. If the email in old commits does not match the new managed user's email, GitHub will not link those commits to the new account. The git history is preserved, but the GitHub UI may show commits as authored by an unrecognized user. There is no way to retroactively re-attribute commits to new managed accounts without rewriting git history, which is not recommended.
+**A:** GEI keeps git history intact (all commits, branches, and tags), but GitHub links each commit to an account by the commit's author email.
+
+- If old commits use an email that isn't on the new managed account, GitHub can't link them, and the UI shows an unrecognized author.
+- The history itself is preserved.
+- You can't re-attribute old commits without rewriting git history, which isn't recommended.
+
+Pull request, issue, and comment authors are different: GEI creates **mannequins** for them, which you can reclaim to the new managed users.
 
 ---
 
 ### Q: Our CI/CD pipelines use OIDC trust with AWS/Azure/GCP — do the trust policies need updating?
-**A:** Yes. If your OIDC trust policies reference the GitHub token issuer URL, they must be updated. For standard github.com, the issuer is `https://token.actions.githubusercontent.com`. If the new EMU enterprise is on GHE.com (data residency), the issuer changes to `https://token.actions.SUBDOMAIN.ghe.com`. Subjects change too: migrated repositories are new repositories, so since July 15, 2026 they use the immutable subject format (`repo:OWNER@OWNER-ID/REPO@REPO-ID:…`), and organization or repository names may also change. Add trust entries for the new issuer and subjects before cutover (see `Actions/OIDC Federation for Azure Deployments.md`) to avoid CI/CD failures.
+**A:** Yes, if your cloud trust policies reference GitHub's token issuer or subjects.
+
+- **Issuer:** `https://token.actions.githubusercontent.com` on github.com. If the new EMU enterprise is on GHE.com, it becomes `https://token.actions.SUBDOMAIN.ghe.com`.
+- **Subjects:** migrated repositories are new repositories, so they use the immutable subject format (`repo:OWNER@OWNER-ID/REPO@REPO-ID:…`, for repositories created since July 15, 2026). Organization or repository names may also change.
+
+Add trust entries for the new issuer and subjects **before** cutover (see `Actions/OIDC Federation for Azure Deployments.md`) to avoid CI/CD failures.
 
 ---
 
 ### Q: Users are confused by having two GitHub accounts (old personal + new managed) — how do we manage this?
-**A:** This is expected and should be communicated clearly before migration. The old personal GitHub account remains active and can still be used for open-source contributions. The new managed account (`username_SHORTCODE`) is for enterprise work only. Advise users to: (1) configure separate browser profiles or use incognito for each account, (2) update their local git configs to use the correct email for the managed account, (3) set up SSH config with separate keys for each account. Provide clear documentation distinguishing the two.
+**A:** This is expected — tell users before the migration.
+
+- Their personal GitHub account stays active and can still be used for open source.
+- The new managed account (`username_SHORTCODE`) is for enterprise work only.
+
+Advise users to:
+
+1. Use separate browser profiles (or a private window) for each account.
+2. Set the right git email for the managed account in their local git config.
+3. Use separate SSH keys, with an SSH config entry for each account.
+
+Give them a short written guide on which account to use when.
 
 ---
 
 ### Q: How long should we keep the old enterprise live after cutover?
-**A:** Keep the old enterprise in read-only mode (archive all repos) for at least 4-8 weeks after cutover. This gives teams time to discover any missed migrations, verify that all integrations work in the new enterprise, and reference old configuration. Monitor access to the old enterprise — if traffic drops to near zero after 4 weeks, it is safe to decommission. Before decommissioning, do a final check that all repositories, secrets, and configuration have been migrated.
+**A:** Keep the old enterprise read-only (archive all repositories) for at least 4–8 weeks after cutover. That gives teams time to find missed migrations, confirm integrations work in the new enterprise, and look up old configuration.
+
+Watch access to the old enterprise. When it drops to near zero (typically after about 4 weeks), do a final check that every repository, secret, and setting has moved — then decommission.
 
 ---
 

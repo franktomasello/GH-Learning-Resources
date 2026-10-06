@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring EMU with Microsoft Entra ID (SAML), Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Stand up an EMU enterprise end to end with Entra ID (SAML) |
+| **Use this when** | Building a new EMU enterprise on Entra ID |
+| **People you need** | Setup user and enterprise owner; Entra Application or Global Administrator; Azure subscription owner |
+| **Where you click** | GitHub and the Microsoft Entra admin center |
+| **End result** | SAML sign-in, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -29,7 +38,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -283,7 +290,7 @@ After setting **Note**, **Expiration = No expiration**, and checking only **`sci
    - **Secret Token:** The personal access token (classic) created in step 4A.
 3. Click **Test Connection**.
 4. Click **Create** (older UI: **Save**).
-5. From the app's **Overview**, open **Properties** and click the **Edit** (pencil). Enable **Send an email notification when a failure occurs** (add a notification email) and **Prevent accidental deletions** (set a threshold), then click **Save**. Next, review **Attribute Mapping** (Users and Groups) in step 4C.
+5. From the app's **Overview**, open **Properties** and click the **Edit** (pencil). Enable **Send an email notification when a failure occurs** (add a notification email) and **Prevent accidental deletions** (set a threshold), then click **Apply**. Next, review **Attribute Mapping** (Users and Groups) in step 4C.
 
 #### Tenant URL Values
 
@@ -547,11 +554,12 @@ After completing this guide, you should have:
 - ✅ Initial organization structure established
 - ✅ First users provisioned and able to access GitHub
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -574,7 +582,6 @@ After completing this guide, you should have:
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: The setup user activation link does not work — what is wrong?
 **A:** The most common cause is an email conflict. If the email address provided for the setup user is already associated as a primary email on another GitHub account, the activation link will silently fail. Find the existing GitHub account using that email, change its primary email to something else, and then retry the activation link. If the link has expired, contact GitHub Support to resend it.

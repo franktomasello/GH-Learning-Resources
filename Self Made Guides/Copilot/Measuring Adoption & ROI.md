@@ -2,6 +2,15 @@
 
 > **Complete guide to tracking Copilot metrics, running pilots, building dashboards, and reporting ROI to leadership**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Measure Copilot adoption and report value to leadership |
+| **Use this when** | After rollout, or when leadership asks "is this worth it?" |
+| **People you need** | Enterprise owner or billing manager; metrics viewers via custom roles |
+| **Where you click** | GitHub (Insights, Billing and licensing) and the REST API |
+| **End result** | Dashboards, exportable metrics, and an executive reporting framework |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -27,7 +36,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -184,6 +191,8 @@
 
 *Build custom dashboards in Power BI, Tableau, or a data warehouse*
 
+**👤 Role:** **Enterprise owner**, **billing manager**, or a custom role with **View Enterprise Copilot Metrics** (organization reports: **organization owner** or **View Organization Copilot Metrics**) · **📍 Portal:** REST API
+
 Each endpoint returns `download_links` (short-lived signed URLs) and a `report_day`. Download the NDJSON files from the links.
 
 | Endpoint | Report |
@@ -247,6 +256,8 @@ curl -L \
 ## 7️⃣ Running a Copilot Pilot
 
 *A structured way to measure impact before a full rollout*
+
+**👤 Roles:** Pilot owner (program lead), **enterprise owner** (metrics policy and seats), team leads (surveys) · **📍 Portal:** GitHub + your survey tool
 
 ### Pilot parameters
 
@@ -348,11 +359,12 @@ curl -L \
 
 > 💡 **Data delay:** metrics land within about two full UTC days, so a brand-new rollout won't show data immediately.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -376,14 +388,18 @@ curl -L \
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Our acceptance rate seems low — is that normal?
 **A:** GitHub doesn't publish a "normal" acceptance rate, so compare against your own baseline and look at the trend. Low acceptance often points to weak context (no `.github/copilot-instructions.md`), little training, or languages and tasks where Copilot is less useful. Add instructions, run enablement sessions, and watch whether the trend improves.
 
 ---
 
 ### Q: The usage metrics API returns no data or a 404 — what's wrong?
-**A:** Check that (1) the **Copilot usage metrics** policy is **Enabled everywhere**, (2) your token belongs to an enterprise owner, billing manager, or someone with the **View Enterprise Copilot Metrics** permission, with the right scope (`manage_billing:copilot` or `read:enterprise`; `read:org` for organization reports), (3) the day you asked for is at least two full UTC days old and not before the report start date, and (4) the enterprise or organization slug is correct.
+**A:** Check that:
+
+1. The **Copilot usage metrics** policy is **Enabled everywhere**.
+2. Your token belongs to an enterprise owner, billing manager, or someone with the **View Enterprise Copilot Metrics** permission — and has the right scope (`manage_billing:copilot` or `read:enterprise`; `read:org` for organization reports).
+3. The day you asked for is at least two full UTC days old, and not before the report start date.
+4. The enterprise or organization slug is correct.
 
 ---
 

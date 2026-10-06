@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring Standard (non-EMU) GHEC with Active Directory Federation Services (AD FS) SAML, user provisioning, Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Set up standard GHEC with AD FS single sign-on end to end |
+| **Use this when** | A standard (personal-account) enterprise uses on-premises AD FS |
+| **People you need** | Enterprise owner; AD FS admin; Azure subscription owner |
+| **Where you click** | GitHub and AD FS Management |
+| **End result** | SAML SSO, member provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -31,7 +40,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -48,7 +56,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -84,6 +91,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 - AD FS does **NOT** natively support SCIM provisioning for GitHub
 - For organizations seeking full SCIM lifecycle management and cloud-native capabilities, consider migrating to **Microsoft Entra ID** (see Section 12)
 
+---
+
 ## ✅ Prerequisites
 
 | Requirement | Owner / Role | Notes |
@@ -97,6 +106,8 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | Dedicated GitHub "SCIM setup user" (optional) | Org Owner | Only needed if you plan to use API-based provisioning scripts or a SCIM bridge |
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -143,6 +154,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 📌 **Note:** This setup user will consume a GitHub license (if used). Treat it as a system account: minimal use outside of IAM configuration. If using manual management only, this step can be skipped.
 
+---
+
 ## 2️⃣ Add Relying Party Trust in AD FS
 
 **👤 Role:** AD FS **administrator** · **📍 Portal:** AD FS Management
@@ -183,6 +196,8 @@ Replace `YOUR_ORG` with your actual GitHub organization slug.
 | Entity ID / Identifier | `https://github.com/orgs/YOUR_ORG` |
 | ACS (Assertion Consumer Service) URL | `https://github.com/orgs/YOUR_ORG/saml/consume` |
 | Sign-on URL | `https://github.com/orgs/YOUR_ORG/sso` |
+
+---
 
 ## 3️⃣ Configure Claim Rules
 
@@ -234,6 +249,8 @@ From the AD FS server, collect:
 
    **Navigate:** **AD FS Management** → **AD FS** → **Service** → **Certificates** → right-click the **Token-signing** certificate → **View Certificate...** → **Details** tab → **Copy to File...** → in the Certificate Export Wizard click **Next** → select **Base-64 encoded X.509 (.CER)** → **Next** → enter a file name → **Next** → **Finish**
 
+---
+
 ## 4️⃣ Enable & Test SAML SSO in GitHub
 
 **👤 Role:** GitHub **enterprise owner** (4A) / **organization owner** (4B) · **📍 Portal:** GitHub
@@ -280,6 +297,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
+---
+
 ## 5️⃣ Enforce SAML SSO for the Organization (Required)
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
@@ -301,6 +320,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 4. Confirm the warning and click:
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
+
+---
 
 ## 6️⃣ User Provisioning (Manual or Scripted — No Native SCIM)
 
@@ -339,6 +360,8 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 > 📌 **Note:** Regardless of provisioning method, users must still authenticate via SAML (AD FS) to access the org. For new hires: invite to GitHub org, then user authenticates via AD FS on first access. For departures: remove from GitHub org (manually or via script) and disable AD account.
 
+---
+
 ## 7️⃣ Assign Users (AD Group → Mapped via Claims)
 
 **👤 Role:** **Active Directory / AD FS administrator** · **📍 Portal:** Active Directory Users and Computers + AD FS Management
@@ -363,6 +386,8 @@ Since AD FS uses Active Directory as its identity store, you can control which u
 
 - **Add user to AD group** → user can authenticate to GitHub via SAML → invite to org (manual or scripted)
 - **Remove user from AD group** → user can no longer authenticate via SAML → remove from org (manual or scripted)
+
+---
 
 ## 8️⃣ Attach Azure Subscription for Metered Billing
 
@@ -400,6 +425,8 @@ Since AD FS uses Active Directory as its identity store, you can control which u
 10. Click **Connect**
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
+
+---
 
 ## 9️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
@@ -492,6 +519,8 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 
 > 📌 **One license per person:** someone assigned through both 9D and 9E uses **one** license (the highest tier).
 
+---
+
 ## 🔟 Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
 When SAML is enabled/enforced, users often must authorize credentials (depending on token type and whether they have a linked external identity).
@@ -515,6 +544,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 **Token nuance:**
 
 > 📌 **Note:** GitHub states **PAT classic** requires post-creation SSO authorization. **Fine-grained PATs** are authorized during creation, before org access is granted.
+
+---
 
 ## ✅ Pre-Flight / Validation Checklist
 
@@ -556,6 +587,8 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 - [ ] Licenses assigned to pilot cohort
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
 
+---
+
 ## 🎯 Success Criteria
 
 After completing this guide, you should have:
@@ -567,6 +600,8 @@ After completing this guide, you should have:
 - ✅ GitHub Copilot enabled and configured
 - ✅ Users have authorized SSH keys and PATs for SSO access
 - ✅ Pilot users provisioned and able to access GitHub via SSO
+
+---
 
 ## 💡 Recommendation: Consider Migrating to Microsoft Entra ID
 
@@ -590,7 +625,6 @@ Microsoft provides migration tooling and documentation for moving from AD FS to 
 <details>
 <summary><em>Show known errors table</em></summary>
 
-
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
 | Error or symptom | Likely cause | Resolution |
@@ -613,24 +647,40 @@ Microsoft provides migration tooling and documentation for moving from AD FS to 
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: GitHub cannot reach my AD FS server — SAML test fails with a connection error. What do I need?
 **A:** AD FS must be publicly accessible from the internet for GitHub's SAML flow to work. If your AD FS server is behind a firewall, deploy a Web Application Proxy (WAP) server in your DMZ that proxies SAML requests to the internal AD FS server. The WAP publishes the AD FS federation endpoint (typically `https://your-adfs-server/adfs/ls/`) externally. Without WAP or public access, GitHub cannot validate SAML assertions and SSO will fail.
 
 ---
 
 ### Q: My claim rules are configured, but GitHub shows "NameID not found in SAML assertion" — what is wrong?
-**A:** This error means the SAML assertion does not contain a properly formatted NameID claim. Verify you have both claim rules configured: (1) an LDAP Attributes rule that sends the email as an E-Mail Address claim, and (2) a Transform rule that converts E-Mail Address to Name ID with the "Email" outgoing format. The two rules must be in the correct order — the LDAP rule first, then the transform rule. Use a SAML tracer browser extension to inspect the actual assertion.
+**A:** The SAML assertion doesn't contain a correctly formatted NameID. Check that you have both claim rules, in this order:
+
+1. An **LDAP Attributes** rule that sends the email as an **E-Mail Address** claim.
+2. A **Transform** rule that turns **E-Mail Address** into **Name ID** with the **Email** outgoing format.
+
+Use a SAML tracer browser extension to inspect the actual assertion.
 
 ---
 
 ### Q: AD FS does not support SCIM — how do I manage user provisioning?
-**A:** AD FS has no native SCIM support. Your options are: (1) **Manual provisioning** — invite users to the org individually via GitHub settings, (2) **API scripts** — build a PowerShell or Python script that reads AD group membership and uses the GitHub REST API to invite/remove org members on a schedule, or (3) **SCIM bridge** — deploy middleware that translates AD changes into SCIM API calls. For most organizations, option 2 (API scripts) provides the best balance of automation and simplicity.
+**A:** AD FS has no built-in SCIM. Options:
+
+1. **Manual provisioning:** invite users to the organization one by one in GitHub.
+2. **API scripts:** a PowerShell or Python script that reads AD group membership and calls the GitHub REST API on a schedule to invite or remove org members.
+3. **SCIM bridge:** middleware that turns AD changes into SCIM API calls.
+
+For most organizations, option 2 is the best balance of automation and simplicity.
 
 ---
 
-### Q: The AD FS certificate needs renewal — how do I update it in GitHub without breaking SSO?
-**A:** When the AD FS token-signing certificate is near expiration, generate the new certificate in AD FS Management Console (Service > Certificates). Export it in Base64-encoded X.509 (.CER) format. Update the certificate in GitHub first (Organization Settings > Authentication security > SAML > Public certificate), save, then activate the new certificate as primary in AD FS. Updating GitHub before AD FS ensures there is no window where the certificates are mismatched.
+### Q: The AD FS certificate needs renewal — how do I update it in GitHub with minimal disruption?
+**A:** GitHub won't save a certificate until **Test SAML configuration** passes, and the test only passes once AD FS signs with the new certificate. So swap them in this order, in one short maintenance window:
+
+1. In **AD FS Management** → **Service** → **Certificates**, add or generate the new token-signing certificate and export it as **Base-64 encoded X.509 (.CER)**.
+2. Make it the **primary** token-signing certificate. From here until step 3 is done, sign-ins fail with a `digest mismatch` error.
+3. Right away, in GitHub: Organization → **Settings** → **Authentication security** → paste the new **Public Certificate** → **Test SAML configuration** → **Save**.
+
+> 💡 GitHub doesn't enforce the certificate's expiry date, so an expired certificate won't break sign-in on GitHub's side. Schedule the swap for a quiet time.
 
 ---
 
@@ -640,12 +690,25 @@ Microsoft provides migration tooling and documentation for moving from AD FS to 
 ---
 
 ### Q: Users authenticate successfully via AD FS but end up in an SSO redirect loop — what causes this?
-**A:** An SSO redirect loop usually means the SAML configuration values do not match between AD FS and GitHub. Verify: (1) the Entity ID (Relying Party Trust Identifier) matches `https://github.com/orgs/YOUR_ORG` exactly, (2) the ACS URL matches `https://github.com/orgs/YOUR_ORG/saml/consume`, (3) the Federation Service Identifier (Issuer) in GitHub matches the Entity ID in AD FS. Also check for clock skew between the AD FS server and GitHub — time differences greater than 5 minutes can cause assertion validation failures.
+**A:** A redirect loop usually means the SAML values don't match between AD FS and GitHub. Check:
+
+1. The Relying Party Trust **Identifier** (Entity ID) is exactly `https://github.com/orgs/YOUR_ORG`.
+2. The ACS URL is exactly `https://github.com/orgs/YOUR_ORG/saml/consume`.
+3. The **Issuer** in GitHub matches your AD FS **Federation Service Identifier**.
+
+Also check clock skew: if the AD FS server's time is off by more than 5 minutes, assertions can fail validation.
 
 ---
 
 ### Q: We are considering migrating from AD FS to Entra ID — what are the benefits for GitHub?
-**A:** Migrating to Entra ID unlocks native SCIM provisioning (eliminating the need for manual provisioning or scripts), Conditional Access Policies, cloud-native management with no on-premises servers, and a path to GitHub Enterprise Managed Users (EMU) if desired. Microsoft provides migration tooling for AD FS to Entra ID. For GitHub specifically, you would switch from the AD FS Relying Party Trust to the Entra ID Enterprise Application for SAML and gain automatic user lifecycle management through SCIM.
+**A:** Moving to Entra ID gives you:
+
+- Built-in SCIM provisioning (no manual provisioning or scripts).
+- Conditional Access at sign-in.
+- Cloud management with no on-premises servers.
+- A path to Enterprise Managed Users (EMU) if you want it.
+
+Microsoft provides AD FS-to-Entra migration tooling. For GitHub, you'd replace the AD FS Relying Party Trust with an Entra enterprise application for SAML, and add SCIM for automatic user lifecycle management.
 
 ---
 

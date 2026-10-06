@@ -2,6 +2,15 @@
 
 > **Complete guide to enabling secrets protection across repositories, organizations, and at scale via Security Configurations**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Find leaked secrets and block new ones |
+| **Use this when** | Enabling Secret Protection, or after a credential leak |
+| **People you need** | Repository admins; organization owners or security managers |
+| **Where you click** | GitHub (repo and org settings) |
+| **End result** | Secret scanning and push protection on the right repositories |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -273,11 +280,12 @@ Call **Update a repository** (`PATCH /repos/{owner}/{repo}`) as a repository adm
 
 > 💡 **Licensing models:** organizations on the original bundled **GitHub Advanced Security** license see slightly different setting names and order in the configuration editor than organizations on the separate **Secret Protection** and **Code Security** products.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -301,7 +309,6 @@ Call **Update a repository** (`PATCH /repos/{owner}/{repo}`) as a repository adm
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Push protection is blocking my push, but the detected string is a false positive. How do I bypass it?
 **A:** If bypass privileges aren't restricted, follow the link in the block message, choose a reason (**It's used in tests**, **It's a false positive**, or **I'll fix it later**), and push again. If your organization uses **bypass privileges** (delegated bypass), submit a bypass request and wait for an approved reviewer. Every bypass creates an alert for the security team.
 
@@ -323,14 +330,29 @@ Call **Update a repository** (`PATCH /repos/{owner}/{repo}`) as a repository adm
 ---
 
 ### Q: I created a custom secret scanning pattern, but it is not matching secrets I expect it to find. What should I check?
-**A:** In the custom pattern editor, use the test string box and **Save and dry run** to see what the pattern matches before publishing it. Common issues are unescaped special characters, anchors that are too strict, and missing **Before secret** / **After secret** context. Then confirm the pattern is published at the right scope (repository, organization, or enterprise) and, if you want it to block pushes, that push protection is enabled for it.
+**A:** In the custom pattern editor, enter a test string and click **Save and dry run** to see what the pattern matches before you publish it.
+
+Common issues:
+
+- Unescaped special characters.
+- Anchors that are too strict.
+- Missing **Before secret** / **After secret** context.
+
+Then confirm the pattern is published at the right scope (repository, organization, or enterprise). If it should block pushes, confirm push protection is enabled for it.
 
 ---
 
 ### Q: What is the difference between secret scanning alerts and push protection?
-**A:** Secret scanning alerts are a detection mechanism that scans existing repository content and history, alerting you to secrets that are already present. Push protection is a prevention mechanism that blocks secrets from being committed in the first place by rejecting pushes that contain supported secret patterns. Both features complement each other: push protection stops new leaks, while secret scanning alerts catch secrets that were committed before push protection was enabled.
+**A:** They work together:
+
+- **Secret scanning alerts** *detect* secrets that are already in your repositories and their history.
+- **Push protection** *prevents* new leaks by blocking pushes that contain supported secret patterns.
+
+Push protection stops new leaks; alerts catch the secrets committed before push protection was turned on.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

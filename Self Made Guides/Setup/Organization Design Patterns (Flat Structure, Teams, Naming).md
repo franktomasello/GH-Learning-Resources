@@ -2,6 +2,15 @@
 
 > Best practices for structuring enterprises, organizations, teams, and repositories — especially when migrating from GitLab or Azure DevOps
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Design organizations, teams, and naming that scale |
+| **Use this when** | Planning a new enterprise or cleaning up after a migration |
+| **People you need** | Enterprise owner; organization owners; platform team |
+| **Where you click** | GitHub (enterprise, org, and repo settings) |
+| **End result** | A small set of orgs, nested teams, naming rules, and metadata |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -92,6 +99,8 @@ GitHub uses a flatter hierarchy than GitLab or Azure DevOps. Understanding the m
 
 > 💡 **Key difference:** GitHub repos live directly under an org — there is no nested folder structure. Use naming, topics, teams, and custom properties for organization.
 
+---
+
 ## 1️⃣ Enterprise & Organization Structure
 
 ### Recommended Pattern
@@ -110,7 +119,7 @@ Enterprise (single admin boundary)
 | Reason | Separate Orgs? |
 |--------|---------------|
 | Different departments/business units | Yes — one org per major unit |
-| Different cost centers for billing | Yes — cost centers are org-level |
+| Different cost centers for billing | Not required — cost centers can group organizations, repositories, users, or enterprise teams |
 | Different security/compliance requirements | Yes — org-level policies differ |
 | Different IdPs (non-EMU only) | Yes — per-org SAML in standard enterprise |
 | Sub-teams within a department | No — use nested teams instead |
@@ -126,6 +135,8 @@ Enterprise (single admin boundary)
 | Hard compliance boundaries (FedRAMP vs non-FedRAMP) | Multiple enterprises |
 | Completely independent billing and governance | Multiple enterprises |
 
+---
+
 ## 2️⃣ Repository Naming Conventions
 
 ### Recommended Pattern: `team-project-component`
@@ -139,11 +150,15 @@ Enterprise (single admin boundary)
 
 > 💡 **Tip:** Prefix with team or domain name so repos sort together alphabetically.
 
+---
+
 ## 3️⃣ Topics for Discoverability
 
-Tag repos with topics for filtering and search. Topics are **not** under the Settings tab — add them from the repository's main page:
+Tag repos with topics for filtering and search. Topics are **not** under the Settings tab — add them from the repository's main page.
 
-**Navigate:** Open the repository → click the gear icon labeled **Edit repository metadata** (next to the **About** section, top-right).
+**👤 Role:** **Repository administrator** (or maintainer) · **📍 Portal:** GitHub
+
+**Navigate:** Open the repository → next to **About** (top right), click the gear icon (**Edit repository metadata**).
 
 1. In the **Topics** field, type each topic (e.g., `python`, `api`, `production`, `team-platform`) and press **Enter** after each.
 2. Click **Save changes**.
@@ -158,13 +173,20 @@ Tag repos with topics for filtering and search. Topics are **not** under the Set
 | Environment | `production`, `staging`, `internal` |
 | Status | `active`, `deprecated`, `archived` |
 
+---
+
 ## 4️⃣ Nested Teams for Access Control
 
-**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → **New team**.
+**👤 Role:** **Organization owner** (or a member allowed to create teams) · **📍 Portal:** GitHub
 
-1. Enter the **Team name** and (optionally) a description.
-2. Under **Parent team**, select a parent to nest this team (for cascading permissions).
-3. Choose the team **visibility**, then click **Create team**.
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** tab → **New team**
+
+1. Under **Create new team**, type the **team name** and, optionally, a **Description**.
+2. To nest it, under **Parent team**, open **Select a parent team** and pick the parent.
+3. *(Optional)* Under **Identity Provider Groups**, connect an IdP group (see below).
+4. Under **Team visibility**, choose **Visible** or **Secret**, and set **Team notifications**.
+5. Click **Create team**.
+6. Give the team repository access: open the team → **Repositories** → **Add repository** → choose the repository and a role.
 
 ### Example Team Hierarchy
 
@@ -183,11 +205,18 @@ engineering (parent team — broad read access)
 
 ### IdP Group Sync
 
-Org teams are reached from the org **Teams** tab (not under **Settings**), and the IdP-group connection is configured on the individual team's page.
+**👤 Role:** **Organization owner** (or team maintainer) · **📍 Portal:** GitHub
 
-**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → select the team → team **Settings** → connect the IdP group.
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** tab → click the team → **Settings** (top of the team page)
 
-> 📌 **Constraint:** Organization team synchronization applies to **standard GHEC** (personal accounts) with Microsoft Entra ID or Okta. **EMU** deployments manage team membership through SCIM group membership instead.
+1. Under **Identity Provider Groups**, open the dropdown and select the group.
+2. Click **Save changes**.
+
+> 📌 **Which kind applies:**
+> - **Enterprise Managed Users (EMU):** connect **one** IdP group per team. Groups arrive through SCIM from your IdP's GitHub EMU app.
+> - **Standard GHEC (personal accounts):** this is **team synchronization**, available with Microsoft Entra ID or Okta when SAML and team sync are set up; you can connect up to **five** groups per team.
+
+---
 
 ## 5️⃣ Custom Properties (Enterprise Feature)
 
@@ -204,41 +233,56 @@ Define them at the **organization** level, or — for consistency across all org
 - Can be used in rulesets to target repos by property value
 - Better than topics for formal governance metadata
 
+---
+
 ## 6️⃣ Internal Repositories (Enterprise Feature)
 
-**Navigate:** Open the repository → **Settings** tab → scroll to the **Danger Zone**.
+**👤 Role:** **Repository administrator** (organization policy must allow the visibility change) · **📍 Portal:** GitHub
 
-1. Click **Change visibility**.
-2. Select **Internal**, then confirm.
+**Navigate:** Open the repository → **Settings** tab → **Danger Zone** (bottom of the page)
+
+1. Next to **Change repository visibility**, click **Change visibility**.
+2. Select **Internal**.
+3. Confirm you're changing the right repository, then click **I have read and understand these effects**.
+4. Click the final confirmation button (**Make this repository internal**).
 
 | Visibility | Who Can See |
 |-----------|-------------|
 | **Private** | Only explicitly granted users/teams |
-| **Internal** | All members of the enterprise (across all orgs) |
+| **Internal** | All enterprise members (across all orgs) — except guest collaborators, who only see internal repos in orgs where they're members |
 | **Public** | Everyone on the internet |
 
 > 💡 **Tip:** Use **Internal** for shared libraries, standards, and tools that should be visible enterprise-wide without explicit access grants.
 
+---
+
 ## 7️⃣ Enterprise Teams (Cross-Org Collaboration)
 
-**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **People** → **Enterprise teams** → **Create Enterprise team**.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-1. Enter the team details and click to create the team.
-2. Add members from any org in the enterprise.
-3. (EMU only) To automate membership, open the team → **Edit** → under **Manage members** select **Identity provider group** and choose the IdP group (synced via SCIM).
+**Navigate:** Enterprise → **People** → **Enterprise teams** *(left sidebar)*
+
+1. Click **Create Enterprise team**.
+2. Enter the **name** and **description**, and choose **organization access** (leave it empty if the team shouldn't be added to any organization — for example, Copilot-only licensing).
+3. Click **Create Enterprise team**.
+4. Open the team → **Add members** → search and select people → **Add**.
+5. *(EMU only)* To drive membership from your IdP instead: make sure the team has no manually added members → **Edit** → under **Manage members**, click **Identity provider group** → **Select group** → choose the group → **Update team**.
+
+> ⚠️ Giving an enterprise team **organization access** adds its members to those organizations directly — unaffiliated users then consume a GitHub Enterprise license.
 
 > ✅ Enterprise teams became generally available in June 2026. IdP group sync for enterprise teams is available only in Enterprise Managed Users (EMU) deployments; standard-GHEC enterprises manage enterprise-team membership manually.
 
 - Enterprise teams span multiple organizations
 - Grant access to repos across orgs without moving repos
 - Sync with IdP groups for automatic membership (EMU only)
-- Only enterprise owners or designated team maintainers can manage
+- Enterprise owners manage enterprise teams (up to 2,500 teams, 5,000 members each)
+
+---
 
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -262,14 +306,19 @@ Define them at the **organization** level, or — for consistency across all org
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: We migrated from GitLab and created one org per GitLab subgroup — now we have 50+ orgs. Is that a problem?
 **A:** Yes. GitHub has a flatter hierarchy than GitLab, and creating one org per subgroup leads to excessive admin overhead, fragmented policies, and poor cross-org discoverability. Consolidate to 3-7 organizations aligned to major business units or compliance boundaries. Use teams (including nested teams) for the granularity that GitLab subgroups provided. Use topics, naming conventions, and custom properties to organize repos within each org.
 
 ---
 
 ### Q: We established a naming convention but nobody is following it — how do we enforce it?
-**A:** GitHub does not natively enforce repo naming conventions at the platform level. Options include: (1) use a GitHub App or Action that runs on `repository.created` webhook events and renames or flags non-compliant repos, (2) restrict repository creation to org owners or a platform team who enforce the convention manually, (3) use repository templates with pre-set names that follow the pattern. Custom properties can supplement naming by providing structured metadata even if the repo name is imperfect.
+**A:** GitHub doesn't enforce repository naming rules natively. Options:
+
+1. A GitHub App or organization webhook that listens for repository `created` events, then flags or renames non-compliant repos.
+2. Restrict repository creation to org owners or a platform team who apply the convention.
+3. Repository templates that start teams on the right pattern.
+
+Custom properties add structured metadata even when a name isn't perfect.
 
 ---
 
@@ -284,22 +333,45 @@ Define them at the **organization** level, or — for consistency across all org
 ---
 
 ### Q: We set custom properties at the enterprise level, but they are not showing up on our repos — what is wrong?
-**A:** Custom properties defined at the enterprise level are available on all repos across all orgs, but property values must be set on each repository individually (or in bulk via the API). Simply defining a custom property does not auto-populate values. Navigate to individual repos > Settings > Custom properties to set values, or use the REST API to set values in bulk. Also verify the property was created at the correct level (enterprise vs org).
+**A:** Defining a property doesn't fill in values. Enterprise-level properties are available on every repository in every organization, but each repository's value still has to be set:
+
+- **Many repositories at once:** Org → **Settings** → **Repository** → **Custom properties** → **Set values** tab → select repositories → **Edit properties** → choose values → **Save changes**.
+- **One repository:** Repository → **Settings** → **Custom properties**.
+- **Automation:** the REST API.
+
+Also confirm the property was created at the level you expected (enterprise or organization).
 
 ---
 
 ### Q: How do we handle a shared "monorepo" that multiple teams need access to across orgs?
-**A:** Place the monorepo in the organization where it is most naturally managed (typically the platform or engineering org). Set visibility to **internal** so all enterprise members can read it. Use team-based permissions for write/maintain/admin access. If specific teams from other orgs need write access, either add those users to a team in the repo's org, or use enterprise teams to grant cross-org access. Avoid duplicating the repo across multiple orgs.
+**A:** Put the monorepo in the organization that naturally owns it (usually platform or engineering).
+
+- Make it **internal** so every enterprise member can read it.
+- Grant write, maintain, and admin through teams.
+- For people in other orgs who need write access, add them to a team in the repo's org, or use enterprise teams.
+
+Don't duplicate the repo across organizations.
 
 ---
 
 ### Q: We want to restrict who can create repos in our organization — is that possible?
-**A:** Yes. Go to Organization > Settings > Member privileges > Repository creation. You can restrict repo creation to org owners only, or allow all members to create repos with specific visibility constraints (e.g., members can create private repos but not public or internal). For tighter control, restrict creation to owners and use a request workflow (e.g., a GitHub Issue template or a Slack integration) for teams to request new repos.
+**A:** Yes. Go to Organization → **Settings** → **Member privileges** → **Repository creation**:
+
+- Clear every visibility to let only org owners create repositories, or
+- Allow only certain visibilities (for example private, but not public or internal).
+
+For tighter control, restrict creation to owners and give teams a request process (for example an issue template).
 
 ---
 
 ### Q: How should we structure teams when we have both permanent staff and contractors?
-**A:** Create separate teams for contractors (e.g., `contractor-team-x`) with limited permissions (read or write, never admin). In EMU environments, contractors are always provisioned through the IdP via SCIM — either as regular users or with the **guest collaborator** role, which blocks internal repositories except in organizations where they're members. For the tightest scope, add guests as repository collaborators on specific repos. Use nested teams to group contractors under a parent team for easy auditing. Set up a process to review and remove contractor access when engagements end — IdP group sync makes this automatic when contractors are removed from the IdP group.
+**A:**
+
+- Create separate contractor teams (for example `contractor-team-x`) with read or write access — never admin.
+- In EMU, contractors are always provisioned by the IdP: either as regular users or with the **guest collaborator** role, which hides internal repositories except in organizations where they're members.
+- For the tightest scope, add guests as collaborators on specific repositories.
+- Nest contractor teams under a parent team for easier auditing.
+- Review and remove access when engagements end. With IdP group sync, removing someone from the IdP group removes their team access automatically.
 
 </details>
 

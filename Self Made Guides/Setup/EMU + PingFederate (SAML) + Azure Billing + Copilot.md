@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring EMU with PingFederate (SAML), Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Stand up an EMU enterprise end to end with PingFederate |
+| **Use this when** | Building a new EMU enterprise on PingFederate |
+| **People you need** | Setup user and enterprise owner; PingFederate admin; Azure subscription owner |
+| **Where you click** | GitHub and the PingFederate administrative console |
+| **End result** | SAML sign-in, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -29,7 +38,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub, Microsoft Entra, and Ping Identity documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -574,11 +581,12 @@ After completing this guide, you should have:
 - ✅ Initial organization structure established
 - ✅ First users provisioned and able to access GitHub
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -602,7 +610,6 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: I am using PingFederate (self-managed) — what is the most common SP Connection misconfiguration?
 **A:** The most frequent issue is an incorrect Partner Entity ID or ACS URL in the SP Connection. The Entity ID must be exactly `https://github.com/enterprises/YOUR_ENTERPRISE` (no trailing slash), and the ACS URL must be `https://github.com/enterprises/YOUR_ENTERPRISE/saml/consume` with binding set to POST. Also verify the Connection Name is descriptive but the actual SAML configuration values are what matter — the connection name is only for your reference.
 
@@ -618,8 +625,14 @@ After completing this guide, you should have:
 
 ---
 
-### Q: My PingFederate signing certificate is expiring — how do I renew it without downtime?
-**A:** Generate a new signing certificate in PingFederate (**Security → Signing & Decryption Keys & Certificates**). Export the new certificate in X.509/PEM format. Before activating it in PingFederate, update the certificate in GitHub using the EMU identity path: Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → edit the **SAML single sign-on** configuration → paste the new **Public Certificate** → **Test SAML configuration** → **Save SAML settings**. Once GitHub has the new cert, activate it as the primary signing certificate in PingFederate. This avoids a window where the certs are mismatched.
+### Q: My PingFederate signing certificate is expiring — how do I renew it with minimal disruption?
+**A:** GitHub won't save a certificate until **Test SAML configuration** passes, and the test only passes once PingFederate signs with the new certificate. So the swap happens in this order, in one short maintenance window:
+
+1. In PingFederate, create the new signing certificate (**Security** → **Signing & Decryption Keys & Certificates**) and export it in X.509/PEM format.
+2. Make it the active signing certificate for the GitHub SP connection. From here until step 3 is done, sign-ins fail with a `digest mismatch` error.
+3. Right away, as an enterprise owner: profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → edit the **SAML single sign-on** configuration → paste the new **Public Certificate** → **Test SAML configuration** → **Save SAML settings**.
+
+> 💡 GitHub doesn't enforce the certificate's expiry date, so an expired certificate won't break sign-in on GitHub's side. Schedule the swap for a quiet time.
 
 ---
 
@@ -639,7 +652,11 @@ After completing this guide, you should have:
 ---
 
 ### Q: Users are provisioned via SCIM but cannot sign in — what is likely the issue?
-**A:** This usually means SCIM provisioning succeeded but the user is not assigned to the SP Connection for SSO. In PingFederate, user assignment for SSO is controlled by your authentication policy and the user datastore connected to the SP Connection. Verify the user exists in the LDAP/AD directory connected to PingFederate and that no access control policy is blocking their authentication. In PingOne, verify the user's group is assigned to the application under the Access tab.
+**A:** Usually SCIM worked, but the user can't pass SSO at the SP connection. In PingFederate, SSO access comes from your authentication policy and the user data store connected to the SP connection. Check:
+
+- The user exists in the LDAP/AD directory connected to PingFederate.
+- No access control policy blocks their sign-in.
+- In PingOne: the user's group is assigned to the application on the **Access** tab.
 
 </details>
 

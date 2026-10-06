@@ -2,6 +2,15 @@
 
 > How to set up open-source contribution alongside Enterprise Managed Users governance
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Let EMU users still contribute to open source |
+| **Use this when** | An EMU customer also publishes or contributes to public projects |
+| **People you need** | Enterprise owner; open-source program owner; each developer |
+| **Where you click** | GitHub (enterprise) and GitHub.com (public org) |
+| **End result** | Two clean identities and a governed path from internal to public |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -23,7 +32,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the key steps:**
@@ -39,7 +47,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -61,6 +68,8 @@
 | A **separate**, non-EMU organization on GitHub.com for public repositories (if you publish OSS) | Owner of that organization (a personal account) | ☐ |
 | Personal GitHub.com accounts for people who contribute to open source | Each developer | ☐ |
 | A GitHub App installed on the public organization (if mirroring) | Public org owner | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -105,6 +114,8 @@ This is handled by your IdP (Entra ID, Okta, PingFederate) via SCIM provisioning
 ---
 
 ## 2️⃣ Set Up the Personal Account
+
+**👤 Role:** Each **developer** (on their own) · **📍 Portal:** GitHub.com
 
 Users create a separate, free GitHub.com account independently:
 1. Go to github.com/signup
@@ -178,11 +189,12 @@ Publish clear onboarding guidance:
 
 > "State employees access enterprise GitHub **only** via IdP-provisioned managed accounts. For open-source contributions, use a separate personal GitHub.com account with a personal email address. Do not use personal GitHub.com accounts for state work."
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -205,7 +217,6 @@ Publish clear onboarding guidance:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Users are confused about which GitHub account to use for what. How do we communicate this clearly?
 **A:** Publish clear onboarding documentation that states: use the EMU account (e.g., `username_shortcode`) for all enterprise/internal work, and use a separate personal GitHub.com account for open-source contributions. Include this guidance in new-hire onboarding, your internal wiki, and Slack channel topics. A simple rule: if you are accessing enterprise repos, use your managed account; if you are contributing to public open-source, use your personal account.
 
@@ -217,7 +228,13 @@ Publish clear onboarding guidance:
 ---
 
 ### Q: A user accidentally pushed enterprise/proprietary code to their personal GitHub account. What should we do?
-**A:** Treat it as a security incident. Assess what was exposed, and revoke and rotate any secrets in it immediately — assume they're compromised. The **account owner** must delete the repository or rewrite its history (for example with `git filter-repo`) and force-push; the enterprise can't act on a personal account. For cached views or pull request refs on GitHub, follow GitHub's "Removing sensitive data from a repository" guidance and contact GitHub Support. Then review your publishing approval process.
+**A:** Treat it as a security incident:
+
+1. Assess what was exposed.
+2. Revoke and rotate any secrets in it immediately — assume they're compromised.
+3. The **account owner** must delete the repository, or rewrite its history (for example with `git filter-repo`) and force-push. The enterprise can't act on a personal account.
+4. For cached views or pull request refs on GitHub, follow GitHub's "Removing sensitive data from a repository" guidance and contact GitHub Support.
+5. Review your publishing approval process.
 
 ---
 
@@ -235,6 +252,8 @@ Publish clear onboarding guidance:
 **A:** EMU users can view public repositories on github.com, but they cannot interact with them -- they cannot create issues, open pull requests, leave comments, star, watch, or fork public repos outside the enterprise. For any public interaction, users must use a separate personal GitHub.com account.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

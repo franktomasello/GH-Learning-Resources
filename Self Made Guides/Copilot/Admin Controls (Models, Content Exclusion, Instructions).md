@@ -2,6 +2,15 @@
 
 > **Complete guide to managing Copilot AI models, content exclusions, custom instructions, and policy controls across enterprise and organization levels**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Decide which Copilot models, features, and data Copilot can use |
+| **Use this when** | Rolling out Copilot or tightening governance |
+| **People you need** | Enterprise owner; organization owners; repository admins |
+| **Where you click** | GitHub (AI controls, org and repo settings) |
+| **End result** | Approved models, content exclusions, custom instructions, and policy defaults set on purpose |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -27,7 +36,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -44,7 +52,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -322,11 +329,12 @@ All relevant instructions are sent to Copilot together. When they conflict, high
 
 > 💡 **Customization:** Settings wording and layout can vary by plan and rollout. The paths above reflect GitHub's documentation as of October 2026.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -350,14 +358,18 @@ All relevant instructions are sent to Copilot together. When they conflict, high
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: Can we restrict models at the org level if the enterprise allows them?
 **A:** Only if the enterprise **delegates** the decision. In **Configure models**, a model set to **Enabled** or **Disabled** at the enterprise is enforced for everyone; a model set to **Delegate** lets each organization choose **Enabled** or **Disabled** under **Settings** → **Copilot** → **Models**.
 
 ---
 
 ### Q: My content exclusion patterns are not working — what's wrong?
-**A:** Check four things: (1) the syntax — `"*":` for any repository, a bare repository name (organization settings) or full clone URL as the key, and quoted path patterns; (2) paths that start with `/` are relative to the repository root, while patterns like `**/.env` match anywhere; (3) where you're testing — exclusions aren't supported in Edit and Agent modes of Copilot Chat in IDEs; and (4) timing — IDEs that already loaded the settings can take up to 30 minutes to pick up changes, and reloading the IDE applies them sooner.
+**A:** Check four things:
+
+1. **Syntax:** `"*":` for any repository, a bare repository name (organization settings) or full clone URL as the key, and quoted path patterns.
+2. **Paths:** patterns that start with `/` are relative to the repository root; patterns like `**/.env` match anywhere.
+3. **Where you're testing:** exclusions aren't supported in Edit and Agent modes of Copilot Chat in IDEs.
+4. **Timing:** IDEs that already loaded the settings can take up to 30 minutes to pick up changes. Reloading the IDE applies them sooner.
 
 ---
 

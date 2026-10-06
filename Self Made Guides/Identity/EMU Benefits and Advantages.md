@@ -2,6 +2,15 @@
 
 > **A comprehensive guide to understanding Enterprise Managed Users and when to choose this identity model**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Explain what Enterprise Managed Users gives a customer — and what it costs them |
+| **Use this when** | Choosing between EMU and personal accounts |
+| **People you need** | Decision makers; identity and security teams |
+| **Where you click** | None — this is a decision guide |
+| **End result** | A clear EMU vs personal-accounts recommendation |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -22,7 +31,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the key decision points:**
@@ -38,7 +46,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -62,6 +69,8 @@
 | The IdP's GitHub EMU application with SAML/OIDC and SCIM configured | IdP administrator (for Entra, **Global Administrator** consent for OIDC) | ☐ |
 | The setup user's classic PAT with `scim:enterprise` scope (no expiration) | **Setup user** | ☐ |
 | Recovery codes saved | **Setup user** / enterprise owner | ☐ |
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -164,11 +173,12 @@ Use this table to assign provider-side work before following the numbered steps.
 | Centralized access control needed | Public GitHub participation matters |
 | Strict tenant boundaries required | Lowest-friction external collaboration |
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -190,7 +200,6 @@ Use this table to assign provider-side work before following the numbered steps.
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: EMU users cannot contribute to open-source projects. Is there a workaround?
 **A:** This is by design -- EMU accounts are scoped to the enterprise tenant and cannot interact with repos outside it. The recommended approach is the dual-account model: employees use their EMU account for enterprise work and a separate personal GitHub.com account for open-source contributions. See the EMU Dual Presence guide for detailed setup instructions.
@@ -218,9 +227,19 @@ Use this table to assign provider-side work before following the numbered steps.
 ---
 
 ### Q: We are seeing username collisions during SCIM provisioning. What causes this?
-**A:** GitHub builds each username from the SCIM `userName`: it keeps the part before `@`, turns every non-alphanumeric character into a dash, and adds `_SHORTCODE` (for example `j.smith@contoso.com` → `j-smith_contoso`). Two identities that normalize the same way — such as `j.smith@contoso.com` and `j_smith@fabrikam.com` — collide, and only the first is created. Usernames also must fit in 39 characters (30 on GHE.com). Fix the IdP values so each normalizes uniquely, and check your directory for collisions before rollout.
+**A:** GitHub builds each username from the SCIM `userName`:
+
+1. It keeps the part before `@`.
+2. It turns every non-alphanumeric character into a dash.
+3. It adds `_SHORTCODE` (for example `j.smith@contoso.com` → `j-smith_contoso`).
+
+Two identities that normalize the same way — such as `j.smith@contoso.com` and `j_smith@fabrikam.com` — collide, and only the first is created. Usernames must also fit in 39 characters (30 on GHE.com).
+
+Fix the IdP values so each one normalizes uniquely, and check your directory for collisions before rollout.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

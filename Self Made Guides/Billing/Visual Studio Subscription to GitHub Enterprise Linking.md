@@ -2,6 +2,15 @@
 
 > **How Visual Studio subscriptions with GitHub Enterprise get matched to GitHub accounts — assignment, invitation, verification, and manual reconciliation**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Make sure Visual Studio subscribers use their included GitHub Enterprise license |
+| **Use this when** | The customer buys Visual Studio subscriptions with GitHub Enterprise through a Microsoft agreement |
+| **People you need** | Visual Studio subscriptions admin; GitHub organization owner; enterprise owner |
+| **Where you click** | Visual Studio admin portal and GitHub |
+| **End result** | Every subscriber matched to a Visual Studio license — no double-counted seats |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -24,7 +33,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -40,7 +48,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -195,11 +202,12 @@ Use this table to assign provider-side work before following the numbered steps.
 - **Unaffiliated users count too.** Unaffiliated enterprise members linked to a Visual Studio subscription consume a bundled Visual Studio license.
 - **GitHub Enterprise Server:** a subscriber consumes one license as long as their GHES email matches their UPN (and Cloud/Server license sync is set up for users on both).
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -225,7 +233,6 @@ Use this table to assign provider-side work before following the numbered steps.
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: A user is looking for a "Link Visual Studio subscription" button in GitHub. Where is it?
 **A:** There isn't one — subscribers can't self-link. The Visual Studio admin assigns a "… with GitHub Enterprise" subscription, an organization owner invites the person (ideally by their UPN), and GitHub matches the accounts when a verified email equals the UPN. An enterprise owner can match the rest manually.
@@ -256,6 +263,8 @@ Use this table to assign provider-side work before following the numbered steps.
 **A:** Under the terms of use, the GitHub account and the subscription must belong to the same person. Remove the wrong account from your organizations, invite the correct account using the subscriber's UPN, and — if it isn't matched automatically — use **Change to Visual Studio license** for the correct account.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

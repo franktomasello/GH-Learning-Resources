@@ -2,6 +2,15 @@
 
 > **Complete end-to-end runbook for configuring EMU with Okta (SAML), Azure billing, and GitHub Copilot**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Stand up an EMU enterprise end to end with Okta |
+| **Use this when** | Building a new EMU enterprise on Okta |
+| **People you need** | Setup user and enterprise owner; Okta admin; Azure subscription owner |
+| **Where you click** | GitHub and the Okta Admin Console |
+| **End result** | SAML sign-in, SCIM provisioning, Azure billing, and Copilot ready to use |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -29,7 +38,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -46,7 +54,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -542,11 +549,12 @@ After completing this guide, you should have:
 - ✅ Initial organization structure established
 - ✅ First users provisioned and able to access GitHub
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -570,7 +578,6 @@ After completing this guide, you should have:
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: I installed the wrong Okta app — how do I tell if I have the EMU app vs the standard org app?
 **A:** The correct catalog app for EMU is named **"GitHub Enterprise Managed User"** (for github.com) or **"GitHub Enterprise Managed User - GHE.com"** (for data residency). The standard org app is named **"GitHub Enterprise Cloud - Organization"**. If you accidentally installed the standard org app, SCIM provisioning and SAML will target org-level endpoints instead of enterprise-level. Delete the incorrect app and install the EMU-specific one from the Okta catalog.
 
@@ -582,7 +589,13 @@ After completing this guide, you should have:
 ---
 
 ### Q: Okta Push Groups are assigned but members are not syncing to GitHub teams — why?
-**A:** Push Groups in Okta push group membership to GitHub, but the groups must be mapped to GitHub teams within an organization. Verify that: (1) the group is assigned under Assignments in the Okta app, (2) the Push Groups tab shows the group is actively pushing, (3) the group name matches or is mapped to a GitHub team. Also note that Okta does not support nested groups — only direct members of the pushed group will sync.
+**A:** Okta **Push Groups** sends group membership to GitHub, but each group must then be connected to a GitHub team in an organization. Verify:
+
+1. The group is assigned on the Okta app's **Assignments** tab.
+2. The **Push Groups** tab shows the group as active.
+3. The group is connected to a team in GitHub (Team → **Settings** → **Identity Provider Groups**).
+
+Okta doesn't support nested groups — only direct members of a pushed group sync.
 
 ---
 
@@ -607,7 +620,16 @@ After completing this guide, you should have:
 ---
 
 ### Q: We switched Okta tenants — do we need to reconfigure everything?
-**A:** Yes. A new Okta tenant means new app integrations, new SAML certificates, and new SCIM connections. You will need to: (1) install the EMU catalog app in the new Okta tenant, (2) update the SAML certificate and Sign on URL in GitHub enterprise settings, (3) generate a new SCIM token and configure provisioning in the new tenant, and (4) reassign all users and groups. Plan this as a maintenance window.
+**A:** Yes — and it's a disruptive change, so plan it as a project. You can't edit the existing SSO settings to point at a new tenant; GitHub's documented process is to turn identity off and set it up again:
+
+1. **Check usernames first.** The normalized SCIM `userName` values must stay the same in the new tenant. If they'll change, GitHub must provision a new enterprise — contact GitHub Sales.
+2. **Download enterprise recovery codes** if you don't have them.
+3. **Stop provisioning in the old tenant:** Okta app → **Provisioning** → **Integration** → **Edit** → clear **Enable API integration**.
+4. **Disable authentication** for the enterprise (signed in as the setup user with a recovery code).
+5. **Wait** until every managed user shows as suspended. This can take hours, or days for large enterprises.
+6. **Set up SSO and SCIM again** with the new tenant's app, then provision users and groups again. Users are unsuspended as their SCIM identities re-link.
+
+> ⚠️ **What users lose:** personal access tokens and SSH keys are deleted, SCIM-provisioned groups are deleted, and team-to-group connections are removed. Plan to reissue credentials and reconnect teams.
 
 </details>
 

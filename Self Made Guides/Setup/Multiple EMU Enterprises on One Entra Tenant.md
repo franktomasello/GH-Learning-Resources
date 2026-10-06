@@ -2,6 +2,15 @@
 
 > How to connect multiple GitHub Enterprise Managed User instances to a single Microsoft Entra ID tenant
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Connect more than one EMU enterprise to a single Entra ID tenant |
+| **Use this when** | The customer needs separate enterprises (for example regulated vs non-regulated) |
+| **People you need** | Entra Application Administrator; setup user for each enterprise |
+| **Where you click** | Microsoft Entra admin center and GitHub |
+| **End result** | Each enterprise with its own SAML app, SCIM, and governance |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -24,7 +33,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -40,7 +48,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -80,7 +87,17 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 📋 Overview
 
-Multiple EMU enterprises CAN connect to a single Entra ID tenant. Each EMU enterprise requires its own separate Enterprise Application registration.
+Multiple EMU enterprises **can** share one Entra ID tenant. The rule is simple: **one enterprise application per enterprise**, each with its own sign-in settings, its own SCIM token, and its own assigned groups.
+
+```text
+Entra ID tenant
+ ├─ App "GitHub EMU - Enterprise A" ── SSO + SCIM ──▶ Enterprise A  (users: jsmith_codea)
+ └─ App "GitHub EMU - Enterprise B" ── SSO + SCIM ──▶ Enterprise B  (users: jsmith_codeb)
+```
+
+Work through Steps 1–4 once **per enterprise**. Don't move to the next enterprise until the current one passes its SSO test and a **Provision on demand** test.
+
+---
 
 ## 1️⃣ Create Separate Enterprise Applications
 
@@ -90,12 +107,18 @@ Multiple EMU enterprises CAN connect to a single Entra ID tenant. Each EMU enter
 
 For each EMU enterprise, create a dedicated Entra enterprise application:
 
-1. Click **New application**.
-2. **For a SAML enterprise:** click **Browse Microsoft Entra Gallery**, then in the search box type **GitHub Enterprise Managed User**, select the result, and click **Create** (wait for the app to finish provisioning before continuing). Then rename it distinctly using the enterprise slug (e.g., **GitHub EMU - Enterprise A**).
-3. **For the OIDC enterprise:** do **not** gallery-add the app. The **GitHub Enterprise Managed User (OIDC)** enterprise application is created in your tenant automatically when you **Enable OIDC configuration** in GitHub and a **Global Administrator** consents (see Step 2). Afterward, open that app under **Enterprise apps** to configure provisioning.
-4. Repeat for each enterprise (**GitHub EMU - Enterprise B**, etc.).
+1. Click **New application**. The **Browse Microsoft Entra Gallery** page opens.
+2. **For a SAML enterprise:** in the search box, type **GitHub Enterprise Managed User** and select it. (Entra uses this same app for GitHub.com and GHE.com enterprises.)
+3. In the pane that opens, change **Name** to something that identifies the enterprise, for example **GitHub EMU - Enterprise A**, then click **Create**. Wait until the app's **Overview** page opens.
+4. **For the one OIDC enterprise (optional):** don't add anything from the gallery. The **GitHub Enterprise Managed User (OIDC)** app appears in your tenant automatically when you **Enable OIDC configuration** in GitHub and a **Global Administrator** consents (see Step 2). Afterward, open it under **Enterprise apps** to set up provisioning.
+5. Repeat steps 1–3 for each other enterprise (**GitHub EMU - Enterprise B**, and so on).
 
-> 📌 **Constraint:** Every EMU enterprise needs its OWN enterprise application. You can add many **SAML** EMU apps to a single tenant. For **OIDC**, one tenant supports the github.com **GitHub Enterprise Managed User (OIDC)** app plus a separate **GitHub Enterprise Managed User (OIDC) - ghe.com** instance for data residency; enabling any additional OIDC instances requires coordination with your GitHub account team. Mixing one enterprise on SAML and another on OIDC in the same tenant is fully supported.
+> 📌 **Constraint:** Every EMU enterprise needs its **own** enterprise application.
+> - **SAML:** you can add as many GitHub EMU SAML apps to one tenant as you need.
+> - **OIDC:** each Entra tenant supports **only one** OIDC integration with EMU. Every other enterprise on that tenant must use SAML.
+> - Mixing one OIDC enterprise with SAML enterprises on the same tenant is supported.
+
+---
 
 ## 2️⃣ Configure SAML/OIDC Per Application
 
@@ -135,6 +158,8 @@ Each enterprise application has its own SAML or OIDC configuration pointing to i
 | Reply URL (ACS) | `https://SUBDOMAIN_A.ghe.com/enterprises/SUBDOMAIN_A/saml/consume` | `https://SUBDOMAIN_B.ghe.com/enterprises/SUBDOMAIN_B/saml/consume` |
 | Sign-on URL | `https://SUBDOMAIN_A.ghe.com/enterprises/SUBDOMAIN_A/sso` | `https://SUBDOMAIN_B.ghe.com/enterprises/SUBDOMAIN_B/sso` |
 
+---
+
 ## 3️⃣ Configure SCIM Provisioning Separately
 
 **👤 Role:** Entra **Application Administrator, Cloud Application Administrator, or Application Owner** · **📍 Portal:** Microsoft Entra admin center
@@ -154,7 +179,14 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 9. Click **Start provisioning** from the Overview page.
 10. Repeat with each other enterprise's Tenant URL and Secret Token in its own dedicated app.
 
-> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token is scoped to a single enterprise and must be generated by that enterprise's setup user: profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → enter a **Note** (a descriptive name, e.g. `EMU-<slug>-SCIM`), set **Expiration** to **No expiration**, check ONLY the **`scim:enterprise`** scope, scroll down and click **Generate token**, then copy the token immediately (it is shown only once).
+> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token works for one enterprise only, and must be created by **that** enterprise's setup user:
+> 1. Profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**.
+> 2. **Note:** a descriptive name, for example `EMU-<slug>-SCIM`.
+> 3. **Expiration:** **No expiration**.
+> 4. **Scopes:** check **only** **`scim:enterprise`**.
+> 5. Click **Generate token**, then copy it right away — it's shown only once.
+
+---
 
 ## 4️⃣ Scope User Populations Using Entra Groups
 
@@ -179,6 +211,8 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 
 > 💡 **Tip:** A single Entra user CAN be assigned to multiple Enterprise Applications, creating separate managed identities in each EMU enterprise.
 
+---
+
 ## 5️⃣ Key Considerations
 
 | Topic | Detail |
@@ -190,6 +224,8 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 | **Audit** | Each enterprise has its own audit log |
 | **Billing** | Each enterprise has separate billing |
 
+---
+
 ## ⚠️ Important Notes
 
 - Each EMU enterprise has fully separate governance, billing, and audit
@@ -197,11 +233,12 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 - Managed users **can't** be invited into another enterprise — a person who needs access to both enterprises needs an account provisioned in each (guest collaborators only limit access *within* one enterprise)
 - SCIM provisioning cycles are independent — changes to one don't affect the other
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -225,19 +262,26 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 <details>
 <summary><em>Show Q&A</em></summary>
 
-
 ### Q: SCIM is provisioning users to the wrong enterprise — how did this happen?
-**A:** Each EMU enterprise must have its own dedicated Entra Enterprise Application with separate SCIM configurations. If users are landing in the wrong enterprise, check which Enterprise Application they are assigned to in Entra. A user assigned to "GitHub EMU - Enterprise A" will be provisioned to Enterprise A. Verify the Tenant URL and Secret Token in each app's Provisioning settings point to the correct enterprise's SCIM endpoint. Never reuse the same SCIM token across Enterprise Applications.
+**A:** Check which enterprise application the user is assigned to in Entra — a user assigned to "GitHub EMU - Enterprise A" is provisioned to Enterprise A. Then, in each app's **Provisioning** settings, confirm the **Tenant URL** and **Secret Token** belong to the matching enterprise.
+
+Each enterprise needs its own application and its own SCIM token. Never reuse a token across applications.
 
 ---
 
 ### Q: A user is assigned to both Enterprise Applications — will they get two managed accounts?
-**A:** Yes. If an Entra user is assigned to both Enterprise Applications, they will be provisioned as separate managed user accounts in each enterprise (e.g., `jsmith_shortcodeA` and `jsmith_shortcodeB`). This is valid if the user needs access to both enterprises. However, ensure this is intentional — accidental dual assignment wastes licenses. Use dedicated Entra groups (one per enterprise) and avoid assigning the same user to multiple groups unless cross-enterprise access is required.
+**A:** Yes — one managed account in each enterprise (for example `jsmith_codea` and `jsmith_codeb`). That's fine if the person really needs both, but each account uses a license in its enterprise.
+
+To avoid accidents, use one Entra group per enterprise, and only put someone in both groups when they need cross-enterprise access.
 
 ---
 
 ### Q: The enterprise shortcodes are confusing our users — how do we choose good shortcodes?
-**A:** Shortcodes are appended to every managed username (e.g., `jsmith_contoso`). Choose shortcodes that are short (4-8 characters), descriptive, and easy to distinguish. For example, if Enterprise A is for North America and Enterprise B is for EMEA, use shortcodes like `na` and `emea` (yielding `jsmith_na` and `jsmith_emea`). Avoid similar-looking shortcodes that could confuse users. Shortcodes are set at enterprise creation and cannot be changed.
+**A:** The shortcode is added to every managed username (for example `jsmith_contoso`). It must be 3–8 letters or numbers, and it **can't be changed** after the enterprise is created.
+
+Pick codes that are short, meaningful, and clearly different. For example, for a North America enterprise and an EMEA enterprise, use `ctsona` and `ctsoemea` (giving `jsmith_ctsona` and `jsmith_ctsoemea`). Avoid codes that look alike.
+
+On GHE.com, the shortcode is generated at random, so you can't choose it.
 
 ---
 
@@ -252,12 +296,21 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 ---
 
 ### Q: One enterprise uses SAML and the other uses OIDC — is that supported on the same Entra tenant?
-**A:** Yes. Each Enterprise Application is independent, so one can use the SAML-based EMU app and the other can use the OIDC-based EMU app. The SAML app is "GitHub Enterprise Managed User" and the OIDC app is "GitHub Enterprise Managed User (OIDC)." Configure each per its respective setup guide. The choice of SAML vs OIDC is per-enterprise and does not affect the other.
+**A:** Yes. Each enterprise application is independent, so one enterprise can use OIDC and the others SAML.
+
+- **SAML app:** "GitHub Enterprise Managed User"
+- **OIDC app:** "GitHub Enterprise Managed User (OIDC)"
+
+Only **one** enterprise per Entra tenant can use OIDC. Configure each enterprise with its own setup guide (see [Related Guides](#-related-guides)).
 
 ---
 
 ### Q: We are hitting Entra provisioning rate limits — how do we manage provisioning across two enterprises?
-**A:** Entra ID runs provisioning cycles independently for each Enterprise Application (approximately every 40 minutes per app). If both enterprises have large user populations, stagger the initial provisioning: start provisioning for Enterprise A first, wait for the initial cycle to complete, then start Enterprise B. For ongoing operations, do not assign more than 1,000 users per hour per enterprise to avoid GitHub's SCIM rate limits. Monitor the provisioning logs in each Entra app separately.
+**A:** Entra runs provisioning cycles separately for each enterprise application (roughly every 40 minutes per app).
+
+- **Initial load:** stagger it. Start Enterprise A, wait for its first cycle to finish, then start Enterprise B.
+- **Ongoing:** don't assign more than **1,000 users per hour** to each app, or add more than 1,000 users to a group per hour — GitHub's SCIM rate limit.
+- **Monitoring:** review each app's provisioning logs separately.
 
 </details>
 

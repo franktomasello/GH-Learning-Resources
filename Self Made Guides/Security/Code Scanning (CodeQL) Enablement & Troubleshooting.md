@@ -2,6 +2,15 @@
 
 > **Complete guide to enabling CodeQL code scanning across repositories and organizations, choosing query suites, enabling Copilot Autofix, and troubleshooting common issues**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Turn on CodeQL code scanning and fix common problems |
+| **Use this when** | Enabling Code Security, or scans show no results |
+| **People you need** | Repository admins; organization owners or security managers |
+| **Where you click** | GitHub (repo and org settings) |
+| **End result** | Code scanning running across repositories, with Autofix and a coverage view |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -42,7 +50,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -243,11 +250,12 @@ If code scanning looks enabled across your organization but you see few or no re
 
 > ⚠️ **Important:** A repository whose code is only in other languages (for example PHP or Perl) produces no CodeQL results.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -270,7 +278,6 @@ If code scanning looks enabled across your organization but you see few or no re
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: Code scanning is enabled across our org but we see zero alerts. What should we check?
 **A:** Start with Organization → **Security and quality** → **Coverage** to see which repositories actually have code scanning. Then work through Section 7: scanning never configured, Actions disabled, unsupported languages, failing analyses, inactive repositories, hidden filters, or a configuration that didn't attach.
@@ -306,6 +313,8 @@ If code scanning looks enabled across your organization but you see few or no re
 **A:** Rust is supported now (see Section 8). PHP isn't. For unsupported languages, run a third-party scanner that outputs SARIF and upload the results to code scanning — they appear alongside CodeQL alerts on the **Security and quality** tab.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

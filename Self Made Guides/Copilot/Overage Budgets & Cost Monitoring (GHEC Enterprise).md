@@ -4,6 +4,15 @@
 
 > 📌 **Billing changed on June 1, 2026.** Copilot now bills in **AI credits** (1 credit = $0.01) from a shared pool; "overage" means **additional (metered) usage** after that pool is exhausted. Premium-request budgets and the "Premium request paid usage" policy belong to the legacy model.
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Cap and watch Copilot spending past the included AI credits |
+| **Use this when** | Setting spending limits or investigating a high bill |
+| **People you need** | Enterprise owner or billing manager |
+| **Where you click** | GitHub (Billing and licensing) |
+| **End result** | Spending limits at the right level, alerts, and a monitoring routine |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -25,7 +34,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -41,7 +49,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026, including the June 1, 2026 move to usage-based billing. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -212,11 +219,12 @@ The **AI credits paid usage** policy decides whether anyone can use Copilot past
 2. Export with **Get usage report** → **Email me the report**.
 3. For a cross-product view, open **Metered usage** and search `product:copilot cost_center:<cost-center-name>`.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -237,7 +245,6 @@ The **AI credits paid usage** policy decides whether anyone can use Copilot past
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: I created a new budget but users are still being blocked — why?
 **A:** A new budget doesn't override existing ones. Once the shared pool is exhausted, any applicable spending limit with **Stop usage** that's used up blocks the users it covers — and a user-level budget can block a user at any time. Check every budget on **Budgets and alerts**, including any **$0** budget, which stops usage immediately.

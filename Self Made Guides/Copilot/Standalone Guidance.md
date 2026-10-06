@@ -2,6 +2,15 @@
 
 > **How to assign Copilot Business licenses without consuming GitHub Enterprise (GHE) licenses**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | License Copilot Business for people who don't need a GitHub Enterprise seat |
+| **Use this when** | Many people need Copilot but not GitHub repositories |
+| **People you need** | Enterprise owner; IdP admin for EMU group sync |
+| **Where you click** | GitHub (People, Billing and licensing) and the REST API |
+| **End result** | Copilot Business for an enterprise team with zero GitHub Enterprise licenses used |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -23,7 +32,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -40,7 +48,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -216,11 +223,12 @@ Copilot Enterprise can't be assigned directly to users or enterprise teams — i
 - **The cost:** each one then consumes a **GitHub Enterprise license** *plus* the Copilot Enterprise rate.
 - **Conclusion:** keep standalone users on **Copilot Business** unless the Copilot Enterprise features are worth the extra GHE seat.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -243,7 +251,6 @@ Copilot Enterprise can't be assigned directly to users or enterprise teams — i
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: Users in the enterprise team are consuming GHE licenses — what went wrong?
 **A:** Most likely the team was given access to an organization, which made every member a standard enterprise member. Check the team's organization access (Enterprise → **People** → **Enterprise teams** → the team → **Edit**) and remove it. Also check whether the users were added to any organization some other way. Under usage-based billing, anyone who consumed a license during the cycle stays billable for that cycle.

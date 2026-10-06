@@ -2,6 +2,15 @@
 
 > **Complete guide to provisioning and managing guest collaborators for contractors, vendors, and partners in GitHub Enterprise Managed Users (EMU)**
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Give contractors and vendors limited access in an EMU enterprise |
+| **Use this when** | Onboarding external people who shouldn't see all internal code |
+| **People you need** | IdP application admin; organization owners; repository admins |
+| **Where you click** | Your IdP (Entra ID or Okta) and GitHub |
+| **End result** | Guests provisioned by the IdP with access only where you grant it |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -24,7 +33,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -41,7 +49,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -94,6 +101,8 @@ Guest collaborators are **managed user accounts** provisioned through your IdP t
 | Grant access in GitHub | **Organization owner** (org membership) or **repository admin** (repo collaborator) | ☐ |
 
 > ⚠️ **Important:** guest collaborators are **only** available with Enterprise Managed Users.
+
+---
 
 ## 👥 Provider Account Action Matrix
 
@@ -249,11 +258,12 @@ Use this table to assign provider-side work before following the numbered steps.
 
 > 💡 **Tip:** When a contractor engagement ends, remove them from the GitHub EMU app assignment in your IdP. SCIM deprovisioning will automatically suspend their managed account.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -275,7 +285,6 @@ Use this table to assign provider-side work before following the numbered steps.
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: A guest collaborator cannot see internal-visibility repositories in the organization. Is this a bug?
 **A:** Check how they were added. As a **repository collaborator**, a guest only sees that repository. As an **organization member**, a guest can access that organization's internal repositories — but not internal repositories in **other** organizations. If they should see more, add them as a member of the right organization (or to the specific repositories).
@@ -306,6 +315,8 @@ Use this table to assign provider-side work before following the numbered steps.
 **A:** It depends on how they're added and on your policies. As a repository collaborator they can't create repositories in the organization. As an organization member, the organization's repository-creation and forking policies (and enterprise policies) apply to them like any member. To keep guests tightly scoped, add them as repository collaborators and restrict repository creation and forking by policy.
 
 </details>
+
+---
 
 ## 🔗 Related Guides
 

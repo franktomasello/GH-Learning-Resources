@@ -2,6 +2,15 @@
 
 > Platform controls and organizational policies to govern responsible AI use with GitHub Copilot
 
+| 🧭 **At a Glance** | |
+|---|---|
+| **Goal** | Put platform and process guardrails around Copilot |
+| **Use this when** | Security, legal, or compliance teams need to approve Copilot |
+| **People you need** | Enterprise owner; organization owners; security team |
+| **Where you click** | GitHub (AI controls, org settings, rulesets, audit log) |
+| **End result** | Documented controls for data, models, agents, code review, and auditing |
+| **New to a term?** | See the [Glossary](../Glossary.md) for plain-English definitions |
+
 ---
 
 ## 📑 Contents
@@ -22,7 +31,6 @@
 
 ---
 
-
 ## ⚡ Quick-Start Summary
 
 > **For experienced admins who just need the click paths:**
@@ -40,7 +48,6 @@
 
 <details>
 <summary><em>Show click-path conventions</em></summary>
-
 
 - Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
@@ -207,11 +214,12 @@ Example security instructions:
 
 > 📌 The audit log keeps **180 days** of events and does **not** include client prompts. Stream it to your SIEM for long-term history and alerting.
 
+---
+
 ## 🧯 Known Errors & Resolutions
 
 <details>
 <summary><em>Show known errors table</em></summary>
-
 
 > This section lists the known product errors and admin-facing symptoms that commonly occur with this workflow. Exact message text can vary by product rollout, tenant policy, and provider, so use the log or settings page named in the resolution to confirm the root cause.
 
@@ -234,7 +242,6 @@ Example security instructions:
 
 <details>
 <summary><em>Show Q&A</em></summary>
-
 
 ### Q: Developers are accepting all Copilot suggestions without review — how do we address this?
 **A:** Require pull request reviews with a ruleset (Org → **Settings** → **Repository** → **Rulesets**), require CodeQL results and status checks, and use the **Code generation** and **Copilot impact** dashboards to find teams where AI-generated code is growing fast. Follow up with coaching, not punishment.
