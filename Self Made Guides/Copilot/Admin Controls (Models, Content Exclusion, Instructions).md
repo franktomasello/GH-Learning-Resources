@@ -99,6 +99,12 @@ Understanding where each control lives and how they cascade:
 
 > 📌 **No Save button for policies and models:** dropdowns and toggles on these pages apply as soon as you select them.
 
+> ⏰ **Act before October 22, 2026 — default availability policies.** Two policies decide what happens to anything left **Unconfigured**:
+> - **Default availability for released models** (already active): new GA models and models shown as **Delegate to Default Policy** follow it. Pre-GA models, open-weight models, and models outside GitHub's data retention agreement stay off regardless.
+> - **Default policy for new features** (applies from **October 22, 2026**, **enabled by default**): unconfigured GA features on **AI controls** → **Copilot** → **Features & clients** — plus **Copilot code review** and **MCP servers in Copilot** — will turn on.
+>
+> To keep control, either disable these default policies, or explicitly set every feature and model you care about to **Enabled** or **Disabled**. The GHE.com restrictive model policies and **Store local sessions in the Cloud** aren't affected.
+
 ---
 
 ## 1️⃣ Restrict AI Models at the Enterprise Level
@@ -401,6 +407,7 @@ All relevant instructions are sent to Copilot together. When they conflict, high
 
 - [Managing policies and features for Copilot in your enterprise](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies)
 - [Managing policies and features for Copilot in your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies)
+- [Default availability of features and models](https://docs.github.com/en/copilot/concepts/enterprise/default-availability)
 - [Excluding content from GitHub Copilot](https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot)
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion)
 - [Adding organization custom instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions)

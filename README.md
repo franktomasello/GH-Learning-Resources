@@ -8,7 +8,7 @@
 ![Guides](https://img.shields.io/badge/Guides-45-4C5FD4?style=flat-square&labelColor=1C2128)
 ![Areas](https://img.shields.io/badge/Areas-8-6D5FD4?style=flat-square&labelColor=1C2128)
 ![Focus](https://img.shields.io/badge/Focus-Enterprise%20%26%20Copilot-7A5AD9?style=flat-square&labelColor=1C2128)
-![Updated](https://img.shields.io/badge/Updated-July%202026-8B5CF6?style=flat-square&labelColor=1C2128)
+![Updated](https://img.shields.io/badge/Updated-October%202026-8B5CF6?style=flat-square&labelColor=1C2128)
 
 <sub>Certification&nbsp;•&nbsp;EMU &amp; Enterprise Setup&nbsp;•&nbsp;Copilot&nbsp;•&nbsp;Advanced Security&nbsp;•&nbsp;Migrations</sub>
 
@@ -23,7 +23,7 @@
 ---
 
 > [!NOTE]
-> Built from real customer engagements and self-guided learning — a practical companion to the official docs. Reviewed and refreshed **July 2026**. For current product behavior, always defer to official GitHub and Microsoft documentation; community links can drift after releases.
+> Built from real customer engagements and self-guided learning — a practical companion to the official docs. Every guide re-verified **October 2026**. For current product behavior, always defer to official GitHub and Microsoft documentation; community links can drift after releases.
 
 ---
 
@@ -35,7 +35,7 @@
 |------|:------:|---------------|
 | [🏗️ **Setup**](Self%20Made%20Guides/Setup) | 15 | EMU identity runbooks (Entra ID SAML/OIDC, Okta, PingFederate), standard-GHEC SSO, enterprise trials, data residency, org design, and standard→EMU migration |
 | [🪪 **Identity**](Self%20Made%20Guides/Identity) | 3 | EMU benefits, dual presence for open source, and guest collaborators |
-| [🤖 **Copilot**](Self%20Made%20Guides/Copilot) | 12 | Seat enablement, admin controls, premium-request budgeting, adoption & ROI, and standalone rollout |
+| [🤖 **Copilot**](Self%20Made%20Guides/Copilot) | 12 | Seat enablement, admin controls, AI credit budgeting, cloud agent & MCP, BYOK, adoption & ROI, and standalone rollout |
 | [🔐 **Security**](Self%20Made%20Guides/Security) | 3 | CodeQL code scanning, secret protection, and organization-wide secret risk assessment |
 | [⚙️ **Actions**](Self%20Made%20Guides/Actions) | 3 | Seat-free GitHub Apps for CI/CD, minutes governance, and OIDC federation to Azure |
 | [🏛️ **Governance**](Self%20Made%20Guides/Governance) | 3 | Branch protection & rulesets, audit-log compliance, and repo/org transfers |
@@ -43,7 +43,7 @@
 | [🔄 **Migration**](Self%20Made%20Guides/Migration) | 4 | GitHub Enterprise Importer, Azure Boards integration, SVN→GitHub, and internal→public mirroring |
 
 > [!TIP]
-> **Featured — EMU setup runbooks.** End-to-end, click-by-click identity setup verified against current GitHub, Microsoft Entra, Okta, and Ping documentation (July 2026):
+> **Featured — EMU setup runbooks.** End-to-end, click-by-click identity setup verified against current GitHub, Microsoft Entra, Okta, and Ping documentation (October 2026):
 > [Entra ID · SAML](<Self Made Guides/Setup/EMU + Entra ID (SAML) + Azure Billing + Copilot.md>) • [Entra ID · OIDC](<Self Made Guides/Setup/EMU + Entra ID (OIDC) + Azure Billing + Copilot.md>) • [Okta · SAML](<Self Made Guides/Setup/EMU + Okta (SAML) + Azure Billing + Copilot.md>) • [PingFederate · SAML](<Self Made Guides/Setup/EMU + PingFederate (SAML) + Azure Billing + Copilot.md>)
 
 ---
@@ -104,7 +104,7 @@ Stay current with the latest Copilot features, prompting techniques, and best pr
 
 | Resource | What it covers |
 |----------|----------------|
-| **[Keeping Up with Copilot](https://github.blog/changelog/?label=copilot)** | Webinar series from GitHub SEs and CSAs covering the latest in Copilot |
+| **[Copilot Changelog](https://github.blog/changelog/?label=copilot)** | GitHub's changelog filtered to Copilot — new features, models, and policy changes as they ship |
 | **[Mastering Copilot for Paired Programming](https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming)** | A 6-lesson Microsoft curriculum: build a web server with Copilot as your pair programmer |
 | **[Copilot Trust Center](https://resources.github.com/copilot-trust-center/)** | How Copilot handles data, privacy, IP, and security compliance |
 | **[Writing Better Prompts for Copilot](https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/)** | Prompt-crafting techniques like "one-shot" vs. "few-shot" learning |
@@ -117,7 +117,7 @@ Stay current with the latest Copilot features, prompting techniques, and best pr
 | **[Copilot Customization](https://youtu.be/0XoXNG65rfg?si=HjGG6oVXUZXq5sZF)** | Custom instructions, prompt files, and custom agents |
 | **[Copilot Cheatsheet](https://sukurcf.github.io/resources/cheatsheets/github-copilot-cheatsheet.html)** | Quick reference for commands, context variables, chat modes, and prompt flow |
 
-> Looking for enterprise Copilot administration? See the repo's [Copilot](Self%20Made%20Guides/Copilot) folder for seat management, admin controls, and premium-request budgeting.
+> Looking for enterprise Copilot administration? See the repo's [Copilot](Self%20Made%20Guides/Copilot) folder for seat management, admin controls, AI credit budgeting, cloud agent & MCP setup, and usage metrics.
 
 ---
 
@@ -135,7 +135,7 @@ Resources for mastering GitHub's advanced security features and CodeQL.
 
 ## ✅ Accuracy & Maintenance
 
-- Reviewed and refreshed **July 2026** — including a full verification pass on the EMU setup runbooks against current GitHub, Microsoft Entra, Okta, and Ping documentation.
+- **October 2026:** every guide re-verified against GitHub's documentation source (and Microsoft, Okta, and Ping docs where relevant) — click paths, required roles, and prerequisites. Highlights: Copilot's move to AI credits (June 2026), Copilot cloud agent and MCP, the **Security and quality** tab rename, immutable OIDC subject claims (July 2026), GA enterprise teams, and the October 22, 2026 default-availability policy for Copilot features.
 - Prefer official GitHub and Microsoft documentation for current product behavior. Community resources are useful but can become stale after product releases.
 - Treat private GitHub issue links and organization-owned resources as internal-only unless the reader has explicit access.
 - Recheck this list quarterly and after major GitHub Enterprise, Copilot, billing, or security launches.
@@ -149,6 +149,6 @@ Complements official GitHub documentation with practical guides for common enter
 
 **·  ·  ·**
 
-<sub><em>Last updated: July 2026</em></sub>
+<sub><em>Last updated: October 2026</em></sub>
 
 </div>

@@ -35,7 +35,7 @@
 - **DRUS (GHE.com):** Formal US data residency, EMU required, SUBDOMAIN.ghe.com — choose when regulatory/contractual language mandates US data residency
 - **GHES:** Self-hosted, full infrastructure control — choose for air-gapped, IL4/IL5, or disconnected environments
 - **Migration to DRUS:** Full migration project (4-8 weeks) — new GHE.com enterprise + reconfigure IdP + GEI repo migration + update all integrations
-- **Copilot inference:** DRUS does NOT automatically pin inference to the US, but inference can now be kept in-region via **GitHub Copilot data residency** (US/EU, GA Apr 2026, admin opt-in, off by default); BYOK remains an alternative for provider-level control
+- **Copilot inference:** DRUS does NOT automatically pin inference to the US. On GHE.com, an admin can turn on the **Restrict Copilot to data residency models** policy (US and EU regions, GA Apr 2026, off by default) to keep inference, prompts, responses, logs, and telemetry in-region; BYOK remains an alternative for provider-level control
 
 ---
 
@@ -121,9 +121,9 @@ Use this table to assign provider-side work before following the numbered steps.
 | EMU support | ✅ | ✅ (required) | N/A |
 | Public repositories | ✅ (standard) | ❌ (EMU) | ✅ |
 | FedRAMP | Tailored ATO | Tailored ATO | Customer's boundary |
-| Copilot inference region lock | ⚙️ Opt-in (Copilot data residency, US/EU) | ⚙️ Opt-in (Copilot data residency, US/EU) | N/A |
+| Copilot inference region lock | ❌ (BYOK only) | ⚙️ Opt-in policy: **Restrict Copilot to data residency models** (US/EU) | N/A |
 
-> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself pin Copilot inference to the US. Region-locked inference is now available as a **separate, admin-enabled** policy — **GitHub Copilot data residency** (US/EU), GA since April 13, 2026, off by default — rather than something DRUS turns on automatically. See [5️⃣ Copilot Inference Geography](#5️⃣-copilot-inference-geography).
+> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself pin Copilot inference to the US. Region-locked inference is available on GHE.com as a **separate, admin-enabled** policy — **Restrict Copilot to data residency models** (US and EU regions), GA since April 13, 2026, off by default — rather than something DRUS turns on automatically. See [5️⃣ Copilot Inference Geography](#5️⃣-copilot-inference-geography).
 
 > 📌 **Advanced Security naming:** On GHEC / GHE.com, Advanced Security was repackaged in 2025 into two standalone products — **GitHub Secret Protection** (secret scanning + push protection) and **GitHub Code Security** (code scanning / CodeQL). "GitHub Advanced Security (GHAS)" as one SKU is now legacy for GHEC and remains the bundle name only on **GHES**.
 
@@ -134,7 +134,7 @@ Use this table to assign provider-side work before following the numbered steps.
 | "Standard GHEC defaults to US data residency" | Standard GHEC is primarily US-hosted but this is NOT a formal data residency guarantee |
 | "DRUS = FedRAMP Moderate" | DRUS is data residency, not an authorization level change |
 | "DRUS = GCC High equivalent" | DRUS is not equivalent to Azure GCC High or IL4/IL5 |
-| "DRUS makes Copilot US-only" | Copilot inference geography is not automatic with DRUS, but it IS separately controllable via the **GitHub Copilot data residency** policy (US/EU, GA Apr 2026) — an opt-in admin setting, off by default |
+| "DRUS makes Copilot US-only" | Copilot inference geography is not automatic with DRUS, but it IS controllable on GHE.com via the **Restrict Copilot to data residency models** policy (US/EU, GA Apr 2026) — an opt-in admin setting, off by default |
 | "We can switch from standard to DRUS with a toggle" | Moving to DRUS requires a full migration to a new GHE.com enterprise |
 
 ## 4️⃣ Migration Implications
@@ -154,11 +154,11 @@ Moving from standard GHEC to DRUS requires:
 |-------|---------------------|
 | Platform data storage | DRUS stores covered data in the US |
 | Copilot inference location | NOT pinned to the US by DRUS alone — DRUS covers platform data storage, not inference routing |
-| Copilot data residency (US & EU) | **Generally available (April 13, 2026).** A separate, admin-enabled policy: when turned on, all inference processing and associated data stay within the selected geography. **Off by default.** Adds ~10% to the model multiplier. For US government customers, the underlying model hosts / infrastructure are **FedRAMP Moderate authorized**. |
+| Copilot data residency (US & EU) | **Generally available (April 13, 2026)** for GHE.com enterprises. When the **Restrict Copilot to data residency models** policy is on, Copilot routes requests to model endpoints in your enterprise's region, only region-certified models appear, and prompts, responses, logs, and telemetry stay in-region. **Off by default.** Clients from 2025 or later are required. A separate **Restrict Copilot to FedRAMP models** policy limits users to FedRAMP Moderate–certified models. |
 | BYOK | Alternative lever: route inference through your chosen provider endpoint — region guarantee comes from THAT provider |
-| Best approach | Prefer the native **GitHub Copilot data residency** policy for US/EU region locking; use BYOK where you need provider-level control or a region the native policy does not yet cover. The nuance still holds: DRUS alone does not enable region-locked inference — it is a separate opt-in. |
+| Best approach | On GHE.com, prefer the native **Restrict Copilot to data residency models** policy for US/EU region locking; use BYOK where you need provider-level control or a region the policy doesn't cover yet. DRUS alone doesn't enable region-locked inference — it's a separate opt-in. |
 
-> 💡 **Enable it:** An enterprise or organization admin turns on **GitHub Copilot data residency** in Copilot settings and selects the geography (US or EU). It is off until explicitly enabled. Confirm current availability and the exact enablement path with GitHub's account/compliance team.
+> 💡 **Enable it:** on the GHE.com enterprise, an enterprise owner sets **Restrict Copilot to data residency models** (and, for US government needs, **Restrict Copilot to FedRAMP models**) in the enterprise's Copilot policies under **AI controls**. The region is your enterprise's GHE.com region — there's no separate geography picker. Model choice is limited to region-certified models, which can lag new GitHub.com releases.
 
 ## 6️⃣ FedRAMP Positioning
 
@@ -203,7 +203,7 @@ Moving from standard GHEC to DRUS requires:
 ---
 
 ### Q: The customer thinks data residency means Copilot inference stays in the US — is that true?
-**A:** Not automatically. Data residency (DRUS) governs where covered GitHub platform data is stored at rest; it does not by itself pin Copilot inference to the US. The remedy, though, is now a native capability: **GitHub Copilot data residency** (US & EU) went generally available on April 13, 2026. It is an admin-enabled policy (off by default, adds ~10% to the model multiplier) that keeps all inference processing and associated data within the selected geography; for US government customers the underlying model hosts / infrastructure are FedRAMP Moderate authorized. Turn that on for in-region inference. **Bring Your Own Key (BYOK)** remains a secondary option where the customer routes inference through their own API endpoint with a provider that offers region guarantees. The key nuance to convey: region-locked inference is a separate opt-in policy, not something DRUS enables on its own.
+**A:** Not automatically. Data residency (DRUS) governs where covered GitHub platform data is stored at rest; it does not by itself pin Copilot inference to the US. The remedy, though, is now a native capability: **GitHub Copilot data residency** (US & EU) went generally available on April 13, 2026. On GHE.com it's the admin-enabled **Restrict Copilot to data residency models** policy (off by default), which keeps inference processing and associated data within your enterprise's region; for US government customers the underlying model hosts / infrastructure are FedRAMP Moderate authorized. Turn that on for in-region inference. **Bring Your Own Key (BYOK)** remains a secondary option where the customer routes inference through their own API endpoint with a provider that offers region guarantees. The key nuance to convey: region-locked inference is a separate opt-in policy, not something DRUS enables on its own.
 
 ---
 

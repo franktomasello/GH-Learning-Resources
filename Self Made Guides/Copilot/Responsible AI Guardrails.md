@@ -90,6 +90,7 @@ Responsible AI governance needs **both** platform controls (what GitHub provides
 | **Cloud agent** | Enterprise → **AI controls** → **Agents** → **Copilot Cloud Agent** | Enable for selected organizations only, after a pilot |
 | **MCP servers** | Enterprise → **AI controls** → **MCP** → **MCP servers in Copilot** | Allow only after a security review of each server |
 | **Third-party coding agents and agent apps** | Enterprise → **AI controls** → **Agents** | Enable only the agents you've approved |
+| **Default availability** | Enterprise → **AI controls** → **Copilot** → default availability policies | Decide before **October 22, 2026**: unconfigured GA features turn on then unless you disable the **Default policy for new features** or set each feature explicitly |
 | **Session syncing** | Enterprise → **AI controls** → **Copilot** policy pages → **Store local sessions in the Cloud** (set per client, such as Copilot CLI and VS Code) | Decide whether local sessions sync to GitHub. Unconfigured = local only |
 
 > 📌 **Defaults to know:** **Suggestions matching public code** is **Allowed** by default for Copilot Business users. Cloud agent and third-party MCP servers are **off** by default.
