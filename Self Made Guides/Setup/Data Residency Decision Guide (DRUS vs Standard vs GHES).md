@@ -13,12 +13,12 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Decision Framework](#1-decision-framework)
-- [2️⃣ Feature Comparison](#2-feature-comparison)
-- [3️⃣ Common Misconceptions](#3-common-misconceptions)
-- [4️⃣ Migration Implications](#4-migration-implications)
-- [5️⃣ Copilot Inference Geography](#5-copilot-inference-geography)
-- [6️⃣ FedRAMP Positioning](#6-fedramp-positioning)
+- [1️⃣ Decision Framework](#1️⃣-decision-framework)
+- [2️⃣ Feature Comparison](#2️⃣-feature-comparison)
+- [3️⃣ Common Misconceptions](#3️⃣-common-misconceptions)
+- [4️⃣ Migration Implications](#4️⃣-migration-implications)
+- [5️⃣ Copilot Inference Geography](#5️⃣-copilot-inference-geography)
+- [6️⃣ FedRAMP Positioning](#6️⃣-fedramp-positioning)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -123,7 +123,7 @@ Use this table to assign provider-side work before following the numbered steps.
 | FedRAMP | Tailored ATO | Tailored ATO | Customer's boundary |
 | Copilot inference region lock | ⚙️ Opt-in (Copilot data residency, US/EU) | ⚙️ Opt-in (Copilot data residency, US/EU) | N/A |
 
-> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself pin Copilot inference to the US. Region-locked inference is now available as a **separate, admin-enabled** policy — **GitHub Copilot data residency** (US/EU), GA since April 13, 2026, off by default — rather than something DRUS turns on automatically. See [5️⃣ Copilot Inference Geography](#5-copilot-inference-geography).
+> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself pin Copilot inference to the US. Region-locked inference is now available as a **separate, admin-enabled** policy — **GitHub Copilot data residency** (US/EU), GA since April 13, 2026, off by default — rather than something DRUS turns on automatically. See [5️⃣ Copilot Inference Geography](#5️⃣-copilot-inference-geography).
 
 > 📌 **Advanced Security naming:** On GHEC / GHE.com, Advanced Security was repackaged in 2025 into two standalone products — **GitHub Secret Protection** (secret scanning + push protection) and **GitHub Code Security** (code scanning / CodeQL). "GitHub Advanced Security (GHAS)" as one SKU is now legacy for GHEC and remains the bundle name only on **GHES**.
 
