@@ -200,7 +200,7 @@ Example security instructions:
 | Copilot settings and license changes | Enterprise → **Settings** → **Audit log** → search `action:copilot` |
 | Agent activity | Same audit log → search `actor:Copilot`, or Enterprise → **AI controls** → **Audit logs** |
 | Recent agent sessions | Enterprise → **AI controls** → **Agent sessions** → **View all** |
-| Security findings | Organization → **Security** tab → **Overview** |
+| Security findings | Organization → **Security and quality** tab → **Overview** |
 
 > 📌 The audit log keeps **180 days** of events and does **not** include client prompts. Stream it to your SIEM for long-term history and alerting.
 

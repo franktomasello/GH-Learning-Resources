@@ -10,14 +10,14 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Enable Default Setup for a Single Repository (Recommended)](#1-enable-default-setup-for-a-single-repository-recommended)
-- [2️⃣ Enable via Workflow File (Advanced)](#2-enable-via-workflow-file-advanced)
-- [3️⃣ Enable Code Scanning Org-Wide](#3-enable-code-scanning-org-wide)
-- [4️⃣ Default vs Extended Query Suites](#4-default-vs-extended-query-suites)
-- [5️⃣ Switch to Extended Query Suite](#5-switch-to-extended-query-suite)
-- [6️⃣ Enable Copilot Autofix for Code Scanning](#6-enable-copilot-autofix-for-code-scanning)
-- [7️⃣ Troubleshooting: Zero Results Despite Many Repos Enabled](#7-troubleshooting-zero-results-despite-many-repos-enabled)
-- [8️⃣ Supported Languages](#8-supported-languages)
+- [1️⃣ Enable Default Setup for a Single Repository (Recommended)](#1️⃣-enable-default-setup-for-a-single-repository-recommended)
+- [2️⃣ Enable via Workflow File (Advanced Setup)](#2️⃣-enable-via-workflow-file-advanced-setup)
+- [3️⃣ Enable Code Scanning Org-Wide](#3️⃣-enable-code-scanning-org-wide)
+- [4️⃣ Default vs Extended Query Suites](#4️⃣-default-vs-extended-query-suites)
+- [5️⃣ Switch to Extended Query Suite](#5️⃣-switch-to-extended-query-suite)
+- [6️⃣ Enable Copilot Autofix for Code Scanning](#6️⃣-enable-copilot-autofix-for-code-scanning)
+- [7️⃣ Troubleshooting: Zero Results Despite Many Repos Enabled](#7️⃣-troubleshooting-zero-results-despite-many-repos-enabled)
+- [8️⃣ Supported Languages](#8️⃣-supported-languages)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -30,10 +30,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Single repo (default setup):** `Repo → Settings → Code security → Code scanning → Set up → Default`
-- **Org-wide enablement:** `Org → Settings → Code security → Code scanning → Enable for all repositories`
-- **Switch to Extended suite:** `Org → Settings → Code security → Global settings → CodeQL → Query suite → Extended`
-- **Enable Copilot Autofix:** `Org → Settings → Code security → Code scanning → Copilot Autofix → Enable`
+- **Single repo (default setup):** `Repo → Settings → Advanced Security` (under "Security and quality") → **CodeQL analysis** → **Set up ▾** → **Default** → **Enable CodeQL**
+- **Org-wide:** `Org → Settings → Advanced Security ▾ → Configurations` → **New configuration** → **Custom configuration** → Code Security + **Default setup** → **Save configuration** → **Repositories** tab → select repos → **Apply configuration ▾** → **Apply**
+- **Recommend the Extended suite:** `Org → Settings → Advanced Security ▾ → Global settings` → **Recommend the extended query suite for repositories enabling default setup**
+- **Copilot Autofix:** `Org → Settings → Advanced Security ▾ → Global settings` → **Copilot Autofix**
+- **Check coverage:** `Org → Security and quality tab → Coverage`
 
 ---
 
@@ -43,9 +44,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -56,70 +57,95 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Advanced Security (GHAS) or GitHub Code Security license | ☐ |
-| Org owner or repo admin role | ☐ |
-| Repository contains a CodeQL-supported language (C/C++, C#, Go, Java, Kotlin, JS/TS, Python, Ruby, Swift) | ☐ |
-| For Copilot Autofix: Copilot license at the org level | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| **GitHub Code Security** (or GitHub Advanced Security) for private and internal repositories — public repositories don't need it | Enterprise owner / billing | ☐ |
+| **GitHub Actions** enabled for the repositories | Organization owner / repo admin | ☐ |
+| Single-repository setup (Sections 1, 2, 5) | **Repository administrator** | ☐ |
+| Organization-wide setup and global settings (Sections 3, 5, 6) | **Organization owner** or **security manager** | ☐ |
+| At least one CodeQL-supported language in the repository (Section 8) | — | ☐ |
+| Copilot Autofix | Nothing extra — it does **not** need a Copilot license | ☐ |
 
 ---
 
 ## 📋 Overview
 
-This runbook covers how to enable and configure CodeQL-based code scanning, choose the right query suite, enable AI-powered autofix, and troubleshoot when results are missing.
+This runbook covers how to enable and configure CodeQL code scanning, choose a query suite, turn on Copilot Autofix, and troubleshoot missing results.
 
-| Method | Scope | Best For |
+| Method | Scope | Best for |
 |--------|-------|----------|
-| **Default setup (repo)** | Single repository | Quick enablement, recommended starting point |
-| **Workflow file** | Single repository | Custom configuration, advanced control |
-| **Org-wide enablement** | All repos in org | Organization rollouts |
-| **Extended query suite** | Global settings | Broader vulnerability coverage |
-| **Copilot Autofix** | Org-wide | AI-suggested fixes for findings |
+| **Default setup** | One repository | Fastest start — GitHub picks languages and settings |
+| **Advanced setup (workflow file)** | One repository | Custom build steps, extra queries, matrix builds |
+| **Security configuration** | Many or all repositories in an organization | Organization rollouts |
+| **Extended query suite** | Per repository, or recommended org-wide | Broader coverage |
+| **Copilot Autofix** | Organization-wide (global setting) | AI-suggested fixes for alerts |
+
+> 📌 **UI note:** on GitHub.com the repository settings section that holds **Advanced Security** is labeled **Security and quality**, and the organization/repository **Security** tab is now **Security and quality**. In **organization** settings the section is still labeled **Security**.
 
 ---
 
 ## 1️⃣ Enable Default Setup for a Single Repository (Recommended)
 
-**Navigation:**
+**👤 Role:** **Repository administrator** · **📍 Portal:** GitHub
 
-```
-Repository → Settings → Code security (sidebar)
-  → Code scanning → Set up → Default
-```
-
-> ✅ **Result:** CodeQL analysis is configured automatically based on detected languages. Scans run on push to default branch and on pull requests.
-
-> 💡 **Tip:** Default setup is the fastest path to results. GitHub detects the languages in your repo and configures everything automatically -- no workflow file needed.
-
----
-
-## 2️⃣ Enable via Workflow File (Advanced)
-
-For repositories that need custom configuration, add a CodeQL workflow file manually.
+**Navigate:** Repository → **Settings** → **Advanced Security** *(under "Security and quality")*
 
 **Steps:**
 
-1. Create the file `.github/workflows/codeql.yml` in your repository
-2. Use the CodeQL starter workflow template from GitHub
-3. Customize languages, query suites, and triggers as needed
+1. In the sidebar, under **Security and quality**, click **Advanced Security**.
+2. Under **Code Security**, next to **CodeQL analysis**, click **Set up ▾**, then **Default**.
+3. *(Optional)* In the **CodeQL default configuration** dialog, click **Edit** to change **Languages** or the **Query suites** selection.
+4. Click **Enable CodeQL**.
 
-> 💡 **Tip:** Use the workflow approach when you need to customize build steps, add additional queries, or configure matrix builds across multiple languages.
+> ✅ **Result:** GitHub runs an initial analysis, then scans on pushes to the default branch, on pull requests, and on a weekly schedule.
+
+> 💡 **Tip:** If your code uses private package registries, grant code scanning access to them for better results. If a repository has had no pushes or pull requests for 6 months, its weekly scan is paused (see Section 7).
+
+---
+
+## 2️⃣ Enable via Workflow File (Advanced Setup)
+
+**👤 Role:** **Repository administrator** · **📍 Portal:** GitHub
+
+Use advanced setup when you need custom build steps, extra queries, or matrix builds.
+
+**Steps:**
+
+1. Repository → **Settings** → **Advanced Security**.
+2. In the **CodeQL analysis** row, click **Set up ▾**, then **Advanced**. *(Already on default setup? Click **⋯** → **Switch to advanced** → **Disable CodeQL** first.)*
+3. Review the generated `.github/workflows/codeql.yml` and edit languages, build steps, and queries as needed.
+4. Click **Commit changes...**, enter a commit message, and choose a branch.
+5. Click **Commit new file** (default branch) or **Propose new file** (new branch + pull request).
+
+> 💡 **Tip:** Advanced setup uses Actions minutes like any workflow. For compiled languages, add explicit build steps if autobuild can't build the project.
 
 ---
 
 ## 3️⃣ Enable Code Scanning Org-Wide
 
-**Navigation:**
+**👤 Role:** **Organization owner** or **security manager** · **📍 Portal:** GitHub
 
-```
-Organization → Settings → Code security (sidebar)
-  → Code scanning → Enable for all repositories
-```
+**Navigate:** Organization → **Settings** → in the **Security** section, **Advanced Security ▾** → **Configurations**
 
-> ✅ **Result:** Default setup is applied to all eligible repositories in the organization.
+### Step A — Create a configuration
 
-> ⚠️ **Important:** Enabling at the org level applies default setup. Repositories that already have a custom CodeQL workflow will not be overwritten.
+1. Click **New configuration**, then **Custom configuration**.
+2. Enter a **name** and **description** (for example `codeql-default`).
+3. Turn on **Code Security**, and set **Default setup** to **Enabled** — or **Enabled with advanced setup allowed**, so repositories that already run their own CodeQL workflow keep it.
+4. *(Optional)* Set the other features you want (secret scanning, dependency scanning, and so on).
+5. *(Optional)* Under **Policy**, set **Use as default for newly created repositories** and/or **Enforce configuration**.
+6. Click **Save configuration**.
+
+### Step B — Apply it to repositories
+
+1. On the **Configurations** page, click the **Repositories** tab.
+2. Filter the table if needed, then select repositories — or select the page checkbox and click **Select all**.
+3. Click **Apply configuration ▾** and choose your configuration.
+4. Review the license-consumption summary, then click **Apply**.
+
+> ✅ **Result:** each repository shows a status such as `attached`, `attaching`, or `failed`.
+
+> ⚠️ **Important:** a default configuration is only applied automatically to **new** repositories. Repositories transferred into the organization need a configuration applied by hand.
 
 ---
 
@@ -141,72 +167,79 @@ CodeQL ships with two built-in query suites. Choosing the right one balances pre
 
 ## 5️⃣ Switch to Extended Query Suite
 
-**Navigation:**
+**Per repository** — **👤 Role:** **Repository administrator**
 
-```
-Organization → Settings → Code security (sidebar)
-  → Global settings → CodeQL analysis → Query suite
-    → Select "Extended"
-```
+1. Repository → **Settings** → **Advanced Security**.
+2. In the **CodeQL analysis** row, click **⋯** → **View CodeQL configuration**.
+3. Click **Edit**.
+4. In the **Query suite** row under **Scan settings**, select **Extended**.
+5. Click **Save changes**. A new analysis runs with the new suite.
 
-> ✅ **Result:** All repositories using default setup in the organization will use the Extended query suite on their next scan.
+**Organization-wide recommendation** — **👤 Role:** **Organization owner** or **security manager**
 
-> ⚠️ **Warning:** Switching to Extended will likely increase the number of alerts. Ensure your team has a triage process in place before making this change.
+1. Organization → **Settings** → **Advanced Security ▾** → **Global settings**.
+2. Under code scanning, select **Recommend the extended query suite for repositories enabling default setup**.
+
+> 📌 The org setting **recommends** Extended to repositories as they enable default setup. It doesn't switch repositories that already run default setup — change those per repository.
+
+> ⚠️ **Warning:** Extended will likely increase the number of alerts. Make sure your team has a triage process first.
 
 ---
 
 ## 6️⃣ Enable Copilot Autofix for Code Scanning
 
-Copilot Autofix uses AI to suggest fixes for CodeQL findings directly in pull requests.
+**👤 Role:** **Organization owner** or **security manager** · **📍 Portal:** GitHub
 
-**Navigation:**
+Copilot Autofix uses AI to suggest fixes for code scanning alerts — in pull requests and for existing alerts on the default branch.
 
-```
-Organization → Settings → Code security (sidebar)
-  → Code scanning → Copilot Autofix → Enable
-```
+**Navigate:** Organization → **Settings** → **Advanced Security ▾** → **Global settings**
 
-> ✅ **Result:** When CodeQL finds a vulnerability in a pull request, Copilot Autofix will suggest a code fix that the developer can review and apply.
+**Steps:**
 
-> 💡 **Tip:** Copilot Autofix significantly reduces remediation time. Developers can accept, modify, or dismiss the suggested fix directly in the PR.
+1. Under code scanning, select **Copilot Autofix**. It applies to repositories using CodeQL default or advanced setup.
+
+> ✅ **Result:** when CodeQL finds an alert, Copilot Autofix can propose a fix the developer reviews, edits, and commits.
+
+> 📌 Copilot Autofix **doesn't require a GitHub Copilot subscription**. It needs code scanning with CodeQL (Code Security for private repositories).
+
+> 💡 **Also on Global settings:** **AI Scan** (AI-powered detections for eligible repositories) and **Keep scheduled scans running every 30 days for inactive repositories**.
 
 ---
 
 ## 7️⃣ Troubleshooting: Zero Results Despite Many Repos Enabled
 
-If you have enabled code scanning across your organization but see no (or very few) results, check these six common causes:
+If code scanning looks enabled across your organization but you see few or no results, check these common causes:
 
-| # | Cause | How to Check | Fix |
+| # | Cause | How to check | Fix |
 |---|-------|-------------|-----|
-| 1 | **Scanning never configured** | Enabling GHAS/Code Security does NOT start scans. Check if repos have default setup or a workflow file. | Enable default setup or add a CodeQL workflow to each repo |
-| 2 | **Language not supported** | CodeQL only supports specific languages (see table below). Repos with only unsupported languages will produce no results. | Verify repo languages against the supported list |
-| 3 | **No triggering events since setup** | Default setup runs on push to default branch and PRs. If no code has been pushed since enablement, no scan has run. | Push a commit or manually trigger the workflow |
-| 4 | **Workflow failing silently** | CodeQL workflow runs may be failing without visible alerts. | Check the **Actions** tab in each repo for failed runs |
-| 5 | **Results hidden by filters** | The Security tab may have filters applied (branch, severity, tool) that hide existing results. | Reset all filters on the code scanning alerts page |
-| 6 | **Org-level default setup not propagated** | Org-wide enablement may not have reached all repos, especially those with existing configurations. | Check individual repo settings to confirm scanning is active |
+| 1 | **Scanning never configured** | Buying Code Security or GHAS doesn't start scans. Check the **Coverage** view. | Apply a security configuration with default setup, or add a workflow |
+| 2 | **GitHub Actions disabled** | Default setup needs Actions. Check Org/Repo → **Settings** → **Actions**. | Allow Actions for the repositories |
+| 3 | **Language not supported** | Repos with only unsupported languages produce no CodeQL results (Section 8). | Use a third-party SARIF tool for those languages |
+| 4 | **Analysis failing** | Check the repo's **Actions** tab and the code scanning **tool status** page. If every language fails, default setup stays enabled but doesn't scan. | Fix the build or switch to advanced setup |
+| 5 | **Inactive repository** | Weekly scans pause after 6 months with no pushes or pull requests. | Push a change, or turn on **Keep scheduled scans running every 30 days for inactive repositories** |
+| 6 | **Results hidden by filters** | Filters (branch, severity, tool) on the alerts page can hide results. | Clear all filters |
+| 7 | **Configuration not attached** | The configuration status shows `failed`, or the repo was transferred in after setup. | Re-apply the configuration on the **Repositories** tab |
 
-> 💡 **Tip:** The fastest way to verify scanning status is to check the **Security** tab at the organization level and look at the "Coverage" view to see which repos have code scanning enabled and running.
+> 💡 **Tip:** The fastest check is Organization → **Security and quality** tab → **Coverage**. It shows which repositories have each feature enabled.
 
 ---
 
 ## 8️⃣ Supported Languages
 
-CodeQL supports the following languages for analysis:
-
 | Language | Notes |
 |----------|-------|
-| **C / C++** | Requires build steps in advanced setup |
-| **C#** | .NET framework and .NET Core |
-| **Go** | Full support |
-| **Java** | Includes Gradle and Maven projects |
-| **Kotlin** | Full support |
-| **JavaScript** | Includes JSX |
-| **TypeScript** | Includes TSX |
-| **Python** | Full support |
-| **Ruby** | Full support |
-| **Swift** | Full support |
+| **C / C++** | Compiled — default setup can use build mode `none`; advanced setup may need build steps |
+| **C#** | Compiled — build mode `none` in default setup |
+| **Go** | |
+| **Java / Kotlin** | Analyzed together (`java-kotlin`) |
+| **JavaScript / TypeScript** | Analyzed together (`javascript-typescript`) |
+| **Python** | |
+| **Ruby** | |
+| **Rust** | Build mode `none` in default setup |
+| **Swift** | Compiled — check runner support before using self-hosted runners |
+| **GitHub Actions workflows** | Scans workflow files for security issues |
 
-> ⚠️ **Important:** If a repository contains only languages not in this list (e.g., Rust, PHP, Perl), CodeQL will not produce any results for that repository.
+> ⚠️ **Important:** A repository whose code is only in other languages (for example PHP or Perl) produces no CodeQL results.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -238,37 +271,37 @@ CodeQL supports the following languages for analysis:
 
 
 ### Q: Code scanning is enabled across our org but we see zero alerts. What should we check?
-**A:** Walk through the six common causes in Section 7 of this guide: (1) scanning may not be configured despite GHAS being enabled, (2) repos may only contain unsupported languages, (3) no code has been pushed since enablement to trigger a scan, (4) CodeQL workflows may be failing silently, (5) alert filters in the Security tab may be hiding results, and (6) org-level default setup may not have propagated to all repos. Check the org-level Security tab "Coverage" view first.
+**A:** Start with Organization → **Security and quality** → **Coverage** to see which repositories actually have code scanning. Then work through Section 7: scanning never configured, Actions disabled, unsupported languages, failing analyses, inactive repositories, hidden filters, or a configuration that didn't attach.
 
 ---
 
 ### Q: My CodeQL workflow is failing on a compiled language like C++ or Java. What is going wrong?
-**A:** CodeQL requires a successful build to analyze compiled languages. If the default setup cannot build your code, switch to the advanced (workflow file) setup and add the necessary build steps (e.g., `mvn compile` for Java or `cmake && make` for C++). The workflow must produce compiled artifacts for CodeQL to analyze.
+**A:** Default setup analyzes C/C++, C#, Java, and Rust with build mode `none`, so it doesn't need to compile them. In advanced setup with `autobuild` or `manual` build mode, CodeQL needs a successful build — add explicit build steps (for example `mvn compile` for Java or `cmake` and `make` for C++) and make sure dependencies install on the runner.
 
 ---
 
 ### Q: We are getting too many false positives from code scanning. How do we reduce noise?
-**A:** If you are using the Extended query suite, switch back to the Default suite, which is curated for high-confidence findings with a low false-positive rate. You can also dismiss individual alerts as "false positive" or "won't fix" to clean up the alert list. For recurring false positives, consider adding inline suppression comments or configuring query filters in your CodeQL configuration.
+**A:** If you're on the Extended suite, switch back to Default, which is tuned for high-confidence results. Dismiss individual alerts as **False positive** or **Won't fix** with a reason. For recurring noise in advanced setup, exclude queries or paths with a CodeQL configuration file (`query-filters`, `paths-ignore`).
 
 ---
 
 ### Q: Copilot Autofix is enabled but it is not generating fix suggestions for our findings. Why?
-**A:** Verify that your organization has a GitHub Advanced Security (GHAS) license and that Copilot Autofix is enabled at the org level (Settings > Code security > Copilot Autofix). Also check that the language of the finding is supported by Copilot Autofix -- not all CodeQL-supported languages have Autofix coverage yet. Autofix suggestions only appear on pull request findings, not on default-branch scan results.
+**A:** Check that **Copilot Autofix** is selected at Organization → **Settings** → **Advanced Security ▾** → **Global settings**, and that the repository uses CodeQL (default or advanced setup) with Code Security enabled for private repositories. Not every alert type and language gets a suggestion. For existing default-branch alerts, open the alert and ask Autofix to generate a fix. A Copilot subscription is **not** required.
 
 ---
 
 ### Q: Code scanning results are not showing up on pull requests, only on the default branch. How do I fix this?
-**A:** Verify that your CodeQL workflow includes `pull_request` as a trigger event. The default setup includes this automatically, but if you are using a custom workflow file, you must explicitly add `on: pull_request` targeting the appropriate branches. Without this trigger, scans only run on push to the default branch and results will not appear inline on PRs.
+**A:** In advanced setup, make sure the workflow has an `on: pull_request` trigger for the target branches — default setup includes it automatically. Also check that the analysis on the PR finished, and that the alerts are in lines the pull request changed (only those are annotated on the PR).
 
 ---
 
 ### Q: How do I exclude test files or generated code from code scanning results?
-**A:** In a custom workflow file, use `paths-ignore` in the workflow trigger to skip scanning on pushes that only change test files. For more granular control, create a CodeQL configuration file (`.github/codeql/codeql-config.yml`) and define `paths-ignore` patterns to exclude directories like `**/test/**` or `**/generated/**` from analysis.
+**A:** In advanced setup, create a CodeQL configuration file (for example `.github/codeql/codeql-config.yml`) with `paths-ignore` patterns such as `**/test/**` or `**/generated/**`, and reference it from the workflow's `init` step. (`paths-ignore` on the workflow trigger only skips runs; it doesn't exclude files from analysis.) For default setup, you can apply a custom configuration file at scale through the `github-codeql-config-file` repository property.
 
 ---
 
-### Q: Can I run CodeQL on languages not in the supported list, like Rust or PHP?
-**A:** CodeQL does not support those languages natively. For unsupported languages, you can integrate third-party SARIF-compatible scanning tools (e.g., Semgrep, Snyk) that upload results to the GitHub code scanning API. These results will appear alongside any CodeQL findings in the Security tab.
+### Q: Can I run CodeQL on languages like Rust or PHP?
+**A:** Rust is supported now (see Section 8). PHP isn't. For unsupported languages, run a third-party scanner that outputs SARIF and upload the results to code scanning — they appear alongside CodeQL alerts on the **Security and quality** tab.
 
 </details>
 
@@ -279,16 +312,19 @@ CodeQL supports the following languages for analysis:
 | Secret Protection Enablement | `Security/Secret Protection Enablement.md` |
 | Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
 | Branch Protection Rules & Rulesets | `Governance/Branch Protection Rules & Rulesets.md` |
-| Copilot Coding Agent & MCP Configuration | `Copilot/Coding Agent & MCP Configuration.md` |
+| Copilot Cloud Agent & MCP Configuration | `Copilot/Cloud Agent & MCP Configuration.md` |
 
 ---
 
 ## 📚 Resources
 
-- [About code scanning with CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql)
-- [Built-in CodeQL query suites](https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/built-in-codeql-query-suites)
-- [Troubleshooting code scanning](https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning)
+- [Configuring default setup for code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning/configure-code-scanning)
+- [Configuring advanced setup for code scanning](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/configure-code-scanning/configuring-advanced-setup-for-code-scanning)
+- [Creating a custom security configuration](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/establish-complete-coverage/create-custom-configuration)
+- [Applying a custom security configuration](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/establish-complete-coverage/apply-custom-configuration)
+- [Configuring global security settings for your organization](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/establish-complete-coverage/configure-global-settings)
+- [Editing your default setup configuration](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/edit-default-setup)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

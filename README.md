@@ -36,7 +36,7 @@
 | [🏗️ **Setup**](Self%20Made%20Guides/Setup) | 15 | EMU identity runbooks (Entra ID SAML/OIDC, Okta, PingFederate), standard-GHEC SSO, enterprise trials, data residency, org design, and standard→EMU migration |
 | [🪪 **Identity**](Self%20Made%20Guides/Identity) | 3 | EMU benefits, dual presence for open source, and guest collaborators |
 | [🤖 **Copilot**](Self%20Made%20Guides/Copilot) | 12 | Seat enablement, admin controls, premium-request budgeting, adoption & ROI, and standalone rollout |
-| [🔐 **Security**](Self%20Made%20Guides/Security) | 3 | CodeQL code scanning, secret protection, and enterprise-wide secret risk assessment |
+| [🔐 **Security**](Self%20Made%20Guides/Security) | 3 | CodeQL code scanning, secret protection, and organization-wide secret risk assessment |
 | [⚙️ **Actions**](Self%20Made%20Guides/Actions) | 3 | Seat-free GitHub Apps for CI/CD, minutes governance, and OIDC federation to Azure |
 | [🏛️ **Governance**](Self%20Made%20Guides/Governance) | 3 | Branch protection & rulesets, audit-log compliance, and repo/org transfers |
 | [💳 **Billing**](Self%20Made%20Guides/Billing) | 2 | Cost centers & department billing, and Visual Studio subscription linking |
@@ -129,7 +129,7 @@ Resources for mastering GitHub's advanced security features and CodeQL.
 |----------|----------------|
 | **[CodeQL Zero to Hero](https://github.com/GitHubSecurityLab/codeql-zero-to-hero)** | Challenges, queries, databases, and material for the CodeQL Zero to Hero blog series |
 
-> The repo's [Security](Self%20Made%20Guides/Security) folder adds hands-on guides for CodeQL enablement, secret protection, and enterprise-wide secret risk assessment.
+> The repo's [Security](Self%20Made%20Guides/Security) folder adds hands-on guides for CodeQL enablement, secret protection, and organization-wide secret risk assessment.
 
 ---
 

@@ -10,12 +10,12 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [🔑 What "Secrets Protection" Means in GitHub](#-what-secrets-protection-means-in-github)
-- [1️⃣ Enable Secret Protection for a Single Repository](#1-enable-secret-protection-for-a-single-repository)
-- [2️⃣ Enable Secret Protection at the Organization Level](#2-enable-secret-protection-at-the-organization-level)
-- [3️⃣ Enable at Scale Using Security Configurations](#3-enable-at-scale-using-security-configurations)
-- [4️⃣ Enable Push Protection for Your User Account](#4-enable-push-protection-for-your-user-account)
-- [5️⃣ Enable via REST API](#5-enable-via-rest-api)
+- [🔑 What "Secret Protection" Means in GitHub](#-what-secret-protection-means-in-github)
+- [1️⃣ Enable Secret Protection for a Single Repository](#1️⃣-enable-secret-protection-for-a-single-repository)
+- [2️⃣ Enable Secret Protection at the Organization Level (Guided)](#2️⃣-enable-secret-protection-at-the-organization-level-guided)
+- [3️⃣ Enable at Scale Using Security Configurations](#3️⃣-enable-at-scale-using-security-configurations)
+- [4️⃣ Enable Push Protection for Your User Account](#4️⃣-enable-push-protection-for-your-user-account)
+- [5️⃣ Enable via REST API](#5️⃣-enable-via-rest-api)
 - [🚀 Quick "Most Complete" Rollout Recipe](#-quick-most-complete-rollout-recipe)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -30,11 +30,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Single repo:** `Repo → Settings → Security → Advanced Security → Secret Protection → Enable`
-- **Org-wide:** `Org → Security → Assessments → Get started → For all repositories`
-- **At scale (Security Configs):** `Org → Settings → Advanced Security → Configurations → Apply to All repositories`
-- **Push protection (repo):** `Repo → Settings → Security → Code security → Secret Protection → Push Protection → Enable`
-- **User-level push protection:** `Profile → Settings → Code security → Push protection for yourself → Toggle on`
+- **Single repo:** `Repo → Settings → Advanced Security` (under "Security and quality") → **Secret Protection** → **Enable** → **Enable Secret Protection**
+- **Push protection (repo):** same page → **Secret Protection** section → **Push protection** → **Enable**
+- **Org-wide (guided):** `Org → Security and quality tab → Assessments` → **Get started ▾** → **For all repositories** → **Enable Secret Protection**
+- **At scale:** `Org → Settings → Advanced Security ▾ → Configurations` → **New configuration** → **Custom configuration** → **Save configuration** → **Repositories** tab → **Apply configuration ▾** → **Apply**
+- **User-level push protection:** `Profile → Settings → Code security` → **Push protection for yourself**
 
 ---
 
@@ -44,9 +44,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -57,193 +57,158 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud or GitHub Team plan | ☐ |
-| GitHub Secret Protection product enabled (for private/internal repos) | ☐ |
-| Org owner or repo admin role | ☐ |
-| Understanding of which repos to target (public vs. private/internal) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Team or GitHub Enterprise Cloud | — | ☐ |
+| **GitHub Secret Protection** (or GitHub Advanced Security) for private and internal repositories — public repositories are free | Enterprise owner / billing | ☐ |
+| Single-repository enablement (Section 1) | **Repository administrator** | ☐ |
+| Organization-wide enablement and configurations (Sections 2–3) | **Organization owner** or **security manager** | ☐ |
+| REST API (Section 5) | Repo admin, or org owner / security manager, with a suitable token | ☐ |
+| A list of target repositories (public vs private/internal) and a pilot group | Security team | ☐ |
+
+> 💡 Run the free **secret risk assessment** first to size the problem — see `Security/Secret Risk Assessment (Organization-Wide Scan).md`.
 
 ---
 
 ## 📋 Overview
 
-This runbook covers every practical way to "turn on secrets protection" in GitHub:
+This runbook covers every practical way to turn on secret protection in GitHub:
 
-| Method | Scope | Best For |
+| Method | Scope | Best for |
 |--------|-------|----------|
-| **Repo-by-repo** | Single repository | Testing, specific repo needs |
-| **Org-wide** | All/public/selected repos | Organization rollouts |
-| **Security Configurations** | At-scale enablement | Enterprise-wide deployments |
-| **User-level push protection** | Individual user | Personal protection on public repos |
-| **REST API** | Automation/scripting | Bulk operations |
+| **Repo-by-repo** | One repository | Testing, specific repositories |
+| **Guided org enablement (Assessments)** | Public or all repositories in an org | Fast organization rollout |
+| **Security configurations** | Selected or all repositories | Controlled, enforceable rollouts |
+| **User-level push protection** | Individual user | Personal protection when pushing to public repositories |
+| **REST API** | Automation and scripting | Bulk operations |
 
 ---
 
-## 🔑 What "Secrets Protection" Means in GitHub
-
-GitHub's "secrets protection" capabilities include:
+## 🔑 What "Secret Protection" Means in GitHub
 
 | Feature | Description |
 |---------|-------------|
-| **Secret scanning alerts** | Detect secrets already in the repo |
-| **Push protection** | Block secrets from being pushed going forward |
+| **Secret scanning alerts** | Finds secrets already in the repository — full Git history, plus issues, pull requests, discussions, and wikis |
+| **Push protection** | Blocks supported secrets from being pushed; bypasses create alerts |
+| **Validity checks** | Checks whether a detected partner token is still active |
+| **Non-provider (generic) patterns** | Detects things like private keys and connection strings |
+| **AI-detected secrets** | Uses AI to find unstructured secrets such as passwords |
+| **Custom patterns** | Your own regular expressions for internal secret formats |
+| **Delegated bypass / dismissal** | Require review before bypassing push protection or dismissing alerts |
 
-> 💡 **Note:** In GitHub's UI/docs, secret scanning alerts for users are enabled when you enable "Secret Protection" for a repository. Push protection requires Secret Protection first.
+> 💡 Enabling **Secret Protection** on a repository turns on secret scanning alerts. Push protection is a separate switch in the same section.
 
 ### Availability
 
-| Repo Type | Availability |
-|-----------|--------------|
-| **Public repos** | Secret scanning available |
-| **Org-owned repos** | Requires GitHub Team with GitHub Secret Protection enabled  |
+| Repository type | Availability |
+|-----------------|--------------|
+| **Public repositories** | Secret scanning is free |
+| **Private and internal repositories** | Need **GitHub Secret Protection** (or GitHub Advanced Security) |
+| **User-owned repositories (EMU)** | Supported with Enterprise Managed Users |
+
+> 📌 **UI note:** on GitHub.com, the repository settings section is labeled **Security and quality**, and the organization tab is **Security and quality**. In **organization settings**, the section is still **Security**.
 
 ---
 
 ## 1️⃣ Enable Secret Protection for a Single Repository
 
+**👤 Role:** **Repository administrator** · **📍 Portal:** GitHub
+
+**Navigate:** Repository → **Settings** → **Advanced Security** *(under "Security and quality")*
+
 ### A) Turn on Secret Protection (enables secret scanning alerts)
 
-**Navigation:**
+1. In the sidebar, under **Security and quality**, click **Advanced Security**.
+2. To the right of **Secret Protection**, click **Enable**.
+3. Review the impact, then click **Enable Secret Protection**.
 
-```
-Repository → Settings → Security (sidebar) → Advanced Security
-  → Secret Protection → Enable
-    → Review impact → Enable Secret Protection
-```
+> ✅ **Result:** secret scanning alerts are on, and GitHub scans the repository's history.
 
-> ✅ **Result:** Secret scanning alerts for users are enabled when you enable Secret Protection.
+### B) Turn on push protection
 
----
+1. On the same page, in the **Secret Protection** section, to the right of **Push protection**, click **Enable**.
 
-### B) Turn on Push Protection (repo-level)
-
-> ⚠️ **Prerequisite:** Secret Protection must already be enabled.
-
-**Navigation:**
-
-```
-Repository → Settings → Security (sidebar) → Code security
-  → Secret Protection → Push Protection → Enable
-```
-
-> ✅ **Result:** Pushes containing supported secrets are blocked (unless bypassed), and bypasses generate alerts.
+> ✅ **Result:** pushes containing supported secrets are blocked unless bypassed, and each bypass creates an alert.
 
 ---
 
-## 2️⃣ Enable Secret Protection at the Organization Level
+## 2️⃣ Enable Secret Protection at the Organization Level (Guided)
 
-*Fastest org-wide entry points via the guided enablement flow*
+**👤 Role:** **Organization owner** or **security manager** · **📍 Portal:** GitHub
 
-### Navigate to Assessments
+**Navigate:** Organization → **Security and quality** tab → under "Security", **Assessments**
 
-**Navigation:**
+**Steps:**
 
-```
-Organization → Security (sidebar) → Assessments
-```
+1. Under your organization name, click the **Security and quality** tab.
+2. In the sidebar, under **Security**, click **Assessments**.
+3. In the banner, open **Get started ▾** and pick one:
 
-### Enablement Options
+| Option | What happens next |
+|--------|-------------------|
+| **For public repositories for free** | Enables Secret Protection for public repositories only |
+| **For all repositories** | Shows a cost estimate. Click **Enable Secret Protection** to turn on alerts **and** push protection everywhere — or **Configure in settings** to choose repositories |
 
-In the banner, open **Get started** dropdown and choose one:
-
-| Option | Effect |
-|--------|--------|
-| **For public repositories for free** | Enables only public repos |
-| **For all repositories** | Shows estimate, enables secret scanning alerts + push protection across your org |
-| **Configure in settings** | Customize which repos get enabled (takes you to Security Configurations) |
+> 💡 **Tip:** enterprise owners can also turn on **public monitoring** to catch secrets that enterprise members leak in public repositories outside your organizations.
 
 ---
 
 ## 3️⃣ Enable at Scale Using Security Configurations
 
-*Recommended for real organization rollouts*
+*Recommended for controlled organization rollouts*
 
-> 💡 **Tip:** Security configurations are GitHub's at-scale mechanism to apply enablement settings across many repositories.
+**👤 Role:** **Organization owner** or **security manager** · **📍 Portal:** GitHub
 
----
+**Navigate:** Organization → **Settings** → in the **Security** section, **Advanced Security ▾** → **Configurations**
 
-### A) Apply the GitHub-recommended Configuration to ALL Repositories
+### A) Quick setup
 
-**Navigation:**
+1. Click **New configuration**.
+2. In the setup dialog, review the default settings and the selected repositories, and adjust them.
+3. Click **Review**, then **Save and enable**.
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Advanced Security (sidebar) → Configurations
-```
+### B) Create a custom security configuration
 
-**Steps:**
-
-1. In the **GitHub recommended** row, click **Apply to** dropdown
-2. Select one of:
-   - **All repositories**
-   - **All repositories without configurations**
-
-> ✅ **Result:** The recommended configuration includes GitHub Secret Protection features (may incur costs for private/internal repos depending on licensing).
-
----
-
-### B) Create a Custom Security Configuration
-
-**Navigation:**
-
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Advanced Security (sidebar) → Configurations
-    → New configuration
-```
-
-**Configuration Steps:**
-
-1. Enter **Name** and **Description**
-2. Under **Secret Protection** (optional, paid for private repos), enable it
-3. Configure the following options:
+1. Click **New configuration**, then **Custom configuration**.
+2. Enter a **name** and **description**.
+3. Turn on **Secret Protection** (paid for private and internal repositories), then set each option to enabled, disabled, or keep existing:
 
 | Setting | Description |
 |---------|-------------|
-| **Validity checks** | Verify if detected secrets are still valid |
-| **Non-provider patterns** | Scan for patterns not from known providers |
-| **Scan for generic passwords** | Detect common password patterns (AI detection)  |
+| **Validity checks** | Check whether detected partner secrets are still valid |
+| **Extended metadata** | Extra details about detected secrets (needs validity checks) |
+| **Generic patterns** | Non-provider patterns such as private keys and connection strings |
+| **Scan for AI-detected secrets** | AI detection of unstructured secrets like passwords |
 | **Push protection** | Block secrets from being pushed |
-| **Bypass privileges** | Allow selected members to bypass; others require review/approval |
-| **Prevent direct alert dismissals** | Require justification for dismissing alerts |
+| **Bypass privileges** | Let selected roles or teams bypass; everyone else must request a review |
+| **Prevent direct alert dismissals** | Dismissals need a reviewer's approval |
 
-4. Click **Save configuration**
+4. *(Optional)* Under **Policy**, set **Use as default for newly created repositories** and/or **Enforce configuration** (**Enforce** blocks repository owners from changing the features you set).
+5. Click **Save configuration**.
 
----
+### C) Apply your configuration to repositories
 
-### C) Apply Your Custom Security Configuration to Repositories
+1. On the **Configurations** page, click the **Repositories** tab.
+2. *(Optional)* Filter the repository table.
+3. Select repositories one by one, select the whole page with the header checkbox, or select the page and click **Select all** for every matching repository.
+4. Click **Apply configuration ▾** and choose your configuration.
+5. Review the license-consumption summary, then click **Apply**.
 
-**Navigation:**
-
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Advanced Security (sidebar) → Configurations
-```
-
-**Steps:**
-
-1. In **Apply configurations**, optionally filter repositories
-2. Select repositories in the table
-3. Apply the configuration
-
-> 💡 **Tip:** The Configurations table supports multiple selection methods for applying to repos.
+> ⚠️ A default configuration only applies automatically to **new** repositories. Apply it by hand to existing and transferred-in repositories.
 
 ---
 
 ## 4️⃣ Enable Push Protection for Your User Account
 
-*Protect your own pushes to any public repo (separate from org/repo settings)*
+*Protects your own pushes to public repositories, separate from org and repo settings*
 
-**Navigation:**
+**👤 Role:** Any user · **📍 Portal:** GitHub
 
-```
-Profile Picture → Settings
-  → Code security (sidebar, under "Security")
-    → Push protection for yourself → Toggle on/off
-```
+1. Click your profile picture → **Settings**.
+2. In the **Security** section of the sidebar, click **Code security**.
+3. Under **User**, next to **Push protection for yourself**, enable or disable it.
 
-> 💡 **Note:** This is enabled by default and can be disabled.
+> 💡 **Note:** It's on by default and stops you from pushing supported secrets to **public** repositories on GitHub.
 
 ---
 
@@ -251,16 +216,20 @@ Profile Picture → Settings
 
 *Useful for automation and bulk scripting*
 
-### Update a Repository with security_and_analysis
+### Update a repository's `security_and_analysis`
 
-Use the **Update a repository** endpoint (`PATCH`) and set fields under `security_and_analysis`:
+Call **Update a repository** (`PATCH /repos/{owner}/{repo}`) as a repository admin, or an organization owner or security manager.
 
 | Field | Values |
 |-------|--------|
 | `secret_scanning.status` | `"enabled"` or `"disabled"` |
 | `secret_scanning_push_protection.status` | `"enabled"` or `"disabled"` |
+| `secret_scanning_validity_checks.status` | `"enabled"` or `"disabled"` |
+| `secret_scanning_non_provider_patterns.status` | `"enabled"` or `"disabled"` |
+| `secret_scanning_ai_detection.status` | `"enabled"` or `"disabled"` |
+| `secret_scanning_delegated_bypass.status` | `"enabled"` or `"disabled"` |
 
-**Example Request Body:**
+**Example request body:**
 
 ```json
 {
@@ -271,6 +240,8 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 }
 ```
 
+> 📌 The `advanced_security` field is for the bundled GitHub Advanced Security product only — it can't be used with standalone Secret Protection or Code Security. For many repositories, prefer applying a security configuration.
+
 ---
 
 ## 🚀 Quick "Most Complete" Rollout Recipe
@@ -279,29 +250,26 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 ### Steps
 
-1. **Navigate to Configurations:**
-   ```
-   Org Settings → Advanced Security → Configurations
-   ```
-
-2. **Create a custom configuration** enabling:
+1. **Size the risk:** run the free secret risk assessment (Organization → **Security and quality** → **Assessments**).
+2. **Open Configurations:** Organization → **Settings** → **Advanced Security ▾** → **Configurations**.
+3. **Create a custom configuration** with:
    - Secret Protection
    - Push protection
-   - Validity checks
-   - Non-provider patterns
-   - Generic passwords
-   - Bypass privileges
-   - Prevent direct dismissals
-
-3. **Apply to repositories:**
-   - Select **All repositories** (or all without configs)
-   - Enable **Enforce** if you want to prevent repo owners from changing enforced settings
+   - Validity checks (and extended metadata)
+   - Generic patterns
+   - Scan for AI-detected secrets
+   - Bypass privileges for your security team
+   - Prevent direct alert dismissals
+4. **Policy:** set it as the default for new repositories and choose **Enforce**.
+5. **Click Save configuration.**
+6. **Apply it:** **Repositories** tab → select all → **Apply configuration ▾** → your configuration → **Apply**.
+7. **Add a resource link:** Advanced Security ▾ → **Global settings** → **Add a resource link in the CLI and the web UI when a commit is blocked**.
 
 ---
 
 ## 📝 Additional Notes
 
-> 💡 **Customization:** If you're targeting GHEC vs GHES, and whether you're using GitHub Secret Protection / Code Security (new products) vs legacy GHAS licensing, the runbook's wording can be tailored to match exactly what your admins will see. Some settings paths may vary slightly (e.g., "Code security" vs "Advanced Security" at the repository level depending on the specific task).
+> 💡 **Licensing models:** organizations on the original bundled **GitHub Advanced Security** license see slightly different setting names and order in the configuration editor than organizations on the separate **Secret Protection** and **Code Security** products.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -333,17 +301,17 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 
 ### Q: Push protection is blocking my push, but the detected string is a false positive. How do I bypass it?
-**A:** When push protection blocks a push, you can bypass it by selecting a reason (e.g., "used in tests" or "false positive") in the GitHub UI or CLI prompt. If your organization requires bypass approval, the push will be held until an authorized reviewer approves it. Note that all bypasses generate an alert for security teams to review.
+**A:** If bypass privileges aren't restricted, follow the link in the block message, choose a reason (**It's used in tests**, **It's a false positive**, or **I'll fix it later**), and push again. If your organization uses **bypass privileges** (delegated bypass), submit a bypass request and wait for an approved reviewer. Every bypass creates an alert for the security team.
 
 ---
 
 ### Q: Secret scanning is enabled but it is not finding secrets I know are in the repo. Why?
-**A:** Secret scanning only detects patterns from its supported providers list. Verify that the secret type you expect to find is in the [supported secret patterns list](https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns). Custom or proprietary secret formats require you to create a custom pattern (org-level or enterprise-level) to be detected.
+**A:** Check that the secret type is in the [supported secret scanning patterns](https://docs.github.com/en/code-security/reference/secret-security/supported-secret-scanning-patterns) list. Generic secrets (private keys, connection strings) need **Generic patterns** turned on, and passwords need **Scan for AI-detected secrets**. Internal formats need a custom pattern at the repository, organization, or enterprise level.
 
 ---
 
 ### Q: Push protection is enabled, but users can still push commits containing secrets. What is wrong?
-**A:** Check whether your organization allows push protection bypass without requiring approval. If bypass is configured to "Always allow," users can self-approve and push the secret through. To enforce stricter controls, configure bypass privileges to require review/approval from a designated security team before the push is allowed.
+**A:** By default, contributors can bypass push protection by giving a reason. To require approval, turn on **Bypass privileges** in your security configuration (or `secret_scanning_delegated_bypass` via the API) and name the roles or teams that can bypass or approve requests. Also remember that push protection only blocks **supported** patterns.
 
 ---
 
@@ -353,7 +321,7 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 ---
 
 ### Q: I created a custom secret scanning pattern, but it is not matching secrets I expect it to find. What should I check?
-**A:** Verify the regex syntax is correct by testing it against sample data using the "Test" feature in the custom pattern editor before enabling. Common issues include unescaped special characters, overly strict anchoring, and missing character classes. Also confirm the pattern is enabled and applied to the correct scope (org or enterprise).
+**A:** In the custom pattern editor, use the test string box and **Save and dry run** to see what the pattern matches before publishing it. Common issues are unescaped special characters, anchors that are too strict, and missing **Before secret** / **After secret** context. Then confirm the pattern is published at the right scope (repository, organization, or enterprise) and, if you want it to block pushes, that push protection is enabled for it.
 
 ---
 
@@ -366,7 +334,7 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 | Guide | Location |
 |-------|----------|
-| Secret Risk Assessment (Enterprise-Wide Scan) | `Security/Secret Risk Assessment (Enterprise-Wide Scan).md` |
+| Secret Risk Assessment (Organization-Wide Scan) | `Security/Secret Risk Assessment (Organization-Wide Scan).md` |
 | Code Scanning (CodeQL) Enablement & Troubleshooting | `Security/Code Scanning (CodeQL) Enablement & Troubleshooting.md` |
 | Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
 | Enterprise Environment Scaffolding Checklist | `Setup/Enterprise Environment Scaffolding Checklist.md` |
@@ -377,11 +345,13 @@ Use the **Update a repository** endpoint (`PATCH`) and set fields under `securit
 
 | Resource | Link |
 |----------|------|
-| About secret scanning | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning) |
-| Configuring secret scanning | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-secret-scanning-for-your-repository) |
-| Push protection for repositories | [GitHub Docs](https://docs.github.com/en/code-security/secret-scanning/enabling-secret-scanning-features/enabling-push-protection-for-your-repository) |
-| Security configurations | [GitHub Docs](https://docs.github.com/en/code-security/securing-your-organization/enabling-security-features-in-your-organization/configuring-global-security-settings-for-your-organization) |
+| Enabling secret scanning for a repository | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enable-secret-scanning) |
+| Enabling push protection for a repository | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/prevent-future-leaks/enable-push-protection) |
+| Managing user push protection | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/prevent-future-leaks/manage-user-push-protection) |
+| Protecting your organization's secrets | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/configure-specific-tools/protect-your-secrets) |
+| Creating a custom security configuration | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/establish-complete-coverage/create-custom-configuration) |
+| Global security settings | [GitHub Docs](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/establish-complete-coverage/configure-global-settings) |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
