@@ -12,7 +12,7 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)](#1-create--secure-the-scim-setup-user-standard-non-emu)
-- [2️⃣ Create the Okta Application (GitHub Enterprise Cloud – Organization)](#2-create-the-okta-application-github-enterprise-cloud--organization)
+- [2️⃣ Create the Okta Application (GitHub Enterprise Cloud - Organization)](#2-create-the-okta-application-github-enterprise-cloud---organization)
 - [3️⃣ Enable SAML SSO in GitHub](#3-enable-saml-sso-in-github)
 - [4️⃣ Enforce SAML SSO for the Organization (Required)](#4-enforce-saml-sso-for-the-organization-required)
 - [5️⃣ Configure SCIM Provisioning (Okta → GitHub Organization)](#5-configure-scim-provisioning-okta--github-organization)
@@ -37,7 +37,7 @@
 - **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste Okta values → Test → Save → Enforce SAML SSO
 - **SCIM:** Sign in as setup user → Visit `/orgs/YOUR_ORG/sso` → Okta App → Provisioning → Enable API Integration → Authenticate with GitHub
 - **Billing:** Org/Enterprise → Billing and licensing → Payment information → Add Azure Subscription → Accept → Connect
-- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+- **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** → turn on the org → **AI controls** → **Copilot** (enterprise policies) → Org **Settings** → **Copilot** → **Policies** / **Models** → **Access** → **Start adding seats** (or the enterprise **Manage** page → **Assign licenses**)
 
 ---
 
@@ -47,9 +47,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -77,7 +77,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 
 ## ✅ Prerequisites
 
-| Requirement | Owner / Role | Notes |
+| Requirement | Who / Role needed | Notes |
 | --- | --- | --- |
 | GitHub Enterprise Cloud (Standard / non-EMU) org | Org Owner | You must be able to access Org Settings → Authentication security |
 | (If applicable) GitHub Enterprise account | Enterprise Owner | Needed only if you will configure Enterprise SAML and/or Enterprise Copilot policies |
@@ -94,15 +94,19 @@ Use this table to assign provider-side work before following the numbered steps.
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
 | **Okta application admin** | Creates the GitHub Enterprise Cloud - Organization app, configures SAML, and enables SCIM OAuth provisioning. | Okta Admin Console → Applications → Applications → Browse App Catalog → search GitHub Enterprise Cloud - Organization → Add Integration → enter organization name and app label → Done → Assignments → Assign setup/pilot user → Sign On → View Setup Instructions. After GitHub SAML is enabled, go to Provisioning → Configure API Integration → Enable API integration → Authenticate with GitHub Enterprise Cloud - Organization → Grant → Authorize OktaOAN → Save → To App → Edit → enable Create Users, Update User Attributes, and Deactivate Users → Save. Handoff: setup instructions, OAuth authorization, and provisioning status. |
-| **GitHub organization owner or dedicated SCIM setup user** | Enables org SAML and authorizes Okta SCIM on behalf of the organization. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste Okta Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → visit `https://github.com/orgs/ORG/sso` → complete SSO → return to Okta OAuth flow → Grant → Authorize OktaOAN. Handoff: SAML test success, recovery codes, and Okta authorization. |
+| **GitHub organization owner or dedicated SCIM setup user** | Enables org SAML and authorizes Okta SCIM on behalf of the organization. | GitHub → profile picture → Organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste Okta Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → visit `https://github.com/orgs/ORG/sso` → complete SSO → return to Okta OAuth flow → Grant → Authorize OktaOAN. Handoff: SAML test success, recovery codes, and Okta authorization. |
 | **Okta group owner** | Maintains the users or groups assigned to the GitHub organization app. | Okta Admin Console → Directory → Groups → [group] → People → Assign people → select users → Save, then Applications → Applications → [GitHub org app] → Assignments → Assign → Assign to Groups → select group → Done. Handoff: pilot group and users assigned. |
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
 ---
 
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
+
+**👤 Role:** Org Owner · **📍 Portal:** GitHub + Okta
+
+**Navigate:** Profile picture → **Organizations** → *[your org]* → **Settings** → **People** → **Invite member**
 
 > ⚠️ **Important:** This user is required because Okta's GitHub SCIM provisioning uses a third-party OAuth authorization that acts on behalf of a specific GitHub user. If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
 
@@ -113,27 +117,19 @@ Use this table to assign provider-side work before following the numbered steps.
     - Enable 2FA
     - Ensure recovery methods are stored per your approved process (vault / break-glass)
 3. **Add the setup user to your GitHub organization as an Owner:**
-    - GitHub → your Organization → Settings → People → Invite member
-    - After accepted → set role to Owner
+    - GitHub → your Organization → **Settings** → **People** → **Invite member**
+    - After accepted → set role to **Owner**
 4. **Assign this same identity in Okta** to the GitHub app (so it can SSO and authorize provisioning)
 
 ### Important Notes
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
-## 2️⃣ Create the Okta Application (GitHub Enterprise Cloud – Organization)
+## 2️⃣ Create the Okta Application (GitHub Enterprise Cloud - Organization)
 
-### Navigation (Okta)
+**👤 Role:** Okta Admin · **📍 Portal:** Okta
 
-```
-Okta Admin Console
-  → Applications
-    → Applications
-      → Browse App Catalog
-        → Search: "GitHub Enterprise Cloud - Organization"
-          → Add Integration
-
-```
+**Navigate:** Okta Admin Console → **Applications** → **Applications** → **Browse App Catalog** → search **GitHub Enterprise Cloud - Organization** → **Add Integration**
 
 ### Configuration Steps
 
@@ -142,9 +138,12 @@ Okta Admin Console
 2. **Fill in required fields:**
     - Organization name (GitHub org slug)
     - Application label (unique name in Okta)
-3. **Assign the app to:**
+3. Click **Done** to create the app integration.
+4. **Assign the app to:**
     - The SCIM setup user
     - Your pilot user/group
+
+> 📌 **Note:** The SAML values (organization name and related settings) are configured under the app's **Sign On** tab → **Edit** before you capture the IdP values in the next section.
 
 ### Download Required Items (Okta IdP values)
 
@@ -159,6 +158,8 @@ In the Okta app:
 
 ## 3️⃣ Enable SAML SSO in GitHub
 
+**👤 Role:** Org Owner (and Enterprise Owner for 3A) · **📍 Portal:** GitHub
+
 You will configure **Organization SAML** (always for the target org).
 
 If your org is under an Enterprise account, you may also configure **Enterprise SAML**.
@@ -171,35 +172,16 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 - If you are a GitHub Enterprise (enterprise account) customer and intend to require SAML at the enterprise level, complete this before org enforcement. **Enterprise SAML completely replaces org-level SAML configuration and enforces SAML SSO for every organization in the enterprise.**
 
-**Navigation Path (GitHub UI)**
-
-```
-GitHub (top-right profile picture)
-  → Enterprises
-    → [Select enterprise]
-      → Settings
-        → Authentication security
-          → SAML single sign-on
-
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Configuration Steps**
 
-1. In Enterprise settings → Authentication security → SAML single sign-on
+1. Go to **Settings** → **Authentication security** → **SAML single sign-on**
 2. Enable / configure SAML per GitHub's enterprise SAML documentation (Okta values differ from org app)
 
 ### 3B — Enable & Test Organization SAML (Required)
 
-**Navigation Path (GitHub UI)**
-
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
+**Navigate:** Profile picture → **Organizations** → *[your org]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Configuration Steps (Organization SAML)**
 
@@ -211,24 +193,17 @@ GitHub (top-right profile picture)
 3. Click **Test SAML configuration** (or equivalent prompt) and complete the auth flow
 4. Click **Save**
 5. **Immediately download and secure SSO recovery codes:**
-    - Organization Settings → Authentication security → Single sign-on recovery codes
+    - Organization Settings → Authentication security → under **SAML single sign-on**, click **Save your recovery codes** → **Download**
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
 ## 4️⃣ Enforce SAML SSO for the Organization (Required)
 
+**👤 Role:** Org Owner · **📍 Portal:** GitHub
+
+**Navigate:** Profile picture → **Organizations** → *[your org]* → **Settings** → **Authentication security** → **SAML single sign-on**
+
 > ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
-
-### Navigation Path (GitHub UI)
-
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
 
 ### Enforcement Steps
 
@@ -236,13 +211,15 @@ GitHub (top-right profile picture)
     - Enabled and tested SAML SSO
     - Authenticated via IdP at least once
 2. Under **SAML single sign-on**, select:
-    - **Require SAML SSO authentication for all members**
+    - **Require SAML SSO authentication for all members of the [organization name] organization**
 3. If GitHub displays members who have not authenticated, review the list
 4. Confirm the warning and click:
     - **Remove members and require SAML single sign-on**
 5. **Verify recovery codes are stored securely**
 
 ## 5️⃣ Configure SCIM Provisioning (Okta → GitHub Organization)
+
+**👤 Role:** Org Owner / SCIM setup user · **📍 Portal:** GitHub + Okta
 
 > 💡 **Tip:** In Standard non-EMU, the Okta integration uses a third-party OAuth flow for SCIM. The OAuth app acts on behalf of the GitHub user who authorized it (hence Step 1).
 
@@ -259,49 +236,30 @@ https://github.com/orgs/ORGANIZATION-NAME/sso
 
 ### 5B — Enable Okta API Integration (Required)
 
-**Navigation (Okta)**
-
-```
-Okta Admin Console
-  → Applications
-    → Applications
-      → [Your "GitHub Enterprise Cloud - Organization" app]
-        → Provisioning
-
-```
+**Navigate:** Okta Admin Console → **Applications** → **Applications** → *[your "GitHub Enterprise Cloud - Organization" app]* → **Provisioning**
 
 **Steps**
 
 1. Click **Configure API Integration**
 2. Check **Enable API integration**
 3. Click **Authenticate with GitHub Enterprise Cloud - Organization**
-4. Complete the GitHub OAuth authorization as the SCIM setup user
+4. In the GitHub authorization window, click **Grant** next to your organization name.
+5. Click **Authorize OktaOAN**.
+6. Back in Okta, click **Save**.
 
 > 📌 **Note:** Okta may show an **Import Groups** option. GitHub's docs state this is not supported; selecting/deselecting does not change behavior.
 
 ### 5C — Configure Provisioning Settings + Mappings (Required)
 
-1. In the Okta app → **Provisioning**
-2. Enable the desired provisioning actions (Create/Update/Deactivate users) as appropriate for your org membership lifecycle
-3. Keep mappings aligned to GitHub's Okta SCIM guidance; avoid custom attributes until the base flow is stable
+1. In the Okta app, go to **Provisioning** → **To App**.
+2. Click **Edit**.
+3. Enable **Create Users**, **Update User Attributes**, and **Deactivate Users** as appropriate for your org membership lifecycle.
+4. Click **Save**.
+5. Keep mappings aligned to GitHub's Okta SCIM guidance; avoid custom attributes until the base flow is stable.
 
 ### 5D — Assign Users/Groups (Required)
 
-**Navigation Path:**
-
-```
-Okta Admin Console
-  → Applications
-    → Applications
-      → [Your "GitHub Enterprise Cloud - Organization" app]
-        → Assignments
-          → Assign
-            → Assign to People / Assign to Groups
-              → (Select users/groups)
-                → Assign
-                  → Done
-
-```
+**Navigate:** Okta Admin Console → **Applications** → **Applications** → *[your "GitHub Enterprise Cloud - Organization" app]* → **Assignments** → **Assign** → **Assign to People** / **Assign to Groups** → select users/groups → **Assign** → **Done**
 
 **Steps**
 
@@ -314,6 +272,8 @@ Okta Admin Console
 
 ## 6️⃣ Attach Azure Subscription for Metered Billing
 
+**👤 Role:** GitHub Enterprise Owner (or Org Owner if connecting at org level) + Azure subscription **Owner** with tenant-wide admin consent · **📍 Portal:** GitHub + Microsoft
+
 **Required if you are billing via Azure**
 
 ### Prerequisites
@@ -325,19 +285,13 @@ Okta Admin Console
 
 ### Configuration Steps (GitHub)
 
-**Navigation Path:**
+**Navigate:** Open the target org/enterprise → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**
+
+Settings entry-point URLs (copy-paste):
 
 ```
-GitHub
-  → Your org or enterprise settings entry point
-    → Org list: https://github.com/settings/organizations
-    → Enterprise list: https://github.com/settings/enterprises
-      → Open the target org/enterprise
-        → Billing and licensing
-          → Payment information
-            → Metered billing via Azure
-              → Add Azure Subscription
-
+Org list:        https://github.com/settings/organizations
+Enterprise list: https://github.com/settings/enterprises
 ```
 
 **Process:**
@@ -361,121 +315,114 @@ GitHub
 
 ## 7️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
-### 7A — (Conditionally Required) Enable Copilot at the Enterprise level via Payment Verification
+If your organization belongs to an enterprise account (the usual GHEC setup), set up Copilot in this order: **7A** turn Copilot on for the organization, **7B** set enterprise policies, **7C** set organization policies, then give people seats with **7D** (organization) and/or **7E** (enterprise).
 
-**When this step is required:**
+> 📌 **Where things live:** organization access and licenses are under the enterprise's **Billing and licensing → Licensing**; enterprise policies are under **AI controls**; organization policies and seats are under the organization's **Settings → Copilot**. Selections on these pages apply immediately — there is **no Save button**.
 
-- If you manage Copilot through an enterprise account, GitHub's setup flow enables Copilot via enterprise payment verification.
+### 7A — Turn Copilot on for organizations
 
-**Navigation Path (GitHub UI)**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → Settings
-      → Getting Started
-        → Verify your payment method
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the "Billing and licensing" sidebar, click **Licensing**.
+3. In the "Copilot" section, click **Manage**.
+4. Next to **Organization access**, open the dropdown and choose whether to enable Copilot for **all organizations** or to **Allow for specific organizations**.
+5. If you chose **Allow for specific organizations**:
+   1. Click the **Organizations** tab.
+   2. Find the organization.
+   3. To the right of its name, open the **Copilot** dropdown and click **Enabled** (Copilot Business plan) — or **Copilot: Enterprise** / **Copilot: Business** if your enterprise has a Copilot Enterprise plan.
+6. Confirm the organization now shows Copilot as enabled. *(The selection applies immediately — there is no Save button.)*
 
-Complete **Verify your payment method** to enable Copilot in the enterprise.
+> ⚠️ **Do this first:** until Copilot is enabled for an organization here, its owners can't assign seats in 7D.
 
-### 7B — Configure Copilot Enterprise Policies
+### 7B — Set enterprise Copilot policies
 
-**Required if you manage policies at enterprise level**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path (GitHub UI)**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **AI controls** → **Copilot** *(sidebar)*
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → AI controls
-      → Copilot
+1. At the top of the enterprise page, click **AI controls** *(a top-of-page tab — not under **Settings**)*.
+2. In the sidebar, open the page that holds the policies you want:
+   - **Copilot** — administration, privacy, model, billing, and usage policies, including **Policies for enterprise-assigned users** (required before 7E).
+   - **Copilot** → under "Features & clients", click **Configure features & clients** — feature and client policies such as Copilot on GitHub.com, Copilot Chat in the IDE, and Copilot in the CLI.
+   - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
+   - **MCP** — Model Context Protocol (MCP) policies.
+3. Set each policy:
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide in 7C).
+   - **Toggle:** click it.
+   - **No visible control:** click the policy name to see its options.
+4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
 
-```
+> 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
-From here you can set enterprise-wide Copilot policy enforcement.
+### 7C — Set organization Copilot policies
 
-**Policy Options:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-- For each policy, select:
-    - **Enabled/Allowed** — Feature is on for all organizations
-    - **Disabled/Blocked** — Feature is off for all organizations
-    - **No policy** — Delegate decision to organization owners
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")*
 
-### 7C — Configure Copilot Organization Policies (Required)
+1. Click **Policies** to set feature and privacy policies, or **Models** to choose which models beyond the basic set are available (some can add cost).
+2. For each policy, open its dropdown and choose an enforcement option. *(Changes apply on selection.)*
 
-Even with enterprise governance, you should confirm org-level visibility and configuration.
+> 📌 **Enterprise wins:** a policy the enterprise set in 7B can't be changed here — only policies left at **No policy** are editable by the organization.
 
-**Navigation Path (GitHub UI)**
+### 7D — Assign seats in the organization
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → (sidebar) Code, planning, and automation
-        → Copilot
-          → Policies / Models
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access**
 
-Set:
+1. If you see **Allow this organization to assign seats**, click it.
+2. Click **Start adding seats**.
+3. Choose who gets Copilot:
+   - **Everyone:** select **Purchase for all members**, then in the "Confirm seats purchase for all members" dialog click **Purchase seats**.
+   - **Specific people or teams:** select **Purchase for selected members**. In the "Enable Copilot access for users and teams" dialog, use the **Users and teams** tab to search for and add people or teams (or **Upload CSV** to add many at once), then click **Continue to purchase** → **Purchase seats**.
 
-- Feature availability policies
-- Model availability policies (if applicable)
+> 💡 **Hands-off seats:** Okta supports team synchronization. Once team synchronization is enabled for the organization, connect a GitHub team to an Okta group (Organization → **Teams** → *[team]* → **Settings** → under **Identity Provider Groups** open **Select Groups**, pick the group, and click **Save changes**), then give that team seats — when Okta adds someone to the group, they get a Copilot seat automatically.
 
-### 7D — Assign Copilot licenses (Required)
+> 💡 **Billing:** a seat is billed from the moment it's granted (prorated mid-cycle), whether or not the person uses Copilot yet.
 
-**Copilot Business:** You can assign licenses to individual users who don't consume a GitHub Enterprise license.
+### 7E — Assign Copilot Business licenses at the enterprise level
 
-**Copilot Enterprise:** You typically enable for entire organizations, and all members consume a GitHub Enterprise license.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path:**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
-Organization Settings
-  → Copilot
-    → Access
-      → Add members or enable for all
+**Before you start:** set the **Policies for enterprise-assigned users** policy (7B), make sure the people are already members of the enterprise (organization members, or users you've invited to the enterprise), and create the enterprise team first if you're licensing a team.
 
-```
+1. Click the **All members** tab (individual users) or the **Enterprise Teams** tab.
+2. Click **Assign licenses**.
+3. Search for the users or enterprise teams, then click **Add licenses**.
 
-Organization owners can assign Copilot seats to individual members or teams.
+> ✅ **Enterprise teams are generally available** (since June 2026). License an enterprise team and people gain or lose Copilot as they join or leave it.
+
+> 💡 **When to use this route:** people who need Copilot but no organization access. Enterprise members who aren't in any organization usually don't consume a GitHub Enterprise Cloud license. Direct enterprise assignment is for **Copilot Business**.
+
+> 📌 **One license per person:** someone assigned through both 7D and 7E uses **one** license (the highest tier).
 
 ## 8️⃣ Critical Post-Enablement: SSO Authorization for Credentials (Required)
+
+**👤 Role:** Each member (self-service) · **📍 Portal:** GitHub
 
 When SAML is enabled/enforced, users often must authorize credentials (depending on token type and whether they have a linked external identity).
 
 ### 8A — Authorize SSH Keys for SSO
 
+**👤 Role:** each **organization member** (for their own SSH keys and tokens) · **📍 Portal:** GitHub
+
 **Required for SSH usage in SSO orgs**
 
-**Navigation**
-
-```
-GitHub (top-right profile picture)
-  → Settings
-    → SSH and GPG keys
-      → (next to the key) Configure SSO
-        → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **SSH and GPG keys** → next to the key **Configure SSO** → **Authorize** (for the org)
 
 ### 8B — Authorize Personal Access Tokens
 
+**👤 Role:** each **organization member** (for their own SSH keys and tokens) · **📍 Portal:** GitHub
+
 **Required for PAT classic in SSO orgs**
 
-**Navigation**
-
-```
-GitHub (top-right profile picture)
-  → Settings
-    → Developer settings
-      → Personal access tokens
-        → (next to the token) Configure SSO
-          → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **Developer settings** → **Personal access tokens** → next to the token **Configure SSO** → **Authorize** (for the org)
 
 **Token nuance:**
 
@@ -577,7 +524,7 @@ After completing this guide, you should have:
 ---
 
 ### Q: We forgot to save our SSO recovery codes before enforcement — what now?
-**A:** If SAML is already enforced and working, you can still access the recovery codes. Navigate to Organization Settings > Authentication security > Single sign-on recovery codes. Download and store them immediately. If your IdP goes down and you do not have recovery codes, you will need to contact GitHub Support for assistance, which can take time. Always store recovery codes in a secure vault accessible to at least two org owners.
+**A:** If SAML is already enforced and working, you can still access the recovery codes. Go to Organization **Settings** → **Authentication security**, and under **SAML single sign-on** click **Save your recovery codes**. Download and store them immediately. If your IdP goes down and you do not have recovery codes, you will need to contact GitHub Support for assistance, which can take time. Always store recovery codes in a secure vault accessible to at least two org owners.
 
 ---
 
@@ -623,4 +570,4 @@ After completing this guide, you should have:
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

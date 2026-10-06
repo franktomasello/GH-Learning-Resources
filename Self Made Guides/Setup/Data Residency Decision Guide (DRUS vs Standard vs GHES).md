@@ -2,6 +2,8 @@
 
 > Decision framework for choosing between standard GitHub Enterprise Cloud, Data Residency (DRUS/GHE.com), and GitHub Enterprise Server
 
+> 📌 **Naming note:** The official product name is **GitHub Enterprise Cloud with data residency**; GitHub's own recent shorthand is **GHEC-DR**. This guide uses **DRUS** ("Data Residency US") as informal shorthand for the US-region deployment to keep the decision framework concise — expect to see **GitHub Enterprise Cloud with data residency** / **GHEC-DR** in official docs.
+
 ---
 
 ## 📑 Contents
@@ -33,7 +35,7 @@
 - **DRUS (GHE.com):** Formal US data residency, EMU required, SUBDOMAIN.ghe.com — choose when regulatory/contractual language mandates US data residency
 - **GHES:** Self-hosted, full infrastructure control — choose for air-gapped, IL4/IL5, or disconnected environments
 - **Migration to DRUS:** Full migration project (4-8 weeks) — new GHE.com enterprise + reconfigure IdP + GEI repo migration + update all integrations
-- **Copilot inference:** DRUS does NOT guarantee US-only inference — use BYOK for provider-level region control
+- **Copilot inference:** DRUS does NOT automatically pin inference to the US, but inference can now be kept in-region via **GitHub Copilot data residency** (US/EU, GA Apr 2026, admin opt-in, off by default); BYOK remains an alternative for provider-level control
 
 ---
 
@@ -43,9 +45,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available (including the April 13, 2026 general availability of GitHub Copilot data residency for US and EU). Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -72,9 +74,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner or procurement owner** | Chooses GitHub.com, GHE.com with data residency, or GHES before identity and billing are configured. | GitHub sales/procurement flow or enterprise setup link → select deployment model → confirm enterprise slug or GHE.com subdomain → complete enterprise creation → GitHub → profile photo → Your enterprises → [enterprise]. Handoff: selected hosting model, enterprise URL, and subdomain if applicable. |
+| **GitHub enterprise owner or procurement owner** | Chooses GitHub.com, GHE.com with data residency, or GHES before identity and billing are configured. | GitHub sales/procurement flow or enterprise setup link → select deployment model → confirm enterprise slug or GHE.com subdomain → complete enterprise creation → GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise]. Handoff: selected hosting model, enterprise URL, and subdomain if applicable. |
 | **Microsoft Entra, Okta, or PingFederate admin** | Uses the app and URLs that match the selected hosting model. | For GitHub.com, use the standard GitHub Enterprise Managed User or GitHub Enterprise Cloud app. For GHE.com, use the GHE.com-specific Okta app or GitHub EMU Connector metadata and SCIM URL format. Entra/Okta/Ping portal → GitHub app → Single sign-on and Provisioning → enter GitHub.com or GHE.com URLs exactly. Handoff: SSO values and SCIM Tenant URL matching the chosen environment. |
-| **Azure subscription Owner, if Azure billing is used** | Confirms the subscription can be connected regardless of the selected GitHub hosting model. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
+| **Azure subscription Owner, if Azure billing is used** | Confirms the subscription can be connected regardless of the selected GitHub hosting model. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then Enterprise path: GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select subscription → Connect. Handoff: connected subscription ID. |
 
 ---
 
@@ -114,14 +116,16 @@ Use this table to assign provider-side work before following the numbered steps.
 |---------|:------------:|:--------------:|:----:|
 | GitHub Copilot | ✅ | ✅ | ❌ |
 | GitHub Actions (hosted runners) | ✅ | ✅ | ❌ (self-hosted only) |
-| Advanced Security (GHAS) | ✅ | ✅ | ✅ |
+| Advanced Security | ✅ (Secret Protection + Code Security) | ✅ (Secret Protection + Code Security) | ✅ (GHAS bundle) |
 | Data residency guarantee | ❌ | ✅ | ✅ (your infra) |
 | EMU support | ✅ | ✅ (required) | N/A |
 | Public repositories | ✅ (standard) | ❌ (EMU) | ✅ |
 | FedRAMP | Tailored ATO | Tailored ATO | Customer's boundary |
-| Copilot inference region lock | ❌ (not guaranteed) | ❌ (not guaranteed) | N/A |
+| Copilot inference region lock | ⚙️ Opt-in (Copilot data residency, US/EU) | ⚙️ Opt-in (Copilot data residency, US/EU) | N/A |
 
-> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself guarantee that Copilot inference stays in the US.
+> ⚠️ **Important:** Data residency (DRUS) governs where covered GitHub platform data is stored. It does NOT by itself pin Copilot inference to the US. Region-locked inference is now available as a **separate, admin-enabled** policy — **GitHub Copilot data residency** (US/EU), GA since April 13, 2026, off by default — rather than something DRUS turns on automatically. See [5️⃣ Copilot Inference Geography](#5-copilot-inference-geography).
+
+> 📌 **Advanced Security naming:** On GHEC / GHE.com, Advanced Security was repackaged in 2025 into two standalone products — **GitHub Secret Protection** (secret scanning + push protection) and **GitHub Code Security** (code scanning / CodeQL). "GitHub Advanced Security (GHAS)" as one SKU is now legacy for GHEC and remains the bundle name only on **GHES**.
 
 ## 3️⃣ Common Misconceptions
 
@@ -130,7 +134,7 @@ Use this table to assign provider-side work before following the numbered steps.
 | "Standard GHEC defaults to US data residency" | Standard GHEC is primarily US-hosted but this is NOT a formal data residency guarantee |
 | "DRUS = FedRAMP Moderate" | DRUS is data residency, not an authorization level change |
 | "DRUS = GCC High equivalent" | DRUS is not equivalent to Azure GCC High or IL4/IL5 |
-| "DRUS makes Copilot US-only" | Copilot inference geography is separate from platform data residency |
+| "DRUS makes Copilot US-only" | Copilot inference geography is not automatic with DRUS, but it IS separately controllable via the **GitHub Copilot data residency** policy (US/EU, GA Apr 2026) — an opt-in admin setting, off by default |
 | "We can switch from standard to DRUS with a toggle" | Moving to DRUS requires a full migration to a new GHE.com enterprise |
 
 ## 4️⃣ Migration Implications
@@ -149,16 +153,20 @@ Moving from standard GHEC to DRUS requires:
 | Topic | What Public Docs Say |
 |-------|---------------------|
 | Platform data storage | DRUS stores covered data in the US |
-| Copilot inference location | NOT guaranteed to be US-only by DRUS alone |
-| BYOK | Can route inference through your chosen provider endpoint — region guarantee comes from THAT provider |
-| Best approach | Treat inference geography as a provider-by-provider validation exercise |
+| Copilot inference location | NOT pinned to the US by DRUS alone — DRUS covers platform data storage, not inference routing |
+| Copilot data residency (US & EU) | **Generally available (April 13, 2026).** A separate, admin-enabled policy: when turned on, all inference processing and associated data stay within the selected geography. **Off by default.** Adds ~10% to the model multiplier. For US government customers, the underlying model hosts / infrastructure are **FedRAMP Moderate authorized**. |
+| BYOK | Alternative lever: route inference through your chosen provider endpoint — region guarantee comes from THAT provider |
+| Best approach | Prefer the native **GitHub Copilot data residency** policy for US/EU region locking; use BYOK where you need provider-level control or a region the native policy does not yet cover. The nuance still holds: DRUS alone does not enable region-locked inference — it is a separate opt-in. |
+
+> 💡 **Enable it:** An enterprise or organization admin turns on **GitHub Copilot data residency** in Copilot settings and selects the geography (US or EU). It is off until explicitly enabled. Confirm current availability and the exact enablement path with GitHub's account/compliance team.
 
 ## 6️⃣ FedRAMP Positioning
 
-- GitHub Enterprise Cloud has a **FedRAMP Tailored ATO**
-- Do NOT equate FedRAMP Moderate with IL4/IL5
-- Do NOT assume DRUS changes the FedRAMP authorization scope
-- For exact authorization scope, route through GitHub's compliance/account team
+- GitHub Enterprise Cloud has a **FedRAMP Tailored / LI-SaaS (Low) authorization** today (authorized since 2018)
+- **In progress:** GitHub announced (Oct 15, 2024) it is **pursuing FedRAMP Moderate** for GitHub Enterprise Cloud. GitHub Enterprise Cloud with data residency (**GHEC-DR**) is on a FedRAMP Moderate authorization path, and as of April 2026 the underlying Copilot model hosts / infrastructure for US government customers are **FedRAMP Moderate authorized**.
+- Do NOT equate FedRAMP Moderate with IL4/IL5 — **IL4/IL5 remain out of scope** for FedRAMP Moderate
+- Do NOT assume DRUS by itself changes the platform's FedRAMP authorization scope
+- For the exact, current authorization scope, route through GitHub's compliance/account team
 
 ## 🧯 Known Errors & Resolutions
 
@@ -190,12 +198,12 @@ Moving from standard GHEC to DRUS requires:
 
 
 ### Q: The customer assumes DRUS provides FedRAMP Moderate authorization — is that correct?
-**A:** No. DRUS (Data Residency US) provides formal US data residency for covered GitHub platform data. It does not change GitHub's FedRAMP authorization level, which is currently FedRAMP Tailored. Do not equate DRUS with FedRAMP Moderate, GCC High, or IL4/IL5. If the customer requires a specific authorization level, route through GitHub's compliance team for the exact scope. DRUS addresses "where is my data stored," not "what compliance framework is the platform certified under."
+**A:** No. DRUS (Data Residency US) provides formal US data residency for covered GitHub platform data. It does not itself change GitHub's FedRAMP authorization level, which is currently **FedRAMP Tailored / LI-SaaS (Low)**. Note that GitHub announced (Oct 2024) it is **pursuing FedRAMP Moderate** for GitHub Enterprise Cloud, and GHEC-DR is on a FedRAMP Moderate authorization path — but do not assume Moderate is fully in place; confirm the current scope with GitHub's compliance team. Do not equate DRUS with GCC High or IL4/IL5. DRUS addresses "where is my data stored," not "what compliance framework is the platform certified under."
 
 ---
 
 ### Q: The customer thinks data residency means Copilot inference stays in the US — is that true?
-**A:** No. Data residency (DRUS) governs where covered GitHub platform data is stored at rest. Copilot inference geography is separate and is not guaranteed to be US-only by DRUS alone. If the customer needs inference region guarantees, explore Bring Your Own Key (BYOK) options where the customer routes inference through their own API endpoint with a provider that offers region guarantees. Treat inference geography as a provider-by-provider validation exercise, not something DRUS solves.
+**A:** Not automatically. Data residency (DRUS) governs where covered GitHub platform data is stored at rest; it does not by itself pin Copilot inference to the US. The remedy, though, is now a native capability: **GitHub Copilot data residency** (US & EU) went generally available on April 13, 2026. It is an admin-enabled policy (off by default, adds ~10% to the model multiplier) that keeps all inference processing and associated data within the selected geography; for US government customers the underlying model hosts / infrastructure are FedRAMP Moderate authorized. Turn that on for in-region inference. **Bring Your Own Key (BYOK)** remains a secondary option where the customer routes inference through their own API endpoint with a provider that offers region guarantees. The key nuance to convey: region-locked inference is a separate opt-in policy, not something DRUS enables on its own.
 
 ---
 
@@ -220,12 +228,12 @@ Moving from standard GHEC to DRUS requires:
 ---
 
 ### Q: Can we use DRUS for non-US data residency (e.g., EU)?
-**A:** DRUS specifically stands for Data Residency US. GitHub has announced data residency support for additional regions (including the EU). Check the current GitHub data residency documentation for available regions and timelines. The setup process is similar — a dedicated GHE.com subdomain with EMU — but the region is selected at enterprise creation and cannot be changed afterward.
+**A:** Yes. "DRUS" is just this guide's shorthand for the US region; the product itself (**GitHub Enterprise Cloud with data residency** / **GHEC-DR**) is now generally available in multiple regions — **EU** (Azure EU regions plus EFTA countries such as Norway and Switzerland), **Australia**, **US**, and **Japan** — with more planned. Check the current GitHub data residency documentation for the latest region list. The setup process is the same — a dedicated GHE.com subdomain with EMU — but the region is chosen at enterprise creation and **cannot be changed afterward**.
 
 ---
 
 ### Q: The customer conflates DRUS with Azure GCC High — how do I clarify?
-**A:** DRUS and Azure GCC High are entirely different offerings. Azure GCC High is a US government-specific Azure cloud environment meeting IL4/IL5 requirements. DRUS is GitHub's data residency offering that stores covered platform data in the US — it runs on GitHub's own infrastructure, not in Azure GCC High. There is no GitHub equivalent of Azure GCC High. If the customer needs IL4/IL5, the only option is GHES deployed within their own FedRAMP-authorized boundary or GCC High environment.
+**A:** DRUS and Azure GCC High are entirely different offerings. Azure GCC High is a US government-specific Azure cloud environment meeting IL4/IL5 requirements. DRUS is GitHub's data residency offering that stores covered platform data in the US — it runs on GitHub's own infrastructure, not in Azure GCC High. On the cloud authorization front, GitHub is moving: GitHub Enterprise Cloud is **pursuing FedRAMP Moderate** (announced Oct 2024) and GHEC-DR is on a FedRAMP Moderate authorization path — so the "no GitHub cloud equivalent" framing is softening over time. However, **IL4/IL5 remain out of scope for FedRAMP Moderate**. If the customer genuinely needs IL4/IL5 today, the practical option is **GHES** deployed within their own FedRAMP-authorized boundary or GCC High environment. Confirm the current cloud authorization scope with GitHub's compliance/account team before ruling the cloud options in or out.
 
 </details>
 
@@ -253,7 +261,9 @@ Moving from standard GHEC to DRUS requires:
 | GitHub FedRAMP page | [government.github.com](https://government.github.com/fedramp/) |
 | About GHES | [docs.github.com](https://docs.github.com/en/enterprise-server@latest/admin/overview/about-github-enterprise-server) |
 | BYOK for Copilot | [docs.github.com](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-your-own-api-keys) |
+| Copilot data residency (US/EU) GA announcement | [github.blog](https://github.blog/changelog/2026-04-13-copilot-data-residency-in-us-eu-and-fedramp-compliance-now-available/) |
+| GitHub pursuing FedRAMP Moderate (Oct 2024) | [github.com/newsroom](https://github.com/newsroom/press-releases/github-to-pursue-fedramp-moderate) |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

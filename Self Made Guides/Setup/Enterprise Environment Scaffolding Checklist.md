@@ -31,11 +31,12 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Identity:** Enterprise → Settings → Authentication security → Configure SAML/OIDC + SCIM (EMU) or SAML SSO (Standard)
-- **Governance:** Enterprise → Settings → Policies → Set repo visibility defaults, rulesets, Actions policies, PAT policies, App policies
-- **Security:** Org → Settings → Advanced Security → Configurations → Apply recommended config (secret scanning + push protection + CodeQL)
-- **Billing:** Enterprise → Billing and licensing → Payment information → Connect Azure subscription → Create cost centers → Set budgets with alerts
-- **Copilot:** Enterprise → AI controls → Copilot → Enable access → Configure models, content exclusions, custom instructions
+- **Identity (EMU / DRUS):** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → **Add SAML configuration** (or **Enable OIDC configuration** for Entra); create the SCIM token as a **personal access token (classic)** scoped to `scim:enterprise`
+- **Identity (Standard):** Enterprise → **Settings** → **Authentication security** → **SAML single sign-on**
+- **Governance:** Enterprise → **Policies** → set repo visibility defaults (**Member privileges**), **Repository** rulesets, **Actions** policies, **Personal access tokens** policies, **GitHub Apps** policies
+- **Security:** Org → **Settings** → **Advanced Security** → **Configurations** → apply recommended config (secret scanning + push protection + CodeQL)
+- **Billing:** Enterprise → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription** → create cost centers → set budgets with alerts
+- **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** (turn on orgs, assign licenses) → **AI controls** → **Copilot** (policies, **Configure models**, **Content exclusion**) → Org **Settings** → **Copilot** → **Custom instructions**
 
 ---
 
@@ -45,9 +46,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -58,14 +59,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account created (Standard, EMU, or DRUS) | ☐ |
-| Identity model decided (Standard vs EMU vs EMU with Data Residency) | ☐ |
-| IdP admin access (Entra ID, Okta, or PingFederate) | ☐ |
-| Azure Subscription ID for billing | ☐ |
-| Organization structure planned (names, boundaries, team model) | ☐ |
-| Security policy requirements documented (branch rules, secret scanning, code scanning) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud account created (Standard, EMU, or DRUS) | GitHub **enterprise owner** | ☐ |
+| Identity model decided (Standard vs EMU vs EMU with Data Residency) | Enterprise architect + GitHub **enterprise owner** | ☐ |
+| IdP admin access (Entra ID, Okta, or PingFederate) | Entra **Application Administrator, Cloud Application Administrator, or Application Owner** (or the equivalent Okta/Ping admin) | ☐ |
+| Azure subscription for metered billing | Azure **subscription Owner** + tenant-wide admin consent (Entra **Global Administrator** if consent is required) | ☐ |
+| Organization structure planned (names, boundaries, team model) | GitHub **enterprise owner** | ☐ |
+| Security policy requirements documented (branch rules, secret scanning, code scanning) | Security lead + GitHub **enterprise owner** | ☐ |
 
 ---
 
@@ -75,9 +76,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner** | Creates the enterprise/org baseline and opens the provider-specific setup tracks. | GitHub → profile photo → Your enterprises → [enterprise] → Organizations, Policies, Billing and licensing, Identity provider, and Copilot settings → configure baseline controls in the order shown in this checklist. Handoff: enterprise URL, org list, policy decisions, and assigned owners. |
+| **GitHub enterprise owner** | Creates the enterprise/org baseline and opens the provider-specific setup tracks. | GitHub → profile picture → Enterprise → Organizations, Policies, Billing and licensing, Identity provider, and Copilot settings → configure baseline controls in the order shown in this checklist. Handoff: enterprise URL, org list, policy decisions, and assigned owners. |
 | **Microsoft Entra, Okta, or PingFederate admin** | Creates the IdP application, group model, SAML/OIDC settings, and provisioning connection required by the chosen identity model. | Entra: Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User or GitHub Enterprise Cloud - Organization → Single sign-on → Provisioning → Users and groups. Okta: Applications → Browse App Catalog → GitHub app → Sign On → Provisioning → Assignments. PingFederate: Applications → SP Connections → GitHub connector/SP connection → Browser SSO → Outbound Provisioning. Handoff: SSO test, SCIM test, group assignments, and owner list. |
-| **Azure subscription Owner and Entra consent approver** | Completes Azure billing readiness when metered services will be enabled. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner, then Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. If consent is blocked: Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → Approve. Handoff: subscription ID and consent status. |
+| **Azure subscription Owner and Entra consent approver** | Completes Azure billing readiness when metered services will be enabled. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → confirm Owner, then Enterprise path: GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. If consent is blocked: Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → Approve. Handoff: subscription ID and consent status. |
 
 ---
 
@@ -103,11 +104,13 @@ This runbook walks through every major decision and configuration step when stan
 | Feature | Standard Enterprise | EMU | EMU with Data Residency |
 |---------|-------------------|-----|------------------------|
 | **User accounts** | Users create their own github.com accounts | Accounts provisioned and managed by IdP | Same as EMU |
-| **SSO** | SAML SSO (optional per org, required at enterprise) | SAML or OIDC (required) | SAML or OIDC (required) |
+| **SSO** | SAML SSO — optional; configurable per org, or enforced enterprise-wide (enterprise-level overrides org-level) | SAML or OIDC (required) | SAML or OIDC (required) |
 | **SCIM provisioning** | Available at org level with supported IdPs (Entra ID, Okta) — not available at enterprise level | Required — IdP provisions and deprovisions users | Required |
 | **Public repos** | Supported | Not supported | Not supported |
 | **External collaboration** | Users can contribute to any public repo | Restricted — EMU users cannot interact outside the enterprise | Restricted |
 | **Data residency** | No (US-hosted) | No (US-hosted) | Yes — choose region at setup |
+
+> 📌 **OIDC single sign-on for EMU is supported only with Microsoft Entra ID** (it also enables Conditional Access). Okta, PingFederate, and other IdPs use SAML.
 
 > ⚠️ **Important:** The identity model cannot be changed after the enterprise is created. Choose carefully.
 
@@ -141,45 +144,52 @@ Enterprise (one per company)
 
 ### For Standard Enterprise (SAML SSO)
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Authentication security
-  → SAML single sign-on → Enable SAML authentication
-    → Enter IdP Sign-on URL, Issuer, Public certificate
-      → Test SAML configuration → Save
-```
+**Navigate:** Enterprise → **Settings** → **Authentication security** → **SAML single sign-on**
 
-> 💡 **Tip:** Enable SAML at the enterprise level to enforce SSO across all organizations. Org-level SAML is also available but enterprise-level is recommended for consistency.
+1. Check **Enable SAML authentication**.
+2. Enter the IdP **Sign on URL**, **Issuer**, and **Public certificate**; choose the **Signature Method** and **Digest Method** (SHA-256 recommended).
+3. Click **Test SAML configuration** and complete the IdP round-trip — the test must pass before you can save.
+4. Click **Save**.
+5. When ready to enforce, check **Require SAML authentication** and **Save** again, then **Download**, **Print**, or **Copy** the SSO recovery codes and store them securely.
+
+> 💡 **Tip:** Enable SAML at the enterprise level to enforce SSO across all organizations. Org-level SAML is also available but enterprise-level SAML overrides org-level and is recommended for consistency.
+
+> 📌 **Constraint:** This **Authentication security → Require SAML authentication** flow is correct for **Standard Enterprise only**. EMU uses the **Identity provider** path below and has no "Require SAML authentication" checkbox.
 
 ### For EMU (SAML/OIDC + SCIM)
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** (the setup user) · **📍 Portal:** GitHub + your IdP
 
-```
-Enterprise → Settings → Authentication security
-  → Configure SAML or OIDC (depending on IdP)
-    → Enable SCIM provisioning
-      → Generate SCIM token → Configure in your IdP
-```
+> 🔐 **Sign in as the setup user first.** All EMU identity setup is done while signed in as the setup user (enterprise **shortcode** + `_admin`, e.g. `octocorp_admin`) in a private/incognito window. Enable 2FA immediately and save the personal 2FA recovery codes — every setup-user sign-in requires a 2FA challenge or an enterprise recovery code.
+
+**Navigate (SSO):** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration**
+
+1. Under **SAML single sign-on**, click **Add SAML configuration** (or, for Microsoft Entra, select **Enable OIDC configuration** under **OIDC single sign-on**).
+2. For SAML, enter the **Sign on URL**, **Issuer**, and **Public Certificate**, and choose the **Signature Method** and **Digest Method** (SHA-256 recommended).
+3. Click **Test SAML configuration** — it must pass before you can save.
+4. Click **Save SAML settings** (OIDC: click **Save**, complete the Entra Global Administrator consent, then **Enable OIDC Authentication**).
+5. Immediately **Download**, **Print**, or **Copy** the enterprise **SSO recovery codes** and store them securely.
+
+> 📌 **OIDC single sign-on for EMU is supported only with Microsoft Entra ID** (it also enables Conditional Access). Okta, PingFederate, and other IdPs use SAML.
+
+> 🔐 **SCIM token:** create the SCIM token as a **personal access token (classic)** with only the `scim:enterprise` scope (**No expiration** recommended) while signed in as the setup user, under **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**. Copy it immediately (shown once) and paste it into the IdP provisioning connection. There is no "Enable SCIM provisioning" toggle on the GitHub side.
 
 | Step | Action |
 |------|--------|
-| **1. Configure SSO** | Set up SAML or OIDC in your IdP (Entra ID, Okta, PingFederate) |
-| **2. Enable SCIM** | Configure SCIM provisioning in your IdP using the enterprise SCIM endpoint |
+| **1. Configure SSO** | Set up SAML (any supported IdP) or OIDC (Entra only) via **Identity provider → Single sign-on configuration** as above |
+| **2. Configure SCIM** | Paste the `scim:enterprise` classic PAT into your IdP's provisioning connection, using the enterprise SCIM tenant URL (`https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}`) |
 | **3. Provision users** | Assign users and groups in your IdP — they will be auto-created in GitHub |
 | **4. Map groups to teams** | IdP groups map to GitHub teams for repository access |
 
 ### Guest Collaborators (EMU)
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** + IdP admin · **📍 Portal:** GitHub + your IdP
 
-```
-Enterprise → Settings → Policies → Guest collaborators
-  → Enable guest collaborators → Configure invitation policies
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies**
 
-> 💡 **Tip:** Guest collaborators allow external users (contractors, partners) to access specific repositories in an EMU enterprise without being provisioned through the IdP.
+> 💡 **Tip:** Guest collaborators let external users (contractors, partners) work on a limited set of repositories in an EMU enterprise. They **are still provisioned through the IdP** — the identity provider assigns the **guest collaborator** role to a managed user (an Entra app-manifest role or an Okta profile-editor role) and the user is created via SCIM. There is no GitHub-side invitation flow. The enterprise-side control lives under the top-level **Policies** tab, which governs whether org and repo admins may add collaborators.
 
 ---
 
@@ -187,13 +197,12 @@ Enterprise → Settings → Policies → Guest collaborators
 
 ### A) Default Repository Visibility
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Policies → Repository creation
-  → Set default visibility (Private recommended)
-  → Restrict which visibility levels members can choose
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **Member privileges**
+
+1. Under **Repository creation**, set the default visibility (**Private** recommended) and restrict which visibility levels members may choose.
+2. Click **Save**.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -205,12 +214,13 @@ Enterprise → Settings → Policies → Repository creation
 
 ### B) Repository Rulesets
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Policies → Repository rulesets
-  → New ruleset
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **Repository** → **Rulesets**
+
+1. Click **New ruleset** and choose a **branch** or **tag** ruleset.
+2. Configure the rules (see the table below) and set **Enforcement status** to **Active**.
+3. Click **Create**.
 
 | Ruleset Type | Recommended Rules |
 |-------------|-------------------|
@@ -223,12 +233,12 @@ Enterprise → Settings → Policies → Repository rulesets
 
 ### C) Actions Policies
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Policies → Actions
-  → Configure allowed actions and workflows
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **Actions**
+
+1. Configure the allowed actions and workflows (see the table below).
+2. Click **Save**.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -240,12 +250,12 @@ Enterprise → Settings → Policies → Actions
 
 ### D) Personal Access Token (PAT) Policies
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Policies → Personal access tokens
-  → Configure PAT policies
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **Personal access tokens**
+
+1. Configure the fine-grained and classic PAT policies (see the table below).
+2. Click **Save** for each policy you change.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -257,12 +267,12 @@ Enterprise → Settings → Policies → Personal access tokens
 
 ### E) GitHub App Governance
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Policies → GitHub Apps
-  → Configure app installation policies
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **GitHub Apps**
+
+1. Configure the app installation and approval policies (see the table below).
+2. Click **Save**.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -275,12 +285,12 @@ Enterprise → Settings → Policies → GitHub Apps
 
 ### A) Enable Security Configurations at Scale
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** (or security manager) · **📍 Portal:** GitHub
 
-```
-Organization → Security (sidebar) → Assessments
-  → Get started → For all repositories (or Configure in settings)
-```
+**Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
+
+1. Apply the **GitHub recommended** security configuration, or click **New configuration** to build your own.
+2. Choose the scope — **All repositories** or a pilot set — and click **Apply**.
 
 > 💡 **Tip:** Use the Organization-level Security Configurations to apply consistent security settings across all repos. See the [GitHub Secret Protection Enablement Runbook](../Security/Secret%20Protection%20Enablement.md) for detailed steps.
 
@@ -288,14 +298,14 @@ Organization → Security (sidebar) → Assessments
 
 ### B) Secret Scanning + Push Protection
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** (or security manager) · **📍 Portal:** GitHub
 
-```
-Organization → Settings → Advanced Security → Configurations
-  → Create or edit configuration
-    → Secret Protection → Enable
-    → Push Protection → Enable
-```
+**Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
+
+1. Create or edit a configuration.
+2. Under **GitHub Secret Protection**, set **Secret scanning** to **Enabled**.
+3. Set **Push protection** to **Enabled**.
+4. Click **Save configuration** and apply it to the target repositories.
 
 | Feature | Description |
 |---------|-------------|
@@ -307,14 +317,14 @@ Organization → Settings → Advanced Security → Configurations
 
 ### C) Code Scanning with CodeQL
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** (or security manager) · **📍 Portal:** GitHub
 
-```
-Organization → Settings → Advanced Security → Configurations
-  → Create or edit configuration
-    → Code Security → Enable
-    → Code scanning → CodeQL → Enable default setup
-```
+**Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
+
+1. Create or edit a configuration.
+2. Under **GitHub Code Security**, set **Code scanning** to **Enabled**.
+3. Enable **CodeQL default setup** for the supported languages.
+4. Click **Save configuration** and apply it to the target repositories.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -328,12 +338,15 @@ Organization → Settings → Advanced Security → Configurations
 
 ### A) Connect Azure Subscription or EA Billing
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** + Azure **subscription Owner** + tenant-wide admin consent · **📍 Portal:** GitHub + Microsoft
 
-```
-Enterprise → Billing and licensing → Payment information
-  → Connect Azure subscription (or configure EA billing)
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Billing and licensing** → **Payment information** → scroll to **Metered billing via Azure**
+
+1. Click **Add Azure Subscription**.
+2. Sign in to Microsoft, review **Permissions requested**, and click **Accept**.
+3. On **Select a subscription**, choose the subscription, check the confirmation box, and click **Connect**.
+
+> 📌 **Constraint:** A **billing manager** cannot connect a subscription — connecting requires a GitHub **enterprise owner**. (Enterprise Agreement customers configure EA billing with their GitHub account team instead.)
 
 > ⚠️ **Important:** An Azure subscription or Enterprise Agreement must be connected before any paid features (Secret Protection, Code Security, Copilot) can be enabled at scale.
 
@@ -341,12 +354,13 @@ Enterprise → Billing and licensing → Payment information
 
 ### B) Create Cost Centers
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** (or billing manager) · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Cost centers
-  → New cost center → Name → Assign organizations, repositories, or users
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Billing and licensing** → **Cost centers**
+
+1. Click **New cost center** and enter a **Name**.
+2. Assign the organizations, repositories, or users that should carry the spend.
+3. Click **Create**.
 
 | Cost Center Example | Assigned To |
 |--------------------|-------------|
@@ -358,13 +372,14 @@ Enterprise → Billing and licensing → Cost centers
 
 ### C) Set Budgets and Hard Stops
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** (or billing manager) · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Budgets and alerts
-  → New budget → Set amount → Assign to cost center
-    → Configure alerts (50%, 75%, 100% thresholds)
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Billing and licensing** → **Budgets and alerts**
+
+1. Click **New budget** and set the amount.
+2. Assign the budget to a cost center, organization, or the whole enterprise.
+3. Enable budget alerts — GitHub automatically emails account owners and billing managers as spending approaches and reaches the budget limit; set the budget amount and, if desired, a hard limit that blocks further usage.
+4. Click **Create**.
 
 > 💡 **Tip:** Set spending alerts well below your actual budget so you have time to react before hitting limits.
 
@@ -372,51 +387,59 @@ Enterprise → Billing and licensing → Budgets and alerts
 
 ## 7️⃣ Enable Copilot
 
-### A) Configure Copilot Access
+### A) Turn Copilot On and Assign Licenses
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Access
-  → Enable for: All organizations / Selected organizations
-    → Assign seats: All members / Selected members
-```
+**Navigate:** your enterprise (EMU accounts: profile picture → **Enterprise**; standard accounts: **Enterprises** page → *[enterprise]*) → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
+
+1. Next to **Organization access**, choose all organizations or **Allow for specific organizations** — for specific ones, click the **Organizations** tab and set each organization's **Copilot** dropdown to **Enabled**. *(Applies immediately — there is no Save button.)*
+2. To license people directly (Copilot Business): click the **All members** or **Enterprise Teams** tab → **Assign licenses** → search → **Add licenses**. Set the **Policies for enterprise-assigned users** policy (step B) first.
+3. Or let organization owners assign seats: org **Settings** → **Copilot** → **Access** → **Start adding seats**.
+
+> 💡 Enterprise-level Copilot Business management is generally available, and **enterprise teams are GA** (since June 2026) — license a team and people gain or lose Copilot as they join or leave it.
 
 ---
 
-### B) Set Model Policies
+### B) Set Copilot Policies and Models
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Models
-  → Enable or disable specific models
-```
+**Navigate:** your enterprise → **AI controls** → **Copilot** *(sidebar)*
+
+1. On the **Copilot** page, set administration, privacy, model, billing, and usage policies — for each dropdown choose **Enabled**, **Disabled**, or **No policy** (lets organization owners decide).
+2. Click **Configure models**, then set each model to **Enabled**, **Disabled**, or **Delegate** (lets organizations decide).
+3. Under "Features & clients", click **Configure features & clients** to set feature and client policies. Use the **Agents** and **MCP** sidebar pages for agent and MCP policies.
+
+> 📌 Policy and model selections apply immediately — there is no Save button.
 
 ---
 
 ### C) Configure Content Exclusions
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** (whole enterprise) or **organization owner** (one organization) · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Content exclusions
-  → Add exclusion rules (by repository or file path patterns)
-```
+**Navigate (enterprise):** your enterprise → **AI controls** → **Copilot** → **Content exclusion**
+**Navigate (organization):** org **Settings** → **Copilot** → **Content exclusion**
 
-> 💡 **Tip:** Use content exclusions to prevent Copilot from accessing sensitive files (e.g., `**/*.env`, `**/secrets/**`).
+1. Open **Content exclusion**.
+2. Enter the repositories and paths to exclude, one pattern per line — for example, `"*":` followed by `- "**/.env"` excludes every `.env` file everywhere.
+3. Save your changes.
+
+> 💡 **Tip:** Use content exclusions to keep Copilot away from sensitive files (e.g., `**/*.env`, `**/secrets/**`).
 
 ---
 
 ### D) Custom Instructions
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Custom instructions
-  → Add coding guidelines, style rules, or organizational standards
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Custom instructions**
 
+1. Under **Preferences and instructions**, write your coding guidelines, style rules, or organizational standards in plain language.
+2. Click **Save changes**.
+
+> 📌 Custom instructions are set per **organization** — there's no enterprise-wide setting. They apply to Copilot Chat, Copilot code review, and Copilot cloud agent on GitHub.com.
 ---
 
 ## 8️⃣ Validation Checklist
@@ -489,7 +512,7 @@ Enterprise → AI controls → Copilot → Custom instructions
 ---
 
 ### Q: Enterprise policies I set are not cascading to organizations as expected — what is happening?
-**A:** Enterprise policies have three modes: **Enforced** (applies to all orgs, cannot be overridden), **Allowed** (org owners can enable/disable within the enterprise's allowed range), and **No policy** (fully delegated to org owners). If you set a policy at the enterprise level but org owners can still override it, you likely chose "Allow" or "No policy" instead of "Enforce." Navigate to Enterprise > Settings > Policies and check the enforcement level for each policy. Rulesets set at the enterprise level always cascade and cannot be overridden.
+**A:** For most enterprise policies you either pick a specific setting — which is then enforced on every organization, so org owners can't change it — or leave the policy at **No policy**, which lets each organization owner decide. Some policies offer options that only limit what org owners can choose (for example, which repository visibilities members can create). If org owners can still change something, the enterprise policy is probably at **No policy**. Go to your enterprise → **Policies** (a top-of-page tab, not under **Settings**), open the relevant policy page, and check its value. Enterprise rulesets are layered on top of organization and repository rules — org-level rules can't relax them — but anyone on a ruleset's bypass list can still bypass it.
 
 ---
 
@@ -499,7 +522,7 @@ Enterprise → AI controls → Copilot → Custom instructions
 ---
 
 ### Q: How should we handle cost allocation across multiple business units?
-**A:** Use GitHub's Cost Centers feature (Enterprise > Billing and licensing > Cost centers). Create a cost center for each business unit or department and assign the organizations, repositories, or users that should carry that spend. User-scoped cost centers are especially useful for Copilot seats and premium requests; repository-scoped cost centers are useful for repository-driven metered usage such as Actions. Set budgets with alerts at 50%, 75%, and 100% thresholds to prevent surprise overages.
+**A:** Use GitHub's Cost Centers feature (Enterprise → **Billing and licensing** → **Cost centers**). Create a cost center for each business unit or department and assign the organizations, repositories, or users that should carry that spend. User-scoped cost centers are especially useful for Copilot seats and metered AI usage — as of 2026-06-01 GitHub Copilot moved to usage-based billing, so Copilot consumption is now measured in **GitHub AI Credits** rather than the former "premium requests." Repository-scoped cost centers are useful for repository-driven metered usage such as Actions. Enable budget alerts — GitHub automatically emails account owners and billing managers as spending approaches and reaches the budget limit; set the budget amount and, if desired, a hard limit that blocks further usage.
 
 ---
 
@@ -530,4 +553,4 @@ Enterprise → AI controls → Copilot → Custom instructions
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

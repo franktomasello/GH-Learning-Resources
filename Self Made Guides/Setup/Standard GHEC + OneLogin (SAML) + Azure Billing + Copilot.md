@@ -12,7 +12,7 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)](#1-create--secure-the-scim-setup-user-standard-non-emu)
-- [2️⃣ Create the OneLogin Application (GitHub Enterprise Cloud – Organization)](#2-create-the-onelogin-application-github-enterprise-cloud--organization)
+- [2️⃣ Create the OneLogin Application (GitHub Organization Connector)](#2-create-the-onelogin-application-github-organization-connector)
 - [3️⃣ Configure SAML (GitHub ↔ OneLogin Values)](#3-configure-saml-github--onelogin-values)
 - [4️⃣ Enable & Test SAML SSO in GitHub](#4-enable--test-saml-sso-in-github)
 - [5️⃣ Enforce SAML SSO for the Organization (Required)](#5-enforce-saml-sso-for-the-organization-required)
@@ -35,11 +35,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **OneLogin:** Applications → Add App → "GitHub Enterprise Cloud - Organization" → Configuration tab → Enter org slug → SSO tab → Capture SAML 2.0 Endpoint, Issuer URL, X.509 cert
-- **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste OneLogin values → Test → Save → Enforce SAML SSO
-- **SCIM:** Sign in as setup user → Org Settings → Authentication security → Generate SCIM token → OneLogin App → Provisioning → Enter SCIM URL + token
-- **Billing:** Org/Enterprise → Billing and licensing → Payment information → Add Azure Subscription → Accept → Connect
-- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+- **OneLogin:** **Applications** → **Add App** → add the GitHub organization connector from the OneLogin catalog → **Configuration** tab → enter org slug → **SSO** tab → capture **SAML 2.0 Endpoint**, **Issuer URL**, **X.509 Certificate**
+- **GitHub:** **Organization** → **Settings** → **Authentication security** → **SAML single sign-on** → paste OneLogin values → **Test SAML configuration** → **Save** → **Require SAML SSO authentication for all members**
+- **SCIM (optional):** Sign in as the setup user with an active SAML session → launch the OneLogin GitHub-org provisioning flow → in GitHub click **Grant** next to your org, then **Authorize** the SCIM OAuth app → in OneLogin enable **Create / Update / Deactivate users** (there is no GitHub-generated SCIM token to paste)
+- **Billing:** **Enterprise** (or **Organization**) → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription** → **Accept** → check consent box → **Connect**
+- **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** → turn on the org → **AI controls** → **Copilot** (enterprise policies) → Org **Settings** → **Copilot** → **Policies** / **Models** → **Access** → **Start adding seats** (or the enterprise **Manage** page → **Assign licenses**)
 
 ---
 
@@ -49,9 +49,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -85,7 +85,7 @@ This guide walks through setting up **Standard (non-EMU) GitHub Enterprise Cloud
 | (If applicable) GitHub Enterprise account | Enterprise Owner | Needed only if you will configure Enterprise SAML and/or Enterprise Copilot policies |
 | OneLogin Admin access | OneLogin Admin | Must be able to install and configure apps in the OneLogin admin portal |
 | Pilot users/groups in OneLogin | IAM team | Use a small pilot cohort first to reduce risk |
-| Dedicated GitHub "SCIM setup user" | Org Owner | GitHub recommends a dedicated user to generate the SCIM API token used by OneLogin |
+| Dedicated GitHub "SCIM setup user" | Org Owner | A stable org owner who **authorizes** the OneLogin SCIM OAuth app; org SCIM then acts on behalf of this user. GitHub does **not** issue a SCIM token here (org SCIM is OAuth-based, not token-based). Optional — SCIM is optional for Standard GHEC |
 | Azure subscription + ability to consent | Azure admin | Needed to connect metered billing via Azure. If subscription is in a different tenant, you may need to specify a different tenant ID during connection |
 | Copilot plan decision | Enterprise/Org owner | Copilot Business vs Copilot Enterprise |
 
@@ -95,10 +95,10 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **OneLogin administrator** | Creates the GitHub SAML app and configures provisioning if OneLogin SCIM is used. | OneLogin Admin Portal → Applications → Applications → Add App → search GitHub or SAML Custom Connector → Add → Configuration → enter GitHub org SAML URLs → SSO → copy SAML 2.0 Endpoint, Issuer URL, and X.509 Certificate → Provisioning → enable provisioning and enter GitHub SCIM base URL/token if used → Save. Handoff: SAML values, provisioning status, and assigned pilot users/groups. |
-| **GitHub organization owner or dedicated SCIM setup user** | Enables GitHub org SAML and provides the SCIM token for OneLogin provisioning when used. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste OneLogin Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → Organization Settings → Authentication security → SCIM provisioning → Generate token. Handoff: SAML test success, SCIM token, Tenant URL, and recovery codes. |
+| **OneLogin administrator** | Creates the GitHub SAML app and configures provisioning if OneLogin SCIM is used. | OneLogin Admin Portal → Applications → Applications → Add App → search GitHub or SAML Custom Connector → Add → Configuration → enter GitHub org SAML URLs → SSO → copy SAML 2.0 Endpoint, Issuer URL, and X.509 Certificate → Provisioning → launch the GitHub OAuth authorization and enable Create/Update/Deactivate users if used → Save. Handoff: SAML values, provisioning status, and assigned pilot users/groups. |
+| **GitHub organization owner or dedicated SCIM setup user** | Enables GitHub org SAML and authorizes the OneLogin SCIM OAuth app for provisioning when used. | GitHub → profile picture → **Organizations** → *[org]* → **Settings** → **Authentication security** → **SAML single sign-on** → **Enable SAML authentication** → paste OneLogin **Sign on URL**, **Issuer**, and **Public Certificate** → **Test SAML configuration** → **Save**. For SCIM (optional): with an active SAML session, launch the OneLogin provisioning flow and, when GitHub shows the org, click **Grant** then **Authorize** the SCIM OAuth app. Handoff: SAML test success, SCIM authorization confirmed, and recovery codes. |
 | **OneLogin group or role owner** | Maintains app assignments and role mappings. | OneLogin Admin Portal → Users → Roles or Groups → [role/group] → Users → add users, then Applications → [GitHub app] → Users → confirm assignment. Handoff: assigned role/group and pilot users. |
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -106,44 +106,38 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 1️⃣ Create & Secure the "SCIM Setup User" (Standard non-EMU)
 
-> ⚠️ **Important:** This user is required because OneLogin's GitHub SCIM provisioning uses an API token generated from a GitHub user account. If that user loses access or leaves the org, SCIM can stop working—so you want a stable, dedicated identity.
+> **👤 Role:** Org Owner · **📍 Portal:** GitHub + OneLogin
+
+> ⚠️ **Important:** If you use org SCIM, provisioning acts on behalf of the GitHub user who **authorizes** OneLogin's SCIM OAuth app (org SCIM is OAuth-based — GitHub does **not** generate an API token here). If that user loses access or leaves the org, SCIM can stop working, so use a stable, dedicated identity as the authorizer. (SCIM is optional for Standard GHEC.)
 
 ### Process
 
 1. Create a dedicated GitHub.com account (example: `gh-onelogin-scim@yourdomain.com`)
 2. **Secure the account:**
-    - Enable 2FA
+    - Enable **2FA**
     - Ensure recovery methods are stored per your approved process (vault / break-glass)
-3. **Add the setup user to your GitHub organization as an Owner:**
-    - GitHub → your Organization → Settings → People → Invite member
-    - After accepted → set role to Owner
-4. **Assign this same identity in OneLogin** to the GitHub app (so it can SSO and be used to generate SCIM credentials)
+3. **Add the setup user to your GitHub organization as an Owner:** GitHub → **Organizations** → *[org]* → **Settings** → **People** → **Invite member**; after the invite is accepted, set the role to **Owner**
+4. **Assign this same identity in OneLogin** to the GitHub app (so it can SSO and be used to authorize the SCIM OAuth app)
 
 ### Important Notes
 
 > 📌 **Note:** This setup user will consume a GitHub license. Treat it as a system account: minimal use outside of IAM configuration.
 
-## 2️⃣ Create the OneLogin Application (GitHub Enterprise Cloud – Organization)
+## 2️⃣ Create the OneLogin Application (GitHub Organization Connector)
 
-### Navigation (OneLogin)
+> **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin
 
-```
-OneLogin Admin Portal
-  → Applications
-    → Add App
-      → Search: "GitHub Enterprise Cloud - Organization"
-        (or "GitHub Organization")
-          → Select and Add
+**Navigate:** OneLogin Admin Portal → **Applications** → **Add App** → search the GitHub organization connector
 
-```
+> 💡 **Tip:** Verify the current OneLogin connector name and its SCIM authentication method against OneLogin's own GitHub connector documentation — catalog names change over time. GitHub presents the OAuth app as **GitHub Enterprise Cloud - Organization** during authorization, but the OneLogin catalog entry may be labeled differently.
 
 ### Configuration Steps
 
-1. **Select the OneLogin catalog app:** `GitHub Enterprise Cloud - Organization`
+1. **Select the GitHub organization connector** from the OneLogin catalog.
     - ⚠️ Do NOT use "GitHub Enterprise Managed User" (that is for EMU)
 2. **Fill in required fields:**
-    - In the app → **Configuration** tab → enter your GitHub organization name (org slug)
-    - Application label / display name (unique name in OneLogin)
+    - In the app, open the **Configuration** tab and enter your GitHub organization name (org slug)
+    - Set the application label / display name (a unique name in OneLogin)
 3. **Assign the app to:**
     - The SCIM setup user
     - Your pilot user/group
@@ -159,6 +153,8 @@ In the OneLogin app:
     - **X.509 Certificate** (click View Details to download the public cert)
 
 ## 3️⃣ Configure SAML (GitHub ↔ OneLogin Values)
+
+> **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin (using GitHub SP values)
 
 ### GitHub Org SAML Values (for reference when configuring OneLogin)
 
@@ -181,6 +177,8 @@ Replace `YOUR_ORG` with your actual GitHub organization slug.
 
 ## 4️⃣ Enable & Test SAML SSO in GitHub
 
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
+
 You will configure **Organization SAML** (always for the target org).
 
 If your org is under an Enterprise account, you may also configure **Enterprise SAML**.
@@ -189,39 +187,31 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 ### 4A — (Conditionally Required) Configure Enterprise SAML
 
+> **👤 Role:** Enterprise Owner · **📍 Portal:** GitHub
+
 **When this step is required:**
 
-- If you are a GitHub Enterprise (enterprise account) customer and intend to require SAML at the enterprise level, complete this before org enforcement. **Enterprise SAML completely replaces org-level SAML configuration and enforces SAML SSO for every organization in the enterprise.**
+- If you are a GitHub Enterprise (enterprise account) customer and intend to require SAML at the enterprise level, complete this before org enforcement. **Enterprise SAML completely replaces (overrides) all org-level SAML configuration and enforces SAML SSO for every organization in the enterprise.**
 
-**Navigation Path (GitHub UI)**
-
-```
-GitHub (top-right profile picture)
-  → Enterprises
-    → [Select enterprise]
-      → Settings
-        → Authentication security
-          → SAML single sign-on
-
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Configuration Steps**
 
-1. In Enterprise settings → Authentication security → SAML single sign-on
-2. Enable / configure SAML per GitHub's enterprise SAML documentation (OneLogin values differ from org app)
+1. Under **SAML single sign-on**, enable and configure SAML. Enterprise-level SP values use the **enterprise slug** (they differ from the org values in Step 3):
+    - **Entity ID / Audience:** `https://github.com/enterprises/YOUR_ENTERPRISE`
+    - **ACS URL:** `https://github.com/enterprises/YOUR_ENTERPRISE/saml/consume`
+    - **Sign-on URL:** `https://github.com/enterprises/YOUR_ENTERPRISE/sso`
+2. Paste the OneLogin **Sign on URL**, **Issuer**, and **Public Certificate** (from a OneLogin app configured with the enterprise SP values above).
+3. Click **Test SAML configuration** and complete the auth flow.
+4. Click **Save**.
+
+> 📌 **Constraint:** Enabling enterprise SAML overrides all org-level SAML config for organizations in the enterprise.
 
 ### 4B — Enable & Test Organization SAML (Required)
 
-**Navigation Path (GitHub UI)**
+> **👤 Role:** Org Owner · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
+**Navigate:** Profile picture → **Organizations** → *[your org]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Configuration Steps (Organization SAML)**
 
@@ -232,8 +222,7 @@ GitHub (top-right profile picture)
     - **Public Certificate** — OneLogin X.509 Certificate
 3. Click **Test SAML configuration** (or equivalent prompt) and complete the auth flow
 4. Click **Save**
-5. **Immediately download and secure SSO recovery codes:**
-    - Organization Settings → Authentication security → Single sign-on recovery codes
+5. **Immediately download and secure SSO recovery codes:** **Organization** → **Settings** → **Authentication security** → under **SAML single sign-on**, click **Save your recovery codes** → **Download**
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
@@ -241,16 +230,9 @@ GitHub (top-right profile picture)
 
 > ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
 
-### Navigation Path (GitHub UI)
+> **👤 Role:** Org Owner · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
+**Navigate:** Profile picture → **Organizations** → *[your org]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 ### Enforcement Steps
 
@@ -266,67 +248,51 @@ GitHub (top-right profile picture)
 
 ## 6️⃣ Configure SCIM Provisioning (OneLogin → GitHub Organization)
 
-> 💡 **Tip:** OneLogin supports SCIM provisioning for GitHub organizations via an API token. You generate a SCIM token from GitHub org settings and enter it into OneLogin's provisioning configuration.
+> 💡 **Tip:** SCIM is **optional** for Standard GHEC and is scoped to the organization. Org SCIM works through a **third-party OAuth app** that the IdP owns and that a specific GitHub user **authorizes** — GitHub does **not** generate a SCIM API token or bearer token for you to paste. Provisioning then acts on behalf of the authorizing user.
 
-### 6A — Generate SCIM Credentials in GitHub (Required)
+> 📌 **Constraint:** GitHub publishes dedicated SCIM setup tutorials only for **Okta** and **Entra ID**. OneLogin is a supported IdP, but for the connector-specific steps follow OneLogin's own GitHub connector documentation.
 
-1. Sign into GitHub as the SCIM setup user
-2. Navigate to your organization's SAML settings:
+### 6A — Establish an Active SAML Session (GitHub)
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
+> **👤 Role:** SCIM setup user (Org Owner) · **📍 Portal:** GitHub
 
-```
+1. Sign in to GitHub as the SCIM setup user.
+2. Establish an active SAML SSO session for the org by visiting `https://github.com/orgs/YOUR_ORG/sso` and authenticating via OneLogin. (Replace `YOUR_ORG` with your org slug.)
 
-3. Under SCIM provisioning, generate or locate the SCIM API token
-4. Copy the SCIM base URL and bearer token — you will need these for OneLogin
+### 6B — Authorize the SCIM OAuth App (GitHub)
 
-### 6B — Enable Provisioning in OneLogin (Required)
+> **👤 Role:** SCIM setup user (Org Owner) · **📍 Portal:** GitHub (launched from OneLogin)
 
-**Navigation (OneLogin)**
+1. From the OneLogin GitHub-organization app's provisioning setup, launch the GitHub authorization flow.
+2. When GitHub shows your organization, click **Grant** to the right of your organization's name.
+3. Click **Authorize** to authorize the SCIM OAuth app on behalf of the setup user.
 
-```
-OneLogin Admin Portal
-  → Applications
-    → [Your "GitHub Enterprise Cloud - Organization" app]
-      → Provisioning
+> 🔐 **Security:** The OAuth authorization is bound to the setup user's active SAML session and identity. Keep this a stable, dedicated org owner — if that account is deactivated, provisioning breaks.
 
-```
+### 6C — Enable Provisioning Actions in OneLogin (Required)
 
-**Steps**
+> **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin
 
-1. Click **Enable provisioning**
-2. Enter the SCIM credentials from GitHub:
-    - SCIM Base URL
-    - SCIM Bearer Token (API token from Step 6A)
-3. Configure provisioning actions:
-    - Create users
-    - Update users
-    - Deactivate users
-4. Click **Save**
+**Navigate:** OneLogin Admin Portal → **Applications** → *[your GitHub organization app]* → **Provisioning**
 
-### 6C — Configure Provisioning Mappings (Required)
+1. Enable **Create users**.
+2. Enable **Update users**.
+3. Enable **Deactivate users**.
+4. Click **Save**.
 
-1. In the OneLogin app → **Provisioning** or **Parameters**
-2. Keep mappings aligned to GitHub's SCIM guidance; avoid custom attributes until the base flow is stable
-3. Ensure NameID / email mapping is consistent between SAML and SCIM
+> 💡 **Tip:** OneLogin's exact provisioning UI (labels and whether authorization is launched from this tab) can vary by connector version — verify against OneLogin's current GitHub connector docs.
+
+### 6D — Configure Provisioning Mappings (Required)
+
+1. In the OneLogin app, open **Provisioning** or **Parameters**.
+2. Keep mappings aligned to GitHub's SCIM guidance; avoid custom attributes until the base flow is stable.
+3. Ensure NameID / email mapping is consistent between SAML and SCIM.
 
 ## 7️⃣ Assign Users & Groups
 
-**Navigation Path (OneLogin)**
+> **👤 Role:** OneLogin Admin · **📍 Portal:** OneLogin
 
-```
-OneLogin Admin Portal
-  → Applications
-    → [Your "GitHub Enterprise Cloud - Organization" app]
-      → Users
-        → Add users or groups
-
-```
+**Navigate:** OneLogin Admin Portal → **Applications** → *[your GitHub organization app]* → **Users** → **Add users or groups**
 
 **Steps**
 
@@ -341,131 +307,128 @@ OneLogin Admin Portal
 
 **Required if you are billing via Azure**
 
+> **👤 Role:** GitHub Enterprise Owner (or Org Owner for org-level) + Azure Subscription Owner · **📍 Portal:** GitHub → Azure
+
 ### Prerequisites
 
-- ✓ You are an Owner of the GitHub org or enterprise account you are connecting
+- ✓ You are an **owner** of the GitHub enterprise (for enterprise-level) or the GitHub org (for org-level) you are connecting. A **billing manager** cannot connect a subscription at the enterprise level
 - ✓ You know the Azure subscription ID
 - ✓ You are logged into Azure with a user who can provide tenant-wide admin consent (or you have an admin-consent workflow)
 - ✓ **If the Azure subscription is in a different tenant than your default, you may need to specify a different tenant ID during connection**
 
 ### Configuration Steps (GitHub)
 
-**Navigation Path:**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription** _(org-level: **Organizations** → *[org]* → **Settings** → **Billing and licensing** → **Payment information**)_
+
+**Copy-paste entry points:**
 
 ```
-GitHub
-  → Your org or enterprise settings entry point
-    → Org list: https://github.com/settings/organizations
-    → Enterprise list: https://github.com/settings/enterprises
-      → Open the target org/enterprise
-        → Billing and licensing
-          → Payment information
-            → Metered billing via Azure
-              → Add Azure Subscription
-
+Org list:        https://github.com/settings/organizations
+Enterprise list: https://github.com/settings/enterprises
 ```
 
 **Process:**
 
-1. Navigate to your org or enterprise settings entry point:
-    - Org list: `https://github.com/settings/organizations`
-    - Enterprise list: `https://github.com/settings/enterprises`
-2. Open the target org/enterprise
-3. Click **Billing and licensing:**
-    - For orgs: in the left sidebar under settings (label can vary slightly by UI)
-    - For enterprises: a top-level tab
-4. Click **Payment information**
-5. Scroll to the bottom. To the right of **Metered billing via Azure**, click:
-    - **Add Azure Subscription**
-6. Sign in to Microsoft when prompted
-7. On **Permissions requested**, click **Accept** (or follow admin approval flow if required)
-8. Under **Select a subscription**, pick the Azure Subscription ID
-9. Click **Connect**
+1. Open the target org/enterprise from the entry point above.
+2. Click **Billing and licensing** (a top-level tab for enterprises; in the left sidebar under **Settings** for orgs).
+3. Click **Payment information**.
+4. Scroll to the bottom. To the right of **Metered billing via Azure**, click **Add Azure Subscription**.
+5. Sign in to Microsoft when prompted.
+6. On **Permissions requested**, click **Accept** (or follow the admin approval flow if required).
+7. Under **Select a subscription**, pick the Azure Subscription ID.
+8. Check the confirmation/consent box acknowledging the billing relationship (**Connect** stays disabled until it is checked).
+9. Click **Connect**.
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
 
 ## 9️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
-### 9A — (Conditionally Required) Enable Copilot at the Enterprise level via Payment Verification
+If your organization belongs to an enterprise account (the usual GHEC setup), set up Copilot in this order: **9A** turn Copilot on for the organization, **9B** set enterprise policies, **9C** set organization policies, then give people seats with **9D** (organization) and/or **9E** (enterprise).
 
-**When this step is required:**
+> 📌 **Where things live:** organization access and licenses are under the enterprise's **Billing and licensing → Licensing**; enterprise policies are under **AI controls**; organization policies and seats are under the organization's **Settings → Copilot**. Selections on these pages apply immediately — there is **no Save button**.
 
-- If you manage Copilot through an enterprise account, GitHub's setup flow enables Copilot via enterprise payment verification.
+### 9A — Turn Copilot on for organizations
 
-**Navigation Path (GitHub UI)**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → Settings
-      → Getting Started
-        → Verify your payment method
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the "Billing and licensing" sidebar, click **Licensing**.
+3. In the "Copilot" section, click **Manage**.
+4. Next to **Organization access**, open the dropdown and choose whether to enable Copilot for **all organizations** or to **Allow for specific organizations**.
+5. If you chose **Allow for specific organizations**:
+   1. Click the **Organizations** tab.
+   2. Find the organization.
+   3. To the right of its name, open the **Copilot** dropdown and click **Enabled** (Copilot Business plan) — or **Copilot: Enterprise** / **Copilot: Business** if your enterprise has a Copilot Enterprise plan.
+6. Confirm the organization now shows Copilot as enabled. *(The selection applies immediately — there is no Save button.)*
 
-Complete **Verify your payment method** to enable Copilot in the enterprise.
+> ⚠️ **Do this first:** until Copilot is enabled for an organization here, its owners can't assign seats in 9D.
 
-### 9B — Configure Copilot Enterprise Policies
+### 9B — Set enterprise Copilot policies
 
-**Required if you manage policies at enterprise level**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path (GitHub UI)**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **AI controls** → **Copilot** *(sidebar)*
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → AI controls
-      → Copilot
+1. At the top of the enterprise page, click **AI controls** *(a top-of-page tab — not under **Settings**)*.
+2. In the sidebar, open the page that holds the policies you want:
+   - **Copilot** — administration, privacy, model, billing, and usage policies, including **Policies for enterprise-assigned users** (required before 9E).
+   - **Copilot** → under "Features & clients", click **Configure features & clients** — feature and client policies such as Copilot on GitHub.com, Copilot Chat in the IDE, and Copilot in the CLI.
+   - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
+   - **MCP** — Model Context Protocol (MCP) policies.
+3. Set each policy:
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide in 9C).
+   - **Toggle:** click it.
+   - **No visible control:** click the policy name to see its options.
+4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
 
-```
+> 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
-From here you can set enterprise-wide Copilot policy enforcement.
+### 9C — Set organization Copilot policies
 
-**Policy Options:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-- For each policy, select:
-    - **Enabled/Allowed** — Feature is on for all organizations
-    - **Disabled/Blocked** — Feature is off for all organizations
-    - **No policy** — Delegate decision to organization owners
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")*
 
-### 9C — Configure Copilot Organization Policies (Required)
+1. Click **Policies** to set feature and privacy policies, or **Models** to choose which models beyond the basic set are available (some can add cost).
+2. For each policy, open its dropdown and choose an enforcement option. *(Changes apply on selection.)*
 
-Even with enterprise governance, you should confirm org-level visibility and configuration.
+> 📌 **Enterprise wins:** a policy the enterprise set in 9B can't be changed here — only policies left at **No policy** are editable by the organization.
 
-**Navigation Path (GitHub UI)**
+### 9D — Assign seats in the organization
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → (sidebar) Code, planning, and automation
-        → Copilot
-          → Policies / Models
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access**
 
-Set:
+1. If you see **Allow this organization to assign seats**, click it.
+2. Click **Start adding seats**.
+3. Choose who gets Copilot:
+   - **Everyone:** select **Purchase for all members**, then in the "Confirm seats purchase for all members" dialog click **Purchase seats**.
+   - **Specific people or teams:** select **Purchase for selected members**. In the "Enable Copilot access for users and teams" dialog, use the **Users and teams** tab to search for and add people or teams (or **Upload CSV** to add many at once), then click **Continue to purchase** → **Purchase seats**.
 
-- Feature availability policies
-- Model availability policies (if applicable)
+> 💡 **Seats by team:** give seats to a GitHub team and manage membership there. (Team synchronization with IdP groups is only available for Entra ID and Okta.)
 
-### 9D — Assign Copilot licenses (Required)
+> 💡 **Billing:** a seat is billed from the moment it's granted (prorated mid-cycle), whether or not the person uses Copilot yet.
 
-**Copilot Business:** You can assign licenses to individual users who don't consume a GitHub Enterprise license.
+### 9E — Assign Copilot Business licenses at the enterprise level
 
-**Copilot Enterprise:** You typically enable for entire organizations, and all members consume a GitHub Enterprise license.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path:**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
-Organization Settings
-  → Copilot
-    → Access
-      → Add members or enable for all
+**Before you start:** set the **Policies for enterprise-assigned users** policy (9B), make sure the people are already members of the enterprise (organization members, or users you've invited to the enterprise), and create the enterprise team first if you're licensing a team.
 
-```
+1. Click the **All members** tab (individual users) or the **Enterprise Teams** tab.
+2. Click **Assign licenses**.
+3. Search for the users or enterprise teams, then click **Add licenses**.
 
-Organization owners can assign Copilot seats to individual members or teams.
+> ✅ **Enterprise teams are generally available** (since June 2026). License an enterprise team and people gain or lose Copilot as they join or leave it.
+
+> 💡 **When to use this route:** people who need Copilot but no organization access. Enterprise members who aren't in any organization usually don't consume a GitHub Enterprise Cloud license. Direct enterprise assignment is for **Copilot Business**.
+
+> 📌 **One license per person:** someone assigned through both 9D and 9E uses **one** license (the highest tier).
 
 ## 🔟 Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
@@ -475,32 +438,17 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 
 **Required for SSH usage in SSO orgs**
 
-**Navigation**
+> **👤 Role:** Any org member · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Settings
-    → SSH and GPG keys
-      → (next to the key) Configure SSO
-        → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **SSH and GPG keys** → next to the key click **Configure SSO** → **Authorize** (for the org)
 
 ### 10B — Authorize Personal Access Tokens
 
 **Required for PAT classic in SSO orgs**
 
-**Navigation**
+> **👤 Role:** Any org member · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Settings
-    → Developer settings
-      → Personal access tokens
-        → (next to the token) Configure SSO
-          → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **Developer settings** → **Personal access tokens** → next to the token click **Configure SSO** → **Authorize** (for the org)
 
 **Token nuance:**
 
@@ -524,11 +472,11 @@ GitHub (top-right profile picture)
 - [ ] Enforcement applied successfully
 - [ ] Pilot users can access org resources via SSO
 
-### SCIM
+### SCIM (optional)
 
 - [ ] Setup user is an org owner
-- [ ] SCIM API token generated from GitHub org settings
-- [ ] OneLogin provisioning configured with SCIM credentials
+- [ ] Setup user has an active SAML session and has authorized the OneLogin SCIM OAuth app (**Grant** → **Authorize**)
+- [ ] OneLogin provisioning enabled with **Create / Update / Deactivate users**
 - [ ] Assign/unassign test behaves as expected
 
 ### Azure Billing
@@ -538,8 +486,8 @@ GitHub (top-right profile picture)
 
 ### Copilot
 
-- [ ] Enterprise payment verification completed (if enterprise-managed)
-- [ ] Enterprise Copilot policies set (if applicable)
+- [ ] Enterprise Copilot Business licenses assigned via **Billing and licensing → Licensing** (if enterprise-managed)
+- [ ] Enterprise Copilot policies set under **AI controls → Copilot** (if applicable)
 - [ ] Org Copilot policies set
 - [ ] Licenses assigned to pilot cohort
 - [ ] Pilot users can use Copilot in IDE / GitHub.com as expected
@@ -571,7 +519,7 @@ After completing this guide, you should have:
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **SAML test fails with NameID, recipient, audience, or signature errors** | Required SAML attributes, ACS URL, Entity ID, certificate, clock sync, or signing algorithm do not match GitHub requirements. | Compare every SAML value with the GitHub settings page, send a stable email/NameID, use SHA-256 signing, refresh the certificate, and retest before enforcing. |
-| **SCIM test connection fails** | Tenant URL, bearer token, SCIM endpoint, token owner, or IdP provisioning mode is incorrect. | Regenerate the SCIM token from the correct GitHub setup/admin account, paste the exact tenant URL, and confirm the IdP provisioning test succeeds before assigning users. |
+| **SCIM test connection fails** | For org SCIM, the SCIM OAuth app is not authorized, the setup user's SAML session lapsed, or the setup user lost org ownership. | Re-establish the setup user's SAML session, re-run the OAuth authorization (**Grant** → **Authorize**) so provisioning acts on behalf of a valid org owner, then confirm the IdP provisioning test succeeds before assigning users. |
 | **Provisioned users are missing from GitHub** | Users or groups are not assigned to the IdP app, attribute mappings fail, or provisioning cycles have not completed. | Review IdP provisioning logs, fix mapping errors, assign a small pilot group, and wait for the next incremental provisioning cycle. |
 | **Azure billing connection fails** | The Azure signer cannot grant tenant consent or does not own the subscription. | Use a subscription owner with tenant consent rights or run the Entra admin consent workflow, then repeat the GitHub Add Azure Subscription flow. |
 | **Copilot controls or seats are not visible** | Copilot is not enabled for the enterprise/org, the signed-in user lacks owner/admin permissions, or the plan/add-on is not active. | Verify Copilot plan activation, enable access at the enterprise/org level, and assign seats from the documented access page. |
@@ -586,8 +534,8 @@ After completing this guide, you should have:
 <summary><em>Show Q&A</em></summary>
 
 
-### Q: How do I set up the SCIM API token in OneLogin for GitHub provisioning?
-**A:** Sign in to GitHub as the SCIM setup user, navigate to Organization Settings > Authentication security, and under SCIM provisioning, generate a SCIM token. Copy this token and the SCIM base URL. In OneLogin, go to the GitHub app > Provisioning tab, enable provisioning, and enter the SCIM Base URL and Bearer Token. Click Save and test by assigning a pilot user. The token is displayed only once — regenerate it if lost.
+### Q: How do I connect OneLogin SCIM provisioning to a GitHub organization?
+**A:** GitHub organization SCIM does **not** use a token you generate in GitHub — it uses a third-party OAuth app that a specific GitHub user authorizes. Sign in to GitHub as the SCIM setup user and establish an active SAML session by visiting `https://github.com/orgs/YOUR_ORG/sso`. Launch the provisioning/authorization flow from the OneLogin GitHub organization app; when GitHub shows your org, click **Grant** next to the org name, then **Authorize**. Provisioning then acts on behalf of that setup user. In OneLogin, enable **Create users**, **Update users**, and **Deactivate users**, then **Save** and test by assigning a pilot user. GitHub publishes dedicated SCIM tutorials only for Okta and Entra ID; for OneLogin follow OneLogin's own GitHub connector documentation.
 
 ---
 
@@ -602,12 +550,12 @@ After completing this guide, you should have:
 ---
 
 ### Q: Which OneLogin connector version should I use — there seem to be multiple?
-**A:** Use the **"GitHub Enterprise Cloud - Organization"** connector from the OneLogin catalog. Older connectors may be labeled differently or target deprecated endpoints. If you see multiple versions, choose the one most recently updated in the catalog. Avoid using connectors labeled for "GitHub Enterprise Managed User" (that is for EMU, not standard orgs). If provisioning behaves unexpectedly, check the OneLogin release notes for your connector version.
+**A:** Use the **GitHub organization connector** from the OneLogin catalog (GitHub presents the OAuth app as **GitHub Enterprise Cloud - Organization** during authorization, though the OneLogin catalog entry may be labeled differently — confirm the current name against OneLogin's docs). Older connectors may target deprecated endpoints. If you see multiple versions, choose the one most recently updated in the catalog. Avoid connectors labeled for "GitHub Enterprise Managed User" (that is for EMU, not standard orgs). If provisioning behaves unexpectedly, check the OneLogin release notes for your connector version.
 
 ---
 
 ### Q: Users are authenticated via SAML but not getting added to the org — SCIM does not seem to be working. What is wrong?
-**A:** Verify provisioning is enabled in OneLogin (GitHub app > Provisioning tab) and that Create Users, Update Users, and Deactivate Users are all checked. Confirm the SCIM credentials (base URL and bearer token) are correct and the token has not expired. Check the OneLogin Events log for provisioning errors. Also ensure the user is assigned to the GitHub app in OneLogin — SAML authentication alone does not trigger SCIM provisioning.
+**A:** Verify provisioning is enabled in OneLogin (GitHub app > Provisioning tab) and that Create Users, Update Users, and Deactivate Users are all checked. Confirm the SCIM OAuth app is still authorized — the setup user needs an active SAML session and must have completed the **Grant** → **Authorize** flow (org SCIM runs on that OAuth grant, not a static bearer token). Check the OneLogin Events log for provisioning errors. Also ensure the user is assigned to the GitHub app in OneLogin — SAML authentication alone does not trigger SCIM provisioning.
 
 ---
 
@@ -622,7 +570,7 @@ After completing this guide, you should have:
 ---
 
 ### Q: SCIM provisioning worked initially but has stopped syncing new users — what happened?
-**A:** The most common cause is an expired or invalidated SCIM bearer token. Tokens can be invalidated if the setup user's org membership changes or if the token is regenerated. Check the OneLogin Events log for HTTP 401 or 403 errors from the GitHub SCIM endpoint. If the token is the issue, regenerate it in GitHub org settings and update it in OneLogin's Provisioning configuration.
+**A:** The most common cause is that the OAuth authorization has been broken — for example, the setup user's SAML session expired, the setup user lost org ownership or was deactivated, or the SCIM OAuth app authorization was revoked. (Org SCIM runs on behalf of the authorizing user's OAuth grant, not a static bearer token.) Check the OneLogin Events log for HTTP 401 or 403 errors from the GitHub SCIM endpoint. To recover, sign in as the setup user, re-establish a SAML session at `https://github.com/orgs/YOUR_ORG/sso`, and re-authorize the SCIM OAuth app (**Grant** → **Authorize**).
 
 </details>
 
@@ -647,4 +595,4 @@ After completing this guide, you should have:
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

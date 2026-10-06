@@ -33,7 +33,7 @@
 - **Org structure:** Keep 3-7 orgs max — align to business units or compliance boundaries, not teams or projects
 - **Repo naming:** Use `team-project-component` pattern (e.g., `platform-auth-service`) for alphabetical grouping
 - **Teams:** Organization → Teams → New team → Set parent for nesting → Sync with IdP groups for automated membership
-- **Custom properties:** Enterprise → Settings → Custom properties → Define metadata fields (department, data-classification, owner-team)
+- **Custom properties:** Any org can define at **Organization → Settings → Code, planning, and automation → Repository → Custom properties**; central enterprise-wide definition (requires GitHub Enterprise Cloud) is at **Enterprise → Policies → Custom properties** → add metadata fields (department, data-classification, owner-team)
 - **Internal repos:** Set visibility to Internal for cross-org discoverability within the enterprise
 
 ---
@@ -44,9 +44,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -57,13 +57,13 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account created | ☐ |
-| Enterprise owner or org owner access | ☐ |
-| Organization naming and boundary decisions made | ☐ |
-| Repository naming convention agreed upon by teams | ☐ |
-| IdP groups defined for team sync (if using SCIM) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud account created | GitHub **enterprise owner** | ☐ |
+| Ability to create/edit orgs, teams, and enterprise teams | GitHub **enterprise owner** (enterprise-level) or **organization owner** (org-level) | ☐ |
+| Organization naming and boundary decisions made | Platform / admin team decision | ☐ |
+| Repository naming convention agreed upon by teams | Platform / admin team decision | ☐ |
+| IdP groups defined for team sync (if using SCIM) | **Microsoft Entra** or **Okta group owner** | ☐ |
 
 ---
 
@@ -73,9 +73,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub organization owner** | Creates organizations, teams, nested teams, and naming patterns in GitHub. | GitHub → profile photo → Your organizations → New organization or [org] → Teams → New team → set team name, parent team if needed, privacy, and description → Create team → Repositories or Members → add access. Handoff: org slug, team slugs, parent team map, and repository access model. |
+| **GitHub organization owner** | Creates organizations, teams, nested teams, and naming patterns in GitHub. | GitHub → profile picture → Organizations → New organization or [org] → Teams → New team → set team name, parent team if needed, privacy, and description → Create team → Repositories or Members → add access. Handoff: org slug, team slugs, parent team map, and repository access model. |
 | **Microsoft Entra or Okta group owner, if team sync or IdP-driven membership is used** | Maintains the source groups that map to GitHub teams. | Entra: Microsoft Entra admin center → Entra ID → Groups → New group or [group] → Members → Add members → select users → Add. Okta: Okta Admin Console → Directory → Groups → Add group or [group] → People → Assign people → Save. Handoff: group ID, group owner, and mapped GitHub team slug. |
-| **GitHub enterprise owner** | Connects IdP groups to GitHub teams where team synchronization is available. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Settings → Authentication security or Identity provider → Team synchronization or IdP groups → Link group → select IdP group → select GitHub team → Save. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Authentication security → Team synchronization or IdP groups → Link group → select IdP group → select GitHub team → Save. Handoff: mapping list and validation user. |
+| **GitHub enterprise owner** | Creates enterprise teams and connects IdP groups to teams where group sync is available. | Enterprise team path (EMU only for IdP sync): GitHub → profile picture → **Enterprise** → **People** → **Enterprise teams** → **Create Enterprise team** (or open an existing team) → **Edit** → under **Manage members** select **Identity provider group** → choose the IdP group (synced via SCIM) → **Save**. Organization team sync path (standard GHEC, personal accounts, with Entra/Okta): GitHub → profile picture → **Organizations** → [organization] → **Teams** → select the team → team **Settings** → connect the IdP group. Handoff: mapping list and validation user. |
 
 ---
 
@@ -141,12 +141,12 @@ Enterprise (single admin boundary)
 
 ## 3️⃣ Topics for Discoverability
 
-Tag repos with topics for filtering and search:
+Tag repos with topics for filtering and search. Topics are **not** under the Settings tab — add them from the repository's main page:
 
-```
-Repository → Settings → scroll to Topics
-  → Add topics (e.g., "python", "api", "production", "team-platform")
-```
+**Navigate:** Open the repository → click the gear icon labeled **Edit repository metadata** (next to the **About** section, top-right).
+
+1. In the **Topics** field, type each topic (e.g., `python`, `api`, `production`, `team-platform`) and press **Enter** after each.
+2. Click **Save changes**.
 
 ### Suggested Topic Taxonomy
 
@@ -160,10 +160,11 @@ Repository → Settings → scroll to Topics
 
 ## 4️⃣ Nested Teams for Access Control
 
-```
-Organization → Teams → New team
-  → Set parent team (for nesting)
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → **New team**.
+
+1. Enter the **Team name** and (optionally) a description.
+2. Under **Parent team**, select a parent to nest this team (for cascading permissions).
+3. Choose the team **visibility**, then click **Create team**.
 
 ### Example Team Hierarchy
 
@@ -182,19 +183,22 @@ engineering (parent team — broad read access)
 
 ### IdP Group Sync
 
-```
-Organization → Settings → Teams → select team
-  → IdP group sync → Connect IdP group
-```
+Org teams are reached from the org **Teams** tab (not under **Settings**), and the IdP-group connection is configured on the individual team's page.
+
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → select the team → team **Settings** → connect the IdP group.
+
+> 📌 **Constraint:** Organization team synchronization applies to **standard GHEC** (personal accounts) with Microsoft Entra ID or Okta. **EMU** deployments manage team membership through SCIM group membership instead.
 
 ## 5️⃣ Custom Properties (Enterprise Feature)
 
-Add structured metadata to repos beyond topics:
+Add structured metadata to repos beyond topics. **Any organization can define repository custom properties** — there is no GitHub Enterprise Cloud requirement and no plan restriction for the base feature; organizations on GitHub Team can use it too.
 
-```
-Enterprise → Settings → Custom properties
-  → New property (e.g., "department", "data-classification", "owner-team")
-```
+Define them at the **organization** level, or — for consistency across all orgs — centrally at the **enterprise** level (the central enterprise-wide definition is the piece that requires **GitHub Enterprise Cloud**):
+
+- **Organization → Settings → Code, planning, and automation → Repository → Custom properties → New property** (e.g., `department`, `data-classification`, `owner-team`). This is the workflow the linked org doc in Resources describes, and it is available to any organization.
+- **Enterprise → Policies → Custom properties → New property** *(Enterprise Feature)* — defining properties centrally across all orgs at the enterprise level requires **GitHub Enterprise Cloud**; at the enterprise, repository custom properties live under **Policies**, not **Settings**.
+
+> 📌 **Constraint:** Defining a property does not populate it. **Values must be set per repository** (via the UI or REST API) after a property is defined.
 
 - Custom properties are searchable and filterable
 - Can be used in rulesets to target repos by property value
@@ -202,10 +206,10 @@ Enterprise → Settings → Custom properties
 
 ## 6️⃣ Internal Repositories (Enterprise Feature)
 
-```
-Repository → Settings → Danger Zone → Change visibility
-  → Internal
-```
+**Navigate:** Open the repository → **Settings** tab → scroll to the **Danger Zone**.
+
+1. Click **Change visibility**.
+2. Select **Internal**, then confirm.
 
 | Visibility | Who Can See |
 |-----------|-------------|
@@ -217,14 +221,17 @@ Repository → Settings → Danger Zone → Change visibility
 
 ## 7️⃣ Enterprise Teams (Cross-Org Collaboration)
 
-```
-Enterprise → People → Teams → Create team
-  → Add members from any org in the enterprise
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **People** → **Enterprise teams** → **Create Enterprise team**.
+
+1. Enter the team details and click to create the team.
+2. Add members from any org in the enterprise.
+3. (EMU only) To automate membership, open the team → **Edit** → under **Manage members** select **Identity provider group** and choose the IdP group (synced via SCIM).
+
+> ✅ Enterprise teams became generally available in June 2026. IdP group sync for enterprise teams is available only in Enterprise Managed Users (EMU) deployments; standard-GHEC enterprises manage enterprise-team membership manually.
 
 - Enterprise teams span multiple organizations
 - Grant access to repos across orgs without moving repos
-- Sync with IdP groups for automatic membership
+- Sync with IdP groups for automatic membership (EMU only)
 - Only enterprise owners or designated team maintainers can manage
 
 ## 🧯 Known Errors & Resolutions
@@ -319,4 +326,4 @@ Enterprise → People → Teams → Create team
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

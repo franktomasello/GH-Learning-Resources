@@ -36,11 +36,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **AD FS:** Trust Relationships → Relying Party Trusts → Add → Manual → Entity ID `https://github.com/orgs/YOUR_ORG` → ACS URL → Configure claim rules (email → NameID)
+- **AD FS:** **AD FS Management** → **Relying Party Trusts** → **Add Relying Party Trust** → **Claims aware** → **Enter data about the relying party manually** → SAML 2.0 SSO service URL `https://github.com/orgs/YOUR_ORG/saml/consume` → identifier `https://github.com/orgs/YOUR_ORG` → **Edit Claim Issuance Policy** (email → Name ID)
 - **GitHub:** Org Settings → Authentication security → SAML single sign-on → Paste AD FS SSO URL, Federation Service ID, token-signing cert → Test → Save → Enforce
 - **Provisioning:** Manual (invite users) or API scripts (AD group sync) — AD FS does NOT support native SCIM
 - **Billing:** Org/Enterprise → Billing and licensing → Payment information → Add Azure Subscription → Accept → Connect
-- **Copilot:** Enterprise AI controls → Copilot → Enable → Org Settings → Copilot → Access → Assign seats
+- **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** → turn on the org → **AI controls** → **Copilot** (enterprise policies) → Org **Settings** → **Copilot** → **Policies** / **Models** → **Access** → **Start adding seats** (or the enterprise **Manage** page → **Assign licenses**)
 
 ---
 
@@ -50,9 +50,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -105,9 +105,9 @@ Use this table to assign provider-side work before following the numbered steps.
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
 | **AD FS administrator** | Creates the relying party trust and claim rules for GitHub SAML. | AD FS Management → Relying Party Trusts → Add Relying Party Trust → Claims aware → enter or import GitHub metadata/URLs → configure identifiers and endpoints → Finish. Then Relying Party Trusts → [GitHub trust] → Edit Claim Issuance Policy → Add Rule → send LDAP attributes or transform claims for NameID/email → OK. Handoff: Sign-on URL, Issuer, certificate, and claim rule export. |
-| **GitHub organization owner** | Enables org SAML using the AD FS values and handles manual or scripted user provisioning. | GitHub → profile photo → Your organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste AD FS Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → download recovery codes. Provisioning is manual/scripted because AD FS does not provide native GitHub SCIM. Handoff: SAML test success, recovery codes, and user provisioning roster. |
+| **GitHub organization owner** | Enables org SAML using the AD FS values and handles manual or scripted user provisioning. | GitHub → profile picture → Organizations → [org] → Settings → Authentication security → SAML single sign-on → Enable SAML authentication → paste AD FS Sign on URL, Issuer, and Public Certificate → Test SAML configuration → Save → download recovery codes. Provisioning is manual/scripted because AD FS does not provide native GitHub SCIM. Handoff: SAML test success, recovery codes, and user provisioning roster. |
 | **Active Directory group owner** | Maintains the AD group used by AD FS claim rules or manual provisioning. | Active Directory Users and Computers → [domain] → Users or target OU → [group] → Members → Add → enter users → Check Names → OK. Handoff: AD group name, pilot users, and owner for ongoing changes. |
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → Enterprises page (github.com/settings/enterprises) → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -127,6 +127,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ### If Using API Scripts or SCIM Bridge
 
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
+
 1. Create a dedicated GitHub.com account (example: `gh-adfs-scim@yourdomain.com`)
 2. **Secure the account:**
     - Enable 2FA
@@ -143,38 +145,34 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 2️⃣ Add Relying Party Trust in AD FS
 
-### Navigation (AD FS Management Console)
+**👤 Role:** AD FS **administrator** · **📍 Portal:** AD FS Management
 
-```
-AD FS Management Console (on the AD FS server)
-  → Trust Relationships
-    → Relying Party Trusts
-      → Add Relying Party Trust...
-
-```
+**Navigate:** Server Manager → **Tools** → **AD FS Management** *(on the AD FS server)* → **AD FS** → **Relying Party Trusts** → *(Actions pane)* **Add Relying Party Trust...**
 
 ### Configuration Steps
 
-1. **Start the Add Relying Party Trust Wizard**
-2. Select **Enter data about the relying party manually** (or use metadata URL import if available)
-3. **Display name:** `GitHub - YOUR_ORG` (or a descriptive name)
-4. **Profile:** Select **AD FS profile**
-5. **Configure URL:** Enable **SAML 2.0 WebSSO protocol**
-    - Relying party SAML 2.0 SSO service URL (Assertion Consumer Service):
+1. In the **Actions** pane, click **Add Relying Party Trust...** to start the wizard.
+2. On the **Welcome** page, select **Claims aware** and click **Start**.
+3. On **Select Data Source**, select **Enter data about the relying party manually** and click **Next**. *(Alternatively, import GitHub's metadata from `https://github.com/orgs/YOUR_ORG/saml/metadata` if your AD FS server can reach it.)*
+4. On **Specify Display Name**, enter the **Display name** `GitHub - YOUR_ORG` and click **Next**.
+5. On **Configure Certificate**, leave the optional token-encryption certificate empty and click **Next**.
+6. On **Configure URL**, check **Enable support for the SAML 2.0 WebSSO protocol**, enter the **Relying party SAML 2.0 SSO service URL** (Assertion Consumer Service), and click **Next**:
 
     ```
     https://github.com/orgs/YOUR_ORG/saml/consume
     ```
 
-6. **Configure Identifiers:** Add the relying party trust identifier (Entity ID):
+7. On **Configure Identifiers**, enter the **Relying party trust identifier** (Entity ID), click **Add**, then click **Next**:
 
     ```
     https://github.com/orgs/YOUR_ORG
     ```
 
-7. **Access Control:** Select the appropriate access control policy (e.g., Permit Everyone, or restrict to specific AD groups)
-8. **Review and Finish:** Confirm settings and close the wizard
-9. The **Edit Claim Issuance Policy** dialog may open automatically — configure claim rules in the next step
+8. On **Choose Access Control Policy**, select a policy (for example **Permit everyone**, or a policy limited to specific AD groups) and click **Next**.
+9. On **Ready to Add Trust**, review the settings and click **Next**.
+10. On **Finish**, click **Close**. The **Edit Claim Issuance Policy** dialog opens automatically — configure the claim rules in the next step.
+
+> 💡 **Windows Server 2012 R2 (out of support):** the console groups trusts under **Trust Relationships**, the wizard has a **Choose Profile** page (select **AD FS profile**) instead of **Claims aware**, and the claim-rules dialog is called **Edit Claim Rules**. Upgrade to a supported Windows Server version if you can.
 
 Replace `YOUR_ORG` with your actual GitHub organization slug.
 
@@ -188,16 +186,9 @@ Replace `YOUR_ORG` with your actual GitHub organization slug.
 
 ## 3️⃣ Configure Claim Rules
 
-### Navigation (AD FS Management Console)
+**👤 Role:** AD FS **administrator** · **📍 Portal:** AD FS Management
 
-```
-AD FS Management Console
-  → Trust Relationships
-    → Relying Party Trusts
-      → [Right-click "GitHub - YOUR_ORG"]
-        → Edit Claim Issuance Policy...
-
-```
+**Navigate:** **AD FS Management** → **AD FS** → **Relying Party Trusts** → right-click **GitHub - YOUR_ORG** → **Edit Claim Issuance Policy...**
 
 ### Required Claim Rules
 
@@ -241,18 +232,11 @@ From the AD FS server, collect:
 2. **SSO Service URL** — typically: `https://your-adfs-server/adfs/ls/`
 3. **Token-signing certificate** — export as Base64-encoded `.cer`:
 
-```
-AD FS Management Console
-  → Service
-    → Certificates
-      → Token-signing certificate
-        → [Right-click] → View Certificate
-          → Details → Copy to File...
-            → Base-64 encoded X.509 (.CER)
-
-```
+   **Navigate:** **AD FS Management** → **AD FS** → **Service** → **Certificates** → right-click the **Token-signing** certificate → **View Certificate...** → **Details** tab → **Copy to File...** → in the Certificate Export Wizard click **Next** → select **Base-64 encoded X.509 (.CER)** → **Next** → enter a file name → **Next** → **Finish**
 
 ## 4️⃣ Enable & Test SAML SSO in GitHub
+
+**👤 Role:** GitHub **enterprise owner** (4A) / **organization owner** (4B) · **📍 Portal:** GitHub
 
 You will configure **Organization SAML** (always for the target org).
 
@@ -266,35 +250,21 @@ If your org is under an Enterprise account, you may also configure **Enterprise 
 
 - If you are a GitHub Enterprise (enterprise account) customer and intend to require SAML at the enterprise level, complete this before org enforcement. **Enterprise SAML completely replaces org-level SAML configuration and enforces SAML SSO for every organization in the enterprise.**
 
-**Navigation Path (GitHub UI)**
-
-```
-GitHub (top-right profile picture)
-  → Enterprises
-    → [Select enterprise]
-      → Settings
-        → Authentication security
-          → SAML single sign-on
-
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Settings** → **Authentication security** → **SAML single sign-on**
 
 **Configuration Steps**
 
-1. In Enterprise settings → Authentication security → SAML single sign-on
-2. Enable / configure SAML per GitHub's enterprise SAML documentation (AD FS values differ from org app)
+1. Under **SAML single sign-on**, select **Require SAML authentication**.
+2. Paste the AD FS values from Step 3: **Sign on URL**, **Issuer**, and **Public Certificate**. _(Enterprise-level AD FS values may differ from the org relying party trust.)_
+3. Click **Test SAML configuration** and complete the auth flow (the test must pass before enforcement).
+4. Click **Save**.
+5. **Immediately download and securely store the enterprise SSO recovery codes** for break-glass access.
+
+> 🔐 **Critical:** Enterprise-level SAML enforces SSO for every organization in the enterprise. Store the enterprise recovery codes before your IdP becomes the only way in.
 
 ### 4B — Enable & Test Organization SAML (Required)
 
-**Navigation Path (GitHub UI)**
-
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
+**Navigate:** Profile picture → **Organizations** → *[your organization]* → **Settings** → **Authentication security** *(sidebar, under "Security")* → **SAML single sign-on**
 
 **Configuration Steps (Organization SAML)**
 
@@ -306,24 +276,19 @@ GitHub (top-right profile picture)
 3. Click **Test SAML configuration** (or equivalent prompt) and complete the auth flow
 4. Click **Save**
 5. **Immediately download and secure SSO recovery codes:**
-    - Organization Settings → Authentication security → Single sign-on recovery codes
+    - Organization Settings → Authentication security → under **SAML single sign-on**, click **Save your recovery codes** → **Download**
 
 > 🔐 **Critical:** Before enabling or immediately after enabling SAML, download and securely store your organization SSO recovery codes. These are essential for break-glass scenarios if your IdP becomes unavailable.
 
 ## 5️⃣ Enforce SAML SSO for the Organization (Required)
 
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
+
 > ⚠️ **Important:** Enforcement removes org members who have not authenticated through the IdP, and can also remove bots/service accounts that don't have external identities. **If a user rejoins the organization within three months, the user's access privileges and settings will be restored.**
 
 ### Navigation Path (GitHub UI)
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → Authentication security
-        → SAML single sign-on
-
-```
+**Navigate:** Profile picture → **Organizations** → *[your organization]* → **Settings** → **Authentication security** *(sidebar, under "Security")* → **SAML single sign-on**
 
 ### Enforcement Steps
 
@@ -339,20 +304,15 @@ GitHub (top-right profile picture)
 
 ## 6️⃣ User Provisioning (Manual or Scripted — No Native SCIM)
 
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
+
 > ⚠️ **Important:** AD FS does not provide native SCIM support. You must manage GitHub organization membership through one of the following approaches.
 
 ### Option A: Manual Provisioning
 
 1. Invite users to the GitHub organization manually:
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → People
-        → Invite member
-
-```
+   **Navigate:** Profile picture → **Organizations** → *[your organization]* → **People** *(tab under the organization name)* → **Invite member**
 
 2. Users accept the invitation and authenticate via SAML (AD FS) on first access
 3. To remove users: Organization Settings → People → remove member
@@ -381,6 +341,8 @@ GitHub (top-right profile picture)
 
 ## 7️⃣ Assign Users (AD Group → Mapped via Claims)
 
+**👤 Role:** **Active Directory / AD FS administrator** · **📍 Portal:** Active Directory Users and Computers + AD FS Management
+
 ### Controlling Access via AD Groups
 
 Since AD FS uses Active Directory as its identity store, you can control which users can access GitHub by:
@@ -389,14 +351,7 @@ Since AD FS uses Active Directory as its identity store, you can control which u
 2. **Add pilot users** to the AD group
 3. **Configure AD FS access control:**
 
-```
-AD FS Management Console
-  → Trust Relationships
-    → Relying Party Trusts
-      → [Right-click "GitHub - YOUR_ORG"]
-        → Edit Access Control Policy...
-
-```
+   **Navigate:** **AD FS Management** → **AD FS** → **Relying Party Trusts** → right-click **GitHub - YOUR_ORG** → **Edit Access Control Policy...**
 
 4. Select **Permit specific group** and choose your AD security group
     - Alternatively, add an Issuance Authorization Rule to restrict access based on group membership
@@ -411,6 +366,8 @@ AD FS Management Console
 
 ## 8️⃣ Attach Azure Subscription for Metered Billing
 
+**👤 Role:** GitHub **enterprise owner** (or organization owner) + Azure **subscription Owner** who can grant tenant-wide admin consent · **📍 Portal:** GitHub → Microsoft
+
 **Required if you are billing via Azure**
 
 ### Prerequisites
@@ -422,20 +379,7 @@ AD FS Management Console
 
 ### Configuration Steps (GitHub)
 
-**Navigation Path:**
-
-```
-GitHub
-  → Your org or enterprise settings entry point
-    → Org list: https://github.com/settings/organizations
-    → Enterprise list: https://github.com/settings/enterprises
-      → Open the target org/enterprise
-        → Billing and licensing
-          → Payment information
-            → Metered billing via Azure
-              → Add Azure Subscription
-
-```
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription** — or, for an organization: Profile picture → **Organizations** → *[organization]* → **Settings** → **Billing and licensing** *(sidebar, under "Access")* → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription**
 
 **Process:**
 
@@ -452,92 +396,99 @@ GitHub
 6. Sign in to Microsoft when prompted
 7. On **Permissions requested**, click **Accept** (or follow admin approval flow if required)
 8. Under **Select a subscription**, pick the Azure Subscription ID
-9. Click **Connect**
+9. Select the confirmation checkbox agreeing to the metered billing terms (**Connect** stays disabled until this is checked)
+10. Click **Connect**
 
 > 💡 **Tip:** If you don't see a "Permissions requested" prompt and instead see a message about needing admin approval, you may need to configure an admin consent workflow in Azure or work with your Azure AD global administrator.
 
 ## 9️⃣ Enable GitHub Copilot (Enterprise + Organization)
 
-### 9A — (Conditionally Required) Enable Copilot at the Enterprise level via Payment Verification
+If your organization belongs to an enterprise account (the usual GHEC setup), set up Copilot in this order: **9A** turn Copilot on for the organization, **9B** set enterprise policies, **9C** set organization policies, then give people seats with **9D** (organization) and/or **9E** (enterprise).
 
-**When this step is required:**
+> 📌 **Where things live:** organization access and licenses are under the enterprise's **Billing and licensing → Licensing**; enterprise policies are under **AI controls**; organization policies and seats are under the organization's **Settings → Copilot**. Selections on these pages apply immediately — there is **no Save button**.
 
-- If you manage Copilot through an enterprise account, GitHub's setup flow enables Copilot via enterprise payment verification.
+### 9A — Turn Copilot on for organizations
 
-**Navigation Path (GitHub UI)**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → Settings
-      → Getting Started
-        → Verify your payment method
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the "Billing and licensing" sidebar, click **Licensing**.
+3. In the "Copilot" section, click **Manage**.
+4. Next to **Organization access**, open the dropdown and choose whether to enable Copilot for **all organizations** or to **Allow for specific organizations**.
+5. If you chose **Allow for specific organizations**:
+   1. Click the **Organizations** tab.
+   2. Find the organization.
+   3. To the right of its name, open the **Copilot** dropdown and click **Enabled** (Copilot Business plan) — or **Copilot: Enterprise** / **Copilot: Business** if your enterprise has a Copilot Enterprise plan.
+6. Confirm the organization now shows Copilot as enabled. *(The selection applies immediately — there is no Save button.)*
 
-Complete **Verify your payment method** to enable Copilot in the enterprise.
+> ⚠️ **Do this first:** until Copilot is enabled for an organization here, its owners can't assign seats in 9D.
 
-### 9B — Configure Copilot Enterprise Policies
+### 9B — Set enterprise Copilot policies
 
-**Required if you manage policies at enterprise level**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path (GitHub UI)**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **AI controls** → **Copilot** *(sidebar)*
 
-```
-GitHub (top-right profile picture)
-  → Enterprise (or Enterprises → select enterprise)
-    → AI controls
-      → Copilot
+1. At the top of the enterprise page, click **AI controls** *(a top-of-page tab — not under **Settings**)*.
+2. In the sidebar, open the page that holds the policies you want:
+   - **Copilot** — administration, privacy, model, billing, and usage policies, including **Policies for enterprise-assigned users** (required before 9E).
+   - **Copilot** → under "Features & clients", click **Configure features & clients** — feature and client policies such as Copilot on GitHub.com, Copilot Chat in the IDE, and Copilot in the CLI.
+   - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
+   - **MCP** — Model Context Protocol (MCP) policies.
+3. Set each policy:
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide in 9C).
+   - **Toggle:** click it.
+   - **No visible control:** click the policy name to see its options.
+4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
 
-```
+> 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
-From here you can set enterprise-wide Copilot policy enforcement.
+### 9C — Set organization Copilot policies
 
-**Policy Options:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-- For each policy, select:
-    - **Enabled/Allowed** — Feature is on for all organizations
-    - **Disabled/Blocked** — Feature is off for all organizations
-    - **No policy** — Delegate decision to organization owners
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")*
 
-### 9C — Configure Copilot Organization Policies (Required)
+1. Click **Policies** to set feature and privacy policies, or **Models** to choose which models beyond the basic set are available (some can add cost).
+2. For each policy, open its dropdown and choose an enforcement option. *(Changes apply on selection.)*
 
-Even with enterprise governance, you should confirm org-level visibility and configuration.
+> 📌 **Enterprise wins:** a policy the enterprise set in 9B can't be changed here — only policies left at **No policy** are editable by the organization.
 
-**Navigation Path (GitHub UI)**
+### 9D — Assign seats in the organization
 
-```
-GitHub (top-right profile picture)
-  → Organizations
-    → (next to your org) Settings
-      → (sidebar) Code, planning, and automation
-        → Copilot
-          → Policies / Models
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access**
 
-Set:
+1. If you see **Allow this organization to assign seats**, click it.
+2. Click **Start adding seats**.
+3. Choose who gets Copilot:
+   - **Everyone:** select **Purchase for all members**, then in the "Confirm seats purchase for all members" dialog click **Purchase seats**.
+   - **Specific people or teams:** select **Purchase for selected members**. In the "Enable Copilot access for users and teams" dialog, use the **Users and teams** tab to search for and add people or teams (or **Upload CSV** to add many at once), then click **Continue to purchase** → **Purchase seats**.
 
-- Feature availability policies
-- Model availability policies (if applicable)
+> 💡 **Seats by team:** give seats to a GitHub team and manage membership there. (Team synchronization with IdP groups is only available for Entra ID and Okta.)
 
-### 9D — Assign Copilot licenses (Required)
+> 💡 **Billing:** a seat is billed from the moment it's granted (prorated mid-cycle), whether or not the person uses Copilot yet.
 
-**Copilot Business:** You can assign licenses to individual users who don't consume a GitHub Enterprise license.
+### 9E — Assign Copilot Business licenses at the enterprise level
 
-**Copilot Enterprise:** You typically enable for entire organizations, and all members consume a GitHub Enterprise license.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation Path:**
+**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[your enterprise]* → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-```
-Organization Settings
-  → Copilot
-    → Access
-      → Add members or enable for all
+**Before you start:** set the **Policies for enterprise-assigned users** policy (9B), make sure the people are already members of the enterprise (organization members, or users you've invited to the enterprise), and create the enterprise team first if you're licensing a team.
 
-```
+1. Click the **All members** tab (individual users) or the **Enterprise Teams** tab.
+2. Click **Assign licenses**.
+3. Search for the users or enterprise teams, then click **Add licenses**.
 
-Organization owners can assign Copilot seats to individual members or teams.
+> ✅ **Enterprise teams are generally available** (since June 2026). License an enterprise team and people gain or lose Copilot as they join or leave it.
+
+> 💡 **When to use this route:** people who need Copilot but no organization access. Enterprise members who aren't in any organization usually don't consume a GitHub Enterprise Cloud license. Direct enterprise assignment is for **Copilot Business**.
+
+> 📌 **One license per person:** someone assigned through both 9D and 9E uses **one** license (the highest tier).
 
 ## 🔟 Critical Post-Enablement: SSO Authorization for Credentials (Required)
 
@@ -545,34 +496,19 @@ When SAML is enabled/enforced, users often must authorize credentials (depending
 
 ### 10A — Authorize SSH Keys for SSO
 
+**👤 Role:** each **organization member** (for their own SSH keys and tokens) · **📍 Portal:** GitHub
+
 **Required for SSH usage in SSO orgs**
 
-**Navigation**
-
-```
-GitHub (top-right profile picture)
-  → Settings
-    → SSH and GPG keys
-      → (next to the key) Configure SSO
-        → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **SSH and GPG keys** → next to the key, **Configure SSO** → next to the organization, **Authorize**
 
 ### 10B — Authorize Personal Access Tokens
 
+**👤 Role:** each **organization member** (for their own SSH keys and tokens) · **📍 Portal:** GitHub
+
 **Required for PAT classic in SSO orgs**
 
-**Navigation**
-
-```
-GitHub (top-right profile picture)
-  → Settings
-    → Developer settings
-      → Personal access tokens
-        → (next to the token) Configure SSO
-          → Authorize (for the org)
-
-```
+**Navigate:** Profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → next to the token, **Configure SSO** → next to the organization, **Authorize**
 
 **Token nuance:**
 
@@ -612,7 +548,7 @@ GitHub (top-right profile picture)
 
 ### Copilot
 
-- [ ] Enterprise payment verification completed (if enterprise-managed)
+- [ ] Copilot turned on for the org under Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** (if enterprise-managed)
 - [ ] Enterprise Copilot policies set (if applicable)
 - [ ] Org Copilot policies set
 - [ ] Licenses assigned to pilot cohort
@@ -737,4 +673,4 @@ Microsoft provides migration tooling and documentation for moving from AD FS to 
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
