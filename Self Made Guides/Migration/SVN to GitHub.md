@@ -10,15 +10,15 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Create the Authors File](#1-create-the-authors-file)
-- [2️⃣ Convert SVN to Git Using svn2git (Recommended)](#2-convert-svn-to-git-using-svn2git-recommended)
-- [3️⃣ Alternative: git svn clone (More Control)](#3-alternative-git-svn-clone-more-control)
-- [4️⃣ Handle Large Binaries with Git LFS](#4-handle-large-binaries-with-git-lfs)
-- [5️⃣ Convert svn:ignore to .gitignore](#5-convert-svnignore-to-gitignore)
-- [6️⃣ Push to GitHub](#6-push-to-github)
-- [7️⃣ SVN-to-Git Structure Mapping](#7-svn-to-git-structure-mapping)
-- [8️⃣ Validation Checklist Post-Migration](#8-validation-checklist-post-migration)
-- [9️⃣ Tips for a Smooth Transition](#9-tips-for-a-smooth-transition)
+- [1️⃣ Create the Authors File](#1️⃣-create-the-authors-file)
+- [2️⃣ Convert SVN to Git Using svn2git (Recommended)](#2️⃣-convert-svn-to-git-using-svn2git-recommended)
+- [3️⃣ Alternative: git svn clone (More Control)](#3️⃣-alternative-git-svn-clone-more-control)
+- [4️⃣ Handle Large Binaries with Git LFS](#4️⃣-handle-large-binaries-with-git-lfs)
+- [5️⃣ Convert svn:ignore to .gitignore](#5️⃣-convert-svnignore-to-gitignore)
+- [6️⃣ Push to GitHub](#6️⃣-push-to-github)
+- [7️⃣ SVN-to-Git Structure Mapping](#7️⃣-svn-to-git-structure-mapping)
+- [8️⃣ Validation Checklist Post-Migration](#8️⃣-validation-checklist-post-migration)
+- [9️⃣ Tips for a Smooth Transition](#9️⃣-tips-for-a-smooth-transition)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -34,7 +34,8 @@
 - **Extract SVN authors:** `svn log --quiet URL | awk '/^r/ {print $3}' | sort -u > svn-authors-raw.txt`
 - **Convert with svn2git:** `svn2git https://svn.example.com/repo --authors authors.txt --verbose`
 - **Track large files:** `git lfs track "*.zip" && git lfs migrate import --include="*.zip" --everything`
-- **Push to GitHub:** `git push --all origin && git push --tags origin`
+- **Create the repo and push:** `gh repo create MyOrg/my-repo --private` → `git push --all origin && git push --tags origin`
+- **Note:** GitHub's web importer doesn't support Subversion — convert locally first
 
 ---
 
@@ -44,9 +45,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation and tool documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -57,13 +58,16 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| `svn2git` or `git svn` installed on migration machine | ☐ |
-| Network access to SVN server | ☐ |
-| Authors mapping file (`authors.txt`) prepared | ☐ |
-| Git LFS installed (`git lfs install`) for large binary handling | ☐ |
-| Target GitHub repository created | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| Migration machine with Git (including `git-svn`), Subversion client, and optionally `svn2git` (Ruby gem) | Migration operator | ☐ |
+| Read access to the full SVN repository history | SVN administrator | ☐ |
+| Authors mapping file (`authors.txt`) covering every SVN committer | Migration operator + team leads | ☐ |
+| Git LFS installed (`git lfs install`) for large binaries | Migration operator | ☐ |
+| Permission to create the target repository in the GitHub organization | **Organization owner**, or a member allowed to create repositories | ☐ |
+| A freeze window when SVN can be made read-only | SVN administrator | ☐ |
+
+> 📌 GitHub's browser-based importer only supports Git sources, so Subversion repositories must be converted locally (as below) and then pushed.
 
 ---
 
@@ -115,8 +119,10 @@ ci-bot = CI Bot <ci-bot@example.com>
 brew install svn2git
 
 # Ubuntu/Debian
-sudo apt-get install git-svn ruby
+sudo apt-get install git-svn subversion ruby
 sudo gem install svn2git
+
+# Any platform with Ruby: gem install svn2git (requires git-svn)
 ```
 
 ### Standard Layout Conversion (trunk/branches/tags)
@@ -127,7 +133,7 @@ svn2git https://svn.example.com/repo \
   --verbose
 ```
 
-> ✅ **Result:** SVN trunk becomes `main` (or `master`), SVN branches become Git branches, and SVN tags become Git tags.
+> ✅ **Result:** SVN trunk becomes `master` (rename it with `git branch -m master main`), SVN branches become Git branches, and SVN tags become Git tags. Re-run `svn2git --rebase` later to pull in new SVN commits before cutover.
 
 ### Non-Standard Layout
 
@@ -278,7 +284,7 @@ git commit -m "Add .gitignore converted from svn:ignore properties"
 ### Create the Target Repository
 
 ```bash
-gh repo create MyOrg/my-repo --private --confirm
+gh repo create MyOrg/my-repo --private
 ```
 
 ### Add Remote and Push
@@ -287,14 +293,16 @@ gh repo create MyOrg/my-repo --private --confirm
 # Set the remote
 git remote add origin https://github.com/MyOrg/my-repo.git
 
-# Push all branches
+# Push all branches (also uploads Git LFS objects)
 git push --all origin
 
 # Push all tags
 git push --tags origin
 ```
 
-> ✅ **Result:** All Git history, branches, and tags are now on GitHub.
+> ✅ **Result:** all Git history, branches, and tags are on GitHub. Then set the default branch: Repository → **Settings** → **General** → **Default branch** → switch to `main` → **Update**.
+
+> ⚠️ **GitHub limits:** files over 100 MiB are rejected (use Git LFS), and a single push can't exceed 2 GiB — push large histories in batches of branches if needed.
 
 ---
 
@@ -356,8 +364,8 @@ git push --tags origin
 | `svn add FILE` | `git add FILE` |
 | `svn commit -m "msg"` | `git commit -m "msg"` then `git push` |
 | `svn log` | `git log` |
-| `svn revert FILE` | `git checkout -- FILE` |
-| `svn switch BRANCH` | `git checkout BRANCH` |
+| `svn revert FILE` | `git restore FILE` |
+| `svn switch BRANCH` | `git switch BRANCH` |
 | `svn merge` | `git merge` |
 | `svn blame FILE` | `git blame FILE` |
 
@@ -407,12 +415,12 @@ git push --tags origin
 ---
 
 ### Q: GitHub is rejecting our push because of files over 100MB. How do we handle large binaries?
-**A:** Files over 100MB must be tracked with Git LFS before pushing to GitHub. Run `git lfs track "*.ext"` for each large file type, then use `git lfs migrate import --include="*.zip,*.jar,*.dll" --everything` to rewrite history so large files are stored in LFS throughout. Push again after the LFS migration. Note that this rewrites commit SHAs.
+**A:** GitHub blocks files larger than 100 MiB. Run `git lfs migrate info --everything` to find them, then `git lfs migrate import --include="*.zip,*.jar,*.dll" --everything` to move them into LFS across all history (this rewrites commit SHAs), and push again. If a single push is over 2 GiB, push branches in smaller groups.
 
 ---
 
 ### Q: The `.gitignore` generated from `svn:ignore` properties does not seem correct. What should I check?
-**A:** `git svn show-ignore` outputs SVN ignore properties in a format similar to `.gitignore`, but SVN ignores are per-directory while Git uses a single file (with optional subdirectory overrides). Manually verify the output and consolidate patterns into a root `.gitignore`. Pay attention to path prefixes -- SVN ignore patterns are relative to each directory, while `.gitignore` patterns are relative to the repo root unless prefixed with `/`.
+**A:** In a `git svn` clone, `git svn show-ignore > .gitignore` produces a root `.gitignore` with each directory's patterns prefixed by its path — review it rather than writing patterns by hand. Remember the rules differ: a `.gitignore` pattern **without** a slash matches at any depth, while a pattern **with** a slash is relative to the `.gitignore` file's directory. SVN `svn:global-ignores` (inherited) also needs to be included.
 
 ---
 
@@ -433,9 +441,11 @@ git push --tags origin
 
 ## 📚 Resources
 
-- [Importing an External Git Repository Using the Command Line](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/importing-an-external-git-repository-using-the-command-line)
+- [Importing a Subversion repository (GitHub Docs)](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/importing-a-subversion-repository)
+- [About large files on GitHub](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github)
 - [svn2git (nirvdrum)](https://github.com/nirvdrum/svn2git)
+- [git-svn documentation](https://git-scm.com/docs/git-svn)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

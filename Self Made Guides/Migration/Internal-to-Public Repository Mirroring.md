@@ -10,11 +10,11 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Option 1 — Separate Public Organization (Recommended Starting Point)](#1-option-1--separate-public-organization-recommended-starting-point)
-- [2️⃣ Option 2 — Automated Mirror via GitHub Actions](#2-option-2--automated-mirror-via-github-actions)
-- [3️⃣ Authentication Options for Mirroring](#3-authentication-options-for-mirroring)
-- [4️⃣ Selective Mirroring](#4-selective-mirroring)
-- [5️⃣ Security Controls](#5-security-controls)
+- [1️⃣ Option 1 — Separate Public Organization (Recommended Starting Point)](#1️⃣-option-1--separate-public-organization-recommended-starting-point)
+- [2️⃣ Option 2 — Automated Mirror via GitHub Actions](#2️⃣-option-2--automated-mirror-via-github-actions)
+- [3️⃣ Authentication Options for Mirroring](#3️⃣-authentication-options-for-mirroring)
+- [4️⃣ Selective Mirroring](#4️⃣-selective-mirroring)
+- [5️⃣ Security Controls](#5️⃣-security-controls)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -27,11 +27,12 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Create public org:** Create a new organization on github.com (not under EMU enterprise)
-- **Store mirror token:** `Internal Repo → Settings → Secrets and variables → Actions → New secret → MIRROR_TOKEN`
-- **Add workflow:** Create `.github/workflows/mirror-to-public.yml` in internal repo
-- **Enable secret scanning:** `Internal Repo → Settings → Security → Advanced Security → Secret Protection → Enable`
-- **Add branch protection:** `Internal Repo → Settings → Rules → Rulesets → New branch ruleset → Require PR reviews`
+- **Public org:** create a separate organization on GitHub.com that is **not** in the EMU enterprise
+- **Auth (recommended):** a GitHub App owned by the public org, installed on the target repo → store `PUBLIC_APP_CLIENT_ID` (variable) and `PUBLIC_APP_PRIVATE_KEY` (secret) in the internal repo
+- **Approval gate:** `Internal Repo → Settings → Environments → New environment` → `public-release` → **Required reviewers** → **Save protection rules**
+- **Workflow:** `.github/workflows/mirror-to-public.yml` with `persist-credentials: false` on checkout
+- **Secret Protection:** `Internal Repo → Settings → Advanced Security` → **Secret Protection** → **Enable**, then **Push protection** → **Enable**
+- **Review gate:** `Internal Repo → Settings → Rulesets → Rulesets → New ruleset → New branch ruleset` → **Require a pull request before merging**
 
 ---
 
@@ -41,9 +42,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -54,13 +55,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Separate public organization on github.com (not under EMU enterprise) | ☐ |
-| Target public repository created in the public org | ☐ |
-| Authentication token (PAT, deploy key, or GitHub App) for the public repo | ☐ |
-| GitHub Actions enabled on the internal (source) repository | ☐ |
-| Secret scanning enabled on the internal repo | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| A separate public organization on GitHub.com (not in the EMU enterprise) and the target repository | Owner of that organization (personal account) | ☐ |
+| A GitHub App owned by the public org with **Contents: Read & write**, installed on the target repo — or a fine-grained PAT / deploy key | Public org owner | ☐ |
+| Store secrets, variables, and environments in the internal repository | Internal **repository administrator** | ☐ |
+| GitHub Actions enabled on the internal repository | Org owner / repo admin | ☐ |
+| Secret Protection (with push protection) on the internal repository | Repo admin / security team | ☐ |
+| An approved open-source release process | Legal, security, engineering | ☐ |
 
 ---
 
@@ -93,11 +95,20 @@ Enterprise Managed User (EMU) enterprises do not support public repositories. Or
 
 ## 2️⃣ Option 2 — Automated Mirror via GitHub Actions
 
-*Push-triggered workflow that mirrors commits from an internal repo to a public repo*
+*Workflow that pushes an approved branch from the internal repo to the public repo*
 
-### Example Workflow
+### Step A — Create the approval environment
 
-Create this file in your **internal** (source) repository:
+**👤 Role:** Internal **repository administrator** · **📍 Portal:** GitHub
+
+1. Internal repository → **Settings** → **Environments** → **New environment**.
+2. Name it `public-release` and click **Configure environment**.
+3. Select **Required reviewers**, add the release approvers, and click **Save protection rules**.
+4. Under **Environment secrets** / **Environment variables**, add the app credentials from Step B.
+
+### Step B — Add the workflow
+
+Create this file in the **internal** repository:
 
 ```yaml
 # .github/workflows/mirror-to-public.yml
@@ -106,87 +117,74 @@ name: Mirror to Public Repository
 on:
   push:
     branches:
-      - main
+      - release/public
 
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    environment: public-release        # pauses for an approver
     steps:
       - name: Checkout source repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Full history for accurate mirroring
+          fetch-depth: 0               # full history
+          persist-credentials: false   # don't send this repo's GITHUB_TOKEN to the public repo
 
-      - name: Push to public repository
-        run: |
-          git remote add public https://x-access-token:${{ secrets.MIRROR_TOKEN }}@github.com/your-public-org/your-public-repo.git
-          git push public main --force
+      - name: Create a token for the public repo
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PUBLIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.PUBLIC_APP_PRIVATE_KEY }}
+          owner: your-public-org
+          repositories: your-public-repo
+
+      - name: Push to the public repository
         env:
-          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+          TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git remote add public "https://x-access-token:${TOKEN}@github.com/your-public-org/your-public-repo.git"
+          git push public HEAD:main --force
 ```
 
-### Setup Steps
+> ✅ **Result:** each push to `release/public` waits for approval, then mirrors to the public repository's `main` branch.
 
-1. Create the target public repository in your public org
-2. Generate an authentication token (see Section 3 below)
-3. Store the token as a repository secret named `MIRROR_TOKEN`:
-
-**Navigation:**
-
-```
-Internal Repository → Settings → Secrets and variables → Actions
-  → New repository secret → Name: MIRROR_TOKEN → Paste token value
-```
-
-4. Push a commit to `main` to trigger the workflow
-
-> ✅ **Result:** Every push to `main` in the internal repo will automatically mirror to the public repo.
-
-> ⚠️ **Warning:** The `--force` flag overwrites the public repo's history. Do not make commits directly on the public repo — treat it as read-only.
+> ⚠️ **Warnings:**
+> - `--force` overwrites the public branch. Treat the public repository as **read-only** — don't commit to it directly.
+> - Without `persist-credentials: false`, `actions/checkout` keeps an auth header for `github.com` that overrides your token, and the push fails with a 403.
+> - If the internal enterprise is on **GHE.com**, the checkout uses your GHE.com host and the push still targets `github.com`.
 
 ---
 
 ## 3️⃣ Authentication Options for Mirroring
 
-| Method | Security | Scope | Best For |
+| Method | Security | Scope | Best for |
 |--------|----------|-------|----------|
-| **Personal Access Token (PAT)** | Basic | Tied to a user account | Quick setup, testing |
-| **Deploy Key** | Better | Tied to a single repository | Repo-scoped access without a user account |
-| **GitHub App Token** | Best | Scoped to specific permissions and repos | Production-grade, auditable, not tied to a person |
+| **GitHub App token** | Best — 1-hour tokens, not tied to a person | Specific permissions and repositories | Production mirroring (recommended) |
+| **Deploy key** | Good | One repository | SSH-based mirroring without a user account |
+| **Fine-grained PAT** | Basic — tied to a person, long-lived | Selected repositories | Short tests only |
 
-### A) Personal Access Token (PAT)
+### A) GitHub App (recommended)
 
-**Navigation:**
+**👤 Role:** Public **organization owner**
 
-```
-GitHub.com (public org account) → Profile Picture → Settings
-  → Developer settings → Personal access tokens → Fine-grained tokens
-    → Generate new token
-```
+1. Public org → **Settings** → **Developer settings** → **GitHub Apps** → **New GitHub App**.
+2. Name it, set the homepage URL, untick webhook **Active**, set **Repository permissions → Contents: Read & write**, choose **Only on this account**, and click **Create GitHub App**.
+3. Copy the **Client ID**, then under **Private keys** click **Generate a private key**.
+4. Click **Install App** → **Install** → **Only select repositories** → the public repo → **Install**.
+5. In the **internal** repo's `public-release` environment, add variable `PUBLIC_APP_CLIENT_ID` and secret `PUBLIC_APP_PRIVATE_KEY` (the whole `.pem`).
 
-| Setting | Value |
-|---------|-------|
-| **Repository access** | Only select repositories → choose the public target repo |
-| **Permissions** | Contents: Read and write |
+### B) Deploy key
 
-### B) Deploy Key
+1. Generate a dedicated SSH key pair for mirroring.
+2. Public repo → **Settings** → **Deploy keys** → **Add deploy key** → paste the **public** key → select **Allow write access** → **Add key**.
+3. Store the **private** key as an environment secret in the internal repo and push over SSH (`git@github.com:your-public-org/your-public-repo.git`).
 
-**Navigation:**
+### C) Fine-grained PAT (testing only)
 
-```
-Public Target Repository → Settings → Deploy keys
-  → Add deploy key → Paste public SSH key → Check "Allow write access"
-```
-
-> 💡 **Tip:** Generate a dedicated SSH key pair for mirroring. Store the private key as a repository secret in the internal repo.
-
-### C) GitHub App (Most Secure)
-
-1. Create a GitHub App in the public org with `Contents: Read and write` permission
-2. Install the App on the target public repository
-3. Use the App's private key to generate short-lived installation tokens in the workflow
-
-> 💡 **Tip:** GitHub App tokens expire after 1 hour, reducing risk if a token is exposed. This is the recommended approach for production mirroring.
+1. As an account in the public org: **Settings** → **Developer settings** → **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+2. **Resource owner:** the public org. **Repository access:** **Only select repositories** → the public repo. **Permissions:** **Contents: Read and write**.
+3. Click **Generate token** (the org may require approval), then store it as an environment secret.
 
 ---
 
@@ -197,7 +195,7 @@ Public Target Repository → Settings → Deploy keys
 | Technique | How |
 |-----------|-----|
 | **Mirror only a release branch** | Change the workflow trigger to a specific branch (e.g., `release/public`) |
-| **Exclude files with .gitignore** | Add internal-only files to `.gitignore` before they reach the mirror branch |
+| **Keep internal files out of the branch** | Never commit internal-only files to the mirror branch (`.gitignore` doesn't remove files already committed) |
 | **Use git filter-repo** | Strip files, directories, or secrets from history before pushing to public |
 | **Dedicated mirror branch** | Maintain a `mirror` branch that only contains approved content; trigger the workflow on that branch |
 
@@ -220,31 +218,29 @@ on:
 |---------|---------------|
 | **Secret scanning on source repo** | Enable Secret Protection on the internal repo to catch leaked secrets before they reach the mirror |
 | **Push protection** | Block secrets from being committed to the mirror branch |
-| **Required PR approval for mirror branch** | Use branch protection rules or rulesets to require review before merging to the mirror branch |
-| **Audit logs** | Review enterprise audit logs for mirror workflow runs and token usage |
+| **Required PR approval for mirror branch** | A ruleset requiring pull request reviews on `release/public` |
+| **Deployment approval** | The `public-release` environment with required reviewers |
+| **Audit logs** | Review the enterprise audit log for workflow runs and environment approvals, and the public org's audit log for app activity |
 
-### Enable Secret Scanning on the Source Repo
+### Enable Secret Protection on the source repo
 
-**Navigation:**
+**👤 Role:** **Repository administrator**
 
-```
-Internal Repository → Settings → Security (sidebar) → Advanced Security
-  → Secret Protection → Enable
-    → Push Protection → Enable
-```
+1. Internal repository → **Settings** → **Advanced Security** (under "Security and quality").
+2. Next to **Secret Protection**, click **Enable** → **Enable Secret Protection**.
+3. In the **Secret Protection** section, next to **Push protection**, click **Enable**.
 
-### Require PR Approval for the Mirror Branch
+### Require PR approval for the mirror branch
 
-**Navigation:**
+**👤 Role:** **Repository administrator**
 
-```
-Internal Repository → Settings → Rules → Rulesets
-  → New ruleset → Branch ruleset
-    → Target: release/public (or main)
-    → Require pull request reviews before merging → Enable
-```
+1. Internal repository → **Settings** → **Rulesets** → **Rulesets** → **New ruleset** → **New branch ruleset**.
+2. Name it, set **Enforcement status** to **Active**.
+3. **Target branches** → **Add target** → **Include by pattern** → `release/public`.
+4. Select **Require a pull request before merging** and set **Required approvals** to 1 or more.
+5. Click **Create**.
 
-> ✅ **Result:** No code reaches the public mirror without at least one reviewer approving it.
+> ✅ **Result:** nothing reaches the public mirror without a reviewed PR **and** an approved deployment to `public-release`.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -275,27 +271,27 @@ Internal Repository → Settings → Rules → Rulesets
 
 
 ### Q: The mirror workflow is failing with authentication errors. What should I check?
-**A:** Verify that the PAT, deploy key, or GitHub App token stored as a secret has not expired. Check that the secret name in the workflow matches the actual secret name in Settings > Secrets and variables > Actions (e.g., `MIRROR_TOKEN`). For PATs, confirm the token still has Contents: Read and Write permission on the target public repository. Regenerate and re-store the credential if needed.
+**A:** First check that checkout uses `persist-credentials: false` — otherwise the internal repo's `GITHUB_TOKEN` header is sent to the public repo and you get a 403. Then confirm the app is installed on the public repo with **Contents: Read & write**, that `PUBLIC_APP_CLIENT_ID` / `PUBLIC_APP_PRIVATE_KEY` are available to the job (environment secrets need `environment: public-release`), and that `owner` and `repositories` match the public repo. For PATs or deploy keys, check they haven't expired or been removed.
 
 ---
 
 ### Q: Sensitive data was accidentally pushed to the public mirror. What should we do immediately?
-**A:** Treat this as a security incident. First, immediately revoke and rotate any exposed credentials (API keys, tokens, passwords). Then use `git filter-repo` to remove the sensitive data from the public repo's history and force-push the cleaned history. Notify your security team and assess the exposure window. Consider temporarily deleting the public repo if the exposure is severe, and re-mirror after cleanup.
+**A:** Treat it as a security incident. Revoke and rotate the exposed credentials immediately — assume they're compromised. Pause the mirror workflow, rewrite the public history with `git filter-repo` and force-push (or make the repo private or delete it if the exposure is severe), and follow GitHub's "Removing sensitive data from a repository" guidance — contact GitHub Support to purge cached views and pull request refs. Then fix the internal branch before re-enabling the mirror.
 
 ---
 
 ### Q: The public mirror only shows the latest commit instead of the full history. What is wrong?
-**A:** The `actions/checkout` step in the workflow is using the default shallow clone (`fetch-depth: 1`). Set `fetch-depth: 0` in the checkout step to fetch the full commit history before pushing to the mirror. Without full history, only the most recent commit is pushed.
+**A:** `actions/checkout` defaults to a shallow clone (`fetch-depth: 1`), and pushing a shallow clone to another repository either fails ("shallow update not allowed") or can't send the full history. Set `fetch-depth: 0` so the whole history is available before the push.
 
 ---
 
 ### Q: How do I stop mirroring to the public repository?
-**A:** Remove or disable the GitHub Actions mirror workflow in the internal repository (delete the `.github/workflows/mirror-to-public.yml` file or disable the workflow in the Actions tab). Also delete the deploy key from the public repository (or revoke the PAT/App token) to prevent any residual access. The public repo will remain in its current state but will no longer receive updates.
+**A:** Disable the workflow (internal repo → **Actions** → the workflow → **⋯** → **Disable workflow**) or delete the file. Then remove access: uninstall the GitHub App from the public repo (or delete the deploy key, or revoke the PAT) and delete the stored credentials. The public repository keeps its current content but stops receiving updates.
 
 ---
 
 ### Q: Can I mirror only specific files or directories instead of the entire repository?
-**A:** Yes. Use a dedicated mirror branch that contains only the approved content, and configure the workflow to push only that branch. Alternatively, use `git filter-repo` in the workflow to strip internal-only files before pushing. You can also maintain a `.gitignore` on the mirror branch that excludes internal files, though this only affects new commits.
+**A:** Yes. Keep a dedicated branch (such as `release/public`) that only contains approved content, and mirror just that branch. To publish a subdirectory or drop internal paths, run `git filter-repo` (for example `--path public-sdk/`) in the workflow on a fresh clone before pushing. `.gitignore` doesn't remove files that are already committed, so don't rely on it.
 
 ---
 
@@ -316,9 +312,11 @@ Internal Repository → Settings → Rules → Rulesets
 
 ## 📚 Resources
 
-- [actions/checkout](https://github.com/actions/checkout/tree/main)
-- [Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions)
+- [actions/checkout](https://github.com/actions/checkout)
+- [actions/create-github-app-token](https://github.com/actions/create-github-app-token)
+- [Making authenticated API requests with a GitHub App in a GitHub Actions workflow](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow)
+- [Removing sensitive data from a repository](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
