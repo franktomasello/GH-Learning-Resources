@@ -10,15 +10,15 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [🏗️ Policy Hierarchy](#-policy-hierarchy)
-- [1️⃣ Restrict AI Models at the Enterprise Level](#1-restrict-ai-models-at-the-enterprise-level)
-- [2️⃣ Restrict AI Models at the Organization Level](#2-restrict-ai-models-at-the-organization-level)
-- [3️⃣ Set Up Content Exclusions at the Enterprise Level](#3-set-up-content-exclusions-at-the-enterprise-level)
-- [4️⃣ Set Up Content Exclusions at the Organization Level](#4-set-up-content-exclusions-at-the-organization-level)
-- [5️⃣ Create Organization-Level Custom Instructions](#5-create-organization-level-custom-instructions)
-- [6️⃣ Create Repository-Level Custom Instructions](#6-create-repository-level-custom-instructions)
-- [7️⃣ Enable or Disable the Public Code Filter](#7-enable-or-disable-the-public-code-filter)
-- [8️⃣ Manage Copilot Extensions Policy at the Enterprise Level](#8-manage-copilot-extensions-policy-at-the-enterprise-level)
+- [🏗️ Policy Hierarchy](#️-policy-hierarchy)
+- [1️⃣ Restrict AI Models at the Enterprise Level](#1️⃣-restrict-ai-models-at-the-enterprise-level)
+- [2️⃣ Restrict AI Models at the Organization Level](#2️⃣-restrict-ai-models-at-the-organization-level)
+- [3️⃣ Set Up Content Exclusions at the Enterprise Level](#3️⃣-set-up-content-exclusions-at-the-enterprise-level)
+- [4️⃣ Set Up Content Exclusions at the Organization Level](#4️⃣-set-up-content-exclusions-at-the-organization-level)
+- [5️⃣ Create Organization-Level Custom Instructions](#5️⃣-create-organization-level-custom-instructions)
+- [6️⃣ Create Repository-Level Custom Instructions](#6️⃣-create-repository-level-custom-instructions)
+- [7️⃣ Enable or Disable the Public Code Filter](#7️⃣-enable-or-disable-the-public-code-filter)
+- [8️⃣ Manage MCP Server Policy at the Enterprise Level](#8️⃣-manage-mcp-server-policy-at-the-enterprise-level)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
@@ -32,11 +32,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- Restrict models: `Enterprise → AI controls → Copilot → Models` — toggle models on/off
-- Content exclusions: `Enterprise → AI controls → Copilot → Content exclusion` — add glob patterns or repos
-- Org custom instructions: `Org Settings → Copilot → Custom instructions` — enter up to 6,000 characters
-- Repo instructions: create `.github/copilot-instructions.md` in repo root
-- Public code filter: `Enterprise → AI controls → Copilot → Policies → Suggestions matching public code → Block`
+- Restrict models: `Enterprise → AI controls → Copilot → Configure models` — set each model to **Enabled**, **Disabled**, or **Delegate**
+- Content exclusions: `Enterprise → AI controls → Copilot → Content exclusion` (or `Org Settings → Copilot → Content exclusion`) — enter repositories and paths
+- Org custom instructions: `Org Settings → Copilot → Custom instructions` → **Save changes**
+- Repo instructions: `.github/copilot-instructions.md`, path-specific `.github/instructions/**/*.instructions.md` (with `applyTo`), or `AGENTS.md`
+- MCP: `Enterprise → AI controls → MCP` → **MCP servers in Copilot**
 
 ---
 
@@ -46,9 +46,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -59,26 +59,28 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
-| Copilot Business or Copilot Enterprise subscription active | ☐ |
-| Organization admin access (for org-level controls) | ☐ |
-| Repository admin or write access (for repo-level instructions) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud enterprise with Copilot Business or Copilot Enterprise | GitHub **enterprise owner** | ☐ |
+| Enterprise-level policies, models, content exclusion, and MCP | GitHub **enterprise owner** | ☐ |
+| Organization-level policies, models, content exclusion, and custom instructions | GitHub **organization owner** | ☐ |
+| Repository custom instructions | Write access to the repository (to commit the files) | ☐ |
 
 ---
 
 ## 📋 Overview
 
-This runbook covers the key admin controls for GitHub Copilot that let you govern what models are available, what code Copilot can reference, and what instructions guide its behavior:
+This runbook covers the admin controls that govern which models people can use, what content Copilot can see, and what instructions guide it:
 
 | Control | Scope | Purpose |
 |---------|-------|---------|
-| **Model restriction** | Enterprise / Org | Control which AI models users can access |
-| **Content exclusion** | Enterprise / Org | Prevent Copilot from referencing sensitive files or repos |
-| **Custom instructions** | Org / Repo | Guide Copilot's behavior with coding standards and context |
-| **Public code filter** | Enterprise / Org | Block suggestions matching public code |
-| **Extensions policy** | Enterprise | Control which Copilot Extensions are allowed |
+| **Model availability** | Enterprise / Org | Control which AI models people can use |
+| **Content exclusion** | Enterprise / Org / Repo | Keep sensitive files out of Copilot's context |
+| **Custom instructions** | Org / Repo / Personal | Guide Copilot's behavior with standards and project context |
+| **Suggestions matching public code** | Enterprise / Org | Block suggestions that match public code |
+| **MCP servers** | Enterprise / Org | Control use of Model Context Protocol servers |
+
+> 📌 **Copilot Extensions are retired.** GitHub App-based Copilot Extensions were sunset on November 10, 2025 in favor of MCP servers, so this runbook covers MCP policy instead.
 
 ---
 
@@ -88,80 +90,82 @@ Understanding where each control lives and how they cascade:
 
 | Level | Role | Example |
 |-------|------|---------|
-| **Enterprise** | Guardrails | Disable models org admins cannot re-enable, enforce content exclusions |
-| **Organization** | Standards | Set coding standards, restrict models further, add org-level exclusions |
-| **Repository** | Project truth | Repo-specific instructions that reflect the actual codebase |
-| **Content exclusion** | Sensitive paths | Keep secrets, configs, and proprietary logic out of Copilot context |
+| **Enterprise** | Guardrails | Disable models, set content exclusions, set MCP policy |
+| **Organization** | Standards | Restrict models further, add org exclusions, set org custom instructions |
+| **Repository** | Project truth | Repository instructions that reflect the actual codebase |
+| **Content exclusion** | Sensitive paths | Keep secrets, configs, and proprietary logic out of Copilot's context |
 
-> 💡 **Tip:** Enterprise settings act as a ceiling. Organizations can restrict further but cannot enable something the enterprise has disabled.
+> 💡 **Tip:** Enterprise policies act as a ceiling. If the enterprise sets a policy, organizations can't change it — only policies left at **No policy** (or models set to **Delegate**) are decided by organizations.
+
+> 📌 **No Save button for policies and models:** dropdowns and toggles on these pages apply as soon as you select them.
 
 ---
 
 ## 1️⃣ Restrict AI Models at the Enterprise Level
 
-*Control which premium and base models are available across all organizations*
+*Control which models are available across all organizations*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Models
-```
+**Navigate:** Enterprise → **AI controls** → **Copilot** *(sidebar)* → **Configure models**
 
 **Steps:**
 
-1. Review the list of available models (base and premium)
-2. Toggle models to **Enabled** or **Disabled**
-3. Disabled models will not appear as options for users in any organization under this enterprise
+1. At the top of the enterprise page, click **AI controls**, then **Copilot** in the sidebar.
+2. Click **Configure models**.
+3. Set each model to:
+   - **Enabled** — available to every user
+   - **Disabled** — unavailable everywhere in the enterprise
+   - **Delegate** — each organization decides
 
-> ⚠️ **Important:** Disabling a model at the enterprise level cannot be overridden by organization admins. Users will not see disabled models in their model picker.
+> ⚠️ **Important:** Organization owners can't re-enable a model the enterprise has set to **Disabled**. Disabled models don't appear in users' model pickers.
+
+> 💡 **Tip:** Model prices differ a lot under usage-based billing — see [Models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) before enabling expensive models broadly.
 
 ---
 
 ## 2️⃣ Restrict AI Models at the Organization Level
 
-*Further restrict models within a specific organization*
+*Decide models the enterprise has delegated to organizations*
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Models
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Models**
 
 **Steps:**
 
-1. Review the models that the enterprise has left enabled
-2. Toggle individual models to **Enabled** or **Disabled** for this organization
-3. Save changes
+1. Click **Models**.
+2. For each model you can control, open its dropdown and choose **Enabled** or **Disabled**.
 
-> 💡 **Tip:** Org admins can only disable models the enterprise has enabled. They cannot re-enable models the enterprise has disabled.
+> 💡 **Tip:** Organizations can only decide models the enterprise set to **Delegate**. Models not configured by the organization follow its **Default availability for released models** policy.
 
 ---
 
 ## 3️⃣ Set Up Content Exclusions at the Enterprise Level
 
-*Prevent Copilot from using content from specific files or repositories across all organizations*
+*Keep specific files and repositories out of Copilot's context across all organizations*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Content exclusion
-```
+**Navigate:** Enterprise → **AI controls** → **Copilot** *(sidebar)* → **Content exclusion**
 
 **Steps:**
 
-1. Click **Add exclusion**
-2. Choose the exclusion type:
+1. Click **Content exclusion**.
+2. In the text box, enter the repositories and paths to exclude, one pattern per line. Use `"*":` to match any repository, or a repository reference — its full clone URL (or, in organization settings, just the repository name) — followed by its paths:
 
-| Exclusion Type | Format | Example |
-|----------------|--------|---------|
-| **File path patterns** | Glob patterns | `**/.env`, `**/secrets/**`, `config/credentials.*` |
-| **Entire repositories** | `org/repo` | `my-org/internal-secrets` |
+```yaml
+"*":
+  - "**/.env"
+  - "**/secrets/**"
+https://github.com/octo-org/payments-service.git:
+  - "/config/production.*"
+  - "**/*.pem"
+```
 
-3. Enter the repository or path pattern
-4. Save the exclusion
+3. Save your changes.
 
-> ⚠️ **Important:** Content exclusions apply to Copilot code completions and Copilot Chat. Excluded content will not be used as context for suggestions.
+> ⚠️ **Where it applies:** content exclusion works for inline suggestions and Copilot Chat. It is **not** supported in Edit and Agent modes of Copilot Chat in IDEs, and support in other surfaces has changed over time — check GitHub's [content exclusion](https://docs.github.com/en/copilot/concepts/context/content-exclusion) page for the current list. An IDE can also pass Copilot indirect information from excluded files, such as type information and hover definitions.
 
 ---
 
@@ -169,48 +173,41 @@ Enterprise → AI controls → Copilot → Content exclusion
 
 *Add organization-specific exclusions on top of enterprise exclusions*
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Content exclusions
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Content exclusion**
 
 **Steps:**
 
-1. Click **Add exclusion**
-2. Specify the repository (within the organization)
-3. Enter file path patterns to exclude:
+1. Click **Content exclusion**.
+2. In the box under **Repositories and paths to exclude**, enter the patterns:
 
-| Pattern | What It Excludes |
+| Pattern | What it excludes |
 |---------|------------------|
-| `**/.env` | All `.env` files in any directory |
-| `**/secrets/**` | Everything under any `secrets` directory |
-| `config/production.*` | Production config files |
-| `**/*.pem` | All PEM certificate files |
+| `"*": ["**/.env"]` | Every `.env` file, in any repository or location |
+| `"*": ["**/secrets/**"]` | Everything under any `secrets` directory |
+| `my-repo: ["/config/production.*"]` | Production config files in `my-repo` |
+| `"*": ["**/*.pem"]` | All PEM certificate files |
 
-4. Save the exclusion
+3. Save your changes.
 
-> 💡 **Tip:** Organization-level exclusions are additive to enterprise-level exclusions. You do not need to duplicate enterprise exclusions at the org level.
+> 💡 **Tip:** Organization exclusions add to enterprise exclusions — you don't need to repeat enterprise patterns. Repository admins can also exclude paths in a single repository at **Repo** → **Settings** → **Copilot** → **Content exclusion**.
 
 ---
 
 ## 5️⃣ Create Organization-Level Custom Instructions
 
-*Set coding standards and context that apply to all Copilot interactions within the organization*
+*Set standards that apply to Copilot interactions in the organization's context on GitHub.com*
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Custom instructions
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Custom instructions**
 
 **Steps:**
 
-1. Enable **Custom instructions**
-2. Enter instructions in the text field (up to 6,000 characters)
-3. Save changes
+1. Click **Custom instructions**.
+2. Under **Preferences and instructions**, write your instructions in plain language — for example, one per line.
+3. Click **Save changes**.
 
 **Example instructions:**
 
@@ -219,7 +216,7 @@ Profile Picture → Organizations → [Your Organization] → Settings
 - "Include JSDoc comments on all public functions"
 - "Use snake_case for Python variables and function names"
 
-> 💡 **Tip:** Organization instructions are automatically included as context in Copilot Chat conversations for all members of the organization.
+> 📌 **Where they apply:** organization custom instructions are used by Copilot Chat, Copilot code review, and Copilot cloud agent **on GitHub.com**. They're available with Copilot Business and Copilot Enterprise.
 
 ---
 
@@ -229,27 +226,27 @@ Profile Picture → Organizations → [Your Organization] → Settings
 
 ### A) General Repository Instructions
 
-Create a file at the root of the repository:
+Create this file in the repository:
 
 ```
 .github/copilot-instructions.md
 ```
 
-This file contains instructions that apply to all Copilot interactions within the repository.
+It applies to all Copilot requests made in the context of the repository.
 
 ### B) Task-Specific Instruction Files
 
-Create instruction files in the following directory:
+Create path-specific instruction files anywhere under:
 
 ```
-.github/instructions/*.instructions.md
+.github/instructions/**/*.instructions.md
 ```
 
-Each file can target specific tasks or file types using front matter:
+Use the `applyTo` front matter to choose which files they apply to:
 
 ```markdown
 ---
-applyWhen: "**/*.test.ts"
+applyTo: "**/*.test.ts"
 ---
 
 When writing tests, use Vitest as the test framework.
@@ -257,73 +254,65 @@ Always include edge case tests.
 Use descriptive test names following the pattern: "should [expected behavior] when [condition]".
 ```
 
-> 💡 **Tip:** Repository-level instructions are version-controlled and travel with the code. This makes them the best place for project-specific standards that all contributors (and Copilot) should follow.
+> 💡 **Tip:** Repository instructions are version-controlled and travel with the code. Agents also read `AGENTS.md` files.
 
 ### Instruction Precedence
 
+All relevant instructions are sent to Copilot together. When they conflict, higher entries win:
+
 | Priority | Source | Scope |
 |----------|--------|-------|
-| 1 (highest) | `.github/instructions/*.instructions.md` | Task/file-specific |
-| 2 | `.github/copilot-instructions.md` | Repository-wide |
-| 3 | Organization custom instructions | All repos in the org |
+| 1 (highest) | **Personal** instructions | Just you |
+| 2 | Path-specific `.github/instructions/**/*.instructions.md` | Matching files in the repository |
+| 3 | Repository-wide `.github/copilot-instructions.md` | The whole repository |
+| 4 | Agent instructions (e.g., `AGENTS.md`) | The repository, for agents |
+| 5 | **Organization** custom instructions | The organization (on GitHub.com) |
 
 ---
 
 ## 7️⃣ Enable or Disable the Public Code Filter
 
-*Control whether Copilot suggests code that matches publicly available code*
+*Control whether Copilot suggests code that matches public code*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** (enterprise) or **organization owner** (organization) · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Policies
-  → Suggestions matching public code → Block / Allow
-```
-
-Or at the organization level:
-
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Policies → Suggestions matching public code
-```
+**Navigate (enterprise):** Enterprise → **AI controls** → **Copilot** *(sidebar)* → **Suggestions matching public code**
+**Navigate (organization):** Organization → **Settings** → **Copilot** → **Policies** → **Suggestions matching public code**
 
 **Options:**
 
 | Setting | Effect |
 |---------|--------|
-| **Block** | Copilot filters out suggestions that match public code (reduces IP risk) |
-| **Allow** | Copilot does not filter suggestions based on public code matches |
+| **Blocked** | Copilot filters out suggestions that match public code |
+| **Allowed** | Copilot can show matching suggestions, with references to the matching code |
+| **No policy** *(enterprise only)* | Each organization decides |
 
-> 💡 **Tip:** Enabling the public code filter is recommended for enterprises concerned about intellectual property and licensing compliance.
+> 💡 **Tip:** Agree this setting with your legal team. The selection applies immediately — there is no Save button.
 
 ---
 
-## 8️⃣ Manage Copilot Extensions Policy at the Enterprise Level
+## 8️⃣ Manage MCP Server Policy at the Enterprise Level
 
-*Control which Copilot Extensions can be used across the enterprise*
+*Control whether and how Model Context Protocol (MCP) servers can be used with Copilot*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Policies
-  → Copilot Extensions
-```
+**Navigate:** Enterprise → **AI controls** → **MCP** *(sidebar)*
 
-**Options:**
+**Steps:**
 
-| Setting | Effect |
-|---------|--------|
-| **No policy** | Organization admins decide their own Extensions policy |
-| **Enabled** | Extensions are available to all organizations |
-| **Disabled** | Extensions are blocked across all organizations |
+1. Set the **MCP servers in Copilot** policy (for example, **Enabled everywhere**, or disabled).
+2. *(Optional)* To limit which servers can run, enter your registry in **MCP Registry URL** and click **Save**, then under **Restrict MCP access to registry servers** choose an option such as **Registry only**.
 
-> ⚠️ **Important:** When set to **Disabled** at the enterprise level, organization admins cannot enable Extensions for their org.
+> 📌 **What this policy covers:** it controls MCP use in Copilot where MCP support is generally available. It doesn't control access to the GitHub MCP server from third-party tools such as Cursor or Claude.
+
+> 💡 **Tip:** GitHub recommends enforcing an MCP allowlist with your enterprise's `managed-settings.json` file, which users can't override; custom-registry allowlists are in public preview. Allowlist controls require Copilot Business or Copilot Enterprise.
 
 ---
 
 ## 📝 Additional Notes
 
-> 💡 **Customization:** The exact wording and layout of settings may vary slightly depending on your GitHub Enterprise Cloud version and whether you are using Copilot Business or Copilot Enterprise. The navigation paths above reflect the current UI at time of writing.
+> 💡 **Customization:** Settings wording and layout can vary by plan and rollout. The paths above reflect GitHub's documentation as of October 2026.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -339,10 +328,10 @@ Enterprise → AI controls → Copilot → Policies
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
-| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+| **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
 </details>
 
@@ -355,12 +344,12 @@ Enterprise → AI controls → Copilot → Policies
 
 
 ### Q: Can we restrict models at the org level if the enterprise allows them?
-**A:** Yes, an organization can be more restrictive than the enterprise but not less restrictive. If the enterprise enables a model, the org admin can disable it for their org. However, if the enterprise disables a model, the org admin cannot re-enable it.
+**A:** Only if the enterprise **delegates** the decision. In **Configure models**, a model set to **Enabled** or **Disabled** at the enterprise is enforced for everyone; a model set to **Delegate** lets each organization choose **Enabled** or **Disabled** under **Settings** → **Copilot** → **Models**.
 
 ---
 
 ### Q: My content exclusion patterns are not working — what's wrong?
-**A:** Check three things: (1) verify your glob syntax is correct (e.g., `**/.env` not `*.env`), (2) ensure patterns are relative to the repository root, and (3) wait up to 30 minutes for exclusions to propagate. Exclusions do not take effect instantly after saving.
+**A:** Check four things: (1) the syntax — `"*":` for any repository, a bare repository name (organization settings) or full clone URL as the key, and quoted path patterns; (2) paths that start with `/` are relative to the repository root, while patterns like `**/.env` match anywhere; (3) where you're testing — exclusions aren't supported in Edit and Agent modes of Copilot Chat in IDEs; and (4) timing — IDEs that already loaded the settings can take up to 30 minutes to pick up changes, and reloading the IDE applies them sooner.
 
 ---
 
@@ -370,22 +359,22 @@ Enterprise → AI controls → Copilot → Policies
 ---
 
 ### Q: Custom instructions are not being followed — what should I check?
-**A:** Verify the file path is exactly `.github/copilot-instructions.md` at the repository root. Also confirm that the custom instructions feature is enabled at the organization level under Settings > Copilot > Custom instructions. If using task-specific instructions, check that the `applyWhen` front matter pattern matches the files you are working with.
+**A:** Confirm the repository file is exactly `.github/copilot-instructions.md`, and that path-specific files live under `.github/instructions/` with an `applyTo` pattern that matches the files you're working on. Remember that **personal** instructions take precedence over repository and organization instructions when they conflict, and organization instructions only apply on GitHub.com (Copilot Chat, code review, and cloud agent). Also check that the Copilot feature or IDE you're using supports that instruction type.
 
 ---
 
 ### Q: Can we enforce custom instructions across all repos in the org?
-**A:** Use organization-level custom instructions for shared standards that apply everywhere. Repository-level instructions in `.github/copilot-instructions.md` then add project-specific context on top. Org instructions are automatically included in all Copilot Chat conversations for org members.
+**A:** Organization custom instructions cover every repository in the organization, but only for Copilot Chat, Copilot code review, and Copilot cloud agent **on GitHub.com**. For IDE use, add standards to each repository's `.github/copilot-instructions.md` (a repository template helps new repos start with one).
 
 ---
 
 ### Q: We disabled a model at the enterprise level but users still see it — why?
-**A:** Model restriction changes can take a few minutes to propagate. Ask users to restart their IDE or refresh their Copilot Chat session. If the model still appears, verify the change was saved correctly in Enterprise > AI controls > Copilot > Models.
+**A:** Confirm the model is set to **Disabled** (not **Delegate**) in Enterprise → **AI controls** → **Copilot** → **Configure models**. Then ask users to reload their IDE or start a new Copilot Chat session — clients can take a little while to pick up policy changes.
 
 ---
 
 ### Q: Can content exclusions block Copilot code completions and Chat separately?
-**A:** No, content exclusions apply to both Copilot code completions and Copilot Chat simultaneously. You cannot exclude a file from Chat but allow it for completions or vice versa.
+**A:** No. An exclusion applies to both inline suggestions and Copilot Chat; you can't exclude a file from one but not the other. Note that exclusions aren't supported in Edit and Agent modes of Copilot Chat in IDEs.
 
 ---
 
@@ -404,17 +393,21 @@ Enterprise → AI controls → Copilot → Policies
 | BYOK (Bring Your Own Key) Configuration | `Copilot/BYOK (Bring Your Own Key) Configuration.md` |
 | Context Management (Spaces, Indexing, Instructions, Exclusions) | `Copilot/Context Management (Spaces, Indexing, Instructions, Exclusions).md` |
 | Responsible AI Guardrails | `Copilot/Responsible AI Guardrails.md` |
-| Coding Agent & MCP Configuration | `Copilot/Coding Agent & MCP Configuration.md` |
+| Cloud Agent & MCP Configuration | `Copilot/Cloud Agent & MCP Configuration.md` |
 
 ---
 
 ## 📚 Resources
 
-- [Configure access to AI models](https://docs.github.com/en/copilot/how-tos/use-ai-models/configure-access-to-ai-models)
-- [Exclude content from Copilot](https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot)
-- [Add organization custom instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions)
-- [Add custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot)
+- [Managing policies and features for Copilot in your enterprise](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies)
+- [Managing policies and features for Copilot in your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies)
+- [Excluding content from GitHub Copilot](https://docs.github.com/en/copilot/how-tos/configure-content-exclusion/exclude-content-from-copilot)
+- [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion)
+- [Adding organization custom instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions)
+- [About customizing Copilot responses](https://docs.github.com/en/copilot/concepts/prompting/response-customization)
+- [Restrict MCP server access to a custom registry](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-mcp-server-access)
+- [Sunset notice: GitHub App-based Copilot Extensions](https://github.blog/changelog/2025-09-24-deprecate-github-copilot-extensions-github-apps/)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

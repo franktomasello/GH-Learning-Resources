@@ -31,11 +31,10 @@
 
 > **For experienced admins who just need the click paths:**
 
-- Enable orgs: `Enterprise → AI controls → Copilot → Access → Enabled for selected organizations`
-- Assign individual seats: `Org Settings → Copilot → Access → Enabled for selected members → Add members`
-- Team-based assignment: `Org Settings → Copilot → Access → Enabled for selected members → Add teams`
-- Enable all members: `Org Settings → Copilot → Access → All members`
-- Assign Business vs Enterprise tier: `Enterprise → AI controls → Copilot → Access` — set tier per org
+- **Turn Copilot on for orgs (and pick the plan per org):** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **Organization access** → **Allow for specific organizations** → **Organizations** tab → org's **Copilot** dropdown
+- **Seats for specific users or teams:** Organization → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access** → **Start adding seats** → **Purchase for selected members** → **Users and teams** → **Continue to purchase** → **Purchase seats**
+- **Seats for everyone in an org:** Organization → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access** → **Start adding seats** → **Purchase for all members** → **Purchase seats**
+- **License users directly at the enterprise (Copilot Business):** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **All members** or **Enterprise Teams** → **Assign licenses** → **Add licenses**
 
 ---
 
@@ -45,7 +44,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -58,46 +57,49 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
-| Copilot Business or Copilot Enterprise subscription purchased | ☐ |
-| Organization admin access (for org-level seat assignment) | ☐ |
-| GitHub Teams created (for team-based pilot rollouts) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud enterprise with Copilot Business or Copilot Enterprise | GitHub **enterprise owner** | ☐ |
+| Turn Copilot on for organizations and choose each org's plan | GitHub **enterprise owner** | ☐ |
+| Assign seats inside an organization | GitHub **organization owner** | ☐ |
+| GitHub teams created (for team-based pilots) | GitHub **organization owner** or team maintainer | ☐ |
 
 ---
 
 ## 📋 Overview
 
-This runbook covers every way to assign and manage GitHub Copilot seats:
+This runbook covers every way to give people GitHub Copilot:
 
-| Method | Scope | Best For |
-|--------|-------|----------|
-| **Enterprise-level org selection** | Entire enterprise | Choosing which orgs get Copilot |
-| **Org-level selected members** | Specific users | Controlled rollouts, budget management |
-| **Team-based assignment** | GitHub Team | Pilot programs, department rollouts |
-| **Org-level all members** | Entire organization | Full org enablement |
-| **Enterprise tier assignment** | Enterprise | Assigning Business vs Enterprise plans to orgs |
+| Method | Who does it | Best for |
+|--------|-------------|----------|
+| **Turn Copilot on for selected organizations** | Enterprise owner | Choosing which orgs can use Copilot, and on which plan |
+| **Seats for selected members** | Organization owner | Controlled rollouts, budget management |
+| **Seats for a team** | Organization owner | Pilots and department rollouts |
+| **Seats for all members** | Organization owner | Full-organization enablement |
+| **Direct enterprise licenses** | Enterprise owner | Copilot Business for people with no org access needed |
+
+> 💡 **Billing:** a seat is billed from the moment it's granted (prorated mid-cycle), whether or not the person uses Copilot. Since **October 1, 2026**, customers who pay by **credit card or PayPal** must pay for each new seat before the user gets access, and assigned seats incur an upfront charge each billing cycle.
 
 ---
 
 ## 1️⃣ Enable Copilot for Specific Organizations (Enterprise Level)
 
-*Choose which organizations under your enterprise have access to Copilot*
+*Choose which organizations in your enterprise can use Copilot*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Access
-  → "Enabled for selected organizations"
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
 **Steps:**
 
-1. Select **Enabled for selected organizations**
-2. Use the search box to find organizations
-3. Check the organizations you want to enable
-4. Save changes
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the sidebar, click **Licensing**.
+3. In the "Copilot" section, click **Manage**.
+4. Next to **Organization access**, open the dropdown and select **Allow for specific organizations** (or enable it for all organizations).
+5. Click the **Organizations** tab.
+6. Find each organization and, to the right of its name, open the **Copilot** dropdown and click **Enabled** (or **Copilot: Business** / **Copilot: Enterprise** if your enterprise has a Copilot Enterprise plan).
+
+> 📌 These selections apply immediately — there is no Save button.
 
 > 💡 **Tip:** Start with a single organization for your pilot, then expand as adoption grows.
 
@@ -105,168 +107,155 @@ Enterprise → AI controls → Copilot → Access
 
 ## 2️⃣ Assign Seats to Specific Users (Organization Level)
 
-*Grant Copilot access to individual members within an organization*
+*Grant Copilot to individual members of an organization*
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Access → "Enabled for selected members"
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Access**
 
 **Steps:**
 
-1. Select **Enabled for selected members**
-2. Click **Add members**
-3. Search for and select the users to grant access
-4. Confirm the seat assignments
+1. If you see **Allow this organization to assign seats**, click it.
+2. Click **Start adding seats**.
+3. Select **Purchase for selected members**.
+4. In the "Enable Copilot access for users and teams" dialog, on the **Users and teams** tab, search for and select the users. *(To add many at once, use the **Upload CSV** tab.)*
+5. Click **Continue to purchase**, then **Purchase seats**.
 
-> ⚠️ **Important:** Each assigned seat counts toward your Copilot license total. Users who are assigned but never activate Copilot still consume a seat.
+> ⚠️ **Important:** Each assigned seat is billed, even if the person never uses Copilot. Revoke unused seats to stop the charge.
 
 ---
 
 ## 3️⃣ Team-Based Assignment for Pilots
 
-*Recommended approach for running a Copilot pilot program*
+*Recommended approach for running a Copilot pilot*
 
 ### A) Create a GitHub Team
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization]
-  → Teams → New team
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → **New team**
 
 **Steps:**
 
-1. Enter a team name (e.g., `copilot-pilot`)
-2. Add a description (e.g., "Copilot pilot participants - Q2 2026")
-3. Set visibility to **Visible** or **Secret** depending on preference
-4. Click **Create team**
+1. Enter a team name (e.g., `copilot-pilot`).
+2. Add a description (e.g., "Copilot pilot participants").
+3. Set visibility to **Visible** or **Secret**.
+4. Click **Create team**.
 
 ### B) Add Pilot Users to the Team
 
-**Navigation:**
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Teams** → *[copilot-pilot]*
 
-```
-Profile Picture → Organizations → [Your Organization]
-  → Teams → [copilot-pilot] → Members → Add member
-```
+1. Click **Add a member**.
+2. Search for the user, select them, and confirm.
+3. Repeat for each pilot user.
+
+> 📌 **Enterprise Managed Users / team sync:** if the team is linked to an IdP group, add people to the group in your identity provider instead — GitHub updates the team for you.
 
 ### C) Grant Copilot Access to the Team
 
-**Navigation:**
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Access**
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Access → "Enabled for selected members"
-    → Add teams → Search for [copilot-pilot] → Select → Save
-```
+1. Click **Start adding seats** (click **Allow this organization to assign seats** first if it appears).
+2. Select **Purchase for selected members**.
+3. On the **Users and teams** tab, search for `copilot-pilot` and select the team.
+4. Click **Continue to purchase**, then **Purchase seats**.
 
-> ✅ **Result:** Only members of the `copilot-pilot` team will have Copilot access. New members added to the team automatically receive a seat.
+> ✅ **Result:** members of `copilot-pilot` get Copilot, and people you add to the team later get a seat automatically.
 
-> 💡 **Tip:** Team-based assignment makes it easy to add or remove pilot participants without managing individual seats. It also simplifies reporting because you can track usage by team.
+> 💡 **Tip:** Team-based assignment makes it easy to add or remove pilot participants and to report usage by team.
 
 ---
 
 ## 4️⃣ Enable Copilot for All Members (Organization Level)
 
-*Grant Copilot access to every member of the organization*
+*Grant Copilot to every current and future member of the organization*
 
-**Navigation:**
+**👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Access → "All members"
-```
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** → **Access**
 
 **Steps:**
 
-1. Select **All members**
-2. Confirm the enablement
+1. Click **Start adding seats** (click **Allow this organization to assign seats** first if it appears).
+2. Select **Purchase for all members**.
+3. In the "Confirm seats purchase for all members" dialog, click **Purchase seats**.
 
-> ⚠️ **Important:** This will assign a seat to every current member and automatically assign seats to new members as they join the organization. Monitor your seat count against your license total.
+> ⚠️ **Important:** Every current member gets a seat, and new members get one automatically when they join. Monitor your seat count.
 
 ---
 
 ## 5️⃣ Mixed Plans: Business + Enterprise in the Same Enterprise
 
-*Assign different Copilot tiers to different organizations*
+*Give different organizations different Copilot plans*
 
 ### Understanding Mixed Plans
 
-| Tier | Features | Typical Use |
-|------|----------|-------------|
-| **Copilot Business** | Code completions, Chat, CLI | Standard developer productivity |
-| **Copilot Enterprise** | Business features + knowledge bases, Bing search, PR summaries | Teams needing advanced features |
+| Plan | Price | AI credits per user per month | What's different |
+|------|-------|-------------------------------|------------------|
+| **Copilot Business** | $19 per seat | 1,900 | Chat, inline suggestions, agents (cloud agent, agent mode, code review), MCP, custom instructions, content exclusion, policy management |
+| **Copilot Enterprise** | $39 per seat | 3,900 | Everything in Business, plus a larger AI credit allowance, access to some additional models, and Spark (public preview) |
+
+> 💡 Under usage-based billing, Copilot Enterprise isn't cheaper for heavy users — its extra credits cost exactly what you pay for them. Choose it for its features. See [AI Credits Budgeting Scenarios](AI%20Credits%20Budgeting%20Scenarios.md).
 
 ### Assign Tiers at the Enterprise Level
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Access
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **Organizations** tab
 
 **Steps:**
 
-1. For each enabled organization, select the Copilot tier:
-   - **Copilot Business**
-   - **Copilot Enterprise**
-2. Save changes
+1. Find the organization.
+2. Open its **Copilot** dropdown and click **Copilot: Business** or **Copilot: Enterprise**. *(Applies immediately.)*
 
-> 💡 **Tip:** You can run some organizations on Copilot Business and others on Copilot Enterprise under the same enterprise. This lets you control costs while giving advanced features to teams that need them.
+> 💡 **Tip:** You can run some organizations on Copilot Business and others on Copilot Enterprise under the same enterprise. The Copilot Enterprise options appear only if your enterprise has a Copilot Enterprise plan.
 
 ---
 
 ## 6️⃣ Resolving Duplicate Tier Assignments
 
-*When a user has both Business and Enterprise assignments*
+*When a user gets Copilot through more than one route*
 
 ### How Duplicates Happen
 
-A user can end up with multiple Copilot assignments if they belong to more than one organization under the enterprise, and those organizations are assigned different Copilot tiers.
+A user can be assigned Copilot more than once — for example, as a member of two organizations on different plans, or through both an organization and a direct enterprise license.
 
 ### Resolution Rules
 
 | Scenario | Result |
 |----------|--------|
-| User has Business in Org A + Enterprise in Org B | User gets **Enterprise** (highest tier wins) |
-| User has Business in Org A + Business in Org B | User consumes **one** Business seat |
+| Business in Org A + Enterprise in Org B | The user gets **Copilot Enterprise** (the highest plan) and consumes **one** license |
+| Business in Org A + Business in Org B | The user consumes **one** Business license |
+| Organization seat + direct enterprise license | The user consumes **one** license, at the highest plan assigned |
 
 ### Identifying Duplicate Assignments
 
-**Navigation:**
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **All members** tab
 
-```
-Enterprise → AI controls → Copilot → Access
-```
+Review who holds a license and how it was assigned, and compare it with each organization's **Settings** → **Copilot** → **Access** page.
 
-Review the seat assignment summary. Users with multiple assignments will be flagged.
-
-> 💡 **Tip:** To avoid unnecessary costs, audit seat assignments periodically. Remove users from the lower-tier organization's Copilot access if they already have a higher tier through another org.
+> 💡 **Tip:** If a user already has Copilot Enterprise through one organization, removing their lower-plan seat elsewhere makes the assignments easier to reason about.
 
 ---
 
 ## 7️⃣ Copilot Enterprise vs Business Assignment at the Enterprise Level
 
-*Set the default tier and manage organization-level plan assignments*
+*Manage which plan each organization uses*
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Access
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **Organizations** tab
 
 **Options:**
 
-| Setting | Effect |
-|---------|--------|
-| **Copilot Business** for an org | All seats in that org are Business tier |
-| **Copilot Enterprise** for an org | All seats in that org are Enterprise tier |
+| Setting on an org's **Copilot** dropdown | Effect |
+|------------------------------------------|--------|
+| **Copilot: Business** | Seats in that org are Copilot Business |
+| **Copilot: Enterprise** | Seats in that org are Copilot Enterprise |
+| **Enabled** *(enterprises on Copilot Business only)* | Copilot is on for that org |
 
-> ⚠️ **Important:** Changing an organization's tier from Enterprise to Business will immediately remove access to Enterprise-only features (knowledge bases, Bing search in Chat, PR summaries) for all users in that org.
+> ⚠️ **Important:** Moving an organization from Copilot Enterprise to Copilot Business removes Enterprise-only capabilities for its users right away, and its contribution to the shared AI credit pool drops at the start of the next billing cycle.
 
 ---
 
@@ -276,34 +265,18 @@ Enterprise → AI controls → Copilot → Access
 
 ### Steps
 
-1. **Enable Copilot for the pilot organization:**
-   ```
-   Enterprise → AI controls → Copilot → Access
-     → Enabled for selected organizations → [Pilot Org]
-   ```
-
-2. **Create a pilot team:**
-   ```
-   Org → Teams → New team → "copilot-pilot"
-   ```
-
-3. **Add pilot users to the team** (50-100 recommended)
-
-4. **Grant Copilot to the team:**
-   ```
-   Org Settings → Copilot → Access
-     → Enabled for selected members → Add teams → copilot-pilot
-   ```
-
-5. **Set policies** (model access, public code filter, content exclusions)
-
-6. **Run for 30-60 days**, then review metrics
+1. **Turn Copilot on for the pilot organization** — Enterprise → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)* → **Allow for specific organizations** → **Organizations** tab → pilot org's **Copilot** dropdown → **Enabled**.
+2. **Create a pilot team** — Organization → **Teams** → **New team** → `copilot-pilot` → **Create team**.
+3. **Add pilot users to the team** (50–100 is a good size).
+4. **Grant Copilot to the team** — Organization → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access** → **Start adding seats** → **Purchase for selected members** → select `copilot-pilot` → **Continue to purchase** → **Purchase seats**.
+5. **Set policies and budgets** — model access, public-code matching, content exclusions, and a universal user-level budget (see [AI Credits Budget & Overage Planning](AI%20Credits%20Budget%20%26%20Overage%20Planning.md)).
+6. **Run for 30–60 days**, then review usage on Enterprise → **Billing and licensing** → **AI usage** and your adoption metrics.
 
 ---
 
 ## 📝 Additional Notes
 
-> 💡 **Customization:** The exact UI labels and options may vary slightly depending on your enterprise agreement and whether you are on Copilot Business, Copilot Enterprise, or a trial. The navigation paths above reflect the current UI at time of writing.
+> 💡 **Customization:** UI labels can vary slightly depending on your enterprise agreement, plan, and trial status. The paths above reflect GitHub's documentation as of October 2026.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -319,10 +292,10 @@ Enterprise → AI controls → Copilot → Access
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
-| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+| **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
 </details>
 
@@ -335,37 +308,37 @@ Enterprise → AI controls → Copilot → Access
 
 
 ### Q: A user says Copilot isn't working even though we assigned them a seat — what should we check?
-**A:** Verify four things: (1) the user's IDE extension is up to date, (2) their SSO/SAML session is active and not expired, (3) the user has accepted the Copilot terms of service, and (4) they are signed into the correct GitHub account in their IDE. An assigned seat does not activate until the user completes these steps.
+**A:** Check, in order: (1) Copilot is turned on for their organization at the enterprise level (Step 1); (2) they're signed in to the right GitHub account in their IDE and have an active SSO session if the organization uses SAML; (3) their IDE and Copilot extension are up to date — older versions can show wrong usage and billing information; (4) the feature they're using is allowed by your Copilot policies; and (5) they haven't used up their AI credit budget — they can see this under **Your Copilot** → **Usage**.
 
 ---
 
 ### Q: Can we auto-assign Copilot to all new org members?
-**A:** Yes, set the access policy to "All members" under Org Settings > Copilot > Access. New members joining the organization will automatically receive a Copilot seat. Monitor your seat count against your license total to avoid exceeding your purchased seats.
+**A:** Yes. In **Settings** → **Copilot** → **Access**, click **Start adding seats** → **Purchase for all members** → **Purchase seats**. Every current member gets a seat, and new members get one automatically when they join. Each seat is billed, so monitor your seat count.
 
 ---
 
 ### Q: A user has both Copilot Business and Enterprise assigned — what happens?
-**A:** Enterprise takes precedence. The user gets Enterprise-tier features. To avoid unnecessary cost, remove the lower-tier (Business) assignment by removing them from the Business-tier organization's Copilot access.
+**A:** They get Copilot Enterprise (the highest plan assigned) and consume only **one** license, so there's no double charge. You can still remove the extra assignment to keep things tidy.
 
 ---
 
 ### Q: How do we revoke a seat immediately?
-**A:** Remove the user from the team or individual seat assignment under Org Settings > Copilot > Access. The revocation takes effect within minutes. The user will lose Copilot functionality in their IDE on their next session refresh.
+**A:** It depends where the seat came from. **Enterprise-level licenses** (direct assignment or an enterprise team): unassign the license or remove the user from the enterprise team — access is revoked **immediately**. **Organization seats:** in **Settings** → **Copilot** → **Access**, select the member's checkbox, click **Cancel seat**, then **Remove seats** in the confirmation dialog — the user keeps access until the **start of the next billing cycle**. Removing the user from the organization also revokes the organization seat.
 
 ---
 
 ### Q: Seats are showing as "pending" — what does that mean?
-**A:** A pending seat means the user has been assigned but has not yet activated Copilot. The user needs to sign into an IDE with the Copilot extension installed and accept the Copilot terms of service. Pending seats still consume a license.
+**A:** Usually the person wasn't a member of the organization when you assigned the seat, so GitHub sent them an organization invitation that they haven't accepted yet. Check the organization's pending invitations and ask them to accept.
 
 ---
 
 ### Q: We removed a user from the org but they still appear to have a Copilot seat — why?
-**A:** Seat assignment changes may take a few minutes to reflect in the UI. If the user belongs to multiple organizations under the same enterprise, they may still have a seat through another org. Check all org-level assignments in the enterprise access view.
+**A:** They may still have Copilot through another organization, an enterprise team, or a direct enterprise license. Check Enterprise → **Billing and licensing** → **Licensing** → **Manage** (*Copilot*) → **All members**. Organization-level removals also take effect from the start of the next billing cycle.
 
 ---
 
 ### Q: How many seats can we assign during a pilot without over-purchasing?
-**A:** Use team-based assignment with a dedicated pilot team (e.g., `copilot-pilot`). This lets you control exactly who has access. Seats are counted at the enterprise level, so you only need enough total licenses to cover all assigned users across all orgs.
+**A:** There's no fixed pool of seats to over-buy: you're billed for each seat you grant, prorated for the rest of the cycle. Grant seats only to a dedicated pilot team (e.g., `copilot-pilot`), and cancel seats for people who stop using Copilot.
 
 </details>
 
@@ -384,9 +357,12 @@ Enterprise → AI controls → Copilot → Access
 
 ## 📚 Resources
 
-- [Managing access to GitHub Copilot in your organization](https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-access-to-github-copilot-in-your-organization)
-- [Managing policies and features for Copilot in your enterprise](https://docs.github.com/en/copilot/managing-copilot/managing-copilot-for-your-enterprise/managing-policies-and-features-for-copilot-in-your-enterprise)
+- [Granting users access to Copilot in your enterprise](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access)
+- [Granting access to Copilot for members of your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-access/grant-access)
+- [Revoking access to Copilot for members of your organization](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-access/revoke-access)
+- [Plans for GitHub Copilot](https://docs.github.com/en/copilot/get-started/plans)
+- [Managing policies and features for Copilot in your enterprise](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-enterprise-policies)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

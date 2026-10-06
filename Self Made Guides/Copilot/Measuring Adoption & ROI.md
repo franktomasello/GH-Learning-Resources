@@ -10,13 +10,14 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Built-In Metrics at the Enterprise Level](#1️⃣-built-in-metrics-at-the-enterprise-level)
-- [2️⃣ Organization-Level Metrics](#2️⃣-organization-level-metrics)
-- [3️⃣ Key Metrics to Track](#3️⃣-key-metrics-to-track)
-- [4️⃣ Copilot Metrics API](#4️⃣-copilot-metrics-api)
-- [5️⃣ ROI Indicators](#5️⃣-roi-indicators)
-- [6️⃣ Running a Copilot Pilot](#6️⃣-running-a-copilot-pilot)
-- [7️⃣ Executive Reporting Framework](#7️⃣-executive-reporting-framework)
+- [1️⃣ Turn On Copilot Usage Metrics](#1️⃣-turn-on-copilot-usage-metrics)
+- [2️⃣ Use the Built-In Dashboards](#2️⃣-use-the-built-in-dashboards)
+- [3️⃣ Track Spend and Seat Activity](#3️⃣-track-spend-and-seat-activity)
+- [4️⃣ Key Metrics to Track](#4️⃣-key-metrics-to-track)
+- [5️⃣ Copilot Usage Metrics API](#5️⃣-copilot-usage-metrics-api)
+- [6️⃣ ROI Indicators](#6️⃣-roi-indicators)
+- [7️⃣ Running a Copilot Pilot](#7️⃣-running-a-copilot-pilot)
+- [8️⃣ Executive Reporting Framework](#8️⃣-executive-reporting-framework)
 - [🚀 Quick Metrics Setup Recipe](#-quick-metrics-setup-recipe)
 - [📝 Additional Notes](#-additional-notes)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -31,10 +32,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- Enterprise adoption metrics: `Enterprise → AI controls → Insights`
-- Premium request spend: `Enterprise → Billing and licensing → Usage`
-- Org-level usage: `Org Settings → Copilot → Usage`
-- API for custom dashboards: `GET /orgs/{org}/copilot/metrics` or `/enterprises/{enterprise}/copilot/metrics`
+- Turn on metrics: `Enterprise → AI controls → Copilot` → **Copilot usage metrics** policy → **Enabled everywhere**
+- Dashboards: `Enterprise → Insights` → **Copilot usage** · **Code generation** · **Copilot impact**
+- AI credit spend: `Enterprise → Billing and licensing → AI usage`
+- Seat activity CSV: `Enterprise → Billing and licensing → Licensing` → next to Copilot, **Get activity report**
+- API: `GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-28-day/latest` (returns download links to NDJSON reports)
 
 ---
 
@@ -44,7 +46,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -57,267 +59,271 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account with enterprise owner or billing admin access | ☐ |
-| Copilot Business or Copilot Enterprise subscription active with assigned seats | ☐ |
-| API token with `manage_billing:copilot` scope (for metrics API) | ☐ |
-| Survey tool for qualitative developer feedback (optional) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| Copilot Business or Copilot Enterprise with assigned seats | GitHub **enterprise owner** or **organization owner** | ☐ |
+| **Copilot usage metrics** policy enabled (Section 1) | GitHub **enterprise owner** (or **organization owner** if delegated) | ☐ |
+| View the dashboards and reports | **Enterprise owner**, **enterprise billing manager**, **organization owner**, or a custom role with **View Enterprise Copilot Metrics** / **View Organization Copilot Metrics** | ☐ |
+| API access | A token for one of the roles above. Classic PAT scopes: `manage_billing:copilot` or `read:enterprise` (enterprise reports), `read:org` (organization reports) | ☐ |
+| Users send IDE telemetry | Developers keep telemetry on in their IDE, using a supported IDE and extension version | ☐ |
+| Survey tool for qualitative feedback (optional) | Program owner | ☐ |
 
 ---
 
 ## 📋 Overview
 
-This runbook covers how to measure and report on GitHub Copilot adoption and return on investment:
-
-| Method | Scope | Best For |
+| Method | Scope | Best for |
 |--------|-------|----------|
-| **Built-in enterprise metrics** | Enterprise-wide | Executive dashboards, adoption tracking |
-| **Org-level usage metrics** | Single organization | Team-level insights |
-| **Copilot metrics API** | Custom dashboards | Power BI, Tableau, automated reporting |
-| **Pilot measurement** | Controlled group | Pre-purchase justification, before/after comparison |
-| **Developer surveys** | Qualitative | Sentiment, productivity perception |
+| **Copilot usage dashboard** | Enterprise or organization (28-day trends) | Adoption and engagement tracking |
+| **Code generation dashboard** | Enterprise or organization | User- vs agent-initiated code changes by model and language |
+| **Copilot impact dashboard** | Enterprise | Adoption cohorts, pull request output, and a potential-ROI estimate |
+| **Usage metrics API / NDJSON export** | Enterprise, organization, repository, and user reports | Power BI, Tableau, data warehouse |
+| **Activity report (CSV)** | Enterprise or organization | Seat activity and license cleanup |
+| **Pilot measurement and surveys** | Controlled group | Before/after comparison and sentiment |
+
+> 📌 **What's counted:** metrics come mainly from **IDE telemetry**, plus server-side signals that catch active users whose telemetry is blocked. Copilot Chat on GitHub.com and GitHub Mobile are **not** included. Data arrives within about **two full UTC days** (the dashboard can lag up to three).
 
 ---
 
-## 1️⃣ Built-In Metrics at the Enterprise Level
+## 1️⃣ Turn On Copilot Usage Metrics
 
-*Access adoption metrics and premium request spend from the enterprise dashboard*
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-### A) Adoption Metrics
+**Navigate:** Enterprise → **AI controls** → **Copilot** *(sidebar)*
 
-**Navigation:**
+**Steps:**
 
-```
-Enterprise → AI controls → Insights
-```
+1. At the top of the enterprise page, click **AI controls**.
+2. In the left sidebar, click **Copilot**.
+3. Find the **Copilot usage metrics** policy and select **Enabled everywhere**. *(The API endpoints need **Enabled everywhere**.)*
 
-**Available Metrics:**
+> 📌 The policy applies as soon as you select it. If you delegate it to organizations, an organization owner enables it at Organization → **Settings** → **Copilot** → **Policies**.
 
-| Metric | Description |
-|--------|-------------|
-| **Active users** | Number of users who used Copilot in the selected period |
-| **Acceptance rate** | Percentage of Copilot suggestions accepted by users |
-| **Lines suggested** | Total lines of code suggested by Copilot |
-| **Lines accepted** | Total lines of code accepted by users |
-| **Language breakdown** | Usage by programming language |
-| **IDE breakdown** | Usage by editor (VS Code, JetBrains, Neovim, etc.) |
-
-### B) Premium Request Spend
-
-**Navigation:**
-
-```
-Enterprise → Billing and licensing → Usage
-```
-
-**Available Metrics:**
-
-| Metric | Description |
-|--------|-------------|
-| **Premium requests consumed** | Total premium model requests across the enterprise |
-| **Per-user consumption** | Premium requests broken down by user |
-| **Per-model consumption** | Premium requests broken down by AI model |
-| **Spending trends** | Historical consumption over time |
-
-> 💡 **Tip:** Use the date range selector to compare adoption across months. Look for trends in the first 30, 60, and 90 days after rollout.
+> 💡 **Give someone metrics access without making them an owner:** create a custom organization role that includes **View organization Copilot metrics** and assign it — or use the enterprise equivalent.
 
 ---
 
-## 2️⃣ Organization-Level Metrics
+## 2️⃣ Use the Built-In Dashboards
 
-*View usage data scoped to a specific organization*
+**👤 Role:** See Prerequisites · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **Insights** tab → choose a dashboard in the left sidebar
 
+| Dashboard | Sidebar item | What it shows |
+|-----------|--------------|---------------|
+| **Copilot usage** | **Copilot usage** | 28-day trends: active users, engagement, acceptance, feature, model, and language use. Can export NDJSON |
+| **Code generation** | **Code generation** | Lines changed with AI, split into user-initiated and agent-initiated, by model and language |
+| **Copilot impact** | **Copilot impact** | Users grouped into adoption phases, an **adoption multiplier** for pull requests merged, and a **Potential return on investment** section |
+
+**Steps (impact dashboard ROI estimate):**
+
+1. Enterprise → **Insights** → **Copilot impact**.
+2. Under **Average developer cost in your organization**, select a compensation band.
+3. In the **Transition your developers to be agent-first** card, compare cost, payroll %, and pull requests per developer for **Phase 0-1 Passive and Code First Users** vs **Phase 2-3 Agent First Users**.
+
+> ⚠️ Treat the ROI figures as **directional estimates**, not financial results. They're dashboard-only — not in the API.
+
+**Adoption phases used by the impact dashboard:**
+
+| Phase | Meaning (at least 2 active days in the trailing 28 days) |
+|-------|--------------------------------------------------------|
+| **Passive users** (API: `No Cohort`) | Hasn't reached a phase threshold yet — not the same as inactive |
+| **Phase 1: Code first** | Code completions and/or agent edits in the IDE |
+| **Phase 2: Agent first** | One GitHub agent surface — cloud agent, code review, or Copilot CLI |
+| **Phase 3: Multi-agent** | Two or more agent surfaces, or the GitHub Copilot app |
+
+> 📌 Organization owners see the same dashboards for their organization. A user's usage shows up in **every** organization they belong to, as long as they hold a Copilot seat somewhere in the enterprise. Enterprise totals de-duplicate users; organization totals don't.
+
+---
+
+## 3️⃣ Track Spend and Seat Activity
+
+**👤 Role:** GitHub **enterprise owner** or **billing manager** · **📍 Portal:** GitHub
+
+| What | Click path |
+|------|-----------|
+| AI credit consumption | Enterprise → **Billing and licensing** → **AI usage** |
+| Budgets and alerts | Enterprise → **Billing and licensing** → **Budgets and alerts** |
+| Seat activity (CSV) | Enterprise → **Billing and licensing** → **Licensing** → next to **Copilot**, click **Get activity report** |
+| Seat activity (org CSV) | Organization → **Settings** → **Copilot** → **Access** → **Get usage report** → **Get activity report** |
+
+> 💡 **Tip:** The per-user usage report includes `ai_credits_used`, so you can compare credits against adoption phase and pull request output.
+
+---
+
+## 4️⃣ Key Metrics to Track
+
+### Adoption and engagement
+
+| Metric | API field | What it tells you |
+|--------|-----------|-------------------|
+| Daily / weekly / monthly active users | `daily_active_users`, `weekly_active_users`, `monthly_active_users` | Is Copilot used regularly? |
+| Active seat rate | Monthly active users ÷ assigned seats | How many paid seats are really used |
+| Chat and agent users | `monthly_active_chat_users`, `monthly_active_agent_users` | Breadth beyond completions |
+| Cloud agent users | `monthly_active_copilot_cloud_agent_users` | Agent adoption |
+| Code review users | `monthly_active_copilot_code_review_users` (active), `monthly_passive_copilot_code_review_users` | Code review adoption |
+| Acceptance | `code_acceptance_activity_count` ÷ `code_generation_activity_count` | Do developers trust the output? |
+| Lines added with Copilot | `loc_added_sum` | Directional view of output |
+
+### Cost
+
+| Metric | Source | Action |
+|--------|--------|--------|
+| AI credits per user | `ai_credits_used` (per-user report) or **AI usage** page | Find heavy users; set user-level budgets |
+| AI credits by model | **AI usage** page | Inform model policy decisions |
+| Unused seats | Activity report / user management API (`last_activity_at`) | Reclaim seats |
+| Cost per active user | (Seat cost + metered AI credits) ÷ monthly active users | Compare against ROI |
+
+> 💡 **Tip:** Set targets only after you have a baseline from your own data. GitHub recommends looking at patterns across several signals rather than any single number — for example, steady daily active users plus a rising acceptance rate means growing trust.
+
+---
+
+## 5️⃣ Copilot Usage Metrics API
+
+*Build custom dashboards in Power BI, Tableau, or a data warehouse*
+
+Each endpoint returns `download_links` (short-lived signed URLs) and a `report_day`. Download the NDJSON files from the links.
+
+| Endpoint | Report |
+|----------|--------|
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-1-day?day=YYYY-MM-DD` | Enterprise totals for one day |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-28-day/latest` | Latest 28-day enterprise totals |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/users-1-day?day=YYYY-MM-DD` | Per-user, one day |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/users-28-day/latest` | Per-user, latest 28 days |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/repos-1-day?day=YYYY-MM-DD` | Per-repository pull request activity |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/user-teams-1-day?day=YYYY-MM-DD` | User-to-team mapping (join with the per-user report for team metrics) |
+| `GET /orgs/{org}/copilot/metrics/reports/organization-1-day` · `organization-28-day/latest` · `users-1-day` · `users-28-day/latest` · `repos-1-day` · `user-teams-1-day` | Same reports for one organization |
+
+**Example:**
+
+```bash
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -H "X-GitHub-Api-Version: 2026-03-10" \
+  https://api.github.com/enterprises/ENTERPRISE/copilot/metrics/reports/enterprise-28-day/latest
 ```
-Profile Picture → Organizations → [Your Organization] → Settings
-  → Copilot → Usage
-```
 
-**Available Metrics:**
+**Power BI / Tableau pattern:**
 
-| Metric | Description |
-|--------|-------------|
-| **Active users** | Members who used Copilot in the period |
-| **Seat utilization** | Assigned seats vs active seats |
-| **Acceptance rate** | Suggestion acceptance percentage |
-| **Language breakdown** | Top languages by Copilot usage |
-| **IDE breakdown** | Top editors by Copilot usage |
+1. Run a daily job that calls the `*-1-day` endpoints for the day that finished two days ago.
+2. Download each file in `download_links` right away — the links expire.
+3. Load the NDJSON into your warehouse, keyed by `day` (and `user_id` for per-user reports).
+4. Join `user-teams` with per-user data to build team views.
+5. Point Power BI or Tableau at the warehouse.
 
-> 💡 **Tip:** Compare seat utilization against assigned seats to identify unused licenses. If utilization is below 70%, consider reassigning idle seats or running enablement sessions.
+> 📌 Reports go back to **October 10, 2025** for enterprises (organization reports start **December 12, 2025**) and keep up to **one year** of history. For seat and license data, use the **Copilot user management** API instead — it's the source of truth for seats.
+
+> ⚠️ The older `GET /orgs/{org}/copilot/metrics` endpoint and its fields (`total_active_users`, `total_engaged_users`, …) are no longer documented. Move integrations to the usage metrics reports above.
 
 ---
 
-## 3️⃣ Key Metrics to Track
+## 6️⃣ ROI Indicators
 
-*The metrics that matter most for adoption and ROI reporting*
+### Quantitative indicators
 
-### Adoption Metrics
-
-| Metric | What It Tells You | Healthy Range |
-|--------|-------------------|---------------|
-| **Active user rate** | Percentage of assigned seats actively used | 70-90% |
-| **Acceptance rate** | How useful suggestions are to developers | 25-40% typical |
-| **Lines accepted per user per day** | Volume of AI-assisted code | Varies by role |
-| **IDE coverage** | Which editors are being used with Copilot | Broad adoption preferred |
-| **Language coverage** | Which languages benefit most | Compare to your tech stack |
-
-### Cost Metrics
-
-| Metric | What It Tells You | Action |
-|--------|-------------------|--------|
-| **Premium requests per user** | Who is using premium models heavily | Monitor for budget planning |
-| **Premium requests per model** | Which models drive the most cost | Inform model restriction decisions |
-| **Seat utilization** | Assigned vs active seats | Reclaim unused seats |
-| **Cost per active user** | Effective cost of Copilot per productive user | Compare against ROI |
-
----
-
-## 4️⃣ Copilot Metrics API
-
-*Build custom dashboards in Power BI, Tableau, or other reporting tools*
-
-### API Endpoint
-
-The Copilot metrics API provides programmatic access to usage data:
-
-| Endpoint | Scope | Data |
-|----------|-------|------|
-| `GET /orgs/{org}/copilot/metrics` | Organization | Daily usage metrics |
-| `GET /enterprises/{enterprise}/copilot/metrics` | Enterprise | Daily usage metrics |
-
-### Available Data Fields
-
-| Field | Description |
-|-------|-------------|
-| `total_active_users` | Users who used Copilot on that day |
-| `total_engaged_users` | Users who accepted at least one suggestion |
-| `total_code_acceptances` | Number of accepted suggestions |
-| `total_code_suggestions` | Number of suggestions shown |
-| `total_code_lines_accepted` | Lines of code accepted |
-| `total_code_lines_suggested` | Lines of code suggested |
-| `breakdown` | Per-language and per-editor breakdown |
-
-### Example: Exporting to Power BI
-
-1. Use the GitHub REST API to pull daily metrics
-2. Store in a data warehouse or CSV
-3. Connect Power BI to the data source
-4. Build dashboards with adoption trends, acceptance rates, and language breakdowns
-
-> 💡 **Tip:** Schedule API calls daily to build a historical dataset. The API returns daily granularity, so pulling once per day ensures complete data.
-
----
-
-## 5️⃣ ROI Indicators
-
-*Metrics and signals that demonstrate return on investment*
-
-### Quantitative Indicators
-
-| Indicator | How to Measure | Benchmark |
-|-----------|---------------|-----------|
-| **Acceptance rate** | Built-in metrics | 25-40% is typical for mature rollouts |
-| **Lines accepted per user per day** | API or built-in metrics | Track trend over time |
-| **Active user rate** | Assigned seats vs active users | Target 70%+ |
-| **PR velocity** | Compare PR merge time before/after Copilot | 10-30% improvement common |
-| **Code review turnaround** | Measure time from PR open to first review | Track for improvement |
-
-### Qualitative Indicators
-
-| Indicator | How to Measure |
+| Indicator | How to measure |
 |-----------|---------------|
-| **Developer satisfaction** | Pre/post surveys (see pilot section below) |
-| **Perceived productivity** | "Do you feel more productive with Copilot?" (1-5 scale) |
-| **Task confidence** | "Do you feel more confident tackling unfamiliar codebases?" |
-| **Onboarding speed** | New hire time-to-first-PR before/after Copilot |
+| **Adoption depth** | Share of users in Phase 2–3 on the impact dashboard |
+| **Adoption multiplier** | Impact dashboard: pull requests merged by engaged vs passive users |
+| **Pull request throughput and time to merge** | Usage metrics pull request lifecycle data, or before/after comparison |
+| **Active seat rate** | Monthly active users ÷ assigned seats |
+| **Cost per active user** | Seat cost + metered AI credits, divided by active users |
+| **Code review turnaround** | Time from PR open to first review, before/after |
+
+### Qualitative indicators
+
+| Indicator | How to measure |
+|-----------|---------------|
+| **Developer satisfaction** | Pre/post surveys (see the pilot section) |
+| **Perceived productivity** | "Do you feel more productive with Copilot?" (1–5) |
+| **Task confidence** | "Do you feel more confident in unfamiliar codebases?" (1–5) |
+| **Onboarding speed** | New hire time-to-first-PR, before/after |
 
 ---
 
-## 6️⃣ Running a Copilot Pilot
+## 7️⃣ Running a Copilot Pilot
 
-*Structured approach to measuring Copilot impact before full rollout*
+*A structured way to measure impact before a full rollout*
 
-### Pilot Parameters
+### Pilot parameters
 
-| Parameter | Recommended |
-|-----------|-------------|
-| **Duration** | 30-60 days |
-| **Group size** | 50-100 users |
-| **Composition** | Mix of junior, mid, and senior developers across teams |
-| **Control group** | Optional: equal-sized group without Copilot for comparison |
+| Parameter | Suggested |
+|-----------|-----------|
+| **Duration** | 30–60 days |
+| **Group size** | 50–100 users |
+| **Composition** | A mix of junior, mid, and senior developers across teams |
+| **Control group** | Optional: a similar group without Copilot |
 
-### Before the Pilot
+### Before the pilot
 
-1. **Baseline metrics** (collect 2-4 weeks before pilot starts):
+1. **Turn on the Copilot usage metrics policy** (Section 1) so data is collected from day one.
+2. **Collect baseline metrics** for 2–4 weeks:
 
 | Metric | Source |
 |--------|--------|
-| Average PR merge time | GitHub Insights or API |
-| PRs per developer per week | GitHub API |
-| Lines of code per PR | GitHub API |
-| Developer satisfaction survey | Survey tool |
+| Median time to merge | Repository insights or the REST API |
+| PRs per developer per week | REST API |
+| Developer satisfaction | Survey tool |
 
-2. **Pre-pilot survey** (send to all pilot participants):
+3. **Send the pre-pilot survey:**
 
 | Question | Scale |
 |----------|-------|
-| "How productive do you feel in your daily coding work?" | 1-5 |
-| "How confident are you working in unfamiliar codebases?" | 1-5 |
+| "How productive do you feel in your daily coding work?" | 1–5 |
+| "How confident are you working in unfamiliar codebases?" | 1–5 |
 | "How much time do you spend searching for code examples?" | Hours/week |
-| "How satisfied are you with your development tooling?" | 1-5 |
+| "How satisfied are you with your development tooling?" | 1–5 |
 
-### During the Pilot
+### During the pilot
 
-- Track Copilot metrics weekly (active users, acceptance rate)
-- Hold bi-weekly check-ins with pilot participants
-- Document blockers and feedback
+- Check the **Copilot usage** dashboard weekly (active users, acceptance)
+- Hold check-ins every two weeks
+- Log blockers and feedback
 
-### After the Pilot
+### After the pilot
 
-1. **Post-pilot survey** (same questions as pre-pilot, plus):
+1. **Post-pilot survey** (same questions, plus):
 
 | Question | Scale |
 |----------|-------|
-| "How useful is GitHub Copilot for your daily work?" | 1-5 |
+| "How useful is GitHub Copilot for your daily work?" | 1–5 |
 | "Would you recommend Copilot to a colleague?" | Yes/No |
 | "What tasks does Copilot help you most with?" | Open text |
 
-2. **Compare metrics:**
+2. **Compare:**
 
 | Metric | Before | After | Change |
 |--------|--------|-------|--------|
-| PR merge time | ___ | ___ | ___% |
+| Median time to merge | ___ | ___ | ___% |
 | PRs per developer per week | ___ | ___ | ___% |
 | Developer satisfaction | ___ | ___ | +/- ___ |
+| AI credits per active user | — | ___ | — |
 
 ---
 
-## 7️⃣ Executive Reporting Framework
+## 8️⃣ Executive Reporting Framework
 
-*Structure for presenting Copilot ROI to leadership*
-
-### Recommended Report Structure
+### Recommended report structure
 
 | Section | Content |
 |---------|---------|
-| **Adoption summary** | Active users, seat utilization, trend over time |
-| **Productivity indicators** | Acceptance rate, lines accepted, PR velocity changes |
-| **Cost analysis** | Cost per seat, cost per active user, premium request spend |
-| **Developer sentiment** | Survey results, satisfaction scores, qualitative feedback |
-| **Recommendations** | Expand rollout, adjust policies, reclaim unused seats |
+| **Adoption summary** | Active users, active seat rate, adoption phases, trend |
+| **Productivity indicators** | Acceptance trend, adoption multiplier, pull request throughput and time to merge |
+| **Cost analysis** | Seat cost, AI credits consumed, cost per active user |
+| **Developer sentiment** | Survey results and quotes |
+| **Recommendations** | Expand rollout, adjust policies and budgets, reclaim unused seats |
 
-### Reporting Cadence
+### Reporting cadence
 
 | Audience | Frequency | Focus |
 |----------|-----------|-------|
 | **Engineering leadership** | Monthly | Adoption trends, team-level metrics |
-| **Executive sponsors** | Quarterly | ROI summary, cost analysis, strategic recommendations |
-| **Finance** | Quarterly | Seat utilization, cost per active user, budget forecasting |
-| **Pilot stakeholders** | Weekly (during pilot) | Participation rates, early feedback |
+| **Executive sponsors** | Quarterly | ROI summary, cost, strategy |
+| **Finance** | Monthly or quarterly | AI credit spend, seat use, forecast |
+| **Pilot stakeholders** | Weekly (during pilot) | Participation, early feedback |
 
-> 💡 **Tip:** Lead with adoption metrics in early reports (first 90 days) and shift to ROI metrics as usage matures. Acceptance rates and developer sentiment are the strongest early indicators of long-term value.
+> 💡 **Tip:** Lead with adoption in the first 90 days, then shift to outcomes (adoption depth, pull request flow, cost per active user) once usage settles.
 
 ---
 
@@ -327,32 +333,18 @@ The Copilot metrics API provides programmatic access to usage data:
 
 ### Steps
 
-1. **Check enterprise-level adoption:**
-   ```
-   Enterprise → AI controls → Insights
-   ```
-
-2. **Check premium request spend:**
-   ```
-   Enterprise → Billing and licensing → Usage
-   ```
-
-3. **Review org-level details:**
-   ```
-   Org Settings → Copilot → Usage
-   ```
-
-4. **Set up API-based reporting** for custom dashboards:
-   - Use `GET /orgs/{org}/copilot/metrics` for daily data
-   - Schedule daily exports to your data warehouse
-
-5. **Establish a monthly reporting cadence** using the executive framework above
+1. **Enable the policy:** Enterprise → **AI controls** → **Copilot** → **Copilot usage metrics** → **Enabled everywhere**.
+2. **Open the dashboards:** Enterprise → **Insights** → **Copilot usage**, then **Code generation** and **Copilot impact**.
+3. **Check spend:** Enterprise → **Billing and licensing** → **AI usage**.
+4. **Download seat activity:** **Billing and licensing** → **Licensing** → **Get activity report** (next to Copilot).
+5. **Automate reporting:** schedule daily calls to the `*-1-day` report endpoints and load the NDJSON into your warehouse.
+6. **Set a monthly reporting cadence** using the framework above.
 
 ---
 
 ## 📝 Additional Notes
 
-> 💡 **Customization:** Metrics availability may vary based on your Copilot plan (Business vs Enterprise) and enterprise agreement. Some advanced metrics and API endpoints may require Copilot Enterprise. The navigation paths above reflect the current UI at time of writing.
+> 💡 **Data delay:** metrics land within about two full UTC days, so a brand-new rollout won't show data immediately.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -368,10 +360,10 @@ The Copilot metrics API provides programmatic access to usage data:
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
-| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+| **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
 </details>
 
@@ -383,38 +375,38 @@ The Copilot metrics API provides programmatic access to usage data:
 <summary><em>Show Q&A</em></summary>
 
 
-### Q: Our acceptance rate seems low (15-20%) — is that normal?
-**A:** Typical mature deployments see 25-40% acceptance rates. Low rates may indicate poor context setup (missing custom instructions or repository indexing), lack of developer training, or users working in languages where Copilot is less effective. Add `.github/copilot-instructions.md` files and run enablement sessions to improve.
+### Q: Our acceptance rate seems low — is that normal?
+**A:** GitHub doesn't publish a "normal" acceptance rate, so compare against your own baseline and look at the trend. Low acceptance often points to weak context (no `.github/copilot-instructions.md`), little training, or languages and tasks where Copilot is less useful. Add instructions, run enablement sessions, and watch whether the trend improves.
 
 ---
 
-### Q: The Copilot metrics API is returning empty data — what's wrong?
-**A:** Check three things: (1) your API token has the correct permissions (requires `manage_billing:copilot` or admin scope), (2) ensure Copilot has been active for at least 24 hours — the API returns daily granularity and may not have data yet, and (3) verify you are using the correct org or enterprise slug in the endpoint URL.
+### Q: The usage metrics API returns no data or a 404 — what's wrong?
+**A:** Check that (1) the **Copilot usage metrics** policy is **Enabled everywhere**, (2) your token belongs to an enterprise owner, billing manager, or someone with the **View Enterprise Copilot Metrics** permission, with the right scope (`manage_billing:copilot` or `read:enterprise`; `read:org` for organization reports), (3) the day you asked for is at least two full UTC days old and not before the report start date, and (4) the enterprise or organization slug is correct.
 
 ---
 
 ### Q: How do we attribute productivity gains to Copilot vs other factors?
-**A:** Use a before/after pilot methodology with a control group. Collect baseline metrics (PR merge time, PRs per developer, developer satisfaction) for 2-4 weeks before the pilot, then compare against the pilot group over 30-60 days. Pair quantitative metrics with developer surveys to capture both measurable and perceived impact.
+**A:** Use a before/after pilot with a control group. Collect baseline metrics (time to merge, PRs per developer, satisfaction) for 2–4 weeks, then compare over 30–60 days. The impact dashboard's adoption multiplier adds a within-company comparison of engaged vs passive users. Pair the numbers with surveys.
 
 ---
 
 ### Q: Can we export Copilot metrics to Power BI or Tableau?
-**A:** Yes. Use the Copilot metrics API endpoints (`GET /orgs/{org}/copilot/metrics` or `/enterprises/{enterprise}/copilot/metrics`) to pull daily data. Schedule daily exports to a data warehouse or CSV, then connect Power BI or Tableau to the data source to build custom dashboards.
+**A:** Yes. Call the usage metrics report endpoints (for example `GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-1-day`), download the NDJSON files from `download_links` before they expire, load them into a warehouse, and connect Power BI or Tableau. You can also export NDJSON from the **Copilot usage** dashboard.
 
 ---
 
-### Q: Seat utilization is low — many assigned users are not using Copilot. What should we do?
-**A:** If utilization is below 70%, consider running enablement sessions or office hours to help users get started. Reclaim unused seats from users who have not activated Copilot after 30 days. Use team-based assignment to ensure seats go to engaged users.
+### Q: Seat utilization is low — many assigned users aren't using Copilot. What should we do?
+**A:** Download the activity report to find inactive seats, run enablement sessions or office hours, and reclaim seats from people who still don't use Copilot after a set period (for example 30 days). Assigning seats through teams makes this easier to manage.
 
 ---
 
 ### Q: How long should we wait before reporting ROI to leadership?
-**A:** Lead with adoption metrics in the first 90 days (active users, seat utilization, acceptance rate trends). Shift to ROI metrics (PR velocity improvements, developer satisfaction changes, cost per active user) after 3-6 months when usage patterns have stabilized and you have meaningful before/after comparisons.
+**A:** Report adoption in the first 90 days (active users, active seat rate, adoption phases). Move to outcome metrics — adoption multiplier, pull request flow, cost per active user — after about 3–6 months, once usage has settled and you have before/after data.
 
 ---
 
-### Q: Our metrics show high usage but leadership wants dollar-value ROI — how do we calculate that?
-**A:** Estimate developer time saved by multiplying accepted suggestions by average time-per-task saved (typically 30-60 seconds per accepted suggestion). Convert to hourly developer cost. Compare this against total Copilot licensing and premium request costs. Supplement with survey data on perceived productivity gains.
+### Q: Leadership wants a dollar-value ROI — how do we calculate it?
+**A:** Start with the impact dashboard's **Potential return on investment** section, which compares Copilot cost (from actual AI credit use) with pull request output per developer for your chosen compensation band. Treat it as directional. Add your own before/after data and survey results, and compare against total cost: seats plus metered AI credits.
 
 </details>
 
@@ -432,9 +424,13 @@ The Copilot metrics API provides programmatic access to usage data:
 
 ## 📚 Resources
 
-- [GitHub Copilot usage metrics](https://docs.github.com/en/copilot/concepts/copilot-metrics)
-- [Copilot metrics API](https://docs.github.com/en/rest/copilot/copilot-metrics)
+- [About Copilot usage metrics](https://docs.github.com/en/copilot/concepts/billing-and-usage/copilot-usage-metrics/copilot-metrics)
+- [View the Copilot usage metrics dashboard](https://docs.github.com/en/copilot/how-tos/administer-copilot/view-usage-and-adoption)
+- [View the Copilot impact dashboard](https://docs.github.com/en/copilot/how-tos/administer-copilot/view-impact-dashboard)
+- [Copilot usage metrics reference](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics)
+- [REST API: Copilot usage metrics](https://docs.github.com/en/enterprise-cloud@latest/rest/copilot/copilot-usage-metrics)
+- [Download the Copilot activity report](https://docs.github.com/en/copilot/how-tos/administer-copilot/download-activity-report)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

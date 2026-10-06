@@ -14,8 +14,8 @@
 - [🔧 Phase 1: The Setup (Critical Configuration)](#-phase-1-the-setup-critical-configuration)
 - [👥 Phase 2: Add Users to the Team](#-phase-2-add-users-to-the-team)
 - [📜 Phase 3: Assign the License](#-phase-3-assign-the-license)
-- [✓ Phase 4: Verification & Limits (Triple-Checked)](#-phase-4-verification--limits-triple-checked)
-- [⚠️ Common Pitfall to Avoid](#-common-pitfall-to-avoid)
+- [✓ Phase 4: Verification & Limits](#-phase-4-verification--limits)
+- [⚠️ Common Pitfall to Avoid](#️-common-pitfall-to-avoid)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -28,9 +28,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- Create enterprise team: `Enterprise → People → Enterprise teams → Create enterprise team` (leave org access blank)
-- Add users: IdP group sync, REST API bulk add, or manual UI
-- Assign licenses: `Enterprise → Billing and licensing → Licensing → Copilot → Manage → Enterprise teams tab → Assign licenses`
+- Set the default policy: `Enterprise → AI controls → Copilot` → **Policies for enterprise-assigned users**
+- Add people to the enterprise (personal accounts): `Enterprise → People → Invite member` — they join as **unaffiliated users**
+- Create enterprise team: `Enterprise → People → Enterprise teams → Create Enterprise team` — **no organization access**
+- Add users: **Add members** (UI), IdP group sync (EMU only), or `POST /enterprises/{enterprise}/teams/{team}/memberships/add`
+- Assign licenses: `Enterprise → Billing and licensing → Licensing → Copilot → Manage → Enterprise Teams tab → Assign licenses → Add licenses`
 
 ---
 
@@ -40,9 +42,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -53,12 +55,13 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
-| Copilot Business subscription purchased | ☐ |
-| List of GitHub usernames for standalone users | ☐ |
-| IdP group configured (if using IdP sync) or API access (if using REST API) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud enterprise with a Copilot Business plan | GitHub **enterprise owner** | ☐ |
+| Users exist in the enterprise — **invited** (personal accounts) or **provisioned by SCIM** (EMU) | GitHub **enterprise owner** / IdP admin | ☐ |
+| List of GitHub usernames for the standalone users | Program owner | ☐ |
+| For IdP sync: an IdP group, and an **Enterprise Managed Users** enterprise | IdP group owner | ☐ |
+| For the REST API: a **classic** PAT with `admin:enterprise` (writes) or `read:enterprise` (reads) | GitHub **enterprise owner** | ☐ |
 
 ---
 
@@ -68,110 +71,138 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise or organization owner** | Creates or selects the GitHub team used for Copilot assignment, then assigns Copilot seats. | Team setup: GitHub → profile photo → Your organizations → [organization] → Teams → New team or [team] → Members → Add members. Enterprise Copilot assignment: GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Licensing → Copilot → Manage → Enterprise teams tab → Assign licenses. Organization Copilot assignment: GitHub → profile photo → Your organizations → [organization] → Settings → Copilot → Access → Add seats or Assign seats → choose users or teams → Save. Handoff: team slug and assigned-seat count. |
-| **Microsoft Entra or Okta group owner, if team membership is synchronized from the IdP** | Maintains the source group that drives GitHub team membership. | Entra: Microsoft Entra admin center → Entra ID → Groups → [group] → Members → Add members → select users → Add. Okta: Okta Admin Console → Directory → Groups → [group] → People → Assign people → select users → Save. Handoff: group name, object ID or group ID, and pilot members. |
-| **Visual Studio subscriptions administrator, if Visual Studio benefits are part of the license plan** | Confirms Visual Studio Enterprise subscribers are assigned to the correct corporate identity before GitHub seat assignment. | Visual Studio Admin Portal (`https://manage.visualstudio.com`) → Subscribers → search user → verify Visual Studio Enterprise, active status, corporate email, and tenant. Handoff: eligible subscriber list. |
+| **GitHub enterprise owner** | Creates the enterprise team (no organization access), adds members, and assigns Copilot Business licenses. | Team: GitHub → Enterprise → People → Enterprise teams → Create Enterprise team → name → leave organization access empty → Create Enterprise team. Licenses: Enterprise → Billing and licensing → Licensing → Copilot → Manage → Enterprise Teams tab → Assign licenses → search the team → Add licenses. Handoff: team slug (`ent:...`) and licensed-user count. |
+| **Microsoft Entra or Okta group owner, if team membership is synchronized from the IdP (EMU only)** | Maintains the source group that drives enterprise team membership. | Entra: Microsoft Entra admin center → Entra ID → Groups → [group] → Members → Add members → select users → Select. Okta: Okta Admin Console → Directory → Groups → [group] → People → Assign people → select users → Save. Make sure the group is assigned to the GitHub EMU app so SCIM pushes it. Handoff: group name and member count (5,000 max). |
+| **Visual Studio subscriptions administrator, if Visual Studio subscriptions are linked** | Confirms which users have linked Visual Studio subscriptions — linked users consume a bundled Visual Studio license even when unaffiliated. | Visual Studio Admin Portal (`https://manage.visualstudio.com`) → Subscribers → search user → check subscription and GitHub link status. Handoff: list of linked subscribers. |
 
 ---
 
 ## 📋 Overview
 
-Assign Copilot Business licenses to ~1,000 users **without consuming GitHub Enterprise (GHE) licenses**.
+Give Copilot Business to a large group (for example ~1,000 people) **without each person consuming a GitHub Enterprise license**.
+
+**Why it works:** people who are in your enterprise but **not in any organization** are *unaffiliated users*. Unaffiliated users don't consume a GitHub Enterprise license, and an enterprise owner can assign them Copilot Business licenses directly — one at a time or through an enterprise team.
+
+| Approach | Plan | GHE license? |
+|----------|------|-------------|
+| **Direct assignment** (enterprise → users or enterprise teams) | Copilot **Business** only | ❌ No — for unaffiliated users |
+| **Organization assignment** | Copilot Business or Copilot Enterprise | ✅ Yes — organization members consume a license |
 
 ---
 
 ## 🔧 Phase 1: The Setup (Critical Configuration)
 
-### Step 1: Navigate to Enterprise Settings
+### Step 1: Set the default policy for enterprise-assigned users
 
-1. Click your profile photo (top-right) → **Your enterprises**
-2. Select the target enterprise
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-### Step 2: Create the Enterprise Team (The "Zero-Cost" Step)
+1. Enterprise → **AI controls** → **Copilot** *(sidebar)*.
+2. Find **Policies for enterprise-assigned users** and choose whether "No policy" settings default to **enabled** or **disabled** for these users.
 
-> ⚠️ **CRITICAL**: This step determines if you pay for 1,000 extra GHE licenses or not. Follow exactly.
+> 📌 Users who get Copilot straight from the enterprise aren't in an organization, so "let organizations decide" policies can't reach them. This policy decides their defaults.
 
-1. Go to **People** → **Enterprise teams**
-2. Click **Create enterprise team**
-3. **Name:** Use a functional name (e.g., `copilot-standalone-users`, `contractor-devs`)
-4. **Organizations:** **LEAVE THIS BLANK**
+### Step 2: Get the users into the enterprise
 
-#### 🛑 WARNING: Organization Access
-- **DO NOT** select any organization
-- **Why?** If you grant this team access to an organization (even "Read" access), every user in it becomes a "standard enterprise member" and immediately consumes a full GitHub Enterprise license (approx. $21/mo or $231/yr depending on contract)
-- **Correct State:** The team exists at the *enterprise* level only, with no org affiliation
+- **Personal accounts:** Enterprise → **People** → **Members** page → **Invite member** → search users → **Invite**. They join as **unaffiliated users** after accepting the email (invitations expire after 7 days).
+- **Enterprise Managed Users:** provision the users from your IdP with SCIM. Don't add them to any organization.
+
+### Step 3: Create the enterprise team (the "zero-cost" step)
+
+> ⚠️ **CRITICAL**: This step decides whether you pay for ~1,000 extra GHE licenses. Follow it exactly.
+
+1. Enterprise → **People** → in the left sidebar, **Enterprise teams**.
+2. Click **Create Enterprise team**.
+3. **Name:** a functional name (for example `copilot-standalone-users`). GitHub creates the slug with an `ent:` prefix (`ent:copilot-standalone-users`).
+4. **Organization access:** **leave it empty.**
+5. Click **Create Enterprise team**.
+
+#### 🛑 WARNING: Organization access
+- **DO NOT** give the team access to any organization.
+- **Why?** Team members are added directly to every organization the team can access. Unaffiliated users and outside collaborators in the team then become standard enterprise members — with access to internal repositories — and **consume a GitHub Enterprise license** (list price $21/user/month).
+- **Correct state:** the team exists at the enterprise level only.
 
 ---
 
 ## 👥 Phase 2: Add Users to the Team
 
-Choose the method that matches your infrastructure.
+Choose the method that matches your setup. Each enterprise team holds up to **5,000** members, and an enterprise can have up to **2,500** teams.
 
-### Option A: IdP Group Sync (Best for Long-Term/EMU)
+### Option A: IdP Group Sync (Best long-term — EMU only)
 
-*Requires Enterprise Managed Users (EMU) or Team Sync configured.*
+1. In your IdP (Entra ID or Okta), create a group such as `github-copilot-users` and make sure it's pushed to GitHub through SCIM.
+2. Enterprise → **People** → **Enterprise teams** → click your team.
+3. Make sure the team has **no manually added members** (remove them with the **⋯** menu next to each name).
+4. Next to the team name, click the **Edit** (pencil) icon.
+5. Under **Manage members**, click **Identity provider group**.
+6. Click **Select group** and choose the IdP group.
+7. Click **Update team**.
 
-1. In your IdP (Okta, Azure AD, etc.), create a group (e.g., `github-copilot-users`)
-2. In GitHub **Enterprise teams**, select your team (`copilot-standalone-users`)
-3. Go to **Settings** → **Identity Provider Groups**
-4. Connect the IdP group
-   - **Constraint:** The GitHub team must have **no manually assigned users** before you link the group
-   - **Result:** Membership is now 100% automated by your IdP
+> ⚠️ If the IdP group grows past **5,000** users, syncing stops until it's back under the limit.
 
-### Option B: Scripted REST API (Best for Bulk Initial Setup)
+### Option B: REST API (Best for bulk initial setup)
 
-*Use this if you have a CSV of usernames and don't use IdP sync.*
+Requires a **classic** personal access token with `admin:enterprise` (fine-grained tokens and GitHub App tokens aren't supported).
 
-**Correct Endpoint:**
+**Bulk add (up to many users per call):**
+
+```bash
+curl -L -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer <YOUR-TOKEN>" \
+  -H "X-GitHub-Api-Version: 2026-03-10" \
+  https://api.github.com/enterprises/ENTERPRISE/teams/ent:copilot-standalone-users/memberships/add \
+  -d '{"usernames":["monalisa","octocat"]}'
 ```
-PUT /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}
-```
 
-**Bulk Add Option (Recommended for 1,000 users):**
-```
-POST /enterprises/{enterprise}/teams/{enterprise-team}/memberships/add
-```
-*(accepts an array of usernames)*
-
-**Important Note:** Enterprise team slugs receive an `ent:` prefix. Use the full slug format in API calls.
+**Single user:** `PUT /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}`
 
 **Logic:**
-1. Read list of usernames
-2. Loop through list: Call endpoint for each user (or use bulk add)
-3. Handle 404s (user not found) or 422s (already member)
+1. Read the list of usernames (users must already be in the enterprise).
+2. Send them in batches to the bulk add endpoint.
+3. Re-check with `GET /enterprises/{enterprise}/teams/{enterprise-team}/memberships` and retry any that are missing.
 
-### Option C: Manual UI (Not Recommended)
+### Option C: Manual UI (small groups only)
 
-- Valid only for <50 users
-- Do not attempt for 1,000 users
+1. Enterprise → **People** → **Enterprise teams** → click the team.
+2. Click **Add members**, search for and select users.
+3. Click **Add**.
+
+> 💡 Practical for small groups (for example under 50 users). Use Option A or B for hundreds of users.
 
 ---
 
 ## 📜 Phase 3: Assign the License
 
-1. In the Enterprise account, go to **Billing and licensing**
-2. Select **Licensing** → **Copilot**
-3. Click **Manage** (next to Copilot Business)
-4. Switch to the **Enterprise teams** tab (not the default "Organizations" tab)
-5. Click **Assign licenses**
-6. Select your team (`copilot-standalone-users`) and confirm
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** *(sidebar)* → next to **Copilot**, **Manage**
+
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the left sidebar, click **Licensing**.
+3. Next to **Copilot**, click **Manage**.
+4. Click the **Enterprise Teams** tab. *(To license individual people instead, use the **All members** tab.)*
+5. Click **Assign licenses**.
+6. Search for your team (`copilot-standalone-users`), then click **Add licenses**.
 
 ### ✅ Outcome
-- **All 1,000 users now have a Copilot Business license**
-- **Cost:** 1,000 × Copilot Business rate
-- **GHE Seat Consumption:** 0 (Verified)
+- Everyone in the team has a **Copilot Business** license. People added to or removed from the team gain or lose Copilot automatically.
+- **Cost:** number of users × the Copilot Business rate, plus any metered AI credit usage.
+- **GHE license consumption:** none for unaffiliated users (linked Visual Studio subscribers use a bundled Visual Studio license).
+
+> 💡 Optional: to stop organization owners from assigning their own seats, disable Copilot for organizations on the same **Manage** page.
 
 ---
 
-## ✓ Phase 4: Verification & Limits (Triple-Checked)
+## ✓ Phase 4: Verification & Limits
 
-| Check | Verified Fact |
-|:------|:--------------|
-| **Team Capacity** | **5,000 Members.** The limit was increased from 500 to 5,000 per enterprise team in December 2025. |
-| **License Consumption** | **Copilot Only.** Users in an enterprise team *without* org access do NOT consume a GHE/Visual Studio license. |
-| **Billing Deduplication** | **Unique User.** If a user is already licensed for Copilot in an Org, adding them here generally does not double-bill; the system bills per unique user based on GitHub's combined billing model. |
-| **Scope** | **Copilot Business Only.** This method does *not* grant Copilot Enterprise features (which require repo context/org access). |
-| **Feature Status** | **Public Preview.** Enterprise Teams remain in Public Preview, though widely stable for this use case. |
+| Check | Fact |
+|:------|:-----|
+| **Team capacity** | **5,000 members** per enterprise team; up to **2,500** teams per enterprise. |
+| **License consumption** | Unaffiliated users (in the enterprise, not in any organization) **don't** consume a GitHub Enterprise license. Exception: users linked to a Visual Studio subscription consume a bundled Visual Studio license. |
+| **Plan** | Direct assignment is **Copilot Business only**. Copilot Enterprise is assigned through organizations. |
+| **Policies** | Enterprise-assigned users follow enterprise policies, with **Policies for enterprise-assigned users** setting the defaults. |
+| **Feature status** | Enterprise teams are **generally available** (since June 2026). |
+| **Verify** | Enterprise → **People** → **Members** shows the users as unaffiliated (no organizations). **Billing and licensing** → **Licensing** shows the Copilot license count. |
 
 ---
 
@@ -179,11 +210,11 @@ POST /enterprises/{enterprise}/teams/{enterprise-team}/memberships/add
 
 ### The "Upgrade" Trap
 
-If you later decide to upgrade these users to **Copilot Enterprise** (to use Chat with your codebase), you will need to grant them access to repositories.
+Copilot Enterprise can't be assigned directly to users or enterprise teams — it's assigned through organizations.
 
-- **The Moment you do this:** You must add them to an Organization
-- **The Cost:** They will immediately consume a **GitHub Enterprise license** + the **Copilot Enterprise upgrade** cost
-- **Conclusion:** Keep them on **Copilot Business** if the goal is "standalone" usage (IDE completion/chat without repo context)
+- **The moment you upgrade:** the users must become members of an organization.
+- **The cost:** each one then consumes a **GitHub Enterprise license** *plus* the Copilot Enterprise rate.
+- **Conclusion:** keep standalone users on **Copilot Business** unless the Copilot Enterprise features are worth the extra GHE seat.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -199,10 +230,10 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
-| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+| **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
 </details>
 
@@ -215,27 +246,27 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 
 ### Q: Users in the enterprise team are consuming GHE licenses — what went wrong?
-**A:** The enterprise team was likely granted access to an organization. If the team has any org affiliation (even "Read" access), every member becomes a standard enterprise member and consumes a GHE license. Verify the team has no organization access under Enterprise > People > Enterprise teams > [your team] > Settings.
+**A:** Most likely the team was given access to an organization, which made every member a standard enterprise member. Check the team's organization access (Enterprise → **People** → **Enterprise teams** → the team → **Edit**) and remove it. Also check whether the users were added to any organization some other way. Under usage-based billing, anyone who consumed a license during the cycle stays billable for that cycle.
 
 ---
 
 ### Q: We want to upgrade standalone users to Copilot Enterprise — what's the cost impact?
-**A:** Copilot Enterprise features require repository and org access. The moment you add standalone users to an organization, they consume a GitHub Enterprise license (approximately $21/month) in addition to the Copilot Enterprise upgrade cost. This is the "upgrade trap" — factor in the GHE seat cost before migrating.
+**A:** Copilot Enterprise is only assigned through organizations, so the users must join an organization. Each one then consumes a GitHub Enterprise license (list price $21/user/month) on top of the Copilot Enterprise rate. Budget for the GHE seat before you move them.
 
 ---
 
 ### Q: Can we use IdP group sync and manual assignment together on the same enterprise team?
-**A:** No. If you link an IdP group to an enterprise team, the team must have no manually assigned users. Membership becomes 100% automated by your IdP. Choose one method: IdP sync for long-term management or API/manual for initial setup.
+**A:** No. A team synced to an IdP group can't have manually added members — remove them before linking the group, and membership is then managed entirely by the IdP. IdP sync is only available with Enterprise Managed Users.
 
 ---
 
 ### Q: We hit the enterprise team member limit — what's the cap?
-**A:** The limit is 5,000 members per enterprise team (increased from 500 in December 2025). If you need to assign Copilot to more than 5,000 users in standalone mode, create multiple enterprise teams and assign licenses to each.
+**A:** 5,000 members per enterprise team (up to 2,500 teams per enterprise). For more than 5,000 standalone users, create several teams and assign licenses to each.
 
 ---
 
 ### Q: A user already has Copilot through an org — will adding them to the standalone enterprise team cause double billing?
-**A:** No. GitHub's combined billing model bills per unique user. If a user is already licensed for Copilot in an org, adding them to the enterprise team generally does not double-bill. The system deduplicates based on unique user identity.
+**A:** GitHub bills a Copilot seat once per unique user per billing cycle within an enterprise, even when several organizations assign one. If a user has both Business and Enterprise seats, only Copilot Enterprise is billed. To keep things clean, don't license the same person both ways — and remember that a user in an organization already consumes a GHE license, so they aren't "standalone" anyway.
 
 </details>
 
@@ -253,14 +284,13 @@ If you later decide to upgrade these users to **Copilot Enterprise** (to use Cha
 
 ## 📝 Resources
 
-1. [Creating enterprise teams](https://docs.github.com/en/enterprise-cloud@latest/enterprise-onboarding/setting-up-organizations-and-teams/creating-teams)
-2. [REST API endpoints for enterprise team memberships](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-teams/enterprise-team-members)
+1. [Creating enterprise teams](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-users-in-your-enterprise/create-enterprise-teams)
+2. [REST API endpoints for enterprise team members](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-teams/enterprise-team-members)
 3. [Granting users access to GitHub Copilot in your enterprise](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-access/grant-access)
-4. [Combined GitHub Enterprise cloud and server use](https://docs.github.com/en/enterprise-cloud@latest/billing/concepts/enterprise-billing/combined-enterprise-use)
-5. [Enterprise teams product limits increased by over 10x](https://github.blog/changelog/2025-12-08-enterprise-teams-product-limits-increased-by-over-10x/)
+4. [People who consume a GitHub Enterprise license](https://docs.github.com/en/enterprise-cloud@latest/billing/reference/github-license-users)
+5. [Adding users to your enterprise](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-accounts-and-repositories/managing-users-in-your-enterprise/add-users)
+6. [Copilot seat assignment and billing](https://docs.github.com/en/copilot/reference/copilot-billing/seat-assignment)
 
 ---
 
----
-
-*Last updated: April 2026*
+*Last updated: October 2026*
