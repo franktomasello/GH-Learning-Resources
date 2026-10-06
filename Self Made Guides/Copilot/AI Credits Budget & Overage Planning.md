@@ -1,6 +1,8 @@
-# 💰 GitHub Copilot Premium Request Budget & Overage Planning Runbook
+# 💰 GitHub Copilot AI Credits Budget & Overage Planning Runbook
 
-> **Complete guide to understanding, budgeting, and controlling GitHub Copilot premium request consumption and overages**
+> **Plan, budget, and control GitHub Copilot spending under usage-based billing (AI credits)**
+
+> 📌 **Billing changed on June 1, 2026.** GitHub replaced premium requests and model multipliers with **usage-based billing**: Copilot usage is now measured in **AI credits** based on the model and the tokens consumed. This guide covers the current model. Only existing *annual* Copilot Pro and Pro+ plans stay on premium requests until they expire.
 
 ---
 
@@ -10,13 +12,13 @@
 - [✅ Accuracy & Click-Path Notes](#-accuracy--click-path-notes)
 - [✅ Prerequisites](#-prerequisites)
 - [📋 Overview](#-overview)
-- [1️⃣ Included Models (No Premium Request Cost)](#1-included-models-no-premium-request-cost)
-- [2️⃣ Overage Rate](#2-overage-rate)
-- [3️⃣ Model Multiplier Examples](#3-model-multiplier-examples)
-- [4️⃣ Budget Planning Formula](#4-budget-planning-formula)
-- [5️⃣ Enterprise Controls](#5-enterprise-controls)
-- [6️⃣ Best-Practice Rollout](#6-best-practice-rollout)
-- [7️⃣ Monitoring Consumption](#7-monitoring-consumption)
+- [1️⃣ What Uses AI Credits (and What Doesn't)](#1️⃣-what-uses-ai-credits-and-what-doesnt)
+- [2️⃣ Included Credits and the Shared Pool](#2️⃣-included-credits-and-the-shared-pool)
+- [3️⃣ Model Pricing](#3️⃣-model-pricing)
+- [4️⃣ Budget Planning Formula](#4️⃣-budget-planning-formula)
+- [5️⃣ Enterprise Controls](#5️⃣-enterprise-controls)
+- [6️⃣ Best-Practice Rollout](#6️⃣-best-practice-rollout)
+- [7️⃣ Monitoring Consumption](#7️⃣-monitoring-consumption)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -29,11 +31,12 @@
 
 > **For experienced admins who just need the click paths:**
 
-- Enable/disable overages: `Enterprise → AI controls → Copilot → Policies → Premium request overages`
-- Set spending budgets: `Enterprise → Billing and licensing → Budgets and alerts → New budget → Set monthly limit`
-- Create cost centers: `Enterprise → Billing and licensing → Cost centers → New cost center`
-- Control models: `Enterprise → AI controls → Copilot → Models` — disable high-multiplier models
-- Monitor consumption: `Enterprise → Billing and licensing → Usage → Filter by Copilot`
+- **Allow or block spending past the included credits:** Enterprise → **AI controls** → **Copilot** → **AI credits paid usage** *(enabled by default)*
+- **Cap every user (universal budget):** Enterprise → **Billing and licensing** → **Budgets and alerts** → **New budget** → **Bundled AI credits budget** → scope **Users** (leave the user field empty) → amount → **Create budget**
+- **Cap metered spend (enterprise spending limit):** same page → **New budget** → **Bundled AI credits budget** → scope **Enterprise** → amount → check **Stop usage when budget limit is reached** → **Create budget**
+- **Group spend by team:** Enterprise → **Billing and licensing** → **Cost centers** → **New cost center**
+- **Control which models are available:** Enterprise → **AI controls** → **Copilot** → **Configure models**
+- **Monitor consumption:** Enterprise → **Billing and licensing** → **AI usage**
 
 ---
 
@@ -43,9 +46,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026, including the June 1, 2026 move to usage-based billing. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -56,202 +59,240 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| GitHub Enterprise Cloud account with enterprise owner access | ☐ |
-| Copilot Business (300 requests/user/month) or Enterprise (1,000 requests/user/month) active | ☐ |
-| Enterprise billing admin access (for budgets and cost centers) | ☐ |
-| Understanding of model multipliers for budget projections | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud enterprise with Copilot Business or Copilot Enterprise | GitHub **enterprise owner** | ☐ |
+| Set Copilot policies (AI credits paid usage, models) | GitHub **enterprise owner** | ☐ |
+| Create budgets and cost centers | GitHub **enterprise owner** or **billing manager** | ☐ |
+| Current per-token model prices for your estimates | — ([models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing)) | ☐ |
 
 ---
 
 ## 📋 Overview
 
-GitHub Copilot includes a monthly allowance of premium requests per user. When users interact with premium models that are not included in the base allowance, each interaction consumes premium requests at a model-specific multiplier rate. Once the allowance is exhausted, overages are billed per request.
+Every Copilot Business and Copilot Enterprise license includes a monthly amount of **AI credits** (1 AI credit = **$0.01 USD**). Each interaction costs credits based on **which model** handled it and **how many tokens** it used — input tokens (what's sent to the model), output tokens (what the model generates), and cached tokens (context it reuses). A quick chat question on a lightweight model can cost a fraction of a credit; a long agent session on a frontier model costs much more.
 
-| Plan | Monthly Premium Requests per User |
-|------|----------------------------------|
-| **Copilot Business** | 300 |
-| **Copilot Enterprise** | 1,000 |
+Included credits are **pooled** across your billing entity. When the pool runs out, usage either continues at per-credit rates (the default) or stops, depending on your policy and budgets.
 
----
-
-## 1️⃣ Included Models (No Premium Request Cost)
-
-*These models do not consume premium requests — they are included in the base subscription*
-
-| Model | Premium Cost |
-|-------|-------------|
-| **GPT-5 mini** | None (included) |
-| **GPT-4.1** | None (included) |
-| **GPT-4o** | None (included) |
-
-> 💡 **Tip:** If your goal is to minimize premium request consumption, encourage users to default to these included models for everyday tasks.
+| Plan | Price | Included AI credits per user per month | Value of included credits |
+|------|-------|----------------------------------------|---------------------------|
+| **Copilot Business** | $19 per seat | 1,900 | $19 |
+| **Copilot Enterprise** | $39 per seat | 3,900 | $39 |
 
 ---
 
-## 2️⃣ Overage Rate
+## 1️⃣ What Uses AI Credits (and What Doesn't)
 
-| Metric | Value |
-|--------|-------|
-| **Cost per premium request over allowance** | $0.04 |
+| Uses AI credits | Doesn't use AI credits |
+|-----------------|------------------------|
+| Copilot Chat | Code completions (inline suggestions) — **unlimited on paid plans** |
+| Copilot CLI | Next edit suggestions — **unlimited on paid plans** |
+| Copilot cloud agent (formerly Copilot coding agent) | |
+| Copilot Spaces | |
+| Spark | |
+| Third-party coding agents | |
 
-> ⚠️ **Important:** Overages are billed at the enterprise level. Without spending controls, a large user base using premium models can generate significant unexpected costs.
+> 💡 **Tip:** Copilot code review also consumes **GitHub Actions minutes** (since June 1, 2026), so include Actions in your cost planning if you use it heavily.
 
 ---
 
-## 3️⃣ Model Multiplier Examples
+## 2️⃣ Included Credits and the Shared Pool
 
-*Each premium model interaction consumes a different number of premium requests based on its multiplier*
+- **Pooled, not per user.** Included credits are shared at the billing-entity level. Example: an enterprise with 100 Copilot Business users has one shared pool of **190,000** credits, not 100 separate buckets of 1,900.
+- **Adding licenses mid-cycle** increases the pool immediately. **Removing licenses** doesn't shrink it until the next billing cycle.
+- **No rollover.** Unused credits are forfeited. The pool resets to its full monthly amount at **00:00:00 UTC on the first day of each calendar month**, regardless of when licenses were added.
+- **After the pool is exhausted:**
+  - **Additional usage allowed** (the default): usage continues at published per-credit rates and is charged to your organization or enterprise. Additional usage may be capped.
+  - **Additional usage not allowed:** usage is blocked until the pool refreshes next month.
 
-| Model | Multiplier | Premium Requests per Interaction |
-|-------|-----------|--------------------------------|
-| **Claude Sonnet 4.6** | 1x | 1 |
-| **GPT-5.4** | 1x | 1 |
-| **Claude Opus 4.6** | 3x | 3 |
-| **Gemini 3 Flash** | 0.33x | 0.33 |
-| **Grok Code Fast 1** | 0.25x | 0.25 |
+> ⚠️ **Additional usage is enabled by default.** To prevent any spending beyond the included credits, an administrator must explicitly disable the **AI credits paid usage** policy (step 5A).
 
-> 💡 **Tip:** A single interaction with Claude Opus 4.6 (3x) consumes the same number of premium requests as three interactions with Claude Sonnet 4.6 (1x). Model choice has a significant impact on budget.
+---
+
+## 3️⃣ Model Pricing
+
+Prices are **per 1 million tokens** and are charged in AI credits at $0.01 per credit. Examples from GitHub's published table (October 2026):
+
+| Model | Input | Cached input | Output |
+|-------|------:|-------------:|-------:|
+| **GPT-5 mini** | $0.25 | $0.025 | $2.00 |
+| **Claude Haiku 4.5** | $1.00 | $0.10 | $5.00 |
+| **Claude Sonnet 5.5** | $2.00 | $0.20 | $10.00 |
+| **GPT-5.4** (≤ 272K input tokens) | $2.50 | $0.25 | $15.00 |
+| **Claude Sonnet 4.6** | $3.00 | $0.30 | $15.00 |
+| **Claude Opus 5.5** | $4.00 | $0.20 | $20.00 |
+
+> 📌 **Prices change as models are added and retired.** Always pull current rates from [Models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) before finalizing an estimate. Some models also have a cache-write price or a higher rate above an input-token threshold.
 
 ---
 
 ## 4️⃣ Budget Planning Formula
 
-*Use this formula to estimate monthly premium request consumption and overage costs*
+*Use these formulas to estimate monthly consumption and metered (additional) spend.*
 
-### Step 1: Calculate Monthly Consumption
-
-```
-Monthly Consumption = Sum of (interactions per model × model multiplier)
-```
-
-### Step 2: Calculate Overage
+### Step 1: Calculate the shared pool
 
 ```
-Overage Requests = max(0, Monthly Consumption - Monthly Allowance)
-Overage Cost     = Overage Requests × $0.04
+Pool (credits) = (Business licenses × 1,900) + (Enterprise licenses × 3,900)
 ```
 
-### Example Scenario
+### Step 2: Estimate credits per interaction
+
+```
+Cost ($)    = (input tokens × input price + cached tokens × cached price + output tokens × output price) ÷ 1,000,000
+Credits     = Cost ÷ $0.01
+```
+
+### Step 3: Calculate metered spend
+
+```
+Metered credits = max(0, total monthly consumption − pool)
+Metered cost    = metered credits × $0.01
+Maximum bill    = license fees + enterprise spending limit   (when "Stop usage when budget limit is reached" is on)
+```
+
+### Example: what one interaction costs
+
+A chat turn that sends 20,000 input tokens and gets 2,000 output tokens back:
+
+| Model | Calculation | Cost | AI credits |
+|-------|-------------|-----:|-----------:|
+| **GPT-5 mini** | (20,000 × $0.25 + 2,000 × $2.00) ÷ 1,000,000 | $0.009 | 0.9 |
+| **GPT-5.4** | (20,000 × $2.50 + 2,000 × $15.00) ÷ 1,000,000 | $0.08 | 8 |
+
+> 💡 **Model choice matters:** the same interaction costs roughly **9× more** on GPT-5.4 than on GPT-5 mini. Default everyday work to lighter models and reserve frontier models for hard tasks.
+
+### Example: monthly estimate for a team
 
 | Input | Value |
 |-------|-------|
-| **Plan** | Copilot Enterprise (1,000 premium requests/user/month) |
-| **User count** | 50 |
-| **Avg interactions with Claude Sonnet 4.6 (1x)** | 400 per user |
-| **Avg interactions with Claude Opus 4.6 (3x)** | 100 per user |
+| **Plan** | Copilot Enterprise (3,900 credits per user per month) |
+| **Users** | 50 |
+| **Average consumption** | 4,500 credits per user per month |
 
 | Calculation | Result |
 |-------------|--------|
-| Sonnet consumption | 400 x 1 = 400 |
-| Opus consumption | 100 x 3 = 300 |
-| Total per user | 700 premium requests |
-| Overage per user | max(0, 700 - 1,000) = 0 |
-| **Monthly overage cost** | **$0** |
+| Pool | 50 × 3,900 = **195,000** credits |
+| Consumption | 50 × 4,500 = **225,000** credits |
+| Metered credits | max(0, 225,000 − 195,000) = **30,000** |
+| **Metered cost** | 30,000 × $0.01 = **$300 per month** (on top of 50 × $39 = $1,950 in license fees) |
 
-> 💡 **Tip:** In this example, usage is within the allowance. If each user added 200 more Opus interactions: total = 400 + (300 x 3) = 1,300, overage = 300 x $0.04 = **$12/user/month**.
+> 💡 Because the pool is shared, light users offset heavy users. If half the team used 2,000 credits and half used 7,000, the total (225,000) — and the metered cost — would be the same.
 
 ---
 
 ## 5️⃣ Enterprise Controls
 
-### A) Enable or Disable Overages
+### A) Allow or Block Additional Usage (AI credits paid usage)
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → AI controls → Copilot → Policies
-  → Premium request overages → Enable / Disable
-```
+**Navigate:** Enterprise → **AI controls** → **Copilot** *(sidebar)*
 
-| Setting | Effect |
-|---------|--------|
-| **Overages enabled** | Users can continue using premium models after exhausting their allowance; enterprise is billed for overages |
-| **Overages disabled** | Users are throttled or fall back to included models once the allowance is reached |
+1. At the top of the enterprise page, click **AI controls**.
+2. In the sidebar, click **Copilot**.
+3. Find the **AI credits paid usage** policy and choose **Enabled** (usage continues past the pool at per-credit rates) or **Disabled** (usage stops when the pool is exhausted). *(The selection applies immediately — there is no Save button.)*
 
-> ⚠️ **Warning:** If overages are enabled without budgets and alerts, there is no cap on how much can be billed. Always pair overages with budgets.
+> ⚠️ **Warning:** With paid usage enabled and no enterprise spending limit set to stop usage, there is no cap on metered charges. Always pair it with the budgets in 5C.
 
----
+### B) Control Which Models Are Available
 
-### B) Control Available Models
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **AI controls** → **Copilot** → **Configure models**
 
-```
-Enterprise → AI controls → Copilot → Models
-  → Enable or disable specific models
-```
+1. Click **Configure models**.
+2. Set each model to **Enabled**, **Disabled**, or **Delegate** (lets organizations decide).
 
-> 💡 **Tip:** Disable high-multiplier models (e.g., 3x models) enterprise-wide if budget is a concern, then selectively enable them for teams that need them.
+> 💡 **Tip:** If budget is a concern, disable the most expensive models enterprise-wide, then enable them for the teams that need them.
 
----
+### C) Set Budgets (GitHub's Recommended Setup)
 
-### C) Set Budgets and Hard Stops
+**👤 Role:** GitHub **enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **Billing and licensing** → **Budgets and alerts** → **New budget**
 
-```
-Enterprise → Billing and licensing → Budgets and alerts
-  → New budget → Set monthly limit
-    → Assign to cost center or enterprise-wide
-      → Configure alert thresholds (50%, 75%, 100%)
-```
+Every budget is created the same way:
 
----
+1. Click **New budget**.
+2. Under **Budget Type**, select **Bundled AI credits budget** (covers every feature that uses AI credits).
+3. Under **Budget scope**, choose the scope — see the table below.
+4. Under **Budget**, enter the amount in US dollars.
+5. For spending limits, select **Stop usage when budget limit is reached**. *(Without it, the budget only sends an email — usage is **not** stopped.)*
+6. Under **Alerts**, select **Receive budget threshold alerts** (notifies at 75%, 90%, and 100%) and choose the **Alert Recipients**.
+7. Click **Create budget**.
+
+Create them in this order:
+
+| # | Budget | Scope setting | What it does |
+|---|--------|---------------|--------------|
+| 1 | **Universal user-level budget** | **Users** — leave the user field empty | Caps each user's total consumption (pool + metered). Set it **above** the license value ($19 Business, $39 Enterprise). Always a hard stop. |
+| 2 | **Individual overrides** for power users | **Users** — pick the user; optionally set **Expiration** | Raises or lowers one person's cap; overrides the universal budget. Use an expiration for temporary boosts. |
+| 3 | **Enterprise spending limit** | **Enterprise** | Caps total metered charges after the pool is exhausted. |
+| 4 | **Stop usage** on every spending limit | (step 5 above) | Turns spending limits from alerts into hard stops. |
+
+> 📌 Any budget set to **$0** stops usage immediately for everyone it applies to.
 
 ### D) Create Cost Centers for Department Allocation
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Cost centers
-  → New cost center → Name (e.g., "Engineering", "Data Science")
-    → Assign organizations or specific users
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Cost centers** → **New cost center**
 
-| Cost Center | Assigned Users | Budget |
-|-------------|---------------|--------|
-| Engineering | platform-eng org | $2,000/month |
-| Data Science | data-science org | $5,000/month |
-| Copilot Pilot | pilot-group users | $500/month |
+1. Click **Cost centers**, then **New cost center** (upper-right).
+2. Under **Name**, enter a name (e.g., `Engineering`).
+3. If your account is billed to Azure, optionally add an **Azure ID**.
+4. Under **Resources**, select the organizations, repositories, users, and/or enterprise teams that belong to it.
+5. Click **Create cost center**.
+
+| Cost center | Members | Example budget |
+|-------------|---------|----------------|
+| Engineering | `platform-eng` org | $2,000/month cost center budget |
+| Data Science | `data-science` org | $5,000/month cost center budget |
+| Copilot Pilot | pilot enterprise team | $500/month cost center budget |
+
+> 💡 Add a **cost center budget** (scope **Cost center**) to cap that team's metered charges, or a **cost center user-level budget** (scope **Users** → pick the cost center) to give every member the same per-person cap.
+
+### E) Handle Requests for More Budget
+
+When a user exhausts their budget, they can ask for more.
+
+1. Go to the enterprise (or organization) settings and click **Requests from members**.
+2. Set a new amount for each request, select the requests, and click **Approve and increase**.
 
 ---
 
 ## 6️⃣ Best-Practice Rollout
 
-*A phased approach to introducing premium models without budget surprises*
+| Phase | Action | When |
+|-------|--------|------|
+| **1. Pilot** | License a small cohort (10–20 users) and put them in a dedicated cost center | 2–4 weeks |
+| **2. Guardrails first** | Set a universal user-level budget and an enterprise spending limit with **Stop usage** on | Before the pilot starts |
+| **3. Monitor** | Review the **AI usage** page by user and model | Weekly during the pilot |
+| **4. Tune** | Add individual overrides for genuine power users; restrict expensive models if needed | End of pilot |
+| **5. Expand** | Roll out to broader teams with budgets already in place | After evaluation |
 
-| Phase | Action | Duration |
-|-------|--------|----------|
-| **1. Pilot** | Enable premium models for a small cohort (10-20 users) | 2-4 weeks |
-| **2. Isolate costs** | Create a dedicated cost center for the pilot group | At pilot start |
-| **3. Set budgets** | Apply SKU-level budgets and alert thresholds to the pilot cost center | At pilot start |
-| **4. Monitor** | Review per-user and per-model consumption in billing reports | Weekly during pilot |
-| **5. Evaluate** | Compare productivity gains against cost; adjust model availability | End of pilot |
-| **6. Expand** | Gradually roll out to broader teams with established budgets and guardrails | After evaluation |
-
-> 💡 **Tip:** Start with overages **disabled** during the pilot. Once you understand consumption patterns, enable overages with budgets for the broader rollout.
+> 💡 **Tip:** If you have no usage data yet, start with a universal user-level budget that feels reasonable and revisit it after the first billing cycle.
 
 ---
 
 ## 7️⃣ Monitoring Consumption
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Usage
-  → Filter by: Copilot → View per-user, per-model consumption
-```
+**Navigate:** Enterprise → **Billing and licensing** → **AI usage** *(under "Metered usage")*
 
-| Report View | What It Shows |
-|-------------|--------------|
-| **Per-user** | Total premium requests consumed by each user |
-| **Per-model** | Which models are driving the most consumption |
-| **Per-cost-center** | Consumption and cost allocated to each department |
-| **Trend** | Month-over-month usage growth |
+1. Open **AI usage**. By default, the chart and table group consumption by model.
+2. Use the filter, **Group by**, and **Timeframe** controls to view usage by user, model, organization, or cost center.
+3. Export the data for deeper analysis.
 
-> 💡 **Tip:** Review usage reports weekly during the first month of any rollout expansion. Usage patterns stabilize after 2-4 weeks, after which monthly reviews are sufficient.
+| What to look for | What it means |
+|------------------|---------------|
+| Users blocked early in the cycle | The universal user-level budget is too tight, or a power user needs an override |
+| Metered charges appearing | The pool is running out before month end — check usage trends and spending limits |
+| Pool lasts all month, nobody blocked | Target state — budgets are well sized |
+
+> 💡 **Alerts:** besides budget threshold alerts (75% / 90% / 100%), you can opt in to **included usage alerts** at 90% and 100% of the pool on the **Budgets and alerts** page. Users see their own consumption under **Your Copilot** → **Usage** → **Usage this cycle**.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -267,10 +308,10 @@ Enterprise → Billing and licensing → Usage
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Premium requests are rejected after the included allowance** | Paid usage is disabled, no billing entity is selected, or a stop-usage budget is exhausted. | Enable Premium request paid usage where appropriate, set or delete conflicting budgets, and have users with multiple licenses choose a billing entity. |
+| **A user is blocked from Copilot mid-cycle** | Their user-level budget is used up, the pool is exhausted with **AI credits paid usage** disabled, or a cost center or enterprise spending limit with **Stop usage** was reached. | Check the user on the **AI usage** page and the budgets on **Budgets and alerts**; raise or add an individual budget, approve their budget request, or enable paid usage. |
+| **Metered charges with no budget alerts** | Budget threshold alerts weren't selected, or no spending limit exists. | Edit each budget, select **Receive budget threshold alerts**, and add alert recipients. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
-| **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
-| **Coding agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
+| **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
 
 </details>
 
@@ -282,38 +323,48 @@ Enterprise → Billing and licensing → Usage
 <summary><em>Show Q&A</em></summary>
 
 
-### Q: Users hit the 300 premium request limit mid-month — what happens?
-**A:** If overages are disabled, users fall back to the included base models (GPT-4o, GPT-4.1, GPT-5 mini) and cannot use premium models until the next billing cycle. If overages are enabled, they can continue using premium models and the enterprise is billed at $0.04 per additional premium request.
+### Q: The shared pool ran out mid-month — what happens?
+**A:** It depends on the **AI credits paid usage** policy. If it's enabled (the default), Copilot keeps working and usage is charged at $0.01 per credit, until a spending limit with **Stop usage when budget limit is reached** is hit. If it's disabled, Copilot features that use AI credits are blocked until the pool resets at 00:00 UTC on the first of the month. Code completions and next edit suggestions keep working either way.
 
 ---
 
-### Q: How do we see which users are consuming the most premium requests?
-**A:** Navigate to Enterprise > Billing and licensing > Usage and filter by Copilot. This shows per-user consumption of premium requests. You can also download a CSV usage report for deeper analysis.
+### Q: How do we see which users and models consume the most credits?
+**A:** Go to Enterprise → **Billing and licensing** → **AI usage**. Group or filter by user, model, organization, or cost center, and export the data for analysis.
 
 ---
 
-### Q: Can we set a hard spending cap on premium request overages?
-**A:** Yes. Navigate to Enterprise > Billing and licensing > Budgets and alerts, create a budget scoped to premium requests, set a dollar amount, and enable "Stop usage when budget limit is reached." Configure alert thresholds (e.g., 50%, 75%, 100%) to get notifications before hitting the cap.
+### Q: Can we set a hard cap on spending?
+**A:** Yes. Create an enterprise-scope **Bundled AI credits budget** and select **Stop usage when budget limit is reached** — your maximum monthly bill is then your license fees plus that limit. User-level budgets are always hard stops for the individual. Without **Stop usage**, a spending limit only sends alerts.
 
 ---
 
-### Q: The multipliers changed since we did our cost estimate — what should we do?
-**A:** Model multipliers can change over time. Always check the current values on the GitHub supported models documentation page before finalizing budget estimates. Recalculate your projections whenever multipliers are updated and adjust budgets accordingly.
+### Q: Model prices changed since we did our estimate — what should we do?
+**A:** Re-run your estimate with the current rates from [Models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing), compare against your actual usage on the **AI usage** page, and adjust your budgets.
 
 ---
 
-### Q: Do premium requests reset monthly? Do unused requests roll over?
-**A:** Yes, premium requests reset on each billing cycle. Unused requests do not roll over to the next month. Each user starts fresh with their full allowance (300 for Business, 1,000 for Enterprise) at the beginning of each billing period.
+### Q: Do AI credits reset monthly? Do unused credits roll over?
+**A:** The pool resets at 00:00:00 UTC on the first day of each calendar month. Unused credits do not roll over.
 
 ---
 
-### Q: We enabled overages but users are still being blocked — why?
-**A:** Check for existing budgets under Enterprise > Billing and licensing > Budgets and alerts. If any applicable budget with "Stop usage when budget limit is reached" is exhausted (including legacy $0 budgets), premium requests will be blocked even if the overage policy is enabled. Delete or increase any blocking budgets.
+### Q: Paid usage is enabled, but users are still being blocked — why?
+**A:** A budget is stopping them. Check, in order: the user's individual or cost center user-level budget, the universal user-level budget, any cost center budget with **Stop usage**, and the enterprise spending limit. A **$0** budget at any applicable level blocks usage immediately. The user can also send a budget request, which you approve under **Requests from members**.
 
 ---
 
-### Q: How do we estimate costs before enabling premium models for the whole enterprise?
-**A:** Run a pilot with 10-20 users for 2-4 weeks with overages disabled. Review per-user and per-model consumption in the billing reports, then multiply by your total user count. Use the budget planning formula in this guide to project monthly costs before expanding.
+### Q: How do we estimate costs before rolling out to the whole enterprise?
+**A:** Run a 2–4 week pilot in a dedicated cost center with a universal user-level budget and an enterprise spending limit in place. Use the **AI usage** page to get average credits per user, then apply the formula in step 4 to your full user count.
+
+---
+
+### Q: Are code completions billed in AI credits?
+**A:** No. Code completions and next edit suggestions are unlimited on all paid plans and don't consume AI credits.
+
+---
+
+### Q: Some of our developers still see "premium requests" — why?
+**A:** Premium requests and model multipliers are the legacy billing model. They only still apply to existing **annual** Copilot Pro and Pro+ subscriptions until those plans end. Copilot Business and Copilot Enterprise moved to AI credits on June 1, 2026. Older IDE extensions can also show outdated billing terms — update to the latest version.
 
 </details>
 
@@ -327,16 +378,21 @@ Enterprise → Billing and licensing → Usage
 | Admin Controls (Models, Content Exclusion, Instructions) | `Copilot/Admin Controls (Models, Content Exclusion, Instructions).md` |
 | Cost Centers & Department Billing | `Billing/Cost Centers & Department Billing.md` |
 | Overage Budgets & Cost Monitoring (GHEC Enterprise) | `Copilot/Overage Budgets & Cost Monitoring (GHEC Enterprise).md` |
-| Premium Request Budgeting Scenarios | `Copilot/Premium Request Budgeting Scenarios.md` |
+| AI Credits Budgeting Scenarios | `Copilot/AI Credits Budgeting Scenarios.md` |
+| Power User AI Credit Allowance (Cost Centers + Budgets) | `Copilot/Power User AI Credit Allowance (Cost Centers + Budgets).md` |
 
 ---
 
 ## 📚 Resources
 
-- [Copilot premium requests](https://docs.github.com/en/copilot/concepts/billing/copilot-requests)
-- [Supported AI models for Copilot](https://docs.github.com/en/copilot/reference/ai-models/supported-models)
-- [Manage Copilot request allowances](https://docs.github.com/en/copilot/how-tos/manage-and-track-spending/manage-request-allowances)
+- [Usage-based billing for organizations and enterprises](https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/billing)
+- [Copilot budget controls](https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/budgets)
+- [Getting started with budget controls](https://docs.github.com/en/copilot/tutorials/budgets/getting-started-with-budget-controls)
+- [Models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing)
+- [Setting up budgets](https://docs.github.com/en/billing/how-tos/set-up-budgets)
+- [What changed with Copilot billing (legacy)](https://docs.github.com/en/copilot/reference/copilot-billing/request-based-billing-legacy/what-changed-with-billing)
+- [GitHub Copilot is moving to usage-based billing (GitHub Blog)](https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
