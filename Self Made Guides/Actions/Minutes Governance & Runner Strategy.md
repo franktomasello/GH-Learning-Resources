@@ -11,17 +11,17 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Included Minutes](#1-included-minutes)
-- [2️⃣ Overage Rates](#2-overage-rates)
-- [3️⃣ Self-Hosted Runners](#3-self-hosted-runners)
-- [4️⃣ Setting Actions Budgets and Alerts](#4-setting-actions-budgets-and-alerts)
-- [5️⃣ Restricting Which Actions Can Run](#5-restricting-which-actions-can-run)
-- [6️⃣ Runner Groups for Organization Isolation](#6-runner-groups-for-organization-isolation)
-- [7️⃣ Workflow Controls](#7-workflow-controls)
-- [8️⃣ Monitoring Usage](#8-monitoring-usage)
-- [9️⃣ Decision Guide: Which Runner Type to Use](#9-decision-guide-which-runner-type-to-use)
-- [🔟 GitHub-Hosted Runners with Azure VNET Injection](#-github-hosted-runners-with-azure-vnet-injection)
-- [1️⃣1️⃣ Self-Hosted Runner Setup](#11-self-hosted-runner-setup)
+- [1️⃣ Included Minutes](#1️⃣-included-minutes)
+- [2️⃣ Overage Rates](#2️⃣-overage-rates)
+- [3️⃣ Self-Hosted Runners](#3️⃣-self-hosted-runners)
+- [4️⃣ Setting Actions Budgets and Alerts](#4️⃣-setting-actions-budgets-and-alerts)
+- [5️⃣ Restricting Which Actions Can Run](#5️⃣-restricting-which-actions-can-run)
+- [6️⃣ Runner Groups for Organization Isolation](#6️⃣-runner-groups-for-organization-isolation)
+- [7️⃣ Workflow Controls](#7️⃣-workflow-controls)
+- [8️⃣ Monitoring Usage](#8️⃣-monitoring-usage)
+- [9️⃣ Decision Guide: Which Runner Type to Use](#9️⃣-decision-guide-which-runner-type-to-use)
+- [🔟 GitHub-Hosted Runners with Azure Private Networking](#-github-hosted-runners-with-azure-private-networking)
+- [1️⃣1️⃣ Self-Hosted Runner Setup](#1️⃣1️⃣-self-hosted-runner-setup)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -34,11 +34,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Set hard-stop budget:** `Enterprise → Billing and licensing → Budgets and alerts → New budget → Product: Actions → Stop usage when budget limit is reached`
-- **Restrict allowed Actions:** `Enterprise → Settings → Policies → Actions → Allow select actions → Configure allowlist`
-- **Create runner group:** `Enterprise → Settings → Actions → Runner groups → New runner group`
-- **Add self-hosted runner:** `Org → Settings → Actions → Runners → New self-hosted runner`
-- **Monitor usage:** `Enterprise → Billing and licensing → Usage report → Download CSV`
+- **Hard-stop budget:** `Enterprise → Billing and licensing → Budgets and alerts → New budget` → **Product-level budget** → **Actions** → scope → amount → **Stop usage when budget limit is reached** → **Create budget**
+- **Restrict allowed actions:** `Enterprise → Policies → Actions` → **Allow enterprise, and select non-enterprise, actions and reusable workflows** → **Save**
+- **Enterprise runner group:** `Enterprise → Policies → Actions → Runner groups` tab → **New runner group** → **Save group**
+- **Org self-hosted runner:** `Org → Settings → Actions → Runners` → **New runner** → **New self-hosted runner**
+- **Azure private networking:** `Enterprise → Settings → Hosted compute networking` → **New network configuration ▾** → **Azure private network**
 
 ---
 
@@ -48,9 +48,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -61,14 +61,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Enterprise owner role (for enterprise-level policies and billing budgets) | ☐ |
-| GitHub Enterprise Cloud account | ☐ |
-| Azure subscription (if using VNET injection for GitHub-hosted runners) | ☐ |
-| Infrastructure for self-hosted runners (if applicable) | ☐ |
-
----
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud | — | ☐ |
+| Enterprise Actions policies, enterprise runner groups, hosted compute networking | GitHub **enterprise owner** | ☐ |
+| Budgets and usage reports | **Enterprise owner** or **billing manager** | ☐ |
+| Organization runners and runner groups | **Organization owner** (or "Manage organization runners and runner groups" permission) | ☐ |
+| Azure subscription, VNET, and subnet (for Azure private networking) | Azure subscription / network owner | ☐ |
+| Infrastructure for self-hosted runners (if used) | Platform team | ☐ |
 
 ## 👥 Provider Account Action Matrix
 
@@ -76,8 +76,8 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise or organization Actions admin** | Enables the runner group to use Azure private networking. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Settings → Actions → Runner groups → [runner group] → Azure private networking → Configure → select the approved Azure networking configuration → Save. Organization path: GitHub → profile photo → Your organizations → [organization] → Settings → Actions → Runner groups → [runner group] → Azure private networking → Configure → select the approved Azure networking configuration → Save. Handoff: runner group name and confirmation that Azure private networking is enabled. |
-| **Azure subscription or network Owner** | Creates or validates the VNET, subnet, DNS, routing, and private endpoint dependencies used by GitHub-hosted runners. | Azure portal → Virtual networks → [VNET] → Subnets → + Subnet or [existing subnet] → validate address range and delegation requirements → Network security groups → [NSG] → Inbound security rules and Outbound security rules → validate required traffic → Private DNS zones or Private endpoints as needed. Handoff: subscription ID, resource group, VNET name, subnet name, region, and any required DNS/private endpoint details. |
+| **GitHub enterprise or organization Actions admin** | Enables the runner group to use Azure private networking. | GitHub → Enterprise → Settings → Hosted compute networking → New network configuration ▾ → Azure private network → name it → Add Azure Virtual Network → paste the network settings resource ID → Add Azure Virtual Network → save the configuration. Then Enterprise → Policies → Actions → Runner groups → New runner group → Organization access → Network configurations: pick the configuration → Create group, and add a larger runner to that group. Handoff: network configuration name and runner group name. |
+| **Azure subscription or network Owner** | Creates or validates the VNET, subnet, DNS, routing, and private endpoint dependencies used by GitHub-hosted runners. | Register the `GitHub.Network` resource provider → create (or reuse) a VNET and subnet in a supported region → delegate the subnet to `GitHub.Network/networkSettings` → apply the NSG rules from GitHub's script → create the `GitHub.Network/networkSettings` resource with your enterprise `databaseId` → copy its resource ID. GitHub's docs provide a script for these steps. Handoff: network settings resource ID, subscription, resource group, VNET, and subnet. |
 
 ---
 
@@ -97,111 +97,126 @@ This runbook covers included minutes, overage pricing, spending controls, runner
 
 ## 1️⃣ Included Minutes
 
-GitHub Enterprise Cloud includes a shared pool of Actions minutes per month:
+GitHub Enterprise Cloud includes a monthly quota for **private and internal** repositories on standard GitHub-hosted runners:
 
-| Plan | Included Minutes (Linux) | Storage |
-|------|-------------------------|---------|
-| **GHEC** | 50,000 minutes/month | 50 GB |
+| Plan | Minutes per month | Artifact + Packages storage | Cache (per repository) | Custom image storage |
+|------|------------------|------------------------------|------------------------|----------------------|
+| **GitHub Enterprise Cloud** | 50,000 | 50 GB (shared with GitHub Packages) | 10 GB | 150 GB |
 
-> 💡 **Tip:** The 50,000 minutes are a shared enterprise pool across all organizations. The billing dashboard may show Actions usage as spend rather than raw minutes.
+> 💡 **Tip:** The quota is shared across the enterprise and resets each month. Standard runners are **free** for public repositories, GitHub Pages, and Dependabot. The billing dashboard shows Actions usage as spend (dollars), not minutes.
 
-### Baseline GitHub-Hosted Runner Pricing
+### Baseline GitHub-hosted runner pricing
 
-| Runner OS | Billing SKU | Per-Minute Rate |
-|-----------|-------------|-----------------|
-| **Linux 1-core** | `actions_linux_slim` | $0.002/min |
-| **Linux 2-core** | `actions_linux` | $0.006/min |
-| **Windows 2-core** | `actions_windows` | $0.010/min |
-| **macOS 3-core or 4-core** | `actions_macos` | $0.062/min |
+| Runner | Billing SKU | Per-minute rate |
+|--------|-------------|-----------------|
+| **Linux 1-core (x64)** | `actions_linux_slim` | $0.002 |
+| **Linux 2-core (x64)** | `actions_linux` | $0.006 |
+| **Linux 2-core (arm64)** | `actions_linux_arm` | $0.005 |
+| **Windows 2-core (x64)** | `actions_windows` | $0.010 |
+| **Windows 2-core (arm64)** | `actions_windows_arm` | $0.010 |
+| **macOS 3-core or 4-core** | `actions_macos` | $0.062 |
 
-> ⚠️ **Important:** Larger runners have separate rates, are not covered by included minutes, and are charged even for public repositories.
+**Storage beyond the quota:** $0.25 per GB-month (artifacts + Packages), $0.07 per GB-month (cache and custom images), accrued hourly.
+
+> ⚠️ **Important:** Larger runners have their own rates, don't use the included minutes, and are always billed — even for public repositories.
 
 ---
 
 ## 2️⃣ Overage Rates
 
-When included minutes are exhausted, per-minute charges apply:
-
-| Runner Type | Billing Behavior |
+| Runner type | Billing behavior |
 |-------------|------------------|
-| **Standard GitHub-hosted runners** | Use included minutes first, then bill by runner SKU after the included amount is exhausted |
-| **Larger runners** | Always bill at the larger-runner SKU rate; included minutes do not apply |
-| **Self-hosted runners** | Do not consume included minutes and do not incur GitHub per-minute runner charges |
+| **Standard GitHub-hosted runners** | Use included minutes first, then bill per minute by SKU |
+| **Larger runners** | Always billed at the larger-runner rate |
+| **Self-hosted runners** | Free — no included minutes used, no per-minute charge |
+| **Copilot code review and cloud agent** | Run on Actions and use minutes on private repositories, in addition to AI credits |
 
-> 💡 **Tip:** Self-hosted runners do **NOT** consume included minutes and do **NOT** incur overage charges. They are the primary cost-control lever for high-volume workloads.
+> 💡 **Tip:** Without a payment method, usage stops when the quota runs out, and larger runners are blocked entirely.
 
 ---
 
 ## 3️⃣ Self-Hosted Runners
 
-Self-hosted runners run on your own infrastructure and do not consume any included minutes or incur per-minute charges.
-
 | Aspect | Detail |
 |--------|--------|
-| **Cost** | Zero Actions minutes consumed |
-| **Infrastructure** | You manage the machine (VM, physical, container) |
-| **Best for** | High-volume jobs, specialized hardware, private network access |
+| **Cost** | No Actions minutes or per-minute charges (you pay for your own infrastructure) |
+| **Infrastructure** | You manage the machine (VM, physical, container, or Kubernetes with ARC) |
+| **Best for** | High-volume jobs, special hardware, private network access |
+
+> ⚠️ **Security:** use self-hosted runners only with private repositories — forks of public repositories can run untrusted code on them.
 
 ---
 
 ## 4️⃣ Setting Actions Budgets and Alerts
 
-Control overage costs by creating a budget for GitHub Actions at the enterprise level.
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **Billing and licensing** → **Budgets and alerts**
 
-```
-Enterprise → Billing and licensing
-  → Budgets and alerts → New budget
-    → Product: Actions
-```
+**Steps:**
+
+1. Click **New budget**.
+2. Under **Budget Type**, choose **Product-level budget** and select **Actions** (or **SKU-level budget** for one runner SKU).
+3. Under **Budget scope**, choose **Enterprise**, an **Organization**, a **Repository**, or a **Cost center**.
+4. Under **Budget**, enter the amount.
+5. To block spending at the limit, select **Stop usage when budget limit is reached**.
+6. Under **Alerts**, select **Receive budget threshold alerts** (75%, 90%, 100%) and choose the **Alert Recipients**.
+7. Click **Create budget**.
 
 | Option | Effect |
 |--------|--------|
-| **$0 budget with stop usage enabled** | No paid overage allowed after included minutes/storage are exhausted |
-| **Custom budget with stop usage enabled** | Jobs can run until the budget cap is reached |
-| **Budget without stop usage** | Alerts only; usage can continue beyond the budget |
+| **$0 budget + stop usage** | No paid usage once the included minutes and storage are gone |
+| **Custom budget + stop usage** | Jobs run until the cap is reached |
+| **Budget without stop usage** | Alerts only — usage continues past the budget |
 
-> ⚠️ **Warning:** A hard-stop budget can block workflow execution once the budget is exhausted. Communicate this to teams before applying.
+> ⚠️ **Warning:** a hard-stop budget blocks workflow runs once it's reached. Tell teams before you apply it.
+
+> 💡 Also on this page: **Receive alerts when my included usage reaches 90% and 100%** for the included-minutes quota.
 
 ---
 
 ## 5️⃣ Restricting Which Actions Can Run
 
-Control which Actions are allowed across the enterprise to prevent supply chain risks.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **Policies** tab → **Actions**
 
-```
-Enterprise → Settings → Policies (sidebar)
-  → Actions → Allow specific actions → Configure allowlist
-```
+**Steps:**
+
+1. Under **Policies**, choose which organizations can use Actions (all, specific, or none).
+2. Choose an actions policy:
 
 | Policy | Effect |
 |--------|--------|
-| **Allow all actions** | Any action from GitHub Marketplace or custom repos can run |
-| **Allow local actions only** | Only actions defined in the repository can run |
-| **Allow select actions** | Specify an allowlist of permitted actions (recommended) |
+| **Allow all actions and reusable workflows** | Anything can run |
+| **Allow enterprise actions and reusable workflows** | Only actions in your enterprise's repositories (this blocks `actions/checkout` too) |
+| **Allow enterprise, and select non-enterprise, actions and reusable workflows** | Enterprise actions **plus** your allowlist (recommended) |
 
-> 💡 **Tip:** Use the allowlist approach to permit only verified, trusted actions. This prevents developers from pulling in unvetted third-party actions.
+3. If you chose the third option, select any of **Allow actions created by GitHub**, **Allow Marketplace actions by verified creators**, and **Allow or block specified actions and reusable workflows** (for example `azure/login@*, octo-org/*, !octo-org/risky-action@*`).
+4. *(Optional)* Select **Require actions to be pinned to a full-length commit SHA**.
+5. Click **Save**.
+
+> 💡 **Tip:** Local actions (`uses: ./...`) are never restricted. Under **Runners** on the same page you can also disable repository-level self-hosted runners.
 
 ---
 
 ## 6️⃣ Runner Groups for Organization Isolation
 
-Runner groups let you assign runners to specific organizations, controlling which orgs can use which runner infrastructure.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigation:**
+**Navigate:** Enterprise → **Policies** tab → **Actions** → **Runner groups** tab
 
-```
-Enterprise → Settings → Actions (sidebar)
-  → Runner groups → New runner group
-    → Name the group → Assign to specific organizations
-```
+**Steps:**
 
-> ✅ **Result:** Only the selected organizations can schedule jobs on runners in that group.
+1. Click **New runner group**.
+2. Under **Group name**, type a name.
+3. Open the **Organization access** dropdown and choose all organizations or **Selected organizations** (then pick them).
+4. Set **Workflow access** — all workflows, or specific workflows (use full refs such as `refs/heads/main`).
+5. Click **Save group**.
 
-> 💡 **Tip:** Use runner groups to isolate production-grade runners from development teams, or to give specific orgs access to specialized hardware (GPU, ARM, etc.).
+> ✅ **Result:** only the selected organizations (and workflows) can run jobs on runners in that group.
+
+> 💡 **Organization level:** Org → **Settings** → **Actions** → **Runner groups** → **New runner group**. Runners registered without a group go to the **Default** group.
 
 ---
 
@@ -221,12 +236,13 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 
 ## 8️⃣ Monitoring Usage
 
-| Method | How to Access | Detail |
+| Method | How to access | Detail |
 |--------|---------------|--------|
-| **Billing reports** | Enterprise → Billing and licensing | Download CSV of Actions usage by org and repo |
-| **Actions usage API** | REST API | Programmatic access to billing and usage data |
+| **Usage page** | Enterprise → **Billing and licensing** → **Usage** → **Metered usage** | Filter by product, organization, repository, or SKU |
+| **Usage report (CSV)** | Same page → **Get usage report** | Emailed CSV by organization, repository, and SKU |
+| **Billing usage API** | `GET /enterprises/{enterprise}/settings/billing/usage` (and `/usage/summary`) | Programmatic usage data |
 
-> 💡 **Tip:** Set up a monthly review of billing reports to catch unexpected usage spikes early, before they turn into large overage charges.
+> 💡 **Tip:** Review usage monthly to catch spikes before they become large overage charges.
 
 ---
 
@@ -237,49 +253,49 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 | **Standard CI/CD, low-to-medium volume** | GitHub-hosted | Zero maintenance, pre-configured environments |
 | **Large builds, need more CPU/RAM** | Larger runners (GitHub-hosted) | Configurable specs up to 64 cores |
 | **High volume, cost-sensitive** | Self-hosted | No per-minute charges |
-| **Private network access required** | Self-hosted or Azure VNET | Must reach internal resources |
+| **Private network access required** | Self-hosted, or larger runners with Azure private networking | Must reach internal resources |
 | **Dynamic scaling with Kubernetes** | Actions Runner Controller (ARC) | Auto-scales runner pods in your cluster |
 | **Compliance / data residency** | Self-hosted | Full control over where code is built |
 
 ---
 
-## 🔟 GitHub-Hosted Runners with Azure VNET Injection
+## 🔟 GitHub-Hosted Runners with Azure Private Networking
 
-For GitHub-hosted runners that need access to private network resources, configure Azure private networking.
+**👤 Role:** GitHub **enterprise owner** + Azure network owner · **📍 Portal:** Azure, then GitHub
 
-**Navigation:**
+> 📌 Azure private networking works with **larger runners** (2–64 vCPU Ubuntu and Windows), not standard runners. Initial setup must be done at the **enterprise** level.
 
-```
-Enterprise → Settings → Actions (sidebar)
-  → Runner groups → Select a runner group
-    → Azure private networking → Configure
-```
+**Steps (Azure):** register `GitHub.Network`, create the VNET and subnet, delegate the subnet to `GitHub.Network/networkSettings`, apply the NSG rules, and create the network settings resource for your enterprise (GitHub's docs provide a script). Copy the resource ID.
 
-> ✅ **Result:** GitHub-hosted runners in this group can reach resources inside your Azure VNET (databases, internal APIs, etc.) without exposing them to the public internet.
+**Steps (GitHub):**
 
-> ⚠️ **Important:** Azure VNET injection requires an Azure subscription and network configuration. Work with your network team to set up the VNET and subnet.
+1. Enterprise → **Settings** → **Hosted compute networking**.
+2. Click **New network configuration ▾** → **Azure private network**.
+3. Name the configuration, click **Add Azure Virtual Network**, paste the network settings resource ID, and click **Add Azure Virtual Network**.
+4. Create an enterprise runner group (Section 6). Under **Network configurations**, select this configuration, then click **Create group**.
+5. Add a **larger runner** to that runner group.
+
+> ✅ **Result:** larger runners in the group get a network interface in your subnet and can reach private resources (databases, internal APIs) without exposing them publicly.
+
+> 💡 You can add a **failover network** to a configuration (**Edit configuration** → **Add failover network**).
 
 ---
 
 ## 1️⃣1️⃣ Self-Hosted Runner Setup
 
-**Navigation:**
+**👤 Role:** **Organization owner** · **📍 Portal:** GitHub + the runner machine
 
-```
-Organization → Settings → Actions (sidebar)
-  → Runners → New self-hosted runner
-    → Select OS and architecture → Follow setup instructions
-```
+**Navigate:** Organization → **Settings** → **Actions** → **Runners**
 
 **Steps:**
 
-1. Choose the operating system (Linux, macOS, Windows)
-2. Choose the architecture (x64, ARM, ARM64)
-3. Download and extract the runner application
-4. Configure the runner with the provided token
-5. Start the runner as a service
+1. Click **New runner**, then **New self-hosted runner**.
+2. Select the operating system image and architecture.
+3. On the runner machine, run the shown commands in order: download and extract the runner, run `config` with the URL and the time-limited token shown on the page.
+4. Run the runner (or install it as a service — on Windows, `config` offers this; on Linux/macOS, install the service afterward).
+5. Back on **Runners**, confirm the runner is listed as **Idle**, and the terminal shows `Connected to GitHub` / `Listening for Jobs`.
 
-> 💡 **Tip:** For production use, always run self-hosted runners as a service so they restart automatically after reboots. Never run self-hosted runners on public repositories due to security risks.
+> 💡 **Tip:** run runners as a service so they restart after reboots, use ephemeral runners or ARC where possible, and never attach self-hosted runners to public repositories.
 
 ## 🧯 Known Errors & Resolutions
 
@@ -311,17 +327,17 @@ Organization → Settings → Actions (sidebar)
 
 
 ### Q: Our included minutes are exhausted mid-month. How do we avoid this recurring issue?
-**A:** Move high-volume or long-running workloads to self-hosted runners, which consume zero included minutes. Also review macOS, Windows, larger-runner, and GPU usage because those SKUs cost more than baseline Linux runners. Set Actions budgets and alerts to control overage costs, and use billing reports to identify which repos or workflows are consuming the most spend.
+**A:** Use **Get usage report** to find the repositories and SKUs using the most. Move high-volume work to self-hosted runners (free), check macOS, Windows, and larger-runner use (more expensive), add `timeout-minutes` and concurrency limits, and remember that Copilot code review and cloud agent use Actions minutes too. Turn on the 90%/100% included-usage alerts.
 
 ---
 
 ### Q: My self-hosted runner is online but jobs are not being picked up. What should I check?
-**A:** Verify three things: (1) the runner shows as "Online" in Org Settings > Actions > Runners, (2) the `runs-on` label in your workflow matches a label assigned to the runner exactly, and (3) the runner group the runner belongs to is configured to allow the organization that owns the workflow. Also check the runner application logs for errors.
+**A:** Check that (1) the runner is listed as **Idle** at Org → **Settings** → **Actions** → **Runners**, (2) every label in `runs-on` matches a label on the runner, and (3) the runner's group allows the organization, repository, and workflow (check **Workflow access** too). Then check the runner application logs.
 
 ---
 
 ### Q: VNET injection for GitHub-hosted runners is not working. What are the common issues?
-**A:** Ensure the Azure subnet is delegated to `GitHub.Network/networkSettings` (this is a specific Azure delegation requirement). Verify the subnet has enough available IP addresses for the number of concurrent runners you expect. Also confirm the Azure subscription, VNET, and subnet are in a supported region, and that the runner group is correctly configured with the Azure private networking settings.
+**A:** Confirm you're using **larger runners** (standard runners can't use it), the subnet is delegated to `GitHub.Network/networkSettings`, the subnet has enough free IPs for your peak concurrency, the region is supported, the NSG rules allow GitHub's required traffic, and the runner group has the network configuration selected. Larger runners in a VNET must use dynamic IPs, not static IPs.
 
 ---
 
@@ -331,12 +347,12 @@ Organization → Settings → Actions (sidebar)
 ---
 
 ### Q: Our Actions budget was hit and workflows are queuing but not running. What do we do?
-**A:** When a hard-stop budget is reached, GitHub-hosted runner jobs can queue or stop executing. To resolve immediately, increase or disable the stop-usage budget under Enterprise > Billing and licensing > Budgets and alerts. For a longer-term fix, move high-consumption workloads to self-hosted runners and set `timeout-minutes` on all workflows to prevent runaway jobs from consuming your budget.
+**A:** Raise the budget or clear **Stop usage when budget limit is reached** at Enterprise → **Billing and licensing** → **Budgets and alerts**. Check for a narrower budget too (organization, repository, or cost center). Longer term, move heavy workloads to self-hosted runners and set `timeout-minutes` everywhere.
 
 ---
 
 ### Q: How can we prevent developers from using untrusted third-party Actions from the Marketplace?
-**A:** Configure an Actions allowlist at the enterprise level (Enterprise > Settings > Policies > Actions > Allow select actions). Specify the exact actions and versions that are permitted (e.g., `actions/checkout@v4`, `azure/login@v2`). This prevents developers from pulling in unvetted third-party actions that could introduce supply chain risks.
+**A:** At Enterprise → **Policies** → **Actions**, choose **Allow enterprise, and select non-enterprise, actions and reusable workflows**, select **Allow actions created by GitHub**, and list approved third-party actions (for example `azure/login@*`). Consider **Require actions to be pinned to a full-length commit SHA**, then click **Save**.
 
 </details>
 
@@ -353,10 +369,12 @@ Organization → Settings → Actions (sidebar)
 
 ## 📚 Resources
 
-- [About billing for GitHub Actions](https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions)
-- [About self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners)
-- [About Azure private networking for GitHub-hosted runners](https://docs.github.com/en/organizations/managing-organization-settings/about-azure-private-networking-for-github-hosted-runners-in-your-organization)
+- [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions)
+- [Setting up budgets](https://docs.github.com/en/billing/how-tos/set-up-budgets)
+- [Enforcing policies for GitHub Actions in your enterprise](https://docs.github.com/en/enterprise-cloud@latest/admin/enforcing-policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-github-actions-in-your-enterprise)
+- [Adding self-hosted runners](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners)
+- [Configuring private networking for GitHub-hosted runners in your enterprise](https://docs.github.com/en/enterprise-cloud@latest/admin/configuring-settings/configuring-private-networking-for-hosted-compute-products/configuring-private-networking-for-github-hosted-runners-in-your-enterprise)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
