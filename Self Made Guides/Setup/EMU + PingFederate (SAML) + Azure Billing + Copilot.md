@@ -34,11 +34,11 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **PingFederate:** Identity Provider → SP Connections → Create New → SAML 2.0 → Set Entity ID to `https://github.com/enterprises/YOUR_ENTERPRISE` and ACS URL with POST binding
-- **GitHub:** Sign in as `SHORTCODE_admin` → Enterprise → Identity provider → Add SAML configuration → Paste PingFederate SSO URL, Entity ID, X.509 cert → Save
-- **SCIM:** As `SHORTCODE_admin`, generate PAT with `scim:enterprise` scope → PingFederate SP Connection → Outbound Provisioning → Enter SCIM Base URL + Bearer Token → Test
-- **Billing (enterprise owner):** Enterprise → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription → Accept permissions → Connect
-- **Copilot:** Enterprise → AI controls → Copilot → Enable for orgs → (optionally) Org Settings → Copilot → Access → Assign seats
+- **PingFederate:** **Applications** → **Integration** → **SP Connections** → **Create Connection** → **Use a template for this connection** → **GitHub EMU Connector** → import GitHub's metadata (`https://github.com/enterprises/YOUR_ENTERPRISE/saml/metadata`) → check **Browser SSO Profiles** + **Outbound Provisioning** → confirm Entity ID and ACS URL (POST) → **Save** · *PingOne:* **Applications** → **Applications** → **+** → **SAML Application**
+- **GitHub:** Sign in as `SHORTCODE_admin` → profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → **Add SAML configuration** → paste the Ping **Sign on URL**, **Issuer**, and **Public Certificate** → **Test SAML configuration** → **Save SAML settings**
+- **SCIM:** As `SHORTCODE_admin`, generate a classic PAT with `scim:enterprise` and no expiration → PingFederate: GitHub SP connection → **Outbound Provisioning** → **Configure Provisioning** → **Target**: **Base URL** + **Access Token** → create an **Active** channel · PingOne: **Integrations** → **Provisioning** → **New Connection** → **GitHub EMU** → **Test Connection**
+- **Billing (enterprise owner):** Enterprise → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription → Accept permissions → Connect
+- **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** → turn on organizations → **AI controls** → **Copilot** (policies) → seats: Org **Settings** → **Copilot** → **Access** → **Start adding seats**, or the enterprise **Manage** page → **Assign licenses**
 
 ---
 
@@ -48,9 +48,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub, Microsoft Entra, and Ping Identity documentation in July 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub, Microsoft Entra, and Ping Identity documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -96,10 +96,10 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **PingFederate administrator** | Creates the GitHub EMU SP connection and configures PingFederate outbound SCIM provisioning. | PingFederate Administrative Console → Applications → SP Connections → Use a template for this connection → select GitHub EMU Connector → upload GitHub EMU metadata → Connection Type → Browser SSO Profiles → Next → Configure Browser SSO → Configure Assertion Creation → map LDAP adapter and attributes → Save. For SCIM: SP Connections → [GitHub connection] → Connection Type → Outbound Provisioning → Configure Provisioning → Target → Base URL and Access Token → Manage Channel → Create → Source → select data store → Attribute Mapping → Activation & Summary → Active → Done → Save. Handoff: exported metadata, issuer/entity ID, active channel, and SCIM test evidence. |
-| **GitHub EMU setup user (`SHORTCODE_admin`)** | Enables SAML in GitHub and provides the SCIM token to the PingFederate admin. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → Add SAML configuration → paste Single sign-on URL, Issuer, and verification certificate from PingFederate → Test SAML configuration → Save. For SCIM token: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic) → `scim:enterprise` → Generate token. Handoff: Tenant URL, SCIM token, SAML test success, and recovery codes. |
-| **LDAP or identity directory owner** | Controls the users and groups PingFederate can provision. | PingFederate Administrative Console → System → Data Stores → [LDAP data store] → verify connection, then Applications → SP Connections → [GitHub connection] → Outbound Provisioning → Source and Source Location → configure LDAP search base and filters → Save. Handoff: source filter, pilot users, and role attribute mapping. |
-| **GitHub enterprise owner** (billing manager alone is not sufficient to connect a subscription) | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile photo → Your enterprises → [enterprise] → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path (org owner): GitHub → profile photo → Your organizations → [organization] → Settings → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **PingFederate administrator** | Creates the GitHub EMU SP connection and configures PingFederate outbound SCIM provisioning. | PingFederate administrative console → Applications → Integration → SP Connections → Create Connection → Use a template for this connection → select GitHub EMU Connector → import GitHub EMU metadata → Connection Type → Browser SSO Profiles + Outbound Provisioning → Next → Configure Browser SSO → Configure Assertion Creation → map LDAP adapter and attributes → Save. For SCIM: SP Connections → [GitHub connection] → Connection Type → Outbound Provisioning → Configure Provisioning → Target → Base URL and Access Token → Manage Channel → Create → Source → select data store → Attribute Mapping → Activation & Summary → Active → Done → Save. Handoff: exported metadata, issuer/entity ID, active channel, and SCIM test evidence. |
+| **GitHub EMU setup user (`SHORTCODE_admin`)** | Enables SAML in GitHub and provides the SCIM token to the PingFederate admin. | GitHub → profile picture → Enterprise → Identity provider → Single sign-on configuration → Add SAML configuration → paste Single sign-on URL, Issuer, and verification certificate from PingFederate → Test SAML configuration → Save. For SCIM token: setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic) → `scim:enterprise` → Generate token. Handoff: Tenant URL, SCIM token, SAML test success, and recovery codes. |
+| **LDAP or identity directory owner** | Controls the users and groups PingFederate can provision. | PingFederate administrative console → System → Data & Credential Stores → Data Stores → [LDAP data store] → verify connection, then Applications → Integration → SP Connections → [GitHub connection] → Outbound Provisioning → Source and Source Location → configure LDAP search base and filters → Save. Handoff: source filter, pilot users, and role attribute mapping. |
+| **GitHub enterprise owner** (billing manager alone is not sufficient to connect a subscription) | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile picture → Enterprise → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path (org owner): GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -107,17 +107,19 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 1️⃣ Create & Configure the EMU Setup User
 
+**👤 Role:** GitHub EMU **setup user** (`SHORTCODE_admin`) · **📍 Portal:** GitHub
+
 ### Process
 
 1. GitHub emails an invite to set the password for SHORTCODE_admin
 2. In a private/incognito window:
    - Set password (store it in your password vault)
    - **Enable 2FA:**
-     1. Click your profile photo → **Settings** → **Password and authentication**.
+     1. Click your profile picture → **Settings** → **Password and authentication**.
      2. Under **Two-factor authentication**, click **Enable two-factor authentication**.
      3. Choose a method (**Set up using an app** / TOTP recommended), scan the QR code in your authenticator app, then enter the 6-digit code and click **Continue** / **Verify** to complete the challenge.
      4. On the recovery-codes screen click **Download** (or **Copy** / **Print**) to save your **personal 2FA recovery codes**, then click **I have saved my recovery codes**.
-   - Save recovery codes securely
+   - **Download the enterprise recovery codes** (separate from your personal 2FA codes): profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → under **SAML single sign-on**, click **Save your recovery codes** → **Download** (or **Print** / **Copy**). Store both sets securely. *(If the link isn't shown yet, you'll be prompted to save them when you save your SAML configuration in Step 3.)*
 
 ### Important Notes
 
@@ -131,101 +133,45 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 2️⃣ Create the PingFederate SP Connection
 
+Choose the option that matches your Ping deployment, and use the GitHub values in **SAML Configuration Values** below.
+
+> 💡 **Tip:** Create the SCIM token first (Step 4A — it only needs the setup user). Then you can finish SSO and provisioning in one pass, the way Ping's own GitHub EMU procedure does.
+
 ### Option A — PingFederate (Self-Managed)
 
-#### Navigation
+**👤 Role:** **PingFederate administrator** · **📍 Portal:** PingFederate administrative console
 
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → Create New
-        → Connection Type: Browser SSO Profiles — SAML 2.0
-          → Connection Options: Browser SSO
-            → Continue through wizard
-```
+> 📌 **Prerequisite:** install Ping's **GitHub EMU Provisioner** (PingFederate 9.0 or later). It adds the **GitHub EMU Connector** connection template used below, and one SP connection then handles both SSO and provisioning.
 
-Complete and commit the SP connection:
+**Navigate:** **Applications** → **Integration** → **SP Connections** → **Create Connection**
 
-1. Click **Next** on each wizard screen (**Connection Type**, **Connection Options**, **Assertion Creation**, **Protocol Settings**, **Credentials**).
-2. On the final **Activation & Summary** screen, set **Connection Status = Active**.
-3. Click **Save** / **Done** to commit the SP connection.
-
-#### Configure the SP Connection
-
-1. **Partner's Entity ID:** Enter the GitHub SAML Entity ID (see SAML Values table below)
-2. **Connection Name:** "GitHub Enterprise Managed User" (or similar descriptive name)
-3. **Base URL:** Enter the GitHub SAML Sign-on URL (see SAML Values table below)
-
-#### Browser SSO — SAML Configuration
-
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → GitHub Enterprise Managed User
-        → Browser SSO
-          → Configure Browser SSO
-            → SAML Profiles: Select "SP-Initiated SSO" (and optionally "IdP-Initiated SSO")
-              → Assertion Lifetime: Configure as needed (default is typically fine)
-                → Assertion Creation
-                  → Configure attribute contract and mapping
-```
-
-**Assertion Attribute Contract:**
-
-Map the following attributes in the assertion:
-
-| SAML Attribute | Source Value |
-|----------------|-------------|
-| `SAML_SUBJECT` (NameID) | User's unique identifier (e.g., email or username) |
-| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name` | User's display name |
-| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress` | User's email address |
-
-> 💡 **Note:** Set the **NameID Format** to `urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified` or `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` based on your organization's requirements.
-
-#### Configure Protocol Settings
-
-```
-PingFederate Admin Console
-  → SP Connection
-    → Browser SSO
-      → Protocol Settings
-        → Assertion Consumer Service URL
-          → Binding: POST
-          → Endpoint URL: (ACS URL from SAML Values table below)
-```
-
-1. Under **Browser SSO → Protocol Settings → Signature Policy**, set **Signature Algorithm = RSA-SHA256** and **Digest Algorithm = SHA-256**, then click **Next** / **Done**. (These must match the **Signature Method** and **Digest Method** you select on the GitHub side in Step 3.)
+1. On the **Connection Template** tab, select **Use a template for this connection**, choose **GitHub EMU Connector** from the **Connection Template** list (not "GitHub Connector"), and import GitHub's SP metadata — from `https://github.com/enterprises/YOUR_ENTERPRISE/saml/metadata` (GHE.com: `https://SUBDOMAIN.ghe.com/enterprises/SUBDOMAIN/saml/metadata`) or a saved copy of that file. Click **Next**.
+2. On the **Connection Type** tab, make sure both **Browser SSO Profiles** and **Outbound Provisioning** are checked. Click **Next**.
+3. On **Connection Options**, keep **Browser SSO** selected and click **Next**.
+4. On **General Info**, confirm **Partner's Entity ID (Connection ID)** is `https://github.com/enterprises/YOUR_ENTERPRISE` (no trailing slash), enter a **Connection Name** such as `GitHub Enterprise Managed User`, and click **Next**.
+5. On **Browser SSO**, click **Configure Browser SSO**, then work through its tabs, clicking **Next** on each:
+   - **SAML Profiles** — select **SP-Initiated SSO** (optionally also **IdP-Initiated SSO**).
+   - **Assertion Creation** → **Configure Assertion Creation** — set **SAML_SUBJECT** to a stable, persistent identifier that matches the SCIM `userName` you'll send in Step 4B, and map your authentication source (adapter or policy) to fulfill it.
+     *(GitHub requires only a persistent NameID — the SAML_SUBJECT. Extra name or email claims aren't needed for EMU, because SCIM supplies profile data.)*
+   - **Protocol Settings** → **Configure Protocol Settings** — confirm the **Assertion Consumer Service URL** `https://github.com/enterprises/YOUR_ENTERPRISE/saml/consume` with **POST** binding. Under **Signature Policy**, sign the assertion or the whole response (GitHub accepts either).
+   - Click **Done** to return to the connection.
+6. On **Credentials**, click **Configure Credentials** → **Digital Signature Settings**, select your signing certificate, choose **RSA SHA256**, then click **Next** → **Done**.
+7. On **Outbound Provisioning**: if you already have the SCIM token, configure it now using Step 4B; otherwise continue and finish it in Step 4B.
+8. On **Activation & Summary**, set **Connection Status** to **Active** and click **Save**.
 
 ### Option B — PingOne (Cloud)
 
-#### Navigation
+**👤 Role:** **PingOne administrator** · **📍 Portal:** PingOne admin console
 
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → + (Add Application)
-        → Application Name: "GitHub Enterprise Managed User"
-          → Application Type: SAML Application
-            → Configure
-```
+**Navigate:** **Applications** → **Applications** → **+**
 
-#### Search the Application Catalog
+1. Enter an application name (for example, `GitHub Enterprise Managed User`) and an optional description.
+2. Select **SAML Application**, then click **Configure**.
+3. Give PingOne GitHub's SP details with one of these options: **Import from URL** (`https://github.com/enterprises/YOUR_ENTERPRISE/saml/metadata`), **Import Metadata** (upload the file), or enter the **ACS URLs** (`https://github.com/enterprises/YOUR_ENTERPRISE/saml/consume`) and **Entity ID** (`https://github.com/enterprises/YOUR_ENTERPRISE`) manually.
+4. Click **Save**.
+5. Turn on the application's enable toggle.
 
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → + (Add Application)
-        → Search Catalog: "GitHub Enterprise Managed User"
-          → Select matching integration
-            → Continue
-              → Configure SAML settings
-```
-
-> 💡 **Note:** If the catalog integration is not available, configure a custom SAML application using the SAML values provided below.
+> 💡 **Note:** In PingOne, the GitHub EMU *provisioning* connection is separate from this SAML application — you'll create it in Step 4B (Alt).
 
 ### SAML Configuration Values
 
@@ -249,65 +195,39 @@ Enter your enterprise **slug** (e.g., "octocorp" if your enterprise URL is `gith
 
 > ⚠️ **Critical:** Ensure your Identifier format matches GitHub exactly and does not include a trailing slash.
 
-### Download Required Items (PingFederate IdP Values)
+### Get the IdP Values for GitHub
 
-From your PingFederate or PingOne configuration, gather the three SAML values needed for GitHub:
-
-1. **IdP SSO Service URL** (Single Sign-On Service URL)
-2. **Entity ID** (IdP Issuer / Entity ID)
-3. **Signing Certificate** (X.509 certificate)
-
-#### PingFederate (Self-Managed) Navigation
-
-```
-PingFederate Admin Console
-  → Server Configuration
-    → Server Settings
-      → My Base URL — Note this (used to construct the SSO Service URL)
-  → Security
-    → Signing & Decryption Keys & Certificates
-      → Export the signing certificate (X.509 / PEM format)
-```
-
-> 💡 **Tip:** The IdP SSO Service URL typically follows the pattern: `https://<PING_HOST>/idp/SSO.saml2`
-
-> 💡 **Tip:** The IdP Entity ID can be found under **Server Configuration → Server Settings → Federation Info → Entity ID**.
-
-#### PingOne (Cloud) Navigation
-
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Configuration (tab)
-          → Expand "Connection Details"
-            → Copy: Single Sign-On Service URL, Issuer ID
-          → Download Signing Certificate
-```
-
-### Assign Users (for SSO Testing)
-
-Assign at least one user (or group) to the SP Connection so you can validate SSO.
+You need three values for Step 3: the IdP **Sign on URL**, the **Issuer** (IdP entity ID), and the **signing certificate**.
 
 #### PingFederate (Self-Managed)
 
-User assignment in PingFederate is handled via your authentication policy and user datastore configuration. Ensure the users who need access are in the directory (LDAP/AD) connected to the SP Connection's authentication source.
+**Navigate:** **System** → **Protocol Metadata** → **Metadata Export** *(PingFederate 10.1 or later)*
+
+1. Export PingFederate's IdP metadata — or, on the **SP Connections** list, use **Export Metadata** for the GitHub connection.
+2. In the metadata, note the **entityID** (your **Issuer**) and the **SingleSignOnService** location — typically `https://<PING_HOST>/idp/SSO.saml2` (your **Sign on URL**).
+3. Export the signing certificate: **Security** → **Signing & Decryption Keys & Certificates** → find the certificate → **Select Action** → **Export** → **Certificate Only** → **Next** → **Export**. You'll paste its PEM contents into GitHub as the **Public Certificate**.
 
 #### PingOne (Cloud)
 
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Access (tab)
-          → + Add Group
-            → (Select group)
-              → Save
-```
+**Navigate:** **Applications** → **Applications** → *[GitHub Enterprise Managed User]* → **Configuration** tab
 
-> 💡 **Note:** In PingOne, application access is controlled by group membership. Assign the appropriate group(s) containing users who need GitHub access.
+1. In the connection details, copy the **Issuer ID** and the single sign-on service URL.
+2. Download the signing certificate — or download the IdP metadata, which contains all three values.
+
+### Assign Users (for SSO Testing)
+
+#### PingFederate (Self-Managed)
+
+Who can sign in is decided by your authentication policy and the directory behind it. Make sure your pilot users exist in the directory (LDAP/AD) your adapter or policy authenticates against, and that no access policy blocks them.
+
+#### PingOne (Cloud)
+
+**Navigate:** **Applications** → **Applications** → *[GitHub Enterprise Managed User]* → **Access** tab
+
+1. Add the group(s) whose members should be able to sign in.
+2. Click **Save**.
+
+> 💡 **Note:** In PingOne, application access is controlled by group membership.
 
 ---
 
@@ -317,7 +237,7 @@ PingOne Admin Console
 
 **👤 Role:** EMU setup user (`SHORTCODE_admin`, an enterprise owner) · **📍 Portal:** GitHub
 
-**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
+**Navigate:** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration**
 
 ### Configuration Steps
 
@@ -346,7 +266,7 @@ The token must be created as the setup user with specific requirements.
 
 **👤 Role:** EMU setup user (`SHORTCODE_admin`, an enterprise owner) · **📍 Portal:** GitHub
 
-**Navigate:** Profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**
+**Navigate:** Profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)**
 
 **Token Requirements:**
 - ✓ Type: **personal access token (classic)**
@@ -365,163 +285,65 @@ The token must be created as the setup user with specific requirements.
 
 ### 4B — Configure SCIM in PingFederate (Self-Managed)
 
-PingFederate uses **Outbound Provisioning** to push user data to GitHub via SCIM.
+**👤 Role:** **PingFederate administrator** · **📍 Portal:** PingFederate administrative console
 
-#### Navigation Path
+**Navigate:** **Applications** → **Integration** → **SP Connections** → *[GitHub EMU connection]* → **Outbound Provisioning** → **Configure Provisioning**
 
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → GitHub Enterprise Managed User
-        → Outbound Provisioning
-          → Configure
-```
+1. On the **Target** tab, enter:
+   - **Base URL** — GitHub.com: `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}` · GHE.com: `https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}`
+   - **Access Token** — the SCIM token from Step 4A
+2. Confirm **User Create**, **User Update**, and **User Disable / Delete** are selected, and set **Remove User Action** to **Disable**. Click **Next**.
+3. On **Manage Channels**, click **Create**, then work through the channel tabs, clicking **Next** on each:
+   - **Channel Info** — enter a channel name.
+   - **Source** — select the LDAP data store that holds your users.
+   - **Source Settings** — review the defaults.
+   - **Source Location** — enter the base DN and a group DN or filter that scopes who is provisioned.
+   - **Attribute Mapping** — map the attributes in 4C, including **Roles**.
+   - **Activation & Summary** — set **Channel Status** to **Active**.
+4. Click **Done**, then click **Save** on the connection.
 
-#### Configuration
+> 📌 **Order matters:** GitHub doesn't accept provisioning until SAML SSO is configured (Step 3). Set the channel to **Active** only after SSO works.
 
-1. **Provisioning Target:** Select or configure a SCIM provisioning target
-2. Under **SCIM Connection Settings**, enter:
-   - **SCIM Base URL (Tenant URL):**
-     - For GitHub.com: `https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}`
-     - For GHE.com: `https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}`
-   - **Authentication:** Bearer Token
-   - **Secret Token:** Paste the PAT created in step 4A
-3. Click **Test Connection** to verify
-4. Click **Save**
-
-#### Enable Provisioning Actions
-
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → GitHub Enterprise Managed User
-        → Outbound Provisioning
-          → Target Settings
-            → Enable (check):
-              - Create Users
-              - Update Users
-              - Deactivate/Delete Users
-            → Save
-```
-
-After enabling the Create/Update/Deactivate actions, activate the channel:
-
-1. Click through **Manage Channels → [GitHub channel] → Activation & Summary** → set **Channel Status = Active** → click **Done** → click **Save** to activate outbound provisioning.
-2. Then run a **Provision on demand** / pilot test on one user before assigning the full group.
+> 💡 **Sync interval:** PingFederate checks for changes every 60 seconds by default — adjust it at **System** → **Server** → **Protocol Settings** → **Outbound Provisioning**.
 
 ### 4B (Alt) — Configure SCIM in PingOne (Cloud)
 
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Provisioning (tab)
-          → Enable Provisioning (toggle on)
-            → Configure:
-              → SCIM Base URL:
-                → For GitHub.com: https://api.github.com/scim/v2/enterprises/{ENTERPRISE_SLUG}
-                → For GHE.com: https://api.{SUBDOMAIN}.ghe.com/scim/v2/enterprises/{SUBDOMAIN}
-              → Authentication Method: Bearer Token
-              → Bearer Token: (paste PAT from step 4A)
-            → Test Connection
-            → Save
-```
+**👤 Role:** **PingOne administrator** · **📍 Portal:** PingOne admin console
 
-**Enable Provisioning Actions in PingOne:**
+**Navigate:** **Integrations** → **Provisioning**
 
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Provisioning (tab)
-          → Rules
-            → Enable:
-              - Create Users
-              - Update Users
-              - Deactivate Users
-            → Save
-```
+1. Click **+**, then **New Connection**.
+2. On the **Identity Store** line, click **Select**.
+3. On the **GitHub EMU** tile, click **Select**, then click **Next**.
+4. Enter a name and description for the connection, then click **Next**.
+5. Enter the **Base URL** (same values as 4B) and the **Access Token** (the SCIM token from 4A), then click **Test Connection**.
+6. Set your preferences: **Group Membership Handling** (**Merge** or **Overwrite**), and turn on user creation, updates, disabling, and deprovisioning — set the removal action to **Disable** (recommended).
+7. Click **Save**.
+8. Turn on the toggle at the top of the connection's details panel to enable it.
+9. Create a provisioning rule that uses this connection and scopes which users and groups are provisioned (see Ping's "Creating a provisioning rule"), then confirm the attribute mappings in 4C.
 
 ### 4C — Configure Attribute Mappings
 
-Map SCIM attributes from your PingFederate/PingOne user store to GitHub's SCIM schema.
+**👤 Role:** **PingFederate administrator** or **PingOne administrator** · **📍 Portal:** PingFederate administrative console / PingOne admin console
 
-#### Required SCIM Attribute Mappings
+Map these GitHub SCIM attributes from your directory — in PingFederate on the channel's **Attribute Mapping** tab, in PingOne on the provisioning rule's attribute mappings (PingOne requires **Username**, **Email**, and **External ID**).
 
-| GitHub SCIM Attribute | PingFederate Source Attribute | Description |
-|-----------------------|------------------------------|-------------|
-| `userName` | User's unique identifier (e.g., `sAMAccountName` or `uid`) | Must be unique across the enterprise |
+| GitHub SCIM Attribute | Typical source attribute | Description |
+|-----------------------|--------------------------|-------------|
+| `userName` | User's unique identifier (e.g., `sAMAccountName` or `uid`) | Must be unique across the enterprise and match the SAML_SUBJECT |
 | `name.givenName` | `givenName` / `firstName` | User's first name |
 | `name.familyName` | `sn` / `lastName` | User's last name |
 | `emails[type eq "work"].value` | `mail` / `email` | User's email address |
 | `displayName` | `displayName` / `cn` | User's full display name |
 | `externalId` | Unique directory ID (e.g., `objectGUID` or `entryUUID`) | Persistent unique identifier from the IdP |
+| `roles` | An attribute (PingFederate: the **Roles** mapping) whose value is `enterprise_owner`, `billing_manager`, `user`, or `guest_collaborator` | Sets the enterprise role — give at least one person `enterprise_owner` |
 
-#### PingFederate (Self-Managed) Attribute Mapping Navigation
-
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → GitHub Enterprise Managed User
-        → Outbound Provisioning
-          → Attribute Mapping
-            → Map source attributes to SCIM target attributes
-              → Save
-```
-
-#### PingOne (Cloud) Attribute Mapping Navigation
-
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Provisioning (tab)
-          → Attribute Mappings
-            → Edit
-              → Map PingOne user attributes to GitHub SCIM attributes
-                → Save
-```
-
-> 💡 **Note:** Review default mappings carefully. PingOne may provide pre-configured mappings for the GitHub EMU integration; PingFederate self-managed deployments typically require manual mapping.
+> ⚠️ **Identity linking:** the SAML_SUBJECT in your SSO assertion (Step 2) must match the SCIM `userName`, or people can't sign in to the account SCIM created for them.
 
 ### 4D — Assign Users/Groups for Provisioning
 
-1. Ensure users and/or groups are assigned to the GitHub SP Connection
-2. PingFederate / PingOne will SCIM-provision these members into the EMU enterprise
-
-#### PingFederate (Self-Managed)
-
-Outbound Provisioning in PingFederate provisions users based on the connected user datastore and any configured provisioning filters. Ensure the correct LDAP/AD groups or user base DN is selected.
-
-```
-PingFederate Admin Console
-  → Identity Provider
-    → SP Connections
-      → GitHub Enterprise Managed User
-        → Outbound Provisioning
-          → Source Settings
-            → Configure user source (datastore, base DN, filter)
-              → Save
-```
-
-#### PingOne (Cloud)
-
-```
-PingOne Admin Console
-  → Connections
-    → Applications
-      → GitHub Enterprise Managed User
-        → Access (tab)
-          → + Add Group
-            → (Select groups for provisioning)
-              → Save
-```
+- **PingFederate:** the channel's **Source Location** (base DN plus group or filter) decides who is provisioned — add people to that group or adjust the filter.
+- **PingOne:** the provisioning rule's group or filter scope decides who is provisioned.
 
 **Provisioning Notes:**
 
@@ -536,7 +358,7 @@ Connect your Azure subscription so GitHub usage (Copilot, Actions, Codespaces, e
 
 **👤 Role:** GitHub **enterprise owner** (on the Azure side, a subscription **Owner** who can grant tenant-wide admin consent) · **📍 Portal:** GitHub → Microsoft
 
-**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **Billing & Licensing** → **Payment information** → scroll to **Metered billing via Azure** → **Add Azure Subscription**
+**Navigate:** Profile picture → **Enterprise** → **Billing and licensing** → **Payment information** → scroll to **Metered billing via Azure** → **Add Azure Subscription**
 
 ### Prerequisites
 
@@ -563,69 +385,83 @@ Connect your Azure subscription so GitHub usage (Copilot, Actions, Codespaces, e
 
 ## 6️⃣ Enable GitHub Copilot
 
-### 6A — Enable at Enterprise Level
+Set up Copilot in this order: **6A** turn Copilot on for organizations, **6B** set policies, **6C** give people seats. With Azure metered billing connected (Step 5), Copilot charges bill to your Azure subscription.
 
-With Azure billing connected via metered billing, Copilot usage will be billed through your Azure subscription.
+> 📌 **Where things live:** organization access and licenses are under **Billing and licensing → Licensing**; policies are under **AI controls**. Selections on these pages apply immediately — there is **no Save button**.
+
+### 6A — Turn Copilot on for organizations
 
 **👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigate:** Profile photo → **Your enterprises** → *[your enterprise]* → **AI controls** *(top-of-page tab, not under Settings)* → **Copilot** *(sidebar)*
+**Navigate:** Profile picture → **Enterprise** → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
-**Access Management Configuration:**
+1. At the top of the enterprise page, click **Billing and licensing**.
+2. In the "Billing and licensing" sidebar, click **Licensing**.
+3. In the "Copilot" section, click **Manage**.
+4. Next to **Organization access**, open the dropdown and choose whether to enable Copilot for **all organizations** or to **Allow for specific organizations**.
+5. If you chose **Allow for specific organizations**:
+   1. Click the **Organizations** tab.
+   2. Find the organization.
+   3. To the right of its name, open the **Copilot** dropdown and click **Enabled** (Copilot Business plan) — or **Copilot: Enterprise** / **Copilot: Business** if your enterprise has a Copilot Enterprise plan.
+6. Confirm the organization now shows Copilot as enabled. *(The selection applies immediately — there is no Save button.)*
 
-Under **Access management**, choose:
-- **Disabled** — No organizations can use Copilot
-- **All organizations** — Enable for all organizations in the enterprise
-- **Specific organizations** — Select which organizations can use Copilot
+> ⚠️ **Do this first:** until Copilot is enabled for an organization here, its owners can't assign seats in 6C (Route 1).
 
-Select the Copilot tier (**Copilot Business** or **Copilot Enterprise**) for each enabled organization.
+### 6B — Set Copilot policies
 
-After choosing the access level (for **Specific organizations**, check the box next to each organization that should have Copilot), click **Save** to apply the access setting.
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-> 💡 **Enterprise-level Copilot Business (GA):** Since October 2025, managing Copilot Business at the enterprise level is generally available — enterprise owners can assign Copilot Business licenses directly at the enterprise account, to individual users and/or to enterprise teams, without granting org access. Only **enterprise teams** (the membership construct) remain in public preview. A user assigned via multiple sources consumes **one** license (highest tier).
+**Navigate:** Profile picture → **Enterprise** → **AI controls** → **Copilot** *(sidebar)*
 
-### 6B — Configure Copilot Policies
+1. At the top of the enterprise page, click **AI controls** *(a top-of-page tab — not under **Settings**)*.
+2. In the sidebar, open the page that holds the policies you want:
+   - **Copilot** — administration, privacy, model, billing, and usage policies, including **Policies for enterprise-assigned users** (required before Route 2 in 6C).
+   - **Copilot** → under "Features & clients", click **Configure features & clients** — feature and client policies such as Copilot on GitHub.com, Copilot Chat in the IDE, and Copilot in the CLI.
+   - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
+   - **MCP** — Model Context Protocol (MCP) policies.
+3. Set each policy:
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide).
+   - **Toggle:** click it.
+   - **No visible control:** click the policy name to see its options.
+4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
 
-1. On the **AI controls → Copilot** page, open the **Policies** tab.
-2. Configure policies for:
-   - Suggestions matching public code (Allowed/Blocked)
-   - Copilot in GitHub.com
-   - Copilot Chat in the IDE
-   - Copilot in the CLI
-   - Other feature policies
+> 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
-**Policy Options:**
+### 6C — Assign Copilot seats
 
-For each policy, select:
-- **Enabled/Allowed** — Feature is on for all organizations
-- **Disabled/Blocked** — Feature is off for all organizations
-- **No policy** — Delegate the decision to organization owners
+Use either route — or both. A person assigned through more than one route still uses **one** license (the highest tier).
 
-3. Click **Save** to apply the policy changes.
-
-### 6C — Assign Copilot Seats
-
-Copilot Business licenses can be assigned directly at the enterprise level (see the GA note above). Organizations can also assign seats the traditional way:
-
-**Enterprise route (GA):**
-
-**Navigate:** Profile photo → **Your enterprises** → *[enterprise]* → **Billing & Licensing** → **Licensing** → **Copilot Business**
-
-1. Click **Assign licenses** (or **Add users**).
-2. Select individual users and/or **enterprise teams**.
-3. Click **Assign** / **Confirm** to grant the seats (no org access required).
-
-**Organization route:**
+**Route 1 — Organization seats** (organization owner)
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
-**Navigate:** Profile photo → **Your organizations** → *[organization]* → **Settings** → **Copilot** → **Access**
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Copilot** *(sidebar, under "Code, planning, and automation")* → **Access**
 
-1. Click **Add members** (or enable for all members).
-2. Select the members or teams to receive seats.
-3. Click **Add** / **Confirm** to assign the seats; the selected members now appear in the Copilot **Access** list.
+1. If you see **Allow this organization to assign seats**, click it.
+2. Click **Start adding seats**.
+3. Choose who gets Copilot:
+   - **Everyone:** select **Purchase for all members**, then in the "Confirm seats purchase for all members" dialog click **Purchase seats**.
+   - **Specific people or teams:** select **Purchase for selected members**. In the "Enable Copilot access for users and teams" dialog, use the **Users and teams** tab to search for and add people or teams (or **Upload CSV** to add many at once), then click **Continue to purchase** → **Purchase seats**.
 
-Organization owners can assign Copilot seats to individual members or teams.
+> 💡 **Hands-off seats:** give seats to a team that's linked to an PingFederate group (see Step 7). When PingFederate adds someone to the group, SCIM adds them to the team and they get a Copilot seat automatically.
+
+> 💡 **Billing:** a seat is billed from the moment it's granted (prorated mid-cycle), whether or not the person uses Copilot yet.
+
+**Route 2 — Enterprise licenses** (enterprise owner · Copilot Business · no organization membership required)
+
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
+**Navigate:** Profile picture → **Enterprise** → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
+
+**Before you start:** set the **Policies for enterprise-assigned users** policy (6B), make sure the people already exist in the enterprise (provisioned by SCIM), and create the enterprise team first if you're licensing a team.
+
+1. Click the **All members** tab (individual users) or the **Enterprise Teams** tab.
+2. Click **Assign licenses**.
+3. Search for the users or enterprise teams, then click **Add licenses**.
+
+> ✅ **Enterprise teams are generally available** (since June 2026). License an enterprise team and people gain or lose Copilot as they join or leave it. With Enterprise Managed Users you can sync the enterprise team to an PingFederate group, so licensing is driven entirely from your IdP.
+
+> 💡 **When to use this route:** people who need Copilot but no organization access. Enterprise members who aren't in any organization usually don't consume a GitHub Enterprise Cloud license. Direct enterprise assignment is for **Copilot Business**.
 
 ---
 
@@ -781,7 +617,7 @@ After completing this guide, you should have:
 ---
 
 ### Q: My PingFederate signing certificate is expiring — how do I renew it without downtime?
-**A:** Generate a new signing certificate in PingFederate (**Security → Signing & Decryption Keys & Certificates**). Export the new certificate in X.509/PEM format. Before activating it in PingFederate, update the certificate in GitHub using the EMU identity path: Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration** → edit the **SAML single sign-on** configuration → paste the new **Public Certificate** → **Test SAML configuration** → **Save SAML settings**. Once GitHub has the new cert, activate it as the primary signing certificate in PingFederate. This avoids a window where the certs are mismatched.
+**A:** Generate a new signing certificate in PingFederate (**Security → Signing & Decryption Keys & Certificates**). Export the new certificate in X.509/PEM format. Before activating it in PingFederate, update the certificate in GitHub using the EMU identity path: Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → edit the **SAML single sign-on** configuration → paste the new **Public Certificate** → **Test SAML configuration** → **Save SAML settings**. Once GitHub has the new cert, activate it as the primary signing certificate in PingFederate. This avoids a window where the certs are mismatched.
 
 ---
 
@@ -828,4 +664,4 @@ After completing this guide, you should have:
 
 ---
 
-*Last updated: July 2026*
+*Last updated: October 2026*

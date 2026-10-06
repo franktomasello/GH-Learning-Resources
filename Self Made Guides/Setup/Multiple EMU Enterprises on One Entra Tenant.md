@@ -42,9 +42,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in July 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -72,7 +72,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub setup user for each EMU enterprise** | Configures each enterprise separately and captures a separate SCIM token per enterprise. | For each enterprise: GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → choose SAML unless this is the single permitted Entra OIDC integration → configure and test SSO. Then setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → `scim:enterprise`. Handoff: enterprise slug, SAML values or OIDC status, Tenant URL, and SCIM token. |
+| **GitHub setup user for each EMU enterprise** | Configures each enterprise separately and captures a separate SCIM token per enterprise. | For each enterprise: GitHub → profile picture → Enterprise → Identity provider → Single sign-on configuration → choose SAML unless this is the single permitted Entra OIDC integration → configure and test SSO. Then setup user → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token → `scim:enterprise`. Handoff: enterprise slug, SAML values or OIDC status, Tenant URL, and SCIM token. |
 | **Microsoft Entra Application Administrator, Cloud Application Administrator, or Application Owner** | Creates a separate enterprise application and provisioning configuration per EMU enterprise. | Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User → Create → rename app with the enterprise slug → Single sign-on → SAML → configure enterprise-specific values → Provisioning → + New configuration (older tenants: Get started, Provisioning Mode = Automatic) → Tenant URL and Secret Token for that same enterprise → Test Connection → Create → Start provisioning → Users and groups → assign enterprise-specific groups. Handoff: one app per enterprise and no mixed SCIM tokens. |
 | **Microsoft Entra Global Administrator** | Approves OIDC only where the tenant is intentionally using the single supported Entra OIDC EMU integration. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → approve the selected GitHub Enterprise Managed User (OIDC) request, or complete the consent prompt during GitHub OIDC setup. Handoff: documented decision identifying which single EMU enterprise uses OIDC and which enterprises use SAML. |
 
@@ -101,7 +101,7 @@ For each EMU enterprise, create a dedicated Entra enterprise application:
 
 **👤 Role:** GitHub setup user (`SHORTCODE_admin`, an enterprise owner) + Entra Application Administrator · **📍 Portal:** GitHub + Microsoft Entra admin center
 
-**Navigate (GitHub side):** Profile photo → **Your enterprises** → *[your enterprise]* → **Identity provider** → **Single sign-on configuration**
+**Navigate (GitHub side):** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration**
 
 Each enterprise application has its own SAML or OIDC configuration pointing to its respective EMU enterprise. For SAML, configure the Entra side FIRST to produce the values GitHub needs, then complete the GitHub side signed in as that enterprise's setup user:
 
@@ -154,7 +154,7 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 9. Click **Start provisioning** from the Overview page.
 10. Repeat with each other enterprise's Tenant URL and Secret Token in its own dedicated app.
 
-> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token is scoped to a single enterprise and must be generated by that enterprise's setup user: profile photo → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → enter a **Note** (a descriptive name, e.g. `EMU-<slug>-SCIM`), set **Expiration** to **No expiration**, check ONLY the **`scim:enterprise`** scope, scroll down and click **Generate token**, then copy the token immediately (it is shown only once).
+> 🔐 **Security-critical:** Never reuse one SCIM token across enterprise applications. Each token is scoped to a single enterprise and must be generated by that enterprise's setup user: profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** → **Generate new token (classic)** → enter a **Note** (a descriptive name, e.g. `EMU-<slug>-SCIM`), set **Expiration** to **No expiration**, check ONLY the **`scim:enterprise`** scope, scroll down and click **Generate token**, then copy the token immediately (it is shown only once).
 
 ## 4️⃣ Scope User Populations Using Entra Groups
 
@@ -283,4 +283,4 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 
 ---
 
-*Last updated: July 2026*
+*Last updated: October 2026*
