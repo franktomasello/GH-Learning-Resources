@@ -15,7 +15,7 @@
 - [2️⃣ Assign Resources to Cost Centers](#2️⃣-assign-resources-to-cost-centers)
 - [3️⃣ Cost Center Scope and Limitations](#3️⃣-cost-center-scope-and-limitations)
 - [4️⃣ Patterns for Team-Level Billing](#4️⃣-patterns-for-team-level-billing)
-- [5️⃣ SKU-Level Budgets for Premium Requests](#5️⃣-sku-level-budgets-for-premium-requests)
+- [5️⃣ SKU-Level and AI Credit Budgets for a Cost Center](#5️⃣-sku-level-and-ai-credit-budgets-for-a-cost-center)
 - [6️⃣ Set Budgets and Hard Stops](#6️⃣-set-budgets-and-hard-stops)
 - [7️⃣ Connect an Azure Subscription](#7️⃣-connect-an-azure-subscription)
 - [8️⃣ Export Usage Reports for Finance Reconciliation](#8️⃣-export-usage-reports-for-finance-reconciliation)
@@ -31,11 +31,12 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Create cost center:** `Enterprise → Billing and licensing → Cost centers → New cost center`
-- **Assign resources:** `Enterprise → Billing and licensing → Cost centers → [Cost center] → Resources → Add resources`
-- **Create SKU budget:** `Enterprise → Billing and licensing → Budgets and alerts → New budget → Scope: cost center`
-- **Set hard-stop budget:** `Enterprise → Billing and licensing → Budgets and alerts → New budget → Stop usage when budget limit is reached`
-- **Export usage report:** `Enterprise → Billing and licensing → Usage report → Download CSV`
+- **Create a cost center:** `Enterprise → Billing and licensing → Cost centers → New cost center` → name → (optional Azure ID) → resources → **Create cost center**
+- **Edit resources:** `Cost centers` → **⋯** next to the cost center → **Edit**
+- **Cost center budget:** `Enterprise → Billing and licensing → Budgets and alerts → New budget` → type → **Budget scope: Cost center** → amount → **Create budget**
+- **Hard stop:** in the budget, select **Stop usage when budget limit is reached**
+- **Usage report:** `Enterprise → Billing and licensing → Usage` → **Get usage report** (emailed CSV)
+- **Azure billing:** `Billing and licensing → Payment information` → **Metered billing via Azure** → **Add Azure Subscription**
 
 ---
 
@@ -45,7 +46,7 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
 - When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
 - When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
@@ -58,14 +59,13 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Enterprise owner role | ☐ |
-| GitHub Enterprise Cloud account | ☐ |
-| Azure subscription linked (for Azure billing) | ☐ |
-| Organizations, repositories, or users identified for cost allocation | ☐ |
-
----
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud on metered (usage-based) billing — cost centers don't apply to volume or subscription billing | — | ☐ |
+| Create and edit cost centers for any resource; create budgets | **Enterprise owner** or **billing manager** | ☐ |
+| Create cost centers for resources in their own organization | **Organization owner** | ☐ |
+| Connect an Azure subscription | GitHub **enterprise owner** + an Azure user who is subscription **Owner** and can give tenant-wide admin consent (or a Global Administrator) | ☐ |
+| A mapping of organizations, repositories, users, or enterprise teams to finance cost codes | Finance + platform team | ☐ |
 
 ## 👥 Provider Account Action Matrix
 
@@ -73,7 +73,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → profile picture → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → profile picture → Organizations → [organization] → Settings → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → Connect. Handoff: the subscription ID is visible on Payment information. |
+| **GitHub enterprise or organization owner** | Starts the Azure metered billing connection from GitHub. | Enterprise path: GitHub → Enterprise → Billing and licensing → Payment information → scroll to Metered billing via Azure → Add Azure Subscription. Organization path: GitHub → Organizations → [organization] → Settings → Billing & Licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Then sign in to Microsoft → Permissions requested → Accept → Select a subscription → tick the confirmation checkbox → Connect. Handoff: the subscription ID is visible on Payment information. |
 | **Azure subscription Owner** | Provides the Azure subscription that GitHub will bill against, or grants another signer the required Azure RBAC rights. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm the signer is listed under Owner. To grant access: Add → Add role assignment → Privileged administrator roles → Owner → Members → Select members → [user] → Select → Review + assign. Handoff: subscription ID and tenant ID. |
 | **Microsoft Entra Global Administrator or consent approver** | Approves tenant-wide consent when the Microsoft consent prompt blocks the GitHub billing app. | Microsoft Entra admin center → Entra ID → Enterprise apps → Activity → Admin consent requests → My Pending → [GitHub request] → Review permissions and consent → Approve. If the Global Administrator completes the GitHub flow directly, approve the Permissions requested prompt by clicking Accept. |
 
@@ -81,76 +81,70 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 📋 Overview
 
-This runbook covers how to set up cost tracking and billing for enterprise departments:
-
 | Capability | Description |
 |------------|-------------|
-| **Cost centers** | Group organizations, repositories, or users for billing attribution |
-| **Budgets and alerts** | Monitor metered spend and hard-stop usage where supported |
-| **SKU-level budgets** | Set budgets for premium requests and specific SKUs |
-| **Azure subscription** | Connect Azure for consolidated billing |
-| **Usage reports** | Export data for finance reconciliation |
+| **Cost centers** | Attribute spend to business units using organizations, repositories, users, or enterprise teams |
+| **Budgets and alerts** | Alert at 75%, 90%, and 100%, and optionally stop metered usage at the limit |
+| **SKU-level and AI credit budgets** | Budgets for one SKU, or for AI credits across Copilot, cloud agent, and Spark |
+| **Azure subscription** | Pay for metered usage through Azure — one per enterprise and, optionally, one per cost center |
+| **Usage reports** | Summarized, detailed, and AI usage CSVs for finance reconciliation |
 
 ---
 
 ## 1️⃣ Create Cost Centers
 
-**Navigation:**
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Cost centers
-  → New cost center
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Cost centers**
 
 **Steps:**
 
-1. Click **New cost center**
-2. Enter a **Name** (e.g., `Engineering`, `Marketing`, `Platform Team`)
-3. Add one or more **resources** to the cost center: organizations, repositories, or users
-4. If the cost center should bill to a different Azure subscription than the enterprise default, add that Azure subscription during creation
-5. Click **Create**
+1. Click **New cost center** (upper right).
+2. Under **Name**, enter a name (for example `Engineering` or `Platform Team`).
+3. *(Optional — Azure billing only)* Add an **Azure ID** to bill this cost center to a different subscription than the enterprise default. GitHub verifies it against Azure.
+4. Under **Resources**, select the **organizations**, **repositories**, **users**, and/or **enterprise teams** to include.
+5. Click **Create cost center**.
 
-> ✅ **Result:** Spending by the assigned resources is attributed to this cost center for reporting purposes.
+> ✅ **Result:** future metered spend for those resources is attributed to the cost center.
+
+> 📌 **Limits:** up to 1,000 active cost centers per enterprise and 25,000 resources per cost center; add or remove up to 50 resources at a time. Outside collaborators and unaffiliated users can only be added through the cost center API.
 
 ---
 
 ## 2️⃣ Assign Resources to Cost Centers
 
-**Navigation:**
-
-```
-Enterprise → Billing and licensing → Cost centers
-  → [Select cost center] → Resources → Add resources
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Cost centers** → **⋯** next to the cost center → **Edit**
 
 **Steps:**
 
-1. Click on an existing cost center
-2. Open the **Resources** area
-3. Click **Add resources**
-4. Select organizations, repositories, or users from the list
-5. Save changes
+1. Click **⋯** to the right of the cost center, then **Edit**.
+2. Add or remove organizations, repositories, users, or enterprise teams.
+3. Save your changes.
 
 | Rule | Detail |
 |------|--------|
-| **Resources are allocated to one active cost center** | A resource should be assigned to the cost center that finance expects to own the resulting spend |
-| **Unassigned resources** | Usage that is not covered by a cost center is attributed to the enterprise or owning account instead of a department-specific cost center |
-| **User-based allocation matters for Copilot** | License-based products and premium-request usage are allocated by user, so user-scoped cost centers are the right pattern for role-based Copilot budgets |
+| **One cost center per resource** | A resource belongs to only one cost center. Adding it elsewhere **moves** it. |
+| **Usage-based products** (Actions, Codespaces, Packages, LFS) | Charged by the **repository or organization** where the usage happens |
+| **License-based products** (Copilot, GitHub Enterprise, GHAS) | Charged by the **user** first, otherwise the organization that's billed for the license |
+| **AI credits** | Charged by the **user** who used them, otherwise the organization that granted their Copilot license |
+| **Enterprise teams** | Members are added automatically as they join or leave. A direct user assignment wins over team membership |
+| **Unassigned usage** | Shows as **Enterprise Only** when you group usage by cost center |
 
-> ✅ **Result:** Usage from assigned resources rolls up to the cost center according to GitHub's product-specific cost center allocation rules.
+> 💡 Deleting a cost center sends future usage to the enterprise; past usage stays with the cost center (see the **Deleted** tab).
 
 ---
 
 ## 3️⃣ Cost Center Scope and Limitations
 
-> ⚠️ **Important:** Current GitHub cost centers can include organizations, repositories, and users. They do **not** support GitHub teams as a first-class cost center resource.
+| Resource | Supported |
+|----------|-----------|
+| **Organization** | ✅ Business-unit or org-based allocation |
+| **Repository** | ✅ When usage should follow specific repositories |
+| **User** | ✅ Copilot licenses, AI credits, and other per-user products |
+| **Enterprise team** | ✅ Membership stays in sync automatically |
+| **Organization team** | ❌ Not a cost center resource — use an enterprise team or user list |
 
-| Scope | Supported |
-|-------|-----------|
-| **Organization** | Yes — useful for business-unit or org-based allocation |
-| **Repository** | Yes — useful when usage should follow specific repositories |
-| **User** | Yes — useful for Copilot license and premium-request allocation |
-| **Team** | No — teams are not a first-class cost center resource |
+> ⚠️ **Important:** a budget applies to the whole cost center. If two teams need separate budgets, give each its own cost center (they can share an Azure subscription).
 
 ---
 
@@ -158,16 +152,16 @@ Enterprise → Billing and licensing → Cost centers
 
 *If you need to track costs by department or team within an organization:*
 
-### Strategy A: Use User-Scoped Cost Centers
+### Strategy A: Use User- or Enterprise-Team-Scoped Cost Centers
 
-Use this when the team cost is driven mostly by Copilot seats, Copilot premium requests, or other user-attributed products.
+Use this when the cost is driven mostly by Copilot seats, AI credits, or other user-attributed products.
 
 **Steps:**
 
-1. Create a cost center for the team or department
-2. Add the team members as user resources
-3. Create budgets scoped to that cost center
-4. Keep the user list synchronized as people move teams
+1. Create a cost center for the team or department.
+2. Add the matching **enterprise team** (best — stays in sync) or the users.
+3. Create budgets scoped to that cost center.
+4. If you add users directly, keep the list current as people move teams.
 
 ### Strategy B: Use Repository-Scoped Cost Centers
 
@@ -186,9 +180,7 @@ Use this when the team cost is driven mostly by Actions, Packages, Codespaces, o
 
 1. Create a new organization for each billing group:
 
-```
-Enterprise → Settings → Organizations → New organization
-```
+Enterprise → **Organizations** → **New organization**
 
 2. Name organizations to reflect departments (e.g., `acme-engineering`, `acme-data-science`)
 3. Move relevant repositories to the appropriate org only if org-level governance and cost ownership should be separated
@@ -204,133 +196,122 @@ Enterprise → Settings → Organizations → New organization
 
 ---
 
-## 5️⃣ SKU-Level Budgets for Premium Requests
+## 5️⃣ SKU-Level and AI Credit Budgets for a Cost Center
 
-*Set budgets per cost center for specific product SKUs (e.g., Copilot premium requests).*
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-**Navigation:**
-
-```
-Enterprise → Billing and licensing → Cost centers
-  → [Select cost center] → Budgets → New budget
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Budgets and alerts** → **New budget**
 
 **Steps:**
 
-1. Select the cost center
-2. Click **New budget**
-3. Choose the **SKU** (e.g., `Copilot Premium Requests`)
-4. Set the **budget amount** (USD per month)
-5. Configure **alert thresholds** (e.g., 75%, 90%, 100%)
-6. Save the budget
+1. Under **Budget Type**, choose:
+   - **SKU-level budget** — then a product and a SKU (for example Copilot AI credits or Copilot cloud agent), or
+   - **Bundled AI credits budget** — all AI credit SKUs (Copilot, cloud agent, Spark).
+2. Under **Budget scope**, choose **Cost center** and select it.
+3. Under **Budget**, enter the monthly amount.
+4. *(Optional)* Select **Stop usage when budget limit is reached**.
+5. Under **Alerts**, select **Receive budget threshold alerts** and choose **Alert Recipients**.
+6. Click **Create budget**.
 
 | Setting | Description |
 |---------|-------------|
-| **Budget amount** | Monthly spending cap for the selected SKU |
-| **Alert thresholds** | Email notifications when spending hits a percentage |
-| **Enforcement** | Budgets are informational (alerts only) unless hard limits are configured |
+| **Budget amount** | Monthly cap for the selected SKU or AI credits |
+| **Threshold alerts** | Email and banner at 75%, 90%, and 100% |
+| **Stop usage** | Without it, the budget only alerts |
 
-> 💡 **Tip:** Use hard-stop budgets where GitHub supports enforcement, and alert-only budgets where you only need notification.
+> 💡 **Copilot cost centers:** you can also turn on **included usage controls**, which cap the cost center's share of included AI credits to what its own licenses fund. See `Copilot/Power User AI Credit Allowance (Cost Centers + Budgets).md`.
 
 ---
 
 ## 6️⃣ Set Budgets and Hard Stops
 
-**Navigation:**
-
-```
-Enterprise → Billing and licensing → Budgets and alerts
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Budgets and alerts**
 
 **Steps:**
 
-1. Click **New budget** or edit an existing budget for the product (e.g., **GitHub Actions**, **GitHub Packages**, **Copilot premium requests**)
-2. Set a **monthly budget** (USD per month):
+1. Click **New budget** (or **⋯** → **Edit** on an existing one).
+2. Choose **Product-level budget** (for example Actions, Packages, Codespaces), **SKU-level budget**, or **Bundled AI credits budget**.
+3. Choose the **Budget scope**: **Enterprise**, **Organization**, **Repository**, or **Cost center**.
+4. Enter the amount and choose whether to stop usage:
 
 | Option | Effect |
 |--------|--------|
-| **$0** | No metered spending allowed (included minutes/storage only) |
-| **Set a specific budget** | Spending is tracked against that monthly amount |
-| **Stop usage enabled** | Metered usage stops when the budget limit is reached, where GitHub supports hard stops for that product |
-| **Stop usage disabled** | Budget sends alerts only; usage can continue beyond the budget |
+| **$0 + stop usage** | No metered spending (included usage only) |
+| **Amount + stop usage** | Metered usage stops at the limit |
+| **Amount, no stop usage** | Alerts only — usage continues |
 
-3. Configure alert thresholds and save
+5. Select **Receive budget threshold alerts**, pick recipients, and click **Create budget**.
 
-> ⚠️ **Important:** Hard-stop behavior applies to metered products that support stopping usage. License-based budgets generally alert but do not prevent license assignment.
+> ⚠️ **Important:** **Stop usage** works for metered products (and Advanced Security licenses, where offered as **Limit usage**). Without it, you get emails but usage isn't stopped.
 
 ---
 
 ## 7️⃣ Connect an Azure Subscription
 
-*Route GitHub Enterprise billing through your existing Azure EA or pay-as-you-go subscription.*
+*Pay for metered GitHub usage on your Azure invoice.*
 
-### A) Add an Azure Subscription
+### A) Add an Azure subscription
 
-**Navigation:**
+**👤 Role:** GitHub **enterprise owner** + Azure subscription **Owner** who can give tenant-wide admin consent · **📍 Portal:** GitHub + Microsoft sign-in
 
-```
-Enterprise → Billing and licensing → Payment information
-  → Add Azure subscription
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Payment information**
 
 **Steps:**
 
-1. Click **Add Azure subscription**
-2. Sign in to your Azure account when prompted
-3. Select the Azure subscription to link
-4. Authorize the connection
-5. Confirm the subscription details
+1. Scroll to the bottom. Next to **Metered billing via Azure**, click **Add Azure Subscription**.
+2. Sign in to your Microsoft account.
+3. On **Permissions requested**, click **Accept**. *(If you see "Need admin approval", a Global Administrator must approve GitHub's Subscription Permission Validation app — see the Action Matrix.)*
+4. Under **Select a subscription**, choose the subscription ID. If it's not listed, enter the correct **tenant ID**.
+5. Select **By clicking "Connect", you are confirming that you want to be billed for metered services via the selected Azure subscription**.
+6. Click **Connect**.
 
-> ✅ **Result:** GitHub usage charges appear on your Azure invoice.
+> ✅ **Result:** metered usage from that point on is billed through Azure on the 1st of each month. Charges before the connection are billed by GitHub as usual.
 
-### B) EA vs. Metered Billing Comparison
+### B) How Azure billing works
 
-| Feature | EA (Enterprise Agreement) | Metered (Pay-as-you-go) |
-|---------|--------------------------|------------------------|
-| **Billing model** | Pre-committed annual spend | Usage-based monthly billing |
-| **Seat licensing** | Covered by EA commitment | Billed per-seat monthly |
-| **Metered usage** | Overage billed against EA | Billed at list price |
-| **Invoice** | Consolidated Azure invoice | Consolidated Azure invoice |
-| **Discount eligibility** | EA discount rates apply | Standard pricing |
-| **Commitment** | Annual (1-3 year terms) | Month-to-month |
+| Topic | Detail |
+|-------|--------|
+| **What's billed through Azure** | Metered (usage-based) charges, shown by product family and by `enterprise:sku` or `costcenter:sku` |
+| **Billing date** | The 1st of each month |
+| **Prepaid usage** | Not available through Azure |
+| **MACC** | GitHub products on the Azure invoice count toward a Microsoft Azure Consumption Commitment |
+| **Existing volume or prepaid agreements** | Continue until they expire or you're invited to switch |
+| **Microsoft Enterprise Agreement customers** | Connecting Azure is the only way to use GHAS, Codespaces, Copilot, or extra Actions/LFS/Packages |
 
-### C) Cross-Tenant Azure Subscription Handling
+### C) Tenant and multi-subscription handling
 
-> ⚠️ **Important:** The Azure subscription must be in the same Azure AD tenant that your GitHub enterprise billing admin has access to.
+| Scenario | What to do |
+|----------|------------|
+| **Subscription in another tenant** | The person connecting must be **Owner** of the subscription in that tenant; enter that tenant ID during **Select a subscription** |
+| **Consent blocked** | A Global Administrator approves the GitHub app's admin consent request, or completes the flow themselves |
+| **Multiple subscriptions** | Keep one default for the enterprise and add an **Azure ID** to individual cost centers. Usage of cost centers without one goes to the default |
 
-| Scenario | Solution |
-|----------|----------|
-| **Same tenant** | Connect directly via the UI |
-| **Different tenant** | The billing admin must be invited as a guest user in the Azure AD tenant that owns the subscription, or use a service principal with cross-tenant access |
-| **Multiple subscriptions** | The enterprise can have a default Azure subscription, and cost centers can route their usage to different Azure subscriptions when configured in the cost center UI |
+> 📌 Billing and identity are separate: the Azure subscription doesn't need to be in the same Entra tenant as your SAML/OIDC or EMU configuration.
 
 ---
 
 ## 8️⃣ Export Usage Reports for Finance Reconciliation
 
-**Navigation:**
+**👤 Role:** **Enterprise owner** or **billing manager** · **📍 Portal:** GitHub
 
-```
-Enterprise → Billing and licensing → Usage report
-  → Download usage report (CSV)
-```
+**Navigate:** Enterprise → **Billing and licensing** → **Usage**
 
 **Steps:**
 
-1. Select the **date range** for the report
-2. Click **Download** to get a CSV export
-3. The report includes:
+1. Open **Metered usage** (or **AI usage**).
+2. *(Optional)* Group or filter by **cost center**, organization, or product.
+3. Click **Get usage report** and choose the report type and date range.
+4. GitHub emails the CSV to your default email address (one report request at a time).
 
-| Column | Description |
-|--------|-------------|
-| **Organization** | Which org incurred the cost |
-| **Product** | GitHub Actions, Copilot, Packages, etc. |
-| **SKU** | Specific line item (e.g., premium requests) |
-| **Quantity** | Units consumed |
-| **Cost** | Dollar amount |
-| **Cost center** | Attributed cost center (if assigned) |
+| Report | Covers |
+|--------|--------|
+| **Summarized usage report** | All paid products, up to one year |
+| **Detailed usage report** | Adds `username` and `workflow_path`, up to 31 days (web UI only) |
+| **AI usage report** | Per-user AI credits with `model` and token counts, up to 31 days |
 
-> 💡 **Tip:** Schedule monthly exports and share with your finance team for reconciliation against Azure invoices.
+**Key columns:** `date`, `product`, `sku`, `quantity`, `unit_type`, `gross_amount`, `discount_amount`, `net_amount`, `organization`, `repository`, `cost_center_name`.
+
+> 💡 **Tip:** reconcile monthly with finance. For automation, use `GET /enterprises/{enterprise}/settings/billing/usage` (summarized data).
 
 ## 🧯 Known Errors & Resolutions
 
@@ -361,32 +342,32 @@ Enterprise → Billing and licensing → Usage report
 
 
 ### Q: My cost center is showing $0 usage even though the assigned organizations are actively using GitHub. Why?
-**A:** First, verify that the expected organizations, repositories, or users are assigned to the cost center (Enterprise > Billing and licensing > Cost centers > [Your cost center] > Resources). Usage data can take time to appear in cost center reports after resources are assigned. If the resources were just added, check again after the next usage/billing data refresh.
+**A:** Check the cost center's resources (**Cost centers** → **⋯** → **View details**) and remember the allocation rules: Actions and other usage-based products follow the **repository or organization**, while Copilot and other licenses follow the **user**. Assignments only affect usage from that point on. Also confirm you're on metered billing — cost centers don't apply to volume or subscription agreements.
 
 ---
 
 ### Q: I cannot create cost centers. The option does not appear. What do I need?
-**A:** Creating cost centers requires the enterprise owner role. Billing managers can view billing data but cannot create or modify cost centers. Contact your enterprise owner to create cost centers, or request the enterprise owner role if your responsibilities require it.
+**A:** Enterprise owners and **billing managers** can create cost centers for any resource; organization owners can create them for resources in their own organization. If **Cost centers** is missing, check your role and that the enterprise is on metered (usage-based) billing.
 
 ---
 
 ### Q: I set up a budget alert but it never fired even though spending exceeded the threshold. What happened?
-**A:** Budget alerts are based on projected usage trends, not real-time actual spending. If spending spiked suddenly rather than gradually increasing, the projection may not have triggered the alert before the threshold was crossed. Also verify the alert thresholds are configured correctly and that the notification email is going to a monitored inbox (check spam filters).
+**A:** Threshold alerts (75%, 90%, 100%) only go out if **Receive budget threshold alerts** is selected, and only to the chosen **Alert Recipients**. Check that the budget's type and scope actually cover the spend (for example, a cost center budget won't see usage from repositories outside it), and check spam filters. Usage data can lag by up to a day.
 
 ---
 
 ### Q: Our Azure subscription for billing is in a different tenant than our SSO/EMU identity tenant. Is that a problem?
-**A:** Billing and identity are independent concerns. The Azure subscription used for GitHub billing does not need to be in the same Entra ID tenant as your SAML/SSO or EMU identity configuration. However, the billing admin who links the Azure subscription must have access to that subscription -- if it is in a different tenant, the admin may need to be invited as a guest user in that tenant.
+**A:** No. Billing and identity are independent — the subscription doesn't have to be in your SSO/EMU tenant. The person connecting it must be an **Owner** of the subscription and able to give (or get) tenant-wide admin consent in **its** tenant; during **Select a subscription**, enter that tenant's ID if the subscription isn't listed.
 
 ---
 
 ### Q: Can I split billing by team within a single organization?
-**A:** Not directly by GitHub team object, but you can usually model this with user-scoped or repository-scoped cost centers. Use user resources for Copilot seat and premium-request allocation, and repository resources for repository-driven metered usage such as Actions. Only create separate organizations when you also need a separate admin boundary, policy boundary, or clear business-unit ownership model.
+**A:** Yes. Organization teams can't be added, but **enterprise teams** can — membership stays in sync. Otherwise, use user resources for Copilot and AI credits and repository resources for Actions and other usage-based products. Create separate organizations only when you also need a separate admin or policy boundary.
 
 ---
 
 ### Q: How often are usage reports updated, and can I automate the export?
-**A:** Usage reports in the GitHub enterprise billing dashboard are updated daily. You can manually download CSV exports from Enterprise > Billing and licensing > Usage report. For automation, use the GitHub billing REST API to programmatically retrieve usage data and feed it into your finance systems or data warehouse.
+**A:** Request CSVs from Enterprise → **Billing and licensing** → **Usage** → **Get usage report** (emailed). For automation, call `GET /enterprises/{enterprise}/settings/billing/usage` or `/usage/summary` — the API returns summarized data; the detailed report is web-only.
 
 </details>
 
@@ -407,9 +388,12 @@ Enterprise → Billing and licensing → Usage report
 | Resource | Link |
 |----------|------|
 | **Cost centers** | [GitHub Docs](https://docs.github.com/en/billing/concepts/cost-centers) |
-| **Budgets and alerts** | [GitHub Docs](https://docs.github.com/en/billing/concepts/budgets-and-alerts) |
+| **Using cost centers** | [GitHub Docs](https://docs.github.com/en/billing/how-tos/products/use-cost-centers) |
+| **Cost center allocation** | [GitHub Docs](https://docs.github.com/en/billing/reference/cost-center-allocation) |
+| **Setting up budgets** | [GitHub Docs](https://docs.github.com/en/billing/how-tos/set-up-budgets) |
 | **Connecting an Azure subscription** | [GitHub Docs](https://docs.github.com/en/billing/how-tos/set-up-payment/connect-azure-sub) |
+| **Billing reports** | [GitHub Docs](https://docs.github.com/en/billing/reference/billing-reports) |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

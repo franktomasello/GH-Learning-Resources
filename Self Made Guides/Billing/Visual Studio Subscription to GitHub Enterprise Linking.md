@@ -1,6 +1,6 @@
 # 🔗 Visual Studio Subscription Linking for GitHub Enterprise Runbook
 
-> **Complete guide to linking Visual Studio subscriptions with GitHub Enterprise Cloud for entitled seat management**
+> **How Visual Studio subscriptions with GitHub Enterprise get matched to GitHub accounts — assignment, invitation, verification, and manual reconciliation**
 
 ---
 
@@ -11,11 +11,12 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Step 1 — Verify in the Visual Studio Admin Portal](#1-step-1--verify-in-the-visual-studio-admin-portal)
-- [2️⃣ Step 2 — Verify on the GitHub Enterprise Side](#2-step-2--verify-on-the-github-enterprise-side)
-- [3️⃣ Step 3 — User Self-Service Linking](#3-step-3--user-self-service-linking)
-- [4️⃣ Common Issues & Troubleshooting](#4-common-issues--troubleshooting)
-- [5️⃣ Important Caveats](#5-important-caveats)
+- [1️⃣ Step 1 — Assign the Subscription in the Visual Studio Admin Portal](#1️⃣-step-1--assign-the-subscription-in-the-visual-studio-admin-portal)
+- [2️⃣ Step 2 — Invite the Subscriber to a GitHub Organization](#2️⃣-step-2--invite-the-subscriber-to-a-github-organization)
+- [3️⃣ Step 3 — Subscriber Accepts the Invitation](#3️⃣-step-3--subscriber-accepts-the-invitation)
+- [4️⃣ Step 4 — Verify and Reconcile Licenses on GitHub](#4️⃣-step-4--verify-and-reconcile-licenses-on-github)
+- [5️⃣ Common Issues & Troubleshooting](#5️⃣-common-issues--troubleshooting)
+- [6️⃣ Important Caveats](#6️⃣-important-caveats)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -28,10 +29,10 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Verify in VS Admin Portal:** `https://manage.visualstudio.com → Subscribers → Search for user`
-- **Verify on GitHub side:** `Enterprise → Billing and licensing → Licensing → View license usage`
-- **User self-link (GitHub):** `GitHub.com → Profile → Settings → Billing and plans → Plans → Link Visual Studio subscription`
-- **User self-link (VS portal):** `https://my.visualstudio.com → Benefits → Tools → GitHub Enterprise → Activate`
+- **Assign (VS admin):** `https://manage.visualstudio.com` → agreement → **Subscribers** → **Add** → assign a **Visual Studio … with GitHub Enterprise** subscription to the user's UPN
+- **Invite (org owner):** `Org → People → Invite member` → the subscriber's **UPN email** → **Invite** (EMU: provision with SCIM instead)
+- **Verify (enterprise owner):** `Enterprise → Billing and licensing → Licensing` → next to **Enterprise Cloud**, **Manage** → check the license type
+- **Fix a mismatch:** same list → **⋯** next to the user → **Change to Visual Studio license** → pick the VS email → **Confirm change**
 
 ---
 
@@ -41,9 +42,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -54,13 +55,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Visual Studio Enterprise subscription (not Professional) | ☐ |
-| Subscription assigned to user's corporate email (not personal email) | ☐ |
-| Subscription associated with the correct Entra ID tenant | ☐ |
-| GitHub Enterprise Cloud account linked to the enterprise | ☐ |
-| User has a GitHub account with a verified email matching the VS subscription | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| A Microsoft Enterprise Agreement with **Visual Studio Enterprise with GitHub Enterprise** or **Visual Studio Professional with GitHub Enterprise** subscriptions | Microsoft licensing / procurement | ☐ |
+| Assign subscriptions to people | **Visual Studio subscriptions admin** | ☐ |
+| An enterprise on GitHub with at least one organization | GitHub **enterprise owner** | ☐ |
+| Invite subscribers to an organization | GitHub **organization owner** | ☐ |
+| Verify and manually match licenses | GitHub **enterprise owner** | ☐ |
+| Each subscriber's UPN (work email) | Visual Studio subscriptions admin | ☐ |
 
 ---
 
@@ -70,124 +72,128 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **Visual Studio subscriptions administrator** | Confirms that the user has the eligible Visual Studio Enterprise entitlement assigned to the correct corporate identity. | Visual Studio Admin Portal (`https://manage.visualstudio.com`) → Subscribers → search user by name or email → open subscriber → verify Subscription level is Visual Studio Enterprise, Status is active, email is the corporate email, and tenant is correct. Handoff: subscriber email, subscription level, and tenant confirmation. |
-| **GitHub enterprise owner or billing admin** | Verifies that GitHub sees the Visual Studio entitlement on the enterprise license side. | GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Licensing → View license usage → search user → confirm Visual Studio column or license type shows the Visual Studio subscription entitlement. Handoff: user row or export showing entitlement status. |
-| **End user** | Links their own GitHub account to the Visual Studio subscription. | GitHub → profile photo → Settings → Billing and plans → Plans → Link Visual Studio subscription → sign in with the corporate Microsoft account → approve prompts → confirm the linked subscription. Alternative: Visual Studio Benefits Portal → GitHub Enterprise benefit → Activate → sign in to GitHub. Handoff: GitHub profile shows the linked subscription or GitHub access is restored. |
+| **Visual Studio subscriptions administrator** | Assigns the combined Visual Studio + GitHub Enterprise subscription to the right corporate identity. | Visual Studio Subscriptions Admin Portal (`https://manage.visualstudio.com`) → select the agreement → Subscribers → Add → enter the subscriber's name and UPN email → choose the Visual Studio … with GitHub Enterprise subscription → Add. For existing subscribers, move them to the combined offering. Handoff: subscriber UPN list and subscription level. |
+| **GitHub organization owner** | Invites each subscriber to an organization in the enterprise. | GitHub → Organizations → [organization] → People → Invite member → type the subscriber's UPN email → choose role (Member) and teams → Send invitation. For many users, script it with the REST API. Handoff: list of invitations sent. |
+| **GitHub enterprise owner** | Confirms each member consumes a Visual Studio license and fixes mismatches. | GitHub → Enterprise → Billing and licensing → Licensing → next to Enterprise Cloud, Manage → review license types → for an "Enterprise" user who should be on VS: ⋯ → Change to Visual Studio license → select the VS login email → Confirm change. Handoff: license list or CSV export with all subscribers matched. |
 
 ---
 
 ## 📋 Overview
 
-Visual Studio Enterprise subscriptions include a GitHub Enterprise Cloud seat at no additional cost. This runbook walks through verifying eligibility, confirming the link on both the VS Admin Portal and GitHub Enterprise sides, and troubleshooting common issues.
+**Visual Studio subscriptions with GitHub Enterprise** is a combined Microsoft offering (under an Enterprise Agreement) that gives each subscriber Visual Studio **and** a GitHub Enterprise license.
 
-| VS Subscription Tier | GitHub Enterprise Included? | Notes |
-|---|---|---|
-| **Visual Studio Enterprise** | Yes | GHEC seat included |
-| **Visual Studio Professional** | No | Not included |
-| **GitHub Copilot** | No | Not included in any VS subscription tier |
+| Offering | Includes GitHub Enterprise? |
+|---|---|
+| **Visual Studio Enterprise with GitHub Enterprise** | ✅ Yes |
+| **Visual Studio Professional with GitHub Enterprise** | ✅ Yes |
+| **Visual Studio Enterprise** or **Professional** on their own | ❌ No — GitHub Enterprise is a separate purchase |
+| **GitHub Copilot** | ❌ Licensed separately |
 
-> ⚠️ **Important:** Only Visual Studio Enterprise subscriptions include GitHub Enterprise Cloud. Professional and other tiers do not.
+**How matching works:** a subscriber uses the GitHub Enterprise part of the license by **joining an organization in your enterprise**. GitHub automatically matches the GitHub account to the Visual Studio subscription when a **verified email on the GitHub account matches the subscriber's UPN**. With **Enterprise Managed Users**, the UPN must match the SCIM `userName` (or the linked identity's email).
+
+> ⚠️ **Important:** subscribers **can't self-assign** or self-link the benefit — there's no "link" button on GitHub. An admin assigns the subscription, and an organization owner invites the person.
 
 ---
 
-## 1️⃣ Step 1 — Verify in the Visual Studio Admin Portal
+## 1️⃣ Step 1 — Assign the Subscription in the Visual Studio Admin Portal
 
-*Confirm the user has an eligible subscription and it is properly configured*
+**👤 Role:** **Visual Studio subscriptions admin** · **📍 Portal:** `https://manage.visualstudio.com`
 
-### Navigate to the Admin Portal
+**Steps:**
 
-**Navigation:**
+1. Sign in and select the agreement.
+2. Open **Subscribers** and click **Add** (individual subscriber).
+3. Enter the person's name and **work email (UPN)**.
+4. Choose the **Visual Studio Enterprise with GitHub Enterprise** or **Visual Studio Professional with GitHub Enterprise** subscription.
+5. Click **Add**.
 
-```
-https://manage.visualstudio.com → Subscribers
-  → Search for user by name or email
-```
+**Check the result:**
 
-### Verify the Following
-
-| Check | What to Confirm |
+| Check | What to confirm |
 |-------|-----------------|
-| **Subscription level** | Must be Visual Studio Enterprise (not Professional) |
-| **Assigned email** | Must be the user's work email (corporate identity) |
-| **Entra tenant** | Subscription must be associated with the correct Microsoft Entra (Azure AD) tenant |
-| **Status** | Subscription must be active (not expired or pending) |
+| **Subscription** | The combined offering "… with GitHub Enterprise" |
+| **Email** | The person's corporate UPN — not a personal address |
+| **Status** | Active |
 
-> 💡 **Tip:** If the subscription is assigned to a personal email instead of a work email, the link to GitHub Enterprise will not work. The VS admin must reassign it to the correct corporate identity.
-
----
-
-## 2️⃣ Step 2 — Verify on the GitHub Enterprise Side
-
-*Confirm that the Visual Studio entitlement is visible in GitHub Enterprise billing*
-
-### Navigate to Enterprise Licensing
-
-**Navigation:**
-
-```
-GitHub.com → Your Enterprise → Billing and licensing
-  → Licensing → View license usage
-```
-
-### What to Look For
-
-| Column | Meaning |
-|--------|---------|
-| **Visual Studio** | Shows a checkmark if the seat is linked via a VS Enterprise subscription |
-| **License type** | Should show "Visual Studio subscription" for entitled users |
-
-> 💡 **Tip:** If a user does not appear in the Visual Studio column, they have either not completed the self-service link step (Step 3) or there is an email/tenant mismatch.
+> 💡 If people were assigned plain Visual Studio before GitHub Enterprise was added to your agreement, move them to the combined offering in the admin portal. Unless notifications are turned off, each subscriber gets two confirmation emails.
 
 ---
 
-## 3️⃣ Step 3 — User Self-Service Linking
+## 2️⃣ Step 2 — Invite the Subscriber to a GitHub Organization
 
-*The individual user must complete this step themselves to activate their entitlement*
+**👤 Role:** GitHub **organization owner** (enterprise owner creates the organization first) · **📍 Portal:** GitHub
 
-### Option A: Link from GitHub Settings
+**Navigate:** Organization → **People** → **Invite member**
 
-**Navigation:**
+**Steps:**
 
-```
-GitHub.com → Profile Picture → Settings
-  → Billing and plans → Plans
-    → Link Visual Studio subscription
-```
+1. Click **Invite member**.
+2. Type the subscriber's **UPN email address** (recommended — it lets GitHub match the license and stops another enterprise from claiming it).
+3. Choose the role (**Member**) and any teams.
+4. Click **Send invitation**.
 
-### Option B: Link from the Visual Studio Benefits Portal
+> 📌 **Enterprise Managed Users:** you don't invite — provision the user from your IdP with SCIM. Make sure the Visual Studio UPN matches the SCIM `userName` (or the linked identity's email).
 
-**Navigation:**
-
-```
-https://my.visualstudio.com → Benefits tab
-  → Tools section → GitHub Enterprise benefit
-    → Activate / Link
-```
-
-> ⚠️ **Important:** The user must be signed into GitHub with the account they want linked. If they use the wrong GitHub account, the entitlement will attach to the wrong identity.
-
-> ✅ **Result:** Once linked, the user's GitHub Enterprise seat is covered by their Visual Studio subscription and will not incur a separate purchased-seat charge.
+> 💡 For many subscribers, script the invitations with the REST API (GitHub publishes a sample PowerShell script in `github/platform-samples`).
 
 ---
 
-## 4️⃣ Common Issues & Troubleshooting
+## 3️⃣ Step 3 — Subscriber Accepts the Invitation
+
+**👤 Role:** The **subscriber** · **📍 Portal:** Email + GitHub
+
+1. Open the GitHub invitation email and accept it — with an existing personal account or a new one.
+2. If using an existing account, add the Visual Studio (UPN) email to the account: **Settings** → **Emails** → **Add email address** → verify it.
+3. After joining, the **GitHub Enterprise** tile at `https://my.visualstudio.com/benefits` updates.
+
+> ✅ **Result:** the person is now an enterprise member using a Visual Studio license instead of a separately purchased GitHub Enterprise license.
+
+> ⚠️ Under the terms of use, the GitHub account and the Visual Studio subscription must belong to the **same person**.
+
+---
+
+## 4️⃣ Step 4 — Verify and Reconcile Licenses on GitHub
+
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
+
+**Navigate:** Enterprise → **Billing and licensing** → **Licensing** → next to **Enterprise Cloud**, **Manage**
+
+### Verify
+
+- Review each user's **license type**. Users matched to Visual Studio show a Visual Studio license; users showing **Enterprise** aren't matched.
+- Pending invitations include subscribers who haven't joined an organization yet. You can also see pending invitations in the Visual Studio admin portal.
+- *(Optional)* Download the license CSV. Rows missing **Name** or **Profile** are people who haven't accepted an invitation yet.
+
+### Match a user manually
+
+1. Find the user with an **Enterprise** license type who should be on Visual Studio.
+2. Click **⋯** → **Change to Visual Studio license**.
+3. Select the user's Visual Studio login email.
+4. Click **Confirm change**.
+
+> 📌 Automatically matched users can't be re-mapped. Audit regularly: download the assigned-users summary from the Visual Studio portal and compare it with your enterprise members' verified emails.
+
+---
+
+## 5️⃣ Common Issues & Troubleshooting
 
 | Issue | Cause | Resolution |
 |-------|-------|------------|
-| **User not appearing in VS column** | User never completed the self-service link step | Have the user follow Step 3 above |
-| **Email mismatch** | VS subscription assigned to a different email than the user's GitHub verified email | Align emails — either update the VS assignment or add the correct email to the GitHub account |
-| **Wrong Entra tenant** | VS subscription associated with a tenant that does not match the GitHub Enterprise SAML/EMU IdP | VS admin must reassign the subscription under the correct tenant |
-| **Double-billing** | User has both a VS-linked entitlement and a separately purchased GHEC seat | Remove the purchased seat — GitHub will continue to use the VS entitlement |
-| **Access lost after subscription lapse** | VS Enterprise subscription expired or was reassigned | User loses their VS-entitled GHEC seat; must be given a purchased seat or have the subscription reinstated |
+| **User shows an "Enterprise" license instead of Visual Studio** | No verified GitHub email matches the UPN | Have the user add and verify the UPN email, or match them manually (Step 4) |
+| **Subscriber can't see the GitHub Enterprise benefit** | Setup isn't finished — they haven't been invited or haven't joined an organization | Org owner sends the invitation; the subscriber accepts it |
+| **EMU user consumes a paid license** | UPN doesn't match the SCIM `userName` or linked identity email | Fix the IdP attribute mapping or the Visual Studio assignment |
+| **Another enterprise claimed the license** | The subscriber joined another enterprise with a matching email | Invite using the UPN and reconcile; contact GitHub Support if needed |
+| **Access lost after subscription change** | The Visual Studio subscription expired, was removed, or reassigned | Restore the assignment, or the user consumes a standard GitHub Enterprise license (or is removed) |
 
 ---
 
-## 5️⃣ Important Caveats
+## 6️⃣ Important Caveats
 
-- **VS-entitled seats are tied to the individual.** If the Visual Studio subscription lapses, is reassigned, or expires, the user loses their GitHub Enterprise Cloud access.
-- **You can mix VS-linked and purchased seats.** An enterprise can have some users on VS entitlements and others on directly purchased seats simultaneously.
-- **GitHub deduplicates billing.** A user who has both a VS entitlement and a purchased seat will only consume one seat — GitHub will not charge twice for the same user.
-- **Linking is a one-time action.** Once a user links their VS subscription to their GitHub account, it persists unless the subscription is removed or the user unlinks it.
+- **Licenses are counted together.** Your total GitHub Enterprise licenses = standard licenses + Visual Studio subscription licenses that include GitHub.
+- **One person, one license.** A subscriber matched to Visual Studio consumes the Visual Studio license, not an extra standard one.
+- **Mixing is fine.** Some members can be on Visual Studio licenses and others on standard or usage-based GitHub Enterprise licenses — customers with a Visual Studio bundle can switch non-subscribers to usage-based billing.
+- **Unaffiliated users count too.** Unaffiliated enterprise members linked to a Visual Studio subscription consume a bundled Visual Studio license.
+- **GitHub Enterprise Server:** a subscriber consumes one license as long as their GHES email matches their UPN (and Cloud/Server license sync is set up for users on both).
 
 ## 🧯 Known Errors & Resolutions
 
@@ -206,9 +212,9 @@ https://my.visualstudio.com → Benefits tab
 | **Usage report or cost center shows zero usage** | Usage has not processed yet, resources are not assigned to the cost center, or the report date range is wrong. | Confirm the cost center resources, select a date range after assignment, and wait for normal billing data latency before reconciling. |
 | **Azure subscription is not listed or connection fails** | The Azure user lacks subscription owner rights or tenant-wide consent is required. | Sign in with an Azure subscription owner who can grant consent, or have an Entra global administrator approve the GitHub Subscription Permission Validation app, then repeat the Add Azure Subscription flow. |
 | **Admin approval required during Azure billing connection** | The tenant blocks user consent for the GitHub billing app. | Use the tenant admin consent workflow or have a Global Administrator grant consent, then return to GitHub and select the subscription again. |
-| **Link Visual Studio subscription option is missing** | The user does not have an eligible Visual Studio Enterprise subscription with the GitHub Enterprise benefit or is signed into the wrong GitHub account. | Verify assignment in the Visual Studio Admin Portal, confirm the subscription is active, and have the user retry from the correct GitHub account. |
-| **Subscription cannot be matched to the GitHub account** | The Visual Studio subscription email does not match a verified email on the GitHub account. | Either update the Visual Studio assignment email or add and verify that email on the GitHub account, then repeat the linking flow. |
-| **User appears unlicensed in GitHub after linking** | The user has not joined an organization in the enterprise, the link has not synchronized, or the wrong account was linked. | Confirm the user accepted an org invitation, check enterprise license usage after synchronization, and unlink/relink if the wrong GitHub account was used. |
+| **GitHub Enterprise benefit tile isn't active for a subscriber** | The subscription isn't a "… with GitHub Enterprise" offering, or the subscriber hasn't joined an organization yet. | Check the assignment in the Visual Studio Admin Portal, then have an organization owner invite the subscriber (by UPN) and the subscriber accept. |
+| **Subscription cannot be matched to the GitHub account** | No verified email on the GitHub account matches the subscriber's UPN. | Add and verify the UPN email on the GitHub account, or match the user manually with **Change to Visual Studio license**. |
+| **User shows a standard Enterprise license instead of Visual Studio** | The accounts weren't matched automatically, or the wrong GitHub account joined. | Confirm the right person accepted the invitation, then use **Change to Visual Studio license** on the Licensing page. |
 | **Benefit disappeared after working previously** | The Visual Studio subscription expired, was reassigned, or the bundled benefit changed. | Recheck the subscriber record in the Visual Studio Admin Portal and restore the eligible assignment or replace the seat with a paid GitHub Enterprise license. |
 
 </details>
@@ -221,33 +227,33 @@ https://my.visualstudio.com → Benefits tab
 <summary><em>Show Q&A</em></summary>
 
 
-### Q: A user cannot find the "Link Visual Studio subscription" option in their GitHub settings. Where is it?
-**A:** The option is at GitHub.com > Profile Picture > Settings > Billing and plans > Plans > "Link Visual Studio subscription." The user must have a Visual Studio Enterprise subscription (not Professional or other tiers) -- only VS Enterprise includes the GitHub Enterprise benefit. Also verify the VS subscription is active and assigned in the Visual Studio Admin Portal.
+### Q: A user is looking for a "Link Visual Studio subscription" button in GitHub. Where is it?
+**A:** There isn't one — subscribers can't self-link. The Visual Studio admin assigns a "… with GitHub Enterprise" subscription, an organization owner invites the person (ideally by their UPN), and GitHub matches the accounts when a verified email equals the UPN. An enterprise owner can match the rest manually.
 
 ---
 
-### Q: A user appears to be double-billed -- they have both a VS-linked seat and a purchased seat. How do we fix this?
-**A:** Navigate to Enterprise > Billing and licensing > Licensing and check the user's license type. If they show both a VS entitlement and a purchased seat, remove the purchased seat. GitHub deduplicates billing, but having both entries can cause confusion. The VS entitlement will continue to provide the user's GitHub Enterprise access at no additional seat cost.
+### Q: A user seems to be using a standard license instead of their Visual Studio license. How do we fix this?
+**A:** Go to Enterprise → **Billing and licensing** → **Licensing** → **Manage** next to Enterprise Cloud. If the user's license type is **Enterprise**, click **⋯** → **Change to Visual Studio license**, choose their Visual Studio login email, and click **Confirm change**. A matched user consumes only the Visual Studio license.
 
 ---
 
 ### Q: A user's Visual Studio subscription lapsed. What happens to their GitHub Enterprise access?
-**A:** The user automatically loses their VS-entitled GitHub Enterprise Cloud seat. They will be unable to access enterprise resources until either: (1) the VS subscription is renewed and they re-link it, or (2) the enterprise admin provisions them a separate purchased seat. There is no grace period -- access is lost when the subscription expires.
+**A:** They're no longer covered by a Visual Studio license. If they stay in your organizations, they consume a standard GitHub Enterprise license instead (or are billed under usage-based licensing). Restore the Visual Studio assignment, or remove them from the enterprise if they shouldn't have access.
 
 ---
 
-### Q: The VS subscription email does not match the user's GitHub account email. How do we resolve this?
-**A:** The email on the Visual Studio subscription must match a verified email on the user's GitHub account. Either: (1) have the VS admin update the subscription assignment to use the email that matches the GitHub account, or (2) have the user add their VS subscription email as a verified email on their GitHub account (Settings > Emails > Add email address). Both emails must match for the link to work.
+### Q: The Visual Studio email doesn't match the user's GitHub email. How do we resolve this?
+**A:** Have the user add the UPN email to their GitHub account (**Settings** → **Emails** → **Add email address**) and verify it — GitHub then matches automatically. Or an enterprise owner matches them manually with **Change to Visual Studio license**. With EMU, fix the SCIM `userName` mapping instead.
 
 ---
 
-### Q: Can a user link a Visual Studio Professional subscription to get a free GitHub Enterprise seat?
-**A:** No. Only Visual Studio Enterprise subscriptions include the GitHub Enterprise Cloud benefit. Visual Studio Professional, Test Professional, and MSDN Platforms subscriptions do not include this entitlement. Users on these plans need a separately purchased GitHub Enterprise seat.
+### Q: Does Visual Studio Professional include GitHub Enterprise?
+**A:** Only as the combined **Visual Studio Professional with GitHub Enterprise** offering. Plain Visual Studio Professional or Enterprise subscriptions don't include GitHub Enterprise — it's the "… with GitHub Enterprise" combined offering that does.
 
 ---
 
-### Q: A user linked their VS subscription to the wrong GitHub account. How do they fix it?
-**A:** The user must unlink the VS subscription from the incorrect GitHub account, then re-link it to the correct account. Unlink by going to GitHub.com > Settings > Billing and plans and removing the VS subscription link. Then sign in with the correct GitHub account and complete the linking process from Step 3 of this guide.
+### Q: The wrong GitHub account was matched to a subscriber's license. How do we fix it?
+**A:** Under the terms of use, the GitHub account and the subscription must belong to the same person. Remove the wrong account from your organizations, invite the correct account using the subscriber's UPN, and — if it isn't matched automatically — use **Change to Visual Studio license** for the correct account.
 
 </details>
 
@@ -263,9 +269,11 @@ https://my.visualstudio.com → Benefits tab
 
 ## 📚 Resources
 
-- [Access GitHub Enterprise with your Visual Studio subscription](https://learn.microsoft.com/en-us/visualstudio/subscriptions/access-github)
-- [Setting up Visual Studio subscriptions with GitHub Enterprise](https://docs.github.com/en/billing/managing-licenses-for-visual-studio-subscriptions-with-github-enterprise/setting-up-visual-studio-subscriptions-with-github-enterprise)
+- [Visual Studio subscriptions with GitHub Enterprise (Microsoft)](https://learn.microsoft.com/en-us/visualstudio/subscriptions/access-github)
+- [About Visual Studio subscriptions with GitHub Enterprise](https://docs.github.com/en/billing/concepts/enterprise-billing/visual-studio-subs)
+- [Setting up Visual Studio subscriptions with GitHub Enterprise](https://docs.github.com/en/billing/how-tos/set-up-payment/set-up-vs-subscription)
+- [Roles for Visual Studio subscriptions with GitHub Enterprise](https://docs.github.com/en/billing/reference/roles-for-visual-studio)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
