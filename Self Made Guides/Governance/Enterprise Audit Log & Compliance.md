@@ -11,12 +11,12 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Access the Enterprise Audit Log](#1-access-the-enterprise-audit-log)
-- [2️⃣ Audit Log Streaming (SIEM Integration)](#2-audit-log-streaming-siem-integration)
-- [3️⃣ Audit Log API](#3-audit-log-api)
-- [4️⃣ Git Events Logging](#4-git-events-logging)
-- [5️⃣ IP Allow Lists](#5-ip-allow-lists)
-- [6️⃣ Compliance Checklist](#6-compliance-checklist)
+- [1️⃣ Access the Enterprise Audit Log](#1️⃣-access-the-enterprise-audit-log)
+- [2️⃣ Audit Log Streaming (SIEM Integration)](#2️⃣-audit-log-streaming-siem-integration)
+- [3️⃣ Audit Log API](#3️⃣-audit-log-api)
+- [4️⃣ Git Events](#4️⃣-git-events)
+- [5️⃣ IP Allow Lists](#5️⃣-ip-allow-lists)
+- [6️⃣ Compliance Checklist](#6️⃣-compliance-checklist)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -30,10 +30,11 @@
 > **For experienced admins who just need the click paths:**
 
 - **Enterprise audit log:** `Enterprise → Settings → Audit log`
-- **Set up log streaming:** `Enterprise → Settings → Audit log → Log streaming → Set up a stream`
-- **Enable git events:** `Enterprise → Settings → Audit log → Git events → Enable`
-- **IP allow list:** `Enterprise → Settings → Authentication security → IP allow list → Add IP range`
-- **Download usage report:** `Enterprise → Billing and licensing → Usage report → Download CSV`
+- **Stream to a SIEM:** `Enterprise → Settings → Audit log → Log streaming` → **Configure stream ▾** → provider → details → **Check endpoint** → **Save**
+- **API request events + source IPs:** `Enterprise → Settings → Audit log → Settings` → **Enable API Request Events** / **Enable source IP disclosure** → **Save**
+- **Export:** `Audit log` → **Export ▾** (JSON/CSV) or **Export Git Events ▾** → **Download Results**
+- **IP allow list:** `Enterprise → Settings → Authentication security` → add CIDR → **Add** → **Enable IP allow list** → **Save**
+- **Usage report:** `Enterprise → Billing and licensing → Usage` → **Get usage report**
 
 ---
 
@@ -43,9 +44,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -56,12 +57,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Enterprise owner role | ☐ |
-| GitHub Enterprise Cloud account | ☐ |
-| SIEM endpoint configured (for log streaming) | ☐ |
-| SIEM credentials ready (API token, SAS URL, HEC token, etc.) | ☐ |
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| GitHub Enterprise Cloud | — | ☐ |
+| Enterprise audit log, streaming, settings, IP allow list | GitHub **enterprise owner** | ☐ |
+| Organization audit log | **Organization owner** | ☐ |
+| A streaming destination (S3, Azure Blob Storage, Azure Event Hubs, Datadog, Google Cloud Storage, or Splunk) | Cloud / SIEM administrator | ☐ |
+| Destination credentials (access keys or OIDC role, SAS URL, connection string, token, JSON key, HEC token) | Cloud / SIEM administrator | ☐ |
+| API access | A token with the `read:audit_log` scope | ☐ |
 
 ---
 
@@ -71,156 +74,190 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner** | Configures audit log streaming in GitHub. | GitHub → profile photo → Your enterprises → [enterprise] → Settings → Audit log → Log streaming → Set up a stream → Select provider → enter destination details → Test endpoint if shown → Save. Handoff: active stream destination and test status. |
-| **Azure Storage or Event Hubs administrator** | Creates the Azure destination and provides the exact credential GitHub requires. | For Blob Storage: Azure portal → Storage accounts → [account] → Shared access signature → configure allowed services, resource types, permissions, start, and expiry → Generate SAS and connection string → copy SAS URL. For Event Hubs: Azure portal → Event Hubs → [namespace] → Event Hubs → [hub] → Shared access policies → + Add → choose Send permission → Create → copy connection string or SAS token. Handoff: destination name, region, SAS URL or Event Hubs token, and expiry owner. |
+| **GitHub enterprise owner** | Configures audit log streaming in GitHub. | GitHub → Enterprise → Settings → Audit log → Log streaming → Configure stream ▾ → choose the provider → enter the destination details → Check endpoint → Save. Handoff: active stream and a successful endpoint check. |
+| **Azure Storage administrator (Blob Storage)** | Creates a container-level SAS URL. | Azure portal → Storage accounts → [account] → Data storage → Containers → [container] → Settings → Shared access tokens → Permissions: **Create** and **Write** only → set an expiry that fits your rotation policy → Generate SAS token and URL → copy **Blob SAS URL**. Handoff: Blob SAS URL and its expiry date. |
+| **Azure Event Hubs administrator** | Provides the event hub name and connection string. | Azure portal → search **Event Hubs** → [namespace] → [event hub] → Shared Access Policies → select or create a policy → copy **Connection string-primary key**. Handoff: event hub instance name and connection string. |
 
 ---
 
 ## 📋 Overview
 
-GitHub Enterprise Cloud provides audit logging at multiple levels:
-
-| Level | What It Captures | Navigation |
+| Level | What it captures | Click path |
 |-------|-----------------|-----------|
-| **Enterprise** | All activity across all orgs | Enterprise → Settings → Audit log |
-| **Organization** | Activity within one org | Org → Settings → Audit log |
-| **User** | Individual user's security activity | Profile → Settings → Security log |
+| **Enterprise** | Activity across all organizations (plus user events with EMU) | Enterprise → **Settings** → **Audit log** |
+| **Organization** | Activity within one organization | Org → **Settings** → **Archive** → **Logs** → **Audit log** |
+| **User** | One user's security activity | Profile → **Settings** → **Archives** → **Security log** |
+
+**What's available where:**
+
+| Data | Web UI | JSON/CSV export | REST API | Streaming |
+|------|:-:|:-:|:-:|:-:|
+| Web events | 180 days | 180 days | 180 days | Your retention |
+| Git events | ❌ | ✅ JSON, 7 days | ✅ 7 days (`include=git`) | ✅ |
+| API request events | ❌ | ❌ | ❌ | ✅ if enabled |
+| SSO responses, workflow runs/jobs, self-hosted runner status | ❌ | ✅ | ✅ | ✅ |
+
+> ⚠️ **Important:** streaming only includes activity from the moment you enable it. Turn it on **before** you need it.
 
 ---
 
 ## 1️⃣ Access the Enterprise Audit Log
 
-```
-Enterprise → Settings → Audit log
-```
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-### Search Syntax
+**Navigate:** Enterprise → **Settings** tab → **Audit log**
+
+> 📌 The UI shows the last **three months** by default. Add a `created:` qualifier to see older events (up to 180 days).
+
+### Search syntax
 
 | Filter | Example |
 |--------|---------|
 | By action | `action:repo.create` |
 | By actor | `actor:jsmith` |
-| By org | `org:engineering` |
-| By repo | `repo:engineering/auth-service` |
-| By date | `created:>2026-03-01` |
-| Combined | `action:repo.destroy actor:admin created:>2026-03-01` |
+| By organization | `org:engineering` |
+| By repository | `repo:engineering/auth-service` |
+| By date | `created:>2026-09-01` |
+| Combined | `action:repo.destroy actor:admin created:>2026-09-01` |
 
-### Common Audit Log Actions
+### Common audit log actions
 
-| Action | What It Captures |
+| Action | What it captures |
 |--------|-----------------|
 | `repo.create` | Repository created |
 | `repo.destroy` | Repository deleted |
 | `repo.access` | Repository visibility changed |
-| `org.invite_member` | User invited to org |
-| `org.remove_member` | User removed from org |
-| `team.add_member` | User added to team |
-| `protected_branch.create` | Branch protection created |
-| `business.sso_response` | SAML SSO authentication |
-| `copilot.seat_assigned` | Copilot seat assigned |
-| `copilot.seat_removed` | Copilot seat removed |
+| `org.invite_member` | User invited to an organization |
+| `org.remove_member` | User removed from an organization |
+| `team.add_member` | User added to a team |
+| `protected_branch.create` | Branch protection rule created |
+| `repository_ruleset.create` | Ruleset created |
+| `business.sso_response` | Enterprise SAML SSO response |
+| `copilot.cfb_seat_added` | Copilot seat assigned |
+| `copilot.cfb_seat_cancelled` | Copilot seat removed |
+| `ip_allow_list.enable` | IP allow list turned on |
+
+> 💡 Search `action:copilot` for all Copilot plan changes, and `actor:Copilot` for Copilot agent activity.
+
+### Export
+
+- **Audit events:** filter the log if needed → **Export ▾** → choose **JSON** or **CSV**.
+- **Git events:** **Export Git Events ▾** → choose a date range → **Download Results** (compressed JSON).
+
+> 📌 Exports are limited to 100 MB compressed or 10 minutes of processing. Git event exports don't include pushes made through the web UI or APIs (for example, merging a pull request in the browser).
 
 ---
 
 ## 2️⃣ Audit Log Streaming (SIEM Integration)
 
-Stream audit events in real-time to your SIEM:
+**👤 Role:** GitHub **enterprise owner** (+ the destination's administrator) · **📍 Portal:** GitHub + your cloud/SIEM
 
-```
-Enterprise → Settings → Audit log → Log streaming
-  → Set up a stream
-    → Select provider
-      → Configure endpoint
-```
+**Navigate:** Enterprise → **Settings** → **Audit log** → **Log streaming**
 
-### Supported Streaming Destinations
+**Steps:**
 
-| Provider | Configuration Required |
+1. Prepare the destination and credentials (see the table below and the Action Matrix).
+2. Under **Audit log**, click **Log streaming**.
+3. Click **Configure stream ▾** and choose your provider.
+4. Enter the destination details.
+5. Click **Check endpoint**.
+6. When the check succeeds, click **Save**.
+
+| Provider | What GitHub asks for |
 |----------|----------------------|
-| Amazon S3 | Bucket name, access key, secret key, region |
-| Azure Blob Storage | SAS URL |
-| Azure Event Hubs | Instance name, SAS token |
-| Datadog | API URL, API token |
-| Google Cloud Storage | Bucket name, JSON key |
-| Splunk | HEC URL, HEC token |
+| **Amazon S3** | **Access keys** (region, bucket, access key ID, secret key) — or **OpenID Connect** (no long-lived secret) |
+| **Azure Blob Storage** | Blob SAS URL with **Create** + **Write** permissions (container fills in automatically) |
+| **Azure Event Hubs** | Event hub instance name + connection string |
+| **Datadog** | Client token or API key + your Datadog **Site** |
+| **Google Cloud Storage** | Bucket name + the service account's JSON key (service account needs **Storage Object Creator** on the bucket) |
+| **Splunk** | HTTP Event Collector (HEC) endpoint and token |
 
-> 💡 **Tip:** Set up streaming early — it captures events going forward, not retroactively.
+> 📌 **Good to know:**
+> - Streams include audit **and** Git events for every organization in the enterprise.
+> - A paused stream keeps a 7-day buffer. A daily health check emails enterprise owners if a stream is misconfigured — fix it within six days to avoid dropped events.
+> - Streaming to multiple endpoints is in public preview. Microsoft Purview is supported for Copilot agent session events only.
+> - Delivery is at-least-once, so expect occasional duplicates.
+
+### Recommended stream settings (for incident response)
+
+On Enterprise → **Settings** → **Audit log** → **Settings** tab:
+
+1. Under **API Requests**, select **Enable API Request Events** (streamed only), then click **Save**.
+2. Under **Disclose actor IP addresses in audit logs**, select **Enable source IP disclosure**, then click **Save**.
 
 ---
 
 ## 3️⃣ Audit Log API
 
-Access audit data programmatically:
+Use a token with the `read:audit_log` scope. Each endpoint allows 1,750 queries per hour per user and IP address.
 
 ```bash
-# Enterprise audit log (REST)
-gh api /enterprises/{enterprise}/audit-log \
-  --jq '.[] | {action: .action, actor: .actor, created_at: .@timestamp}'
+# Enterprise audit log — events on one day, 100 per page
+curl -H "Authorization: Bearer <TOKEN>" \
+  "https://api.github.com/enterprises/ENTERPRISE/audit-log?phrase=created:2026-09-01&per_page=100"
 
-# Organization audit log (REST)
-gh api /orgs/{org}/audit-log?phrase=action:repo.create
+# Include Git events (last 7 days) or everything
+curl -H "Authorization: Bearer <TOKEN>" \
+  "https://api.github.com/enterprises/ENTERPRISE/audit-log?include=all&phrase=action:git.push"
+
+# Organization audit log
+curl -H "Authorization: Bearer <TOKEN>" \
+  "https://api.github.com/orgs/ORG/audit-log?phrase=action:repo.create"
 ```
 
-### GraphQL API (for enterprise)
-
-```graphql
-query {
-  enterprise(slug: "my-enterprise") {
-    auditLog(first: 10) {
-      nodes {
-        ... on AuditEntry {
-          action
-          actorLogin
-          createdAt
-        }
-      }
-    }
-  }
-}
-```
+> 💡 Results use cursor-based pagination — follow the `link` header for the next page. Timestamps are UTC epoch milliseconds.
 
 ---
 
-## 4️⃣ Git Events Logging
+## 4️⃣ Git Events
 
-For git-level events (pushes, clones):
+Git events (`git.clone`, `git.fetch`, `git.push`) are collected automatically on GitHub Enterprise Cloud — there's nothing to turn on.
 
-```
-Enterprise → Settings → Audit log → Git events
-  → Enable git events logging
-```
+| Where | Availability |
+|-------|-------------|
+| Audit log UI search | ❌ Not searchable |
+| **Export Git Events** | ✅ JSON, last 7 days |
+| REST API (`include=git` or `include=all`) | ✅ Last 7 days |
+| Streaming | ✅ Kept as long as your destination keeps them |
 
-> ⚠️ **Note:** Git events generate high volume. Enable only if required for compliance. Events include: `git.clone`, `git.fetch`, `git.push`.
+> ⚠️ **Note:** Git events are high-volume and only kept for **seven days** in GitHub. Stream them if you need them for compliance.
 
 ---
 
 ## 5️⃣ IP Allow Lists
 
-Restrict access to your enterprise by IP:
+**👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-```
-Enterprise → Settings → Authentication security → IP allow list
-  → Add IP range (CIDR notation)
-    → Enable IP allow list
-```
+**Navigate:** Enterprise → **Settings** → **Authentication security** → **IP allow list**
 
-> ⚠️ **Important:** Test thoroughly before enabling. Locked-out admins cannot disable the allow list without GitHub Support.
+**Steps:**
+
+1. In **IP address or range in CIDR notation**, type an address or range, add a short description, and click **Add**. Repeat for every range — your admins, VPN, CI/CD, and integrations.
+2. *(Optional)* Under **Check IP address**, test that an address is allowed.
+3. *(Optional)* Select **Enable IP allow list configuration for installed GitHub Apps** so apps can add their own ranges.
+4. *(EMU with OIDC only)* Under **IP allow list configuration**, choose **GitHub** (or your IdP's allow list).
+5. Select **Enable IP allow list**.
+6. Click **Save**.
+
+> ⚠️ **Important:** The allow list blocks web, API, and Git access (including personal access tokens, SSH keys, and app tokens) from addresses that aren't listed. Add every range you and your tooling use **before** enabling it.
 
 ---
 
 ## 6️⃣ Compliance Checklist
 
-| Control | Where to Verify |
+| Control | Where to verify |
 |---------|----------------|
-| SSO enforced | Enterprise → Settings → Authentication security |
-| SCIM provisioning active (EMU) | Enterprise → Settings → Identity provider |
-| Audit log streaming configured | Enterprise → Settings → Audit log → Log streaming |
-| IP allow list enabled | Enterprise → Settings → Authentication security → IP allow list |
-| Secret scanning + push protection | Org → Settings → Code security |
-| Code scanning enabled | Org → Settings → Code security → Code scanning |
-| Copilot content exclusions set | Enterprise → AI controls → Copilot → Content exclusion |
-| Required PR reviews enforced | Org → Settings → Rules → Rulesets |
-| Actions restricted to allowlist | Enterprise → Settings → Policies → Actions |
+| SSO enforced | Enterprise → **Settings** → **Authentication security** (EMU: **Identity provider**) |
+| SCIM provisioning active (EMU) | Enterprise → **Identity provider** |
+| Audit log streaming configured | Enterprise → **Settings** → **Audit log** → **Log streaming** |
+| API request events and source IPs | Enterprise → **Settings** → **Audit log** → **Settings** |
+| IP allow list enabled | Enterprise → **Settings** → **Authentication security** |
+| Secret scanning + push protection | Org → **Settings** → **Advanced Security ▾** → **Configurations** |
+| Code scanning enabled | Org → **Security and quality** tab → **Coverage** |
+| Copilot content exclusions set | Enterprise → **AI controls** → **Copilot** → **Content exclusion** |
+| Required pull request reviews | Org → **Settings** → **Repository** → **Rulesets** (or Enterprise → **Policies** → **Code**) |
+| Actions restricted to an allowlist | Enterprise → **Policies** → **Actions** |
+| Spend and usage | Enterprise → **Billing and licensing** → **Usage** → **Get usage report** |
 
 ## 🧯 Known Errors & Resolutions
 
@@ -251,32 +288,32 @@ Enterprise → Settings → Authentication security → IP allow list
 
 
 ### Q: I configured audit log streaming but events are not appearing in my SIEM. What should I check?
-**A:** Verify the endpoint URL is correct and accessible, confirm the authentication credentials (API token, SAS URL, etc.) are valid and not expired, and ensure streaming is enabled (not paused) in the enterprise settings. Also note that audit log streaming only captures events going forward from the moment it is enabled -- it does not backfill historical events. Check your SIEM's ingestion logs for connection errors.
+**A:** Open **Log streaming**, edit the stream, and click **Check endpoint**. Common causes: an expired SAS URL or token, missing write permissions, a firewall blocking GitHub's `hooks` IP ranges (from the `meta` API), or a paused stream. Streaming never backfills — it only sends events from when it was enabled. Enterprise owners also get an email when the daily health check fails.
 
 ---
 
-### Q: Can we search audit logs older than 6 months in the GitHub UI?
-**A:** The enterprise audit log UI retains events for the most recent 6 months. For longer retention, configure audit log streaming to a SIEM or storage destination (S3, Splunk, Azure Blob, etc.) before the 6-month window elapses. Once events age out of the UI, they can only be queried from your SIEM or storage backend.
+### Q: Can we search audit logs older than 180 days in the GitHub UI?
+**A:** No. The UI, exports, and API cover 180 days of web events (the UI shows three months unless you add `created:`), and Git events for only 7 days. For longer retention, stream to a SIEM or storage destination — streaming starts from the day you enable it, so set it up early.
 
 ---
 
-### Q: We enabled git events logging and it is generating massive volume. Is that expected?
-**A:** Yes, git events (`git.clone`, `git.fetch`, `git.push`) are very high-volume because they fire for every developer interaction with repositories. Enable git events logging only if your compliance or security requirements specifically mandate tracking these operations. If the volume is overwhelming your SIEM, consider filtering git events at the SIEM ingestion layer rather than disabling them entirely.
+### Q: Git events are generating massive volume in our SIEM. Is that expected?
+**A:** Yes. Git events (`git.clone`, `git.fetch`, `git.push`) fire for every clone, fetch, and push, and a stream includes them automatically. If the volume is too high, filter them at your SIEM's ingestion layer — keep them if your compliance requirements call for Git activity tracking.
 
 ---
 
 ### Q: The IP allow list locked out our admin. How do we regain access?
-**A:** If all admins are locked out due to an IP allow list misconfiguration, contact GitHub Support for assistance. To prevent this in the future, always include a "break-glass" IP range (such as a VPN gateway or known emergency access point) in the allow list before enabling it. Test the allow list thoroughly with a subset of users before enforcing it enterprise-wide.
+**A:** Connect from an allowed address (for example your VPN) and fix the list. If no administrator can reach GitHub from an allowed address, contact GitHub Support. To prevent it, add a "break-glass" range (VPN gateway or emergency access point) and use **Check IP address** before you click **Enable IP allow list**.
 
 ---
 
 ### Q: How do I find out who deleted a repository or changed its visibility?
-**A:** Search the enterprise audit log using `action:repo.destroy` for deletions or `action:repo.access` for visibility changes. You can combine filters such as `action:repo.destroy actor:username created:>2026-01-01` to narrow results. The audit log entry will show the actor, timestamp, and the affected repository.
+**A:** Search the enterprise audit log for `action:repo.destroy` (deletions) or `action:repo.access` (visibility changes). Combine filters, for example `action:repo.destroy actor:username created:>2026-09-01`. Each entry shows the actor, time, and repository — and the source IP if you've enabled source IP disclosure.
 
 ---
 
 ### Q: Can we use the audit log API to build custom compliance dashboards?
-**A:** Yes, both the REST API and GraphQL API support querying audit log events programmatically. Use the REST endpoint at `/enterprises/{enterprise}/audit-log` with query parameters to filter by action, actor, date, and organization. Pipe results into your dashboard tooling or data warehouse for custom compliance reporting.
+**A:** Yes. Use `GET /enterprises/{enterprise}/audit-log` with the `phrase` parameter (same qualifiers as the UI search) and cursor pagination, with a `read:audit_log` token. For continuous, long-term reporting, streaming into a SIEM or data lake is more reliable than polling — the API is limited to 1,750 queries per hour.
 
 </details>
 
@@ -295,12 +332,13 @@ Enterprise → Settings → Authentication security → IP allow list
 
 | Resource | Link |
 |----------|------|
-| About the audit log | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/about-the-audit-log-for-your-enterprise) |
+| Accessing the audit log for your enterprise | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/accessing-the-audit-log-for-your-enterprise) |
 | Audit log streaming | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/streaming-the-audit-log-for-your-enterprise) |
-| Audit log API | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/rest/enterprise-admin/audit-log) |
-| IP allow lists | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/enforcing-policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-security-settings-in-your-enterprise#managing-allowed-ip-addresses-for-organizations-in-your-enterprise) |
-| GitHub security features | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/code-security/getting-started/github-security-features) |
+| Exporting audit log activity | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/exporting-audit-log-activity-for-your-enterprise) |
+| Using the audit log API | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/using-the-audit-log-api-for-your-enterprise) |
+| Audit log events for your enterprise | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/audit-log-events-for-your-enterprise) |
+| Restricting network traffic with an IP allow list | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/configuring-settings/hardening-security-for-your-enterprise/restricting-network-traffic-to-your-enterprise-with-an-ip-allow-list) |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

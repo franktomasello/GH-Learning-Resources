@@ -11,13 +11,13 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Transfer a Repository](#1-transfer-a-repository)
-- [2️⃣ What Transfers Automatically](#2-what-transfers-automatically)
-- [3️⃣ Post-Transfer Checklist](#3-post-transfer-checklist)
-- [4️⃣ Rename an Organization](#4-rename-an-organization)
-- [5️⃣ Automatic Redirects](#5-automatic-redirects)
-- [6️⃣ What to Update Manually](#6-what-to-update-manually)
-- [7️⃣ Plan as a Coordinated Event](#7-plan-as-a-coordinated-event)
+- [1️⃣ Transfer a Repository](#1️⃣-transfer-a-repository)
+- [2️⃣ What Transfers Automatically](#2️⃣-what-transfers-automatically)
+- [3️⃣ Post-Transfer Checklist](#3️⃣-post-transfer-checklist)
+- [4️⃣ Rename an Organization](#4️⃣-rename-an-organization)
+- [5️⃣ What Redirects — and What Doesn't](#5️⃣-what-redirects--and-what-doesnt)
+- [6️⃣ What to Update Manually](#6️⃣-what-to-update-manually)
+- [7️⃣ Plan as a Coordinated Event](#7️⃣-plan-as-a-coordinated-event)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -30,9 +30,9 @@
 
 > **For experienced admins who just need the click paths:**
 
-- **Transfer repo:** `Repo → Settings → General → Danger Zone → Transfer repository`
-- **Rename org:** `Org → Settings → General → Change organization's name`
-- **Update git remote (post-rename):** `git remote set-url origin https://github.com/NEW-ORG-NAME/repo.git`
+- **Transfer repo:** `Repo → Settings` → **Danger Zone** → **Transfer** → choose the new owner → type the repo name → **I understand, transfer this repository**
+- **Rename org:** `Org → Settings` → **Danger zone** → **Rename organization** → **I understand, let's rename my organization** → new name → **Change organization's name**
+- **Update git remotes afterward:** `git remote set-url origin https://github.com/NEW-OWNER/REPO.git`
 
 ---
 
@@ -42,9 +42,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub documentation in October 2026. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -55,15 +55,14 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Repo admin role on source repo (for transfers) | ☐ |
-| Org owner role on destination org (for transfers) | ☐ |
-| Org owner role (for renames) | ☐ |
-| Communication plan for affected teams | ☐ |
-| Inventory of integrations, CI/CD, SSO, and external references | ☐ |
-
----
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| Transfer a repository | **Admin** on the repository **and** permission to create repositories in the destination organization | ☐ |
+| Rename the repository during transfer | **Owner** of the destination organization | ☐ |
+| Rename an organization | **Organization owner** | ☐ |
+| Update SAML / SCIM after an org rename | IdP administrator | ☐ |
+| Communication plan for affected teams | Program owner | ☐ |
+| Inventory of integrations, CI/CD, SSO, packages, and external references | Platform team | ☐ |
 
 ## 👥 Provider Account Action Matrix
 
@@ -71,7 +70,7 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub organization owner or enterprise owner** | Renames or transfers only after identity and integration owners are ready to update downstream references. | For organization rename: GitHub → profile photo → Your organizations → [organization] → Settings → General → Organization name → Rename. Repository transfer: GitHub → [owner/repository] → Settings → General → Danger Zone → Transfer ownership → enter target owner/repository name → confirm transfer. Handoff: old URL, new URL, redirect status, and cutover time. |
+| **GitHub organization owner or enterprise owner** | Renames or transfers only after identity and integration owners are ready to update downstream references. | For organization rename: GitHub → profile picture → Organizations → [organization] → Settings → Danger zone → Rename organization → I understand, let's rename my organization → type the new name → Change organization's name. Repository transfer: GitHub → [owner/repository] → Settings → Danger Zone → Transfer → choose the new owner → type the repository name → I understand, transfer this repository. Handoff: old URL, new URL, redirect status, and cutover time. |
 | **Microsoft Entra application admin, if Entra SAML or SCIM references the old org URL** | Updates SAML and SCIM URLs after the org rename. | Microsoft Entra admin center → Entra ID → Enterprise apps → [GitHub app] → Single sign-on → SAML → Basic SAML Configuration → Edit → update Identifier, Reply URL, and Sign on URL → Save. Then Provisioning → Admin Credentials → update Tenant URL if the org slug changed → Test Connection → Save. Handoff: successful SAML test and SCIM test. |
 | **Okta or PingFederate admin, if that IdP references the old org URL** | Updates SAML and provisioning URLs after the org rename. | Okta: Okta Admin Console → Applications → Applications → [GitHub app] → Sign On → Edit → update organization or SAML URL values → Save, then Provisioning → Integration → update API or base URL → Test API Credentials → Save. PingFederate: Administrative Console → Applications → SP Connections → [GitHub connection] → Browser SSO and Outbound Provisioning → update Entity ID, ACS, and SCIM Base URL → Save → activate. Handoff: successful SSO and provisioning test. |
 
@@ -96,55 +95,60 @@ This runbook covers two high-impact administrative operations that require caref
 
 ## 1️⃣ Transfer a Repository
 
-**Navigation:**
+**👤 Role:** Repository **admin** with permission to create repositories in the destination organization · **📍 Portal:** GitHub
 
-```
-Repository → Settings → General (sidebar)
-  → Danger Zone → Transfer repository
-    → Enter destination owner → Type repository name to confirm
-      → Confirm transfer
-```
+**Navigate:** Repository → **Settings** → **Danger Zone** *(bottom of the page)*
 
-> ✅ **Result:** The repository is moved to the new owner (user or organization). A redirect from the old URL is created automatically.
+**Before you start — transfer limits:**
 
-> ⚠️ **Important:** You must be an admin on the repository to initiate a transfer. If transferring to an organization, you must also be an owner of the destination organization.
+- The destination can't already have a repository with the same name (or a fork in the same network).
+- Repositories can't move into or out of an **Enterprise Managed Users** enterprise.
+- **Internal** repositories can only move to another organization in the **same** enterprise.
+- Single forks of a private or internal upstream network can't be transferred.
+
+**Steps:**
+
+1. At the bottom of the **Settings** page, in **Danger Zone**, click **Transfer**.
+2. Under **New owner**, choose **Select one of my organizations** (then pick it from the dropdown) or **Specify an organization or username** (then type it).
+3. *(Optional — destination org owners only)* Enter a new **Repository name**.
+4. Read the warnings about features the new owner's plan might not include.
+5. Type the repository name to confirm, then click **I understand, transfer this repository**.
+
+> ✅ **Result:** the repository moves to the new owner, and links, `git clone`, `git fetch`, and `git push` to the old location redirect automatically. Transfers to a **personal account** wait for that person to accept by email (within one day).
+
+> ⚠️ **Name retirement:** if the repository had a GitHub Marketplace action, or more than 100 clones or Actions uses in the week before the transfer, GitHub permanently retires the old `OWNER/REPOSITORY` name.
 
 ---
 
 ## 2️⃣ What Transfers Automatically
 
-The following are preserved during a repository transfer:
-
 | Item | Transfers? | Notes |
 |------|-----------|-------|
-| **Git history** | Yes | All commits, branches, and tags |
-| **Issues** | Yes | Including labels, milestones, and assignees |
-| **Pull requests** | Yes | Including review comments and status |
-| **Wiki** | Yes | Full wiki content |
-| **Stars** | Yes | Star count is preserved |
-| **Watchers** | Yes | Notification subscriptions carry over |
-| **Webhooks** | Yes | Existing webhook configurations |
-| **Repository secrets** | Yes | Actions secrets transfer with the repo |
-| **Deploy keys** | Yes | Existing deploy keys remain active |
+| **Git history** | ✅ | Commits, branches, tags, and contribution attribution |
+| **Issues and pull requests** | ✅ | Some assignees and issue types may be cleared depending on the new owner |
+| **Wiki, stars, watchers** | ✅ | |
+| **Webhooks, services, secrets, deploy keys** | ✅ | Stay associated with the repository |
+| **Git LFS objects** | ✅ | Moved in the background |
+| **Forks** | ✅ | Stay connected to the network |
+| **Packages** | ⚠️ Depends | May transfer or lose their link, depending on the registry |
+| **GitHub Pages site** | ⚠️ Not redirected | The site URL changes; update custom domains first |
 
-> 💡 **Tip:** GitHub automatically sets up URL redirects from the old location to the new one. However, these redirects are not permanent -- they will break if a new repository is created at the old path.
+> 💡 **Tip:** redirects are permanently deleted if someone creates a new repository or fork at the old location. Update references instead of relying on them.
 
 ---
 
 ## 3️⃣ Post-Transfer Checklist
 
-These items do **NOT** transfer automatically and must be reconfigured:
-
-| Item | Action Required |
+| Item | Action required |
 |------|----------------|
-| **Team access** | Grant appropriate teams in the destination org access to the repo |
-| **Org-level policies and rulesets** | Verify the destination org's branch protection rules, rulesets, and policies apply correctly |
-| **Integrations and GitHub Apps** | Reinstall or reconfigure any org-level GitHub Apps or third-party integrations |
-| **CODEOWNERS** | Update the `CODEOWNERS` file if team names differ between source and destination orgs |
-| **CI/CD references** | Update any hardcoded references to the old `owner/repo` path in pipelines |
-| **Package references** | Update any package registry references that include the old owner |
-
-> ⚠️ **Warning:** Org-level security configurations (secret scanning, code scanning settings) from the **source** org do not follow the repo. The destination org's configurations will apply instead.
+| **Team access** | Grant the destination organization's teams access — the org's **default repository permission** applies automatically |
+| **Collaborators** | The original owner is added as a collaborator — remove if not needed |
+| **Security configuration** | Apply a security configuration by hand — default configurations only attach to **new** repositories |
+| **Rulesets and policies** | Check which destination org and enterprise rulesets now target the repository |
+| **GitHub Apps and integrations** | Install or reconfigure org-level apps in the destination org |
+| **CODEOWNERS** | Update team names if they differ in the destination org |
+| **CI/CD references** | Update hard-coded `owner/repo` paths (Actions `uses:`, checkout, external pipelines) |
+| **Local clones** | `git remote set-url origin NEW_URL` |
 
 ---
 
@@ -154,31 +158,32 @@ These items do **NOT** transfer automatically and must be reconfigured:
 
 ## 4️⃣ Rename an Organization
 
-**Navigation:**
+**👤 Role:** **Organization owner** · **📍 Portal:** GitHub
 
-```
-Organization → Settings → General (sidebar)
-  → Change organization's name → Enter new name
-    → Confirm rename
-```
+**Navigate:** Organization → **Settings** → **Danger zone** *(bottom of the page)*
 
-> ✅ **Result:** The organization is renamed. GitHub creates automatic redirects from the old organization URL to the new one.
+**Steps:**
 
-> ⚠️ **Warning:** This is a high-impact change. All repository URLs under the organization change immediately (e.g., `github.com/old-name/repo` becomes `github.com/new-name/repo`).
+1. Near the bottom of the settings page, under **Danger zone**, click **Rename organization**.
+2. Read the warnings, then click **I understand, let's rename my organization**.
+3. Type the new name, then click **Change organization's name**.
+
+> ✅ **Result:** the organization is renamed, and repository links redirect to the new name within a few minutes.
+
+> ⚠️ **Warning:** the old name becomes available for anyone to claim. If someone takes it, your redirects stop working.
 
 ---
 
-## 5️⃣ Automatic Redirects
+## 5️⃣ What Redirects — and What Doesn't
 
-GitHub sets up redirects from old URLs to the new organization name. However:
+| Works after the rename | Breaks after the rename |
+|------------------------|-------------------------|
+| Web links to **repositories** | The organization **profile page** (`github.com/old-name`) returns 404 |
+| `git push` / `git pull` to old remote URLs (until someone claims the old name) | **API requests** using the old organization name return 404 |
+| Commit attribution | `@old-name/team` mentions don't redirect |
+| Packages and container images move to the new namespace | **SAML SSO** and **SCIM** stop working until the IdP app is updated |
 
-| Aspect | Detail |
-|--------|--------|
-| **Redirect scope** | Web URLs, git clone URLs, API calls |
-| **Duration** | Temporary -- redirects are not guaranteed to persist indefinitely |
-| **Breaks if** | Someone creates a new organization with the old name |
-
-> ⚠️ **Important:** Do not rely on redirects long-term. Update all references to use the new organization name as soon as possible.
+> ⚠️ **Name retirement:** if the organization had public repositories with a Marketplace action, or with more than 100 clones or Actions uses in the week before the rename, GitHub permanently retires those `OLD-OWNER/REPOSITORY` combinations.
 
 ---
 
@@ -189,19 +194,21 @@ The following must be updated after renaming the organization:
 | Item | Action Required |
 |------|----------------|
 | **Git remotes** | All developers must update their local git remotes to the new URL |
-| **Webhooks** | Update any webhooks that reference the old org name in their payload URLs or configurations |
+| **API scripts and tools** | Replace the old organization name — API calls with it return 404 |
+| **Webhooks** | Update receivers that check the organization name in payloads |
 | **GitHub Apps** | Reconfigure any GitHub Apps that reference the old organization name |
 | **CI/CD configurations** | Update all pipeline configs (Actions workflows, Jenkins, CircleCI, etc.) that reference the old org name |
-| **SCIM / SSO configuration** | Update your IdP (Okta, Azure AD, etc.) with the new organization name/URL |
+| **SAML SSO / SCIM** | Update the organization name in the GitHub app on your IdP (Entra ID, Okta, PingFederate) — or members can't sign in and provisioning stops |
 | **Documentation and wikis** | Update internal docs, READMEs, and runbooks that reference the old org name |
 | **Package registries** | Update references in package manifests (npm, Maven, NuGet, etc.) |
-| **Dependabot and branch policies** | Verify these continue to work under the new name |
+| **Actions `uses:` references** | Update `old-name/repo@ref` references to other repositories in the organization |
+| **Links to the org profile** | Update links on other sites — the old profile URL returns 404 |
 
-### Git Remote Update Command
+### Git remote update command
 
-Developers can update their local remotes with:
+Developers update each local clone with:
 
-```
+```bash
 git remote set-url origin https://github.com/NEW-ORG-NAME/repo-name.git
 ```
 
@@ -252,32 +259,32 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 
 ### Q: We transferred a repository but the old URL is not redirecting. What happened?
-**A:** GitHub creates temporary redirects from the old URL to the new location, but these redirects break if a new repository is created at the old path (`owner/repo-name`). Redirects are also not guaranteed to persist indefinitely. Update all references (CI/CD configs, documentation, git remotes, package manifests) to the new URL proactively rather than relying on redirects.
+**A:** Redirects are permanently deleted if someone creates a new repository or fork at the old `owner/repo-name` location. GitHub Pages sites aren't redirected at all. Update CI/CD configs, documentation, git remotes, and package manifests to the new URL rather than relying on redirects.
 
 ---
 
 ### Q: The repository transfer failed. What are the most common causes?
-**A:** You must have admin access on the source repository AND be an owner of the destination organization. Other causes include: the destination org already has a repo with the same name, the repo uses features not available in the destination (e.g., different plan tier), or there are pending required reviews that block the transfer. Verify permissions on both sides before retrying.
+**A:** Check that you're an admin on the repository and can create repositories in the destination organization (an org or enterprise policy may block it). Other causes: the destination already has a repository or fork with that name, you're crossing the EMU boundary, you're moving an internal repository to a different enterprise, or the repository is a fork of a private or internal network.
 
 ---
 
 ### Q: We renamed our organization and now CI/CD pipelines are broken. What do we need to update?
-**A:** Update all hardcoded organization names in: GitHub Actions workflow files (especially `actions/checkout` and cross-repo references), git remote URLs on developer machines (`git remote set-url origin`), webhook configurations, package registry references (npm, Maven, NuGet), and any external tools that reference the org name. Run `git remote set-url origin https://github.com/NEW-ORG-NAME/repo.git` on every developer workstation.
+**A:** API calls with the old organization name return 404, so update every hard-coded name: Actions workflows (`uses:` and cross-repo checkouts), external CI tools, scripts that call the API, package registry references (npm, Maven, NuGet), and webhook receivers. Developers should also run `git remote set-url origin https://github.com/NEW-ORG-NAME/repo.git` in each clone.
 
 ---
 
 ### Q: Our SCIM/SSO configuration stopped working after an organization rename. How do we fix it?
-**A:** Your identity provider (Entra ID, Okta, PingFederate) stores the organization name or URL in its configuration. After renaming the org, update the SAML SSO URL and SCIM endpoint in your IdP to reflect the new organization name. Test SSO login and verify SCIM provisioning is syncing correctly. Failing to update the IdP will prevent users from authenticating or being provisioned.
+**A:** For organization-level SAML and SCIM, update the organization name in the GitHub app on your IdP (Entra ID, Okta, PingFederate) — the SAML URLs and the SCIM base URL include it. Then test SSO sign-in and SCIM provisioning. Until you do, members can't authenticate and users can't be provisioned or deprovisioned. (Enterprise-level SAML and EMU use the enterprise URL, which an org rename doesn't change.)
 
 ---
 
 ### Q: After transferring a repo to a new org, team access and security configurations are missing. Is that expected?
-**A:** Yes. Team access, org-level rulesets, security configurations (secret scanning, code scanning settings), and GitHub App installations do not transfer automatically. The destination org's existing policies will apply instead. You must manually grant team access, verify branch protection rules, reinstall GitHub Apps, and confirm security configurations in the new org.
+**A:** Yes. Team access, organization rulesets, and app installations belong to the organization, not the repository. In the destination, grant team access, check which rulesets target the repository, install the needed GitHub Apps, and apply a security configuration by hand — default configurations only attach to newly created repositories.
 
 ---
 
 ### Q: Can I undo a repository transfer or organization rename?
-**A:** There is no built-in "undo" for either operation. For a repository transfer, you can transfer the repo back to the original owner if you still have the necessary permissions. For an organization rename, you can rename the org again to the old name (if no one has claimed it). In both cases, any external references, CI/CD pipelines, and integrations will need to be updated again.
+**A:** There's no undo button. You can transfer a repository back if you still have the right permissions, or rename the organization back if nobody has claimed the old name — unless GitHub permanently retired the old name. Either way, external references and integrations need updating again.
 
 </details>
 
@@ -298,4 +305,4 @@ An organization rename affects every team and every repository. Treat it as a pl
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
