@@ -11,11 +11,11 @@
 - [✅ Prerequisites](#-prerequisites)
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
-- [1️⃣ Set Up the EMU Account](#1-set-up-the-emu-account)
-- [2️⃣ Set Up the Personal Account](#2-set-up-the-personal-account)
-- [3️⃣ Establish the Governance Bridge](#3-establish-the-governance-bridge)
-- [4️⃣ Organizational Structure](#4-organizational-structure)
-- [5️⃣ Communication to Users](#5-communication-to-users)
+- [1️⃣ Set Up the EMU Account](#1️⃣-set-up-the-emu-account)
+- [2️⃣ Set Up the Personal Account](#2️⃣-set-up-the-personal-account)
+- [3️⃣ Establish the Governance Bridge](#3️⃣-establish-the-governance-bridge)
+- [4️⃣ Organizational Structure](#4️⃣-organizational-structure)
+- [5️⃣ Communication to Users](#5️⃣-communication-to-users)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
 - [❓ Common Questions & Troubleshooting](#-common-questions--troubleshooting)
 - [🔗 Related Guides](#-related-guides)
@@ -31,7 +31,7 @@
 - **EMU account:** Provisioned automatically via IdP (Entra ID / Okta) + SCIM -- username format `username_shortcode`
 - **Personal account:** User creates separately at github.com/signup with a personal email
 - **Public org for OSS:** Create a non-EMU org on github.com for open-source publishing
-- **Mirror internal to public:** Use GitHub Actions workflow with `MIRROR_TOKEN` secret to push approved code
+- **Mirror internal to public:** an Actions workflow in the EMU enterprise uses a **GitHub App installed on the public org** to push approved code
 
 ---
 
@@ -41,9 +41,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -54,14 +54,13 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| EMU enterprise configured with IdP and SCIM provisioning | ☐ |
-| Users have personal GitHub.com accounts (separate from EMU) | ☐ |
-| Open-source contribution policy defined and approved | ☐ |
-| Separate public organization created on github.com (if mirroring) | ☐ |
-
----
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| EMU enterprise with IdP SSO and SCIM working | GitHub **enterprise owner** + IdP administrator | ☐ |
+| An open-source contribution policy (what can be published, who approves) | Legal, security, and engineering leadership | ☐ |
+| A **separate**, non-EMU organization on GitHub.com for public repositories (if you publish OSS) | Owner of that organization (a personal account) | ☐ |
+| Personal GitHub.com accounts for people who contribute to open source | Each developer | ☐ |
+| A GitHub App installed on the public organization (if mirroring) | Public org owner | ☐ |
 
 ## 👥 Provider Account Action Matrix
 
@@ -69,9 +68,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner or setup user** | Owns the GitHub-side EMU enterprise, setup user, recovery codes, and final SSO/SCIM enablement. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → configure OIDC or SAML, then Identity provider → SCIM or provisioning setup where shown. Handoff: enterprise shortcode, setup user status, recovery codes stored, SSO test, and provisioning test. |
+| **GitHub enterprise owner or setup user** | Owns the GitHub-side EMU enterprise, setup user, recovery codes, and final SSO/SCIM enablement. | GitHub (signed in as the setup user) → profile picture → Enterprise → Identity provider → Single sign-on configuration → Add SAML configuration (or Enable OIDC configuration) → Test → Save → Save your recovery codes; then create the classic PAT with `scim:enterprise` for the IdP's SCIM setup. Handoff: enterprise shortcode, setup user status, recovery codes stored, SSO test, and provisioning test. |
 | **Microsoft Entra, Okta, or PingFederate admin** | Creates and owns the IdP application, group assignments, SAML/OIDC claims, and SCIM lifecycle rules. | Entra: Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User. Okta: Okta Admin Console → Applications → Browse App Catalog → GitHub Enterprise Managed User. PingFederate: Administrative Console → Applications → SP Connections → Use a template for this connection → GitHub EMU Connector. Handoff: SSO URLs or consent status, SCIM token destination configured, and pilot group assigned. |
-| **Azure subscription Owner, if metered billing is part of rollout** | Connects or approves the Azure subscription used for GitHub metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then support the GitHub billing connection through GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Handoff: connected subscription ID. |
+| **Azure subscription Owner, if metered billing is part of rollout** | Connects or approves the Azure subscription used for GitHub metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then support the GitHub billing connection through GitHub → profile picture → Enterprise → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Handoff: connected subscription ID. |
 
 ---
 
@@ -95,10 +94,12 @@ This is handled by your IdP (Entra ID, Okta, PingFederate) via SCIM provisioning
 - SCIM creates the managed account automatically
 - Username format: `USERNAME_SHORTCODE`
 
-### EMU Account Restrictions
-- Cannot create public repos or gists
-- Cannot interact with repos outside the enterprise (no PRs, issues, stars, forks)
-- Cannot contribute to open-source projects
+### EMU account restrictions
+
+- Can't create public repositories or gists
+- Can **view** public repositories but can't push, open issues or PRs, comment, react, star, watch, or fork outside the enterprise
+- Can't be invited to organizations outside the enterprise
+- Visible only to other members of the enterprise
 - Fully governed by enterprise policies
 
 ---
@@ -135,11 +136,13 @@ For inbound contributions to your public repos:
 - **DCO (Developer Certificate of Origin):** Contributors certify they have the right to submit code
 - Configure via GitHub Apps (e.g., CLA Assistant) on the public org
 
-### Automated Mirroring (Optional)
-Mirror approved internal code to public repos:
-- Use GitHub Actions in the EMU enterprise to push to a public org
-- Add secret scanning and review gates before any push to the public mirror
-- See the **Internal-to-Public Repository Mirroring Runbook** for details
+### Automated mirroring (optional)
+
+Mirror approved internal code to public repositories:
+
+- Run a GitHub Actions workflow in the EMU enterprise that authenticates with a **GitHub App installed on the public organization** (managed users' tokens can't push outside the enterprise)
+- Add secret scanning and a human approval gate before anything is pushed to the public mirror
+- See `Migration/Internal-to-Public Repository Mirroring.md` for details
 
 ---
 
@@ -214,12 +217,12 @@ Publish clear onboarding guidance:
 ---
 
 ### Q: A user accidentally pushed enterprise/proprietary code to their personal GitHub account. What should we do?
-**A:** Treat this as a security incident. Immediately assess what was exposed (source code, secrets, internal documentation). Revoke and rotate any credentials found in the pushed code. Use `git filter-repo` to remove the proprietary content from the personal repo's history, or delete the personal repo entirely if appropriate. Document the incident and review your organization's code publishing approval process to prevent recurrence.
+**A:** Treat it as a security incident. Assess what was exposed, and revoke and rotate any secrets in it immediately — assume they're compromised. The **account owner** must delete the repository or rewrite its history (for example with `git filter-repo`) and force-push; the enterprise can't act on a personal account. For cached views or pull request refs on GitHub, follow GitHub's "Removing sensitive data from a repository" guidance and contact GitHub Support. Then review your publishing approval process.
 
 ---
 
 ### Q: How can we mirror approved internal code to a public repository for open-source release?
-**A:** Use the Internal-to-Public Repository Mirroring approach: set up a GitHub Actions workflow in the EMU enterprise that pushes approved code from a designated release branch to a separate public organization on github.com. Apply security controls including secret scanning, push protection, and required PR reviews before code reaches the mirror branch. See the Internal-to-Public Repository Mirroring runbook for detailed setup instructions.
+**A:** Run a GitHub Actions workflow in the EMU enterprise that pushes a designated release branch to the separate public organization, authenticating with a GitHub App installed on that public org. Gate it with secret scanning, push protection, required reviews, and a manual approval (environment). See `Migration/Internal-to-Public Repository Mirroring.md`.
 
 ---
 
@@ -250,8 +253,8 @@ Publish clear onboarding guidance:
 |----------|------|
 | EMU restrictions | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts) |
 | About EMU | [GitHub Docs](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users) |
-| Internal-to-Public Mirroring | See: Internal-to-Public Repository Mirroring Runbook.md in this folder |
+| Removing sensitive data from a repository | [GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) |
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*

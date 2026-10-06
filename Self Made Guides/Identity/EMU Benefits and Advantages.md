@@ -12,7 +12,7 @@
 - [👥 Provider Account Action Matrix](#-provider-account-action-matrix)
 - [📋 Overview](#-overview)
 - [✅ Key Benefits of EMU](#-key-benefits-of-emu)
-- [⚠️ Trade-offs and Gotchas to Plan For](#-trade-offs-and-gotchas-to-plan-for)
+- [⚠️ Trade-offs and Gotchas to Plan For](#️-trade-offs-and-gotchas-to-plan-for)
 - [🤔 When Personal Accounts Are a Better Fit](#-when-personal-accounts-are-a-better-fit)
 - [🎯 Bottom Line](#-bottom-line)
 - [🧯 Known Errors & Resolutions](#-known-errors--resolutions)
@@ -40,9 +40,9 @@
 <summary><em>Show click-path conventions</em></summary>
 
 
-- Reviewed against current public GitHub and Microsoft documentation in April 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
-- When a path starts with `Enterprise`, begin at GitHub, click your profile photo, click `Your enterprises` or `Enterprise`, select the enterprise, then continue with the listed top tab or left-sidebar item.
-- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile photo, click `Your organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
+- Reviewed against current public GitHub and Microsoft documentation in October 2026 where public documentation is available. Product UI labels can vary by role, license, feature rollout, and whether the account is on GitHub.com or GHE.com.
+- When a path starts with `Enterprise`, begin at GitHub, click your profile picture, click `Enterprise` (managed/EMU accounts) — or open the `Enterprises` page at github.com/settings/enterprises (standard accounts) —, select the enterprise, then continue with the listed top tab or left-sidebar item.
+- When a path starts with `Organization` or `Org`, begin at GitHub, click your profile picture, click `Organizations`, select the organization, click `Settings`, then continue with the listed sidebar item.
 - When a path starts with `Repository`, `Repo`, or a repository name, open the repository, click the `Settings` tab, then continue with the listed sidebar item.
 - When a path starts with a vendor portal such as `Microsoft Entra admin center`, `Azure portal`, `Okta Admin Console`, `PingFederate`, `PingOne`, `OneLogin`, `AD FS Management`, `Visual Studio Admin Portal`, or `Azure DevOps`, sign in to that admin portal first, select the tenant, application, or project named in the step, then follow each listed blade, tab, button, and confirmation in order.
 - If the expected button is missing, verify you are signed in with the role named in Prerequisites, the feature or license is enabled, and the object is owned by the selected enterprise, organization, or repository. Use page search only to locate the same page, not to skip required confirmation, test, save, or consent clicks.
@@ -53,14 +53,15 @@
 
 ## ✅ Prerequisites
 
-| Requirement | Status |
-|-------------|--------|
-| Identity provider (Entra ID, Okta, or PingFederate) configured | ☐ |
-| SAML or OIDC authentication configured in the IdP | ☐ |
-| SCIM provisioning application set up in the IdP | ☐ |
-| Enterprise setup user account and PAT with `scim:enterprise` scope | ☐ |
+*What you need before you can adopt EMU (see the `Setup/EMU + …` guides for full setup):*
 
----
+| Requirement | Who / Role needed | ✓ |
+|-------------|-------------------|---|
+| A **new** EMU enterprise (an existing personal-account enterprise can't be converted) | GitHub sales / enterprise owner | ☐ |
+| A supported IdP — Entra ID (SAML or OIDC), Okta (SAML), or PingFederate (SAML) — or another SAML 2.0 / SCIM 2.0 IdP that meets GitHub's requirements | IdP administrator | ☐ |
+| The IdP's GitHub EMU application with SAML/OIDC and SCIM configured | IdP administrator (for Entra, **Global Administrator** consent for OIDC) | ☐ |
+| The setup user's classic PAT with `scim:enterprise` scope (no expiration) | **Setup user** | ☐ |
+| Recovery codes saved | **Setup user** / enterprise owner | ☐ |
 
 ## 👥 Provider Account Action Matrix
 
@@ -68,9 +69,9 @@ Use this table to assign provider-side work before following the numbered steps.
 
 | Account / role | What they must do | Full click path and handoff |
 |---|---|---|
-| **GitHub enterprise owner or setup user** | Owns the GitHub-side EMU enterprise, setup user, recovery codes, and final SSO/SCIM enablement. | GitHub → profile photo → Your enterprises → [enterprise] → Identity provider → Single sign-on configuration → configure OIDC or SAML, then Identity provider → SCIM or provisioning setup where shown. Handoff: enterprise shortcode, setup user status, recovery codes stored, SSO test, and provisioning test. |
+| **GitHub enterprise owner or setup user** | Owns the GitHub-side EMU enterprise, setup user, recovery codes, and final SSO/SCIM enablement. | GitHub (signed in as the setup user) → profile picture → Enterprise → Identity provider → Single sign-on configuration → Add SAML configuration (or Enable OIDC configuration) → Test → Save → Save your recovery codes; then create the classic PAT with `scim:enterprise` and give it to the IdP admin for SCIM. Handoff: enterprise shortcode, setup user status, recovery codes stored, SSO test, and provisioning test. |
 | **Microsoft Entra, Okta, or PingFederate admin** | Creates and owns the IdP application, group assignments, SAML/OIDC claims, and SCIM lifecycle rules. | Entra: Microsoft Entra admin center → Entra ID → Enterprise apps → New application → GitHub Enterprise Managed User. Okta: Okta Admin Console → Applications → Browse App Catalog → GitHub Enterprise Managed User. PingFederate: Administrative Console → Applications → SP Connections → Use a template for this connection → GitHub EMU Connector. Handoff: SSO URLs or consent status, SCIM token destination configured, and pilot group assigned. |
-| **Azure subscription Owner, if metered billing is part of rollout** | Connects or approves the Azure subscription used for GitHub metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then support the GitHub billing connection through GitHub → profile photo → Your enterprises → [enterprise] → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Handoff: connected subscription ID. |
+| **Azure subscription Owner, if metered billing is part of rollout** | Connects or approves the Azure subscription used for GitHub metered billing. | Azure portal → Subscriptions → [subscription] → Access control (IAM) → Role assignments → confirm Owner, then support the GitHub billing connection through GitHub → profile picture → Enterprise → Billing and licensing → Payment information → Metered billing via Azure → Add Azure Subscription. Handoff: connected subscription ID. |
 
 ---
 
@@ -101,12 +102,12 @@ Use this table to assign provider-side work before following the numbered steps.
 ### 3) Hard Tenant Boundary for IP Protection
 
 - Managed users cannot create public content or collaborate outside the enterprise with that identity
-- On GitHub.com they can view public repos, but cannot interact (no issues/PRs/comments/reactions, and can't star/watch/fork outside repos)
+- On GitHub.com they can view public repos, but cannot interact outside the enterprise (no pushes, issues, PRs, discussions, comments, or reactions; can't star, watch, or fork; can't follow outside users)
 
 ### 4) Cleaner Governance and Least-Privilege Patterns at Scale
 
 - Enterprise admins can standardize access using IdP groups (team/org membership and enterprise roles)
-- EMU supports repo collaborators within the enterprise (grant repo access without full org membership) and a guest collaborator role for tighter segmentation
+- EMU supports repository collaborators (repo access without org membership) and a **guest collaborator** role that blocks access to internal repositories except in organizations where the guest is a member
 
 ### 5) Corporate Ownership of Identifiers and Profile Data
 
@@ -124,20 +125,24 @@ Use this table to assign provider-side work before following the numbered steps.
 ### Migration and Attribution Considerations
 
 - Changing a user's email in the IdP can unlink contribution history tied to the previous email. Plan identity/email conventions carefully before rollout
-- Usernames are normalized from IdP identifiers; collisions can occur if "unique" parts are stripped during normalization
+- Usernames are normalized from the IdP `userName` (non-alphanumerics become dashes, the domain is dropped, and `_SHORTCODE` is added); collisions occur if two identities normalize the same way
 
 ### Setup/Admin Mechanics
 
-- EMU uses a special setup user for initial configuration, and provisioning requires a PAT (classic) with `scim:enterprise` scope (and GitHub's guide specifies no expiration)
+- EMU uses a special **setup user** (`SHORTCODE_admin`) for initial configuration, and SCIM provisioning uses a classic PAT with the `scim:enterprise` scope and no expiration
 - This is separate from day-to-day managed users, who authenticate via the IdP and don't manage GitHub passwords/2FA on their own accounts
 
 ### Product/Feature Limitations
 
 | Feature | Limitation |
 |---------|------------|
-| **Copilot** | Managed users can't sign up for Copilot Free/Pro; access must come from Copilot Business/Enterprise |
-| **Codespaces** | Managed users can only create enterprise-owned codespaces (and on GHE.com Codespaces isn't available) |
-| **Other** | Restrictions exist for external interactions and certain user-level features |
+| **Copilot** | Managed users can't sign up for Copilot Free or Pro — assign Copilot Business or Enterprise. Copilot cloud agent doesn't work in personal (user-owned) repositories |
+| **Codespaces** | Managed users can only create enterprise-owned codespaces for their organizations' repositories (available on GHE.com too) |
+| **Actions** | GitHub-hosted runners aren't available for user-owned repositories; managed users can't create workflow templates |
+| **Gists and profiles** | No gists (create or comment) and no personalized profiles |
+| **Repositories** | Only private and internal repositories in organizations; user-owned repositories (if allowed) are private only |
+| **GitHub Apps** | Managed users can't install apps on their user accounts (except privileged apps) |
+| **Pages and Packages** | GitHub Pages is limited; no user-level storage (for example, can't publish packages to their user account) |
 
 > 💡 **Note:** Validate EMU fit if your dev workflows depend on broader GitHub.com social/open features.
 
@@ -208,12 +213,12 @@ Use this table to assign provider-side work before following the numbered steps.
 ---
 
 ### Q: EMU users cannot sign up for Copilot Free or Pro. How do they get Copilot access?
-**A:** Managed users cannot self-enroll in Copilot Free or Pro plans. Copilot access must be provisioned through a Copilot Business or Copilot Enterprise license assigned at the enterprise or organization level. Enterprise owners or org admins enable Copilot and assign seats to managed users.
+**A:** Managed users can't sign up for Copilot Free or Pro. Assign Copilot Business directly from the enterprise (users or enterprise teams — great for IdP-synced teams), or enable Copilot for organizations and let org owners assign Business or Enterprise seats. See `Copilot/Seat Assignment & Enablement.md`.
 
 ---
 
 ### Q: We are seeing username collisions during SCIM provisioning. What causes this?
-**A:** EMU usernames are generated by normalizing IdP identifiers and appending an enterprise shortcode (e.g., `jsmith_contoso`). Collisions occur when two different IdP identities normalize to the same username prefix (e.g., `j.smith` and `jsmith` both becoming `jsmith`). Plan your IdP username conventions carefully before EMU rollout, and check for potential collisions in advance by reviewing the normalization rules.
+**A:** GitHub builds each username from the SCIM `userName`: it keeps the part before `@`, turns every non-alphanumeric character into a dash, and adds `_SHORTCODE` (for example `j.smith@contoso.com` → `j-smith_contoso`). Two identities that normalize the same way — such as `j.smith@contoso.com` and `j_smith@fabrikam.com` — collide, and only the first is created. Usernames also must fit in 39 characters (30 on GHE.com). Fix the IdP values so each normalizes uniquely, and check your directory for collisions before rollout.
 
 </details>
 
@@ -230,8 +235,11 @@ Use this table to assign provider-side work before following the numbered steps.
 
 ## 📝 Resources
 
+- [About Enterprise Managed Users](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users)
+- [Abilities and restrictions of managed user accounts](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/understanding-iam-for-enterprises/abilities-and-restrictions-of-managed-user-accounts)
+- [Username considerations for external authentication](https://docs.github.com/en/enterprise-cloud@latest/admin/managing-iam/iam-configuration-reference/username-considerations-for-external-authentication)
 - [EMU Instructions Guide](https://emu-instructions.githubapp.com)
 
 ---
 
-*Last updated: April 2026*
+*Last updated: October 2026*
