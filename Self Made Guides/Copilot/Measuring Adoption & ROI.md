@@ -123,6 +123,8 @@
 
 > ⚠️ Treat the ROI figures as **directional estimates**, not financial results. They're dashboard-only — not in the API.
 
+> 📌 **Feature engagement (September 2026):** the impact dashboard also shows how many active users used each key feature (code completion, agent edits, active/passive code review, cloud agent, CLI, Copilot app) on at least two days in the 28-day window.
+
 **Adoption phases used by the impact dashboard:**
 
 | Phase | Meaning (at least 2 active days in the trailing 28 days) |
@@ -190,7 +192,7 @@ Each endpoint returns `download_links` (short-lived signed URLs) and a `report_d
 | `GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-28-day/latest` | Latest 28-day enterprise totals |
 | `GET /enterprises/{enterprise}/copilot/metrics/reports/users-1-day?day=YYYY-MM-DD` | Per-user, one day |
 | `GET /enterprises/{enterprise}/copilot/metrics/reports/users-28-day/latest` | Per-user, latest 28 days |
-| `GET /enterprises/{enterprise}/copilot/metrics/reports/repos-1-day?day=YYYY-MM-DD` | Per-repository pull request activity |
+| `GET /enterprises/{enterprise}/copilot/metrics/reports/repos-1-day?day=YYYY-MM-DD` | Per-repository pull request activity, including `pull_request_review_times` (median and p90 minutes: ready → first review, first → final review, final review → merge) |
 | `GET /enterprises/{enterprise}/copilot/metrics/reports/user-teams-1-day?day=YYYY-MM-DD` | User-to-team mapping (join with the per-user report for team metrics) |
 | `GET /orgs/{org}/copilot/metrics/reports/organization-1-day` · `organization-28-day/latest` · `users-1-day` · `users-28-day/latest` · `repos-1-day` · `user-teams-1-day` | Same reports for one organization |
 
@@ -360,7 +362,7 @@ curl -L \
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request (not available for EMU enterprises), or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |

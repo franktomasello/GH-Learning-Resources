@@ -200,7 +200,7 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Checkout with app token
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ steps.app-token.outputs.token }}
 
@@ -225,6 +225,8 @@ jobs:
 
 > ✅ **Result:** a short-lived installation access token (valid for one hour) for the later steps. No license seat is consumed.
 
+> 📌 **Token format (October 2026):** installation tokens still start with `ghs_` but are now **stateless and about 520 characters long** (previously 40). Treat them as opaque strings — check any length validation, fixed-size secret fields, proxies that truncate `Authorization` headers, and log-redaction patterns.
+
 ---
 
 ## 6️⃣ Alternative: GITHUB_TOKEN for Actions-Only Workflows
@@ -243,7 +245,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Run tests and report
         run: ./run-tests.sh

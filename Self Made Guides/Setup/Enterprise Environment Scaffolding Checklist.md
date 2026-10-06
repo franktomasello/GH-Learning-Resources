@@ -33,8 +33,8 @@
 
 - **Identity (EMU / DRUS):** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → **Add SAML configuration** (or **Enable OIDC configuration** for Entra); create the SCIM token as a **personal access token (classic)** scoped to `scim:enterprise`
 - **Identity (Standard):** Enterprise → **Settings** → **Authentication security** → **SAML single sign-on**
-- **Governance:** Enterprise → **Policies** → set repo visibility defaults (**Member privileges**), **Repository** rulesets, **Actions** policies, **Personal access tokens** policies, **GitHub Apps** policies
-- **Security:** Org → **Settings** → **Advanced Security** → **Configurations** → apply recommended config (secret scanning + push protection + CodeQL)
+- **Governance:** Enterprise → **Policies** → **Repository** policies (visibility, creation), **Code** (rulesets), **Actions** policies, **Personal access tokens** policies, **GitHub Apps** policies
+- **Security:** Org → **Settings** → **Advanced Security ▾** → **Configurations** → **New configuration** (quick setup or **Custom configuration**: Secret Protection + push protection + Code Security default setup) → apply on the **Repositories** tab
 - **Billing:** Enterprise → **Billing and licensing** → **Payment information** → **Metered billing via Azure** → **Add Azure Subscription** → create cost centers → set budgets with alerts
 - **Copilot:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** (turn on orgs, assign licenses) → **AI controls** → **Copilot** (policies, **Configure models**, **Content exclusion**) → Org **Settings** → **Copilot** → **Custom instructions**
 
@@ -216,11 +216,13 @@ Enterprise (one per company)
 
 **👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
-**Navigate:** **Enterprises** page (github.com/settings/enterprises) → *[enterprise]* → **Policies** → **Repository** → **Rulesets**
+**Navigate:** Enterprise → **Policies** tab → **Code**
 
-1. Click **New ruleset** and choose a **branch** or **tag** ruleset.
-2. Configure the rules (see the table below) and set **Enforcement status** to **Active**.
-3. Click **Create**.
+1. Click **New ruleset**, then **New branch ruleset** (or **New tag ruleset**).
+2. Enter a **Ruleset name** and change **Enforcement status** from **Disabled** to **Active** (or **Evaluate** to test first).
+3. Choose the target **organizations**, **repositories**, and **branches** (for example **Include default branch**).
+4. Select the rules (see the table below).
+5. Click **Create**.
 
 | Ruleset Type | Recommended Rules |
 |-------------|-------------------|
@@ -289,8 +291,9 @@ Enterprise (one per company)
 
 **Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
 
-1. Apply the **GitHub recommended** security configuration, or click **New configuration** to build your own.
-2. Choose the scope — **All repositories** or a pilot set — and click **Apply**.
+1. Click **New configuration**. Use the quick setup dialog (**Review** → **Save and enable**), or choose **Custom configuration**, set the features, and click **Save configuration**.
+2. On the **Repositories** tab, select a pilot set (or **Select all**), click **Apply configuration ▾**, choose the configuration, and click **Apply**.
+3. *(Optional)* In the configuration's **Policy** section, make it the default for new repositories and choose **Enforce**.
 
 > 💡 **Tip:** Use the Organization-level Security Configurations to apply consistent security settings across all repos. See the [GitHub Secret Protection Enablement Runbook](../Security/Secret%20Protection%20Enablement.md) for detailed steps.
 
@@ -302,10 +305,10 @@ Enterprise (one per company)
 
 **Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
 
-1. Create or edit a configuration.
-2. Under **GitHub Secret Protection**, set **Secret scanning** to **Enabled**.
-3. Set **Push protection** to **Enabled**.
-4. Click **Save configuration** and apply it to the target repositories.
+1. Click **New configuration** → **Custom configuration** (or edit an existing one).
+2. Turn on **Secret Protection** — this enables secret scanning alerts.
+3. Set **Push protection** to **Enabled** (and optionally **Validity checks**).
+4. Click **Save configuration**, then apply it on the **Repositories** tab.
 
 | Feature | Description |
 |---------|-------------|
@@ -321,10 +324,10 @@ Enterprise (one per company)
 
 **Navigate:** Organization → **Settings** → **Advanced Security** → **Configurations**
 
-1. Create or edit a configuration.
-2. Under **GitHub Code Security**, set **Code scanning** to **Enabled**.
-3. Enable **CodeQL default setup** for the supported languages.
-4. Click **Save configuration** and apply it to the target repositories.
+1. Click **New configuration** → **Custom configuration** (or edit an existing one).
+2. Turn on **Code Security**.
+3. Set **Default setup** to **Enabled** (or **Enabled with advanced setup allowed** if some repos run their own CodeQL workflow).
+4. Click **Save configuration**, then apply it on the **Repositories** tab.
 
 | Setting | Recommended Value |
 |---------|------------------|
@@ -407,9 +410,11 @@ Enterprise (one per company)
 
 **Navigate:** your enterprise → **AI controls** → **Copilot** *(sidebar)*
 
-1. On the **Copilot** page, set administration, privacy, model, billing, and usage policies — for each dropdown choose **Enabled**, **Disabled**, or **No policy** (lets organization owners decide).
+1. On the **Copilot** page, set administration, privacy, model, billing, and usage policies — for each dropdown choose **Enabled**, **Disabled**, or **Let organizations decide**.
 2. Click **Configure models**, then set each model to **Enabled**, **Disabled**, or **Delegate** (lets organizations decide).
 3. Under "Features & clients", click **Configure features & clients** to set feature and client policies. Use the **Agents** and **MCP** sidebar pages for agent and MCP policies.
+
+> ⏰ **Before October 22, 2026:** set the **Default policy for new features** on the **Copilot** page (**Enabled**, **Disabled**, or **Let organizations decide**). From that date, GA features left **Unconfigured** follow it — and it's **Enabled** by default.
 
 > 📌 Policy and model selections apply immediately — there is no Save button.
 
@@ -512,7 +517,7 @@ Enterprise (one per company)
 ---
 
 ### Q: Enterprise policies I set are not cascading to organizations as expected — what is happening?
-**A:** For most enterprise policies you either pick a specific setting — which is then enforced on every organization, so org owners can't change it — or leave the policy at **No policy**, which lets each organization owner decide. Some policies offer options that only limit what org owners can choose (for example, which repository visibilities members can create). If org owners can still change something, the enterprise policy is probably at **No policy**. Go to your enterprise → **Policies** (a top-of-page tab, not under **Settings**), open the relevant policy page, and check its value. Enterprise rulesets are layered on top of organization and repository rules — org-level rules can't relax them — but anyone on a ruleset's bypass list can still bypass it.
+**A:** For most enterprise policies you either pick a specific setting — which is then enforced on every organization, so org owners can't change it — or leave the policy at **Let organizations decide**, which lets each organization owner decide. Some policies offer options that only limit what org owners can choose (for example, which repository visibilities members can create). If org owners can still change something, the enterprise policy is probably at **Let organizations decide**. Go to your enterprise → **Policies** (a top-of-page tab, not under **Settings**), open the relevant policy page, and check its value. Enterprise rulesets are layered on top of organization and repository rules — org-level rules can't relax them — but anyone on a ruleset's bypass list can still bypass it.
 
 ---
 
@@ -527,7 +532,7 @@ Enterprise (one per company)
 ---
 
 ### Q: Our security team wants to enable Advanced Security (GHAS) for all repos — should we do it at once?
-**A:** Enable incrementally. Start by applying the GitHub recommended security configuration to a pilot set of repositories or one organization. Review the initial alerts (secret scanning, code scanning) and establish a triage process before rolling out broadly. Enabling GHAS across hundreds of repos at once can generate a flood of alerts that overwhelm teams. Use org-level Security Configurations to apply settings consistently, and ramp up over 2-4 weeks.
+**A:** Enable incrementally. Start by applying a security configuration to a pilot set of repositories or one organization. Review the initial alerts (secret scanning, code scanning) and establish a triage process before rolling out broadly. Enabling GHAS across hundreds of repos at once can generate a flood of alerts that overwhelm teams. Use org-level Security Configurations to apply settings consistently, and ramp up over 2-4 weeks.
 
 </details>
 

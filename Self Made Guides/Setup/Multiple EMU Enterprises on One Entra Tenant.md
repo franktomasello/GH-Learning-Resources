@@ -194,7 +194,7 @@ Each enterprise application needs its own SCIM configuration, using a token gene
 
 - Each EMU enterprise has fully separate governance, billing, and audit
 - There is NO cross-enterprise visibility without additional tooling
-- Guest collaborators can enable cross-enterprise access where needed
+- Managed users **can't** be invited into another enterprise — a person who needs access to both enterprises needs an account provisioned in each (guest collaborators only limit access *within* one enterprise)
 - SCIM provisioning cycles are independent — changes to one don't affect the other
 
 ## 🧯 Known Errors & Resolutions

@@ -95,7 +95,7 @@ Understanding where each control lives and how they cascade:
 | **Repository** | Project truth | Repository instructions that reflect the actual codebase |
 | **Content exclusion** | Sensitive paths | Keep secrets, configs, and proprietary logic out of Copilot's context |
 
-> 💡 **Tip:** Enterprise policies act as a ceiling. If the enterprise sets a policy, organizations can't change it — only policies left at **No policy** (or models set to **Delegate**) are decided by organizations.
+> 💡 **Tip:** Enterprise policies act as a ceiling. If the enterprise sets a policy, organizations can't change it — only policies left at **Let organizations decide** (or models set to **Delegate**) are decided by organizations.
 
 > 📌 **No Save button for policies and models:** dropdowns and toggles on these pages apply as soon as you select them.
 
@@ -103,7 +103,9 @@ Understanding where each control lives and how they cascade:
 > - **Default availability for released models** (already active): new GA models and models shown as **Delegate to Default Policy** follow it. Pre-GA models, open-weight models, and models outside GitHub's data retention agreement stay off regardless.
 > - **Default policy for new features** (applies from **October 22, 2026**, **enabled by default**): unconfigured GA features on **AI controls** → **Copilot** → **Features & clients** — plus **Copilot code review** and **MCP servers in Copilot** — will turn on.
 >
-> To keep control, either disable these default policies, or explicitly set every feature and model you care about to **Enabled** or **Disabled**. The GHE.com restrictive model policies and **Store local sessions in the Cloud** aren't affected.
+> **Where:** Enterprise → **AI controls** → **Copilot** → **Default policy for new features** → **Enabled**, **Disabled**, or **Let organizations decide**. Explicit Enabled/Disabled choices are never overridden, and preview features stay opt-in.
+>
+> To keep control, either choose **Disabled** (future GA features then need admin approval), or explicitly set every feature and model you care about. The GHE.com restrictive model policies and **Store local sessions in the Cloud** aren't affected.
 
 ---
 
@@ -291,7 +293,7 @@ All relevant instructions are sent to Copilot together. When they conflict, high
 |---------|--------|
 | **Blocked** | Copilot filters out suggestions that match public code |
 | **Allowed** | Copilot can show matching suggestions, with references to the matching code |
-| **No policy** *(enterprise only)* | Each organization decides |
+| **Let organizations decide** *(enterprise only)* | Each organization decides |
 
 > 💡 **Tip:** Agree this setting with your legal team. The selection applies immediately — there is no Save button.
 
@@ -334,7 +336,7 @@ All relevant instructions are sent to Copilot together. When they conflict, high
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request, or enable AI credits paid usage. |
+| **Copilot stops working for a user mid-cycle** | The user's user-level budget is used up, the shared AI credit pool is exhausted with **AI credits paid usage** disabled, or a spending limit with **Stop usage** was reached. | Check the user on **Billing and licensing** → **AI usage** and the budgets on **Budgets and alerts**; raise their budget, approve their budget request (not available for EMU enterprises), or enable AI credits paid usage. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Usage metrics look empty or inconsistent** | Telemetry is disabled, data freshness delay applies, users are unlicensed, or different APIs report different scopes. | Enable the metrics policy, confirm seats and telemetry, wait for data freshness, and avoid comparing dashboards/API endpoints as if they share identical data models. |
 | **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |

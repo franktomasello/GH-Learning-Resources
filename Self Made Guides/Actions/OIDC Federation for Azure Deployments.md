@@ -254,10 +254,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Log in to Azure
-        uses: azure/login@v2   # Consider pinning to a full commit SHA
+        uses: azure/login@v3   # v2 ran on Node 20, which Actions no longer supports; consider pinning a full commit SHA
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}

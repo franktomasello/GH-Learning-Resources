@@ -342,7 +342,7 @@ gh gei migrate-org \
 ---
 
 ### Q: Our CI/CD pipelines use OIDC trust with AWS/Azure/GCP — do the trust policies need updating?
-**A:** Yes. If your OIDC trust policies reference the GitHub token issuer URL, they must be updated. For standard github.com, the issuer is `https://token.actions.githubusercontent.com`. If the new EMU enterprise is on GHE.com (data residency), the issuer changes to `https://token.actions.SUBDOMAIN.ghe.com`. Even on github.com, the organization and repository names may change, which affects OIDC subject claims. Update all trust policies before cutover to avoid CI/CD failures.
+**A:** Yes. If your OIDC trust policies reference the GitHub token issuer URL, they must be updated. For standard github.com, the issuer is `https://token.actions.githubusercontent.com`. If the new EMU enterprise is on GHE.com (data residency), the issuer changes to `https://token.actions.SUBDOMAIN.ghe.com`. Subjects change too: migrated repositories are new repositories, so since July 15, 2026 they use the immutable subject format (`repo:OWNER@OWNER-ID/REPO@REPO-ID:…`), and organization or repository names may also change. Add trust entries for the new issuer and subjects before cutover (see `Actions/OIDC Federation for Azure Deployments.md`) to avoid CI/CD failures.
 
 ---
 

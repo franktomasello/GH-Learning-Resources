@@ -113,14 +113,16 @@ Included credits are **pooled** across your billing entity. When the pool runs o
 
 Prices are **per 1 million tokens** and are charged in AI credits at $0.01 per credit. Examples from GitHub's published table (October 2026):
 
-| Model | Input | Cached input | Output |
-|-------|------:|-------------:|-------:|
-| **GPT-5 mini** | $0.25 | $0.025 | $2.00 |
-| **Claude Haiku 4.5** | $1.00 | $0.10 | $5.00 |
-| **Claude Sonnet 5.5** | $2.00 | $0.20 | $10.00 |
-| **GPT-5.4** (≤ 272K input tokens) | $2.50 | $0.25 | $15.00 |
-| **Claude Sonnet 4.6** | $3.00 | $0.30 | $15.00 |
-| **Claude Opus 5.5** | $4.00 | $0.20 | $20.00 |
+| Model | Category | Input | Cached input | Output |
+|-------|----------|------:|-------------:|-------:|
+| **GPT-6 Luna** (≤ 272K input tokens) | Lightweight | $0.10 | $0.01 | $0.50 |
+| **GPT-5.6 Luna** (≤ 200K input tokens) | Lightweight | $0.20 | $0.02 | $1.20 |
+| **Claude Haiku 4.5** | Versatile | $1.00 | $0.10 | $5.00 |
+| **Claude Sonnet 5.5** | Versatile | $2.00 | $0.20 | $10.00 |
+| **GPT-6 Sol** (≤ 272K input tokens) | Powerful | $2.00 | $0.20 | $10.00 |
+| **Claude Opus 5.5** | Powerful | $4.00 | $0.20 | $20.00 |
+
+> ⚠️ **Retiring October 19, 2026:** GPT-5 mini, GPT-5.4, GPT-5.4 mini, GPT-5.5, Gemini 3.7 Flash, and Grok 4.5 (suggested replacements: GPT-5.6 Luna, GPT-5.6 Sol, Gemini 3.8 Flash, Grok 4.6). Update model policies and any estimates built on those models.
 
 > 📌 **Prices change as models are added and retired.** Always pull current rates from [Models and pricing](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing) before finalizing an estimate. Some models also have a cache-write price or a higher rate above an input-token threshold.
 
@@ -157,10 +159,11 @@ A chat turn that sends 20,000 input tokens and gets 2,000 output tokens back:
 
 | Model | Calculation | Cost | AI credits |
 |-------|-------------|-----:|-----------:|
-| **GPT-5 mini** | (20,000 × $0.25 + 2,000 × $2.00) ÷ 1,000,000 | $0.009 | 0.9 |
-| **GPT-5.4** | (20,000 × $2.50 + 2,000 × $15.00) ÷ 1,000,000 | $0.08 | 8 |
+| **GPT-6 Luna** | (20,000 × $0.10 + 2,000 × $0.50) ÷ 1,000,000 | $0.003 | 0.3 |
+| **Claude Sonnet 5.5** | (20,000 × $2.00 + 2,000 × $10.00) ÷ 1,000,000 | $0.06 | 6 |
+| **Claude Opus 5.5** | (20,000 × $4.00 + 2,000 × $20.00) ÷ 1,000,000 | $0.12 | 12 |
 
-> 💡 **Model choice matters:** the same interaction costs roughly **9× more** on GPT-5.4 than on GPT-5 mini. Default everyday work to lighter models and reserve frontier models for hard tasks.
+> 💡 **Model choice matters:** the same interaction costs **40× more** on Claude Opus 5.5 than on GPT-6 Luna (12 vs 0.3 credits). Default everyday work to lighter models and reserve powerful models for hard tasks. Cached input lowers these numbers further.
 
 ### Example: monthly estimate for a team
 
@@ -257,6 +260,8 @@ Create them in this order:
 
 When a user exhausts their budget, they can ask for more.
 
+> 📌 Budget increase requests are GA (September 2026) for Copilot Business and Enterprise under usage-based billing. Per GitHub's announcement they're **not available for enterprises with managed users (EMU)** — in an EMU enterprise, raise the user's budget directly instead.
+
 1. Go to the enterprise (or organization) settings and click **Requests from members**.
 2. Set a new amount for each request, select the requests, and click **Approve and increase**.
 
@@ -308,7 +313,7 @@ When a user exhausts their budget, they can ask for more.
 | **Changes appear saved but behavior does not change** | Policy inheritance, cached UI state, propagation delay, or an overlapping enterprise/org/repo policy. | Reopen the settings page, verify the effective policy at the lowest affected scope, wait for propagation where documented, and check for a stricter policy at an enterprise or organization level. |
 | **403, forbidden, or resource not accessible** | The signed-in user or token can see the page but lacks the specific permission for the action. | Use an enterprise owner, organization owner, repository admin, or token with the exact scopes/permissions listed in the runbook. For SAML-protected orgs, authorize the token or SSH key for SSO before retrying. |
 | **Copilot feature, model, or policy is not visible** | Plan, license assignment, enterprise policy, org delegation, or feature rollout does not permit it. | Check enterprise AI controls, organization Copilot settings, assigned seat status, and the plan requirements for the feature. |
-| **A user is blocked from Copilot mid-cycle** | Their user-level budget is used up, the pool is exhausted with **AI credits paid usage** disabled, or a cost center or enterprise spending limit with **Stop usage** was reached. | Check the user on the **AI usage** page and the budgets on **Budgets and alerts**; raise or add an individual budget, approve their budget request, or enable paid usage. |
+| **A user is blocked from Copilot mid-cycle** | Their user-level budget is used up, the pool is exhausted with **AI credits paid usage** disabled, or a cost center or enterprise spending limit with **Stop usage** was reached. | Check the user on the **AI usage** page and the budgets on **Budgets and alerts**; raise or add an individual budget, approve their budget request (not available for EMU enterprises), or enable paid usage. |
 | **Metered charges with no budget alerts** | Budget threshold alerts weren't selected, or no spending limit exists. | Edit each budget, select **Receive budget threshold alerts**, and add alert recipients. |
 | **Content exclusions do not apply immediately** | Client policy cache, unsupported surface/mode, symlink/remote filesystem limitation, or indirect IDE context. | Reload the IDE policy, verify the exclusion syntax at enterprise/org/repo scope, and document surfaces where exclusions are limited. |
 | **Cloud agent or MCP action is denied** | Agent policy, MCP policy, repository permissions, secrets, or server allowlist does not permit the operation. | Review Enterprise AI controls > Agents/MCP, repo-level permissions, MCP server configuration, and audit logs for the denied action. |
@@ -349,7 +354,7 @@ When a user exhausts their budget, they can ask for more.
 ---
 
 ### Q: Paid usage is enabled, but users are still being blocked — why?
-**A:** A budget is stopping them. Check, in order: the user's individual or cost center user-level budget, the universal user-level budget, any cost center budget with **Stop usage**, and the enterprise spending limit. A **$0** budget at any applicable level blocks usage immediately. The user can also send a budget request, which you approve under **Requests from members**.
+**A:** A budget is stopping them. Check, in order: the user's individual or cost center user-level budget, the universal user-level budget, any cost center budget with **Stop usage**, and the enterprise spending limit. A **$0** budget at any applicable level blocks usage immediately. The user can also send a budget request, which you approve under **Requests from members** (not available for EMU enterprises).
 
 ---
 

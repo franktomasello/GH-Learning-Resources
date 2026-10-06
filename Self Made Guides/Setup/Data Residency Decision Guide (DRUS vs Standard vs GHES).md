@@ -144,7 +144,7 @@ Moving from standard GHEC to DRUS requires:
 2. Reconfigure IdP (SAML/OIDC + SCIM) for new enterprise
 3. Migrate repositories using GitHub Enterprise Importer
 4. Update ALL integrations: API endpoints, OIDC issuers, package registry URLs, webhook URLs
-5. Update OIDC trust: `https://token.actions.SUBDOMAIN.ghe.com` replaces `https://token.actions.githubusercontent.com`
+5. Update OIDC trust: `https://token.actions.SUBDOMAIN.ghe.com` replaces `https://token.actions.githubusercontent.com` — and expect new **subject** values, because migrated repositories are new repositories and use the immutable `repo:OWNER@ID/REPO@ID:…` format (since July 15, 2026)
 
 > 💡 **Tip:** Plan this as a migration project with 4-8 weeks timeline, not a settings change.
 

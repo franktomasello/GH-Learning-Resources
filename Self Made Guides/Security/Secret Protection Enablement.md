@@ -196,6 +196,8 @@ This runbook covers every practical way to turn on secret protection in GitHub:
 
 > ⚠️ A default configuration only applies automatically to **new** repositories. Apply it by hand to existing and transferred-in repositories.
 
+> 📌 **Enterprise enforcement:** configurations created at the enterprise level can be set to **Enforce for repository owners** or **Enforce for repository and organization owners**, so neither repo nor org admins can override them.
+
 ---
 
 ## 4️⃣ Enable Push Protection for Your User Account

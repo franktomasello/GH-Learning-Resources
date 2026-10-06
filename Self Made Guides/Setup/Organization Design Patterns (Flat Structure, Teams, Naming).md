@@ -299,7 +299,7 @@ Define them at the **organization** level, or — for consistency across all org
 ---
 
 ### Q: How should we structure teams when we have both permanent staff and contractors?
-**A:** Create separate teams for contractors (e.g., `contractor-team-x`) with limited permissions (read or write, never admin). In EMU environments, contractors can be provisioned via SCIM like regular users, or invited as guest collaborators with access to specific repos. Use nested teams to group contractors under a parent team for easy auditing. Set up a process to review and remove contractor access when engagements end — IdP group sync makes this automatic when contractors are removed from the IdP group.
+**A:** Create separate teams for contractors (e.g., `contractor-team-x`) with limited permissions (read or write, never admin). In EMU environments, contractors are always provisioned through the IdP via SCIM — either as regular users or with the **guest collaborator** role, which blocks internal repositories except in organizations where they're members. For the tightest scope, add guests as repository collaborators on specific repos. Use nested teams to group contractors under a parent team for easy auditing. Set up a process to review and remove contractor access when engagements end — IdP group sync makes this automatic when contractors are removed from the IdP group.
 
 </details>
 

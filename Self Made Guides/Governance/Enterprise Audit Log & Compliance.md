@@ -252,6 +252,8 @@ Git events (`git.clone`, `git.fetch`, `git.push`) are collected automatically on
 | Audit log streaming configured | Enterprise → **Settings** → **Audit log** → **Log streaming** |
 | API request events and source IPs | Enterprise → **Settings** → **Audit log** → **Settings** |
 | IP allow list enabled | Enterprise → **Settings** → **Authentication security** |
+| Credential inventory reviewed | Enterprise → **Settings** → **Authentication security** → **Credentials** → **Export CSV** (SSH keys, PATs, OAuth and GitHub App tokens) |
+| Proof of presence for high-impact actions *(public preview, Entra ID)* | Enterprise → **Settings** → **Authentication security** → **Proof of presence** → **Re-authentication** or **MFA** |
 | Secret scanning + push protection | Org → **Settings** → **Advanced Security ▾** → **Configurations** |
 | Code scanning enabled | Org → **Security and quality** tab → **Coverage** |
 | Copilot content exclusions set | Enterprise → **AI controls** → **Copilot** → **Content exclusion** |

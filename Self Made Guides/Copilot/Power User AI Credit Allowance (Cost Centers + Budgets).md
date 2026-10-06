@@ -194,7 +194,7 @@ Each budget starts the same way: click **New budget**, then under **Budget Type*
 ## 💡 Optional: Temporary Boosts and Budget Requests
 
 - **Temporary boost for one person:** create an **individual** user-level budget (scope **Users** → select the user) and set **Expiration** to **End of current billing cycle** or a **Specific date**. When it expires, the user falls back to their cost center or universal budget [[1]](#source-1).
-- **Requests from users:** a user who runs out can request more. Go to the enterprise settings → **Requests from members**, enter a new amount, select the request, and click **Approve and increase** [[7]](#source-7).
+- **Requests from users:** a user who runs out can request more. Go to the enterprise settings → **Requests from members**, enter a new amount, select the request, and click **Approve and increase** [[7]](#source-7). *(Not available for enterprises with managed users — EMU admins raise the individual budget instead.)*
 
 ---
 

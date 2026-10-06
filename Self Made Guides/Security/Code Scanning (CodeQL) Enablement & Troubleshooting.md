@@ -147,6 +147,8 @@ Use advanced setup when you need custom build steps, extra queries, or matrix bu
 
 > ⚠️ **Important:** a default configuration is only applied automatically to **new** repositories. Repositories transferred into the organization need a configuration applied by hand.
 
+> 📌 **Enterprise enforcement (September 2026):** enterprise-level security configurations have an **Enforcement** dropdown — **Don't enforce**, **Enforce for repository owners**, or **Enforce for repository and organization owners** — so organization admins can't override enterprise settings.
+
 ---
 
 ## 4️⃣ Default vs Extended Query Suites
@@ -202,7 +204,7 @@ Copilot Autofix uses AI to suggest fixes for code scanning alerts — in pull re
 
 > 📌 Copilot Autofix **doesn't require a GitHub Copilot subscription**. It needs code scanning with CodeQL (Code Security for private repositories).
 
-> 💡 **Also on Global settings:** **AI Scan** (AI-powered detections for eligible repositories) and **Keep scheduled scans running every 30 days for inactive repositories**.
+> 💡 **Also on Global settings:** **AI Scan** (AI-powered detections for eligible repositories — it no longer requires CodeQL default setup, and its effective status per repository appears in the **Coverage** view) and **Keep scheduled scans running every 30 days for inactive repositories**.
 
 ---
 

@@ -125,7 +125,7 @@ jobs:
     environment: public-release        # pauses for an approver
     steps:
       - name: Checkout source repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0               # full history
           persist-credentials: false   # don't send this repo's GITHUB_TOKEN to the public repo

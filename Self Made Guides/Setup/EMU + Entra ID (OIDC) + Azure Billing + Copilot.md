@@ -393,10 +393,12 @@ Set up Copilot in this order: **8A** turn Copilot on for organizations, **8B** s
    - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
    - **MCP** — Model Context Protocol (MCP) policies.
 3. Set each policy:
-   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide).
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **Let organizations decide**.
    - **Toggle:** click it.
    - **No visible control:** click the policy name to see its options.
 4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
+
+> ⏰ **Before October 22, 2026:** decide the **Default policy for new features** on this same **Copilot** page (**Enabled**, **Disabled**, or **Let organizations decide**). From that date, GA features you've left **Unconfigured** follow it — and it's **Enabled** by default. Explicit choices are never overridden.
 
 > 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
@@ -589,6 +591,7 @@ Run through these checks to confirm successful setup:
 | December 2025 | 2.0 | Verified against current documentation; updated OIDC navigation path; clarified Azure permissions; added Enterprise Teams option for Copilot; fixed source references |
 | July 2026 | 2.1 | Verified all click paths, roles, and SSO/SCIM/billing/Copilot steps against current GitHub, Microsoft Entra, Okta, and Ping docs; standardized formatting. |
 | October 2026 | 2.2 | Re-verified against GitHub's docs source: enterprise teams are GA (June 2026); Copilot org access moved to Billing and licensing → Licensing; removed nonexistent Save clicks on Copilot pages; corrected seat-assignment flows; Copilot coding agent renamed Copilot cloud agent; added the enterprise recovery-codes step; current menu labels. |
+| October 2026 | 2.3 | Added the October 22, 2026 **Default policy for new features** callout to the Copilot policy step and switched the enforcement label to **Let organizations decide**. |
 
 ---
 

@@ -135,7 +135,7 @@ Resources for mastering GitHub's advanced security features and CodeQL.
 
 ## ✅ Accuracy & Maintenance
 
-- **October 2026:** every guide re-verified against GitHub's documentation source (and Microsoft, Okta, and Ping docs where relevant) — click paths, required roles, and prerequisites. Highlights: Copilot's move to AI credits (June 2026), Copilot cloud agent and MCP, the **Security and quality** tab rename, immutable OIDC subject claims (July 2026), GA enterprise teams, and the October 22, 2026 default-availability policy for Copilot features.
+- **October 2026:** every guide re-verified against GitHub's documentation source (and Microsoft, Okta, and Ping docs where relevant) — click paths, required roles, and prerequisites. Highlights: Copilot's move to AI credits (June 2026), Copilot cloud agent and MCP, the **Security and quality** tab rename, immutable OIDC subject claims (July 2026), GA enterprise teams, and the October 22, 2026 default-availability policy for Copilot features. A follow-up sweep on **October 6, 2026** folded in GitHub changelog items through that date (model retirements on October 19, Node 20 removal from Actions, budget-request limits for EMU, proof of presence, credential inventory exports, and more).
 - Prefer official GitHub and Microsoft documentation for current product behavior. Community resources are useful but can become stale after product releases.
 - Treat private GitHub issue links and organization-owned resources as internal-only unless the reader has explicit access.
 - Recheck this list quarterly and after major GitHub Enterprise, Copilot, billing, or security launches.

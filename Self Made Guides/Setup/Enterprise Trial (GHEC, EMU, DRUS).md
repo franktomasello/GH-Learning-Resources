@@ -34,9 +34,10 @@
 - **Activate:** Open setup email within 7 days → Click activation link → Complete on-screen prompts
 - **IdP (EMU/DRUS only):** Profile picture → **Enterprise** → **Identity provider** → **Single sign-on configuration** → configure SAML/OIDC + SCIM before inviting users
 - **Standard GHEC SSO (optional):** Enterprise or Organization → **Settings** → **Authentication security** → **SAML single sign-on** (Standard GHEC only — not EMU/DRUS)
-- **Add-ons:** Contact your GitHub SE/CSM to request a Copilot Business trial allotment (commonly up to 50 seats — confirm current terms with your GitHub account team) or a GHAS trial add-on
+- **Included:** most GHEC features, plus **Secret Protection** and **Code Security** on GitHub.com trials (not GHE.com); up to 3,000 Actions minutes
+- **Not included:** Copilot Business / Enterprise — ask your GitHub account team about a Copilot pilot
 - **Copilot seats:** Enterprise → **Billing and licensing** → **Licensing** → Copilot **Manage** (turn on orgs / **Assign licenses**); policies under **AI controls** → **Copilot**
-- **Extend:** Request extension before day 25 → Contact GitHub SE/CSM/Sales
+- **Length:** 30 days; unconverted trial enterprises are deleted 90 days after the trial ends. Ask your account team early if you need more time
 
 ---
 
@@ -245,11 +246,12 @@ The **SCIM Tenant URL** you paste into the IdP is:
 
 **👤 Role:** GitHub **enterprise owner** · **📍 Portal:** GitHub
 
+> 📌 Copilot Business and Copilot Enterprise are **not included** in the self-serve GHEC trial.
+
 **Steps:**
 
-1. Contact your GitHub Sales representative or Solutions Engineer.
-2. Request a Copilot Business trial (commonly a **trial allotment of up to 50 seats** — confirm current terms with your GitHub account team).
-3. Once the trial is active, set up Copilot in this order:
+1. Contact your GitHub Sales representative or Solutions Engineer and ask whether a Copilot pilot can be added to your evaluation (terms vary — confirm with your account team).
+2. Once Copilot is available on the enterprise, set it up in this order:
 
 **(a) Turn Copilot on for organizations — Navigate:** your enterprise (EMU/DRUS: profile picture → **Enterprise**; standard GHEC: **Enterprises** page → *[enterprise]*) → **Billing and licensing** → **Licensing** → **Manage** *(in the "Copilot" section)*
 
@@ -259,7 +261,9 @@ The **SCIM Tenant URL** you paste into the IdP is:
 **(b) Set policies — Navigate:** your enterprise → **AI controls** → **Copilot** *(sidebar)*
 
 1. Set policies on the **Copilot** page, and under "Features & clients" click **Configure features & clients** for feature and client policies (public-code matching, Copilot Chat, CLI, and so on). Use the **Agents** and **MCP** sidebar pages if you'll pilot agents or MCP servers.
-2. For each policy, choose **Enabled**, **Disabled**, or **No policy**. *(Applies on selection — there is no Save button.)*
+2. For each policy, choose **Enabled**, **Disabled**, or **Let organizations decide**. *(Applies on selection — there is no Save button.)*
+
+> ⏰ **Before October 22, 2026:** set the **Default policy for new features** on the **Copilot** page (**Enabled**, **Disabled**, or **Let organizations decide**). From that date, GA features left **Unconfigured** follow it — and it's **Enabled** by default.
 
 **(c) Give pilot users seats** — use either route:
 
@@ -272,13 +276,16 @@ The **SCIM Tenant URL** you paste into the IdP is:
 
 **👤 Role:** GitHub **organization owner** · **📍 Portal:** GitHub
 
+> ✅ **Included on GitHub.com trials:** a GHEC trial created on GitHub.com already includes **GitHub Secret Protection** and **GitHub Code Security** — no separate request needed. Trials on **GHE.com** don't include them.
+
+**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Advanced Security ▾** → **Configurations**
+
 **Steps:**
 
-1. Contact your GitHub Sales representative or Solutions Engineer.
-2. Request a GHAS trial add-on.
-3. Once activated, enable security features.
+1. Click **New configuration**, then use the quick setup dialog (**Review** → **Save and enable**) or choose **Custom configuration** → turn on **Secret Protection** (with push protection) and **Code Security** (default setup) → **Save configuration**.
+2. On the **Repositories** tab, select the trial repositories → **Apply configuration ▾** → your configuration → **Apply**.
 
-**Navigate:** Profile picture → **Organizations** → *[organization]* → **Settings** → **Advanced Security** → **Configurations** → **Apply** the GitHub-recommended configuration
+> 💡 Code scanning default setup uses Actions minutes — the trial includes up to 3,000 standard runner minutes.
 
 > 💡 **Tip:** Request add-on trials early in your evaluation period so you have maximum time to test.
 
@@ -289,11 +296,12 @@ The **SCIM Tenant URL** you paste into the IdP is:
 | Detail | Value |
 |--------|-------|
 | **Default trial duration** | 30 days |
-| **Extension available** | Up to 60-90 days (upon request) |
-| **Extension request deadline** | Before day 25 of the trial |
-| **How to request** | Contact your GitHub SE, CSM, or Sales representative |
+| **Actions minutes during the trial** | Up to 3,000 standard GitHub-hosted runner minutes (the 50,000 paid-plan minutes don't apply). EMU trials need a linked Azure subscription to go beyond this |
+| **Extensions** | Not self-service — ask your GitHub account team as early as possible |
+| **Cancel** | Enterprise → **Settings** → **Danger zone** |
+| **After expiry** | Unconverted trial enterprises are deleted **90 days** after the trial ends |
 
-> ⚠️ **Important:** Request your extension **before day 25**. Extensions requested after the trial expires may not be honored.
+> ⚠️ **Important:** if you invite an **existing** organization into the trial enterprise, the trial features are disabled for it. Create new organizations for the evaluation.
 
 ---
 
@@ -301,7 +309,7 @@ The **SCIM Tenant URL** you paste into the IdP is:
 
 1. **Define success criteria** before starting — what does "yes, we buy" look like?
 2. **Schedule a kickoff call** with your GitHub SE/CSM within the first week
-3. **Request trial extensions early** — do not wait until the last day
+3. **Talk to your account team early** if you may need more than 30 days
 4. **Invite a small pilot group** first to validate your IdP integration before broad rollout
 5. **Document your configuration decisions** — they carry over if you convert to a paid plan
 
@@ -348,17 +356,17 @@ The **SCIM Tenant URL** you paste into the IdP is:
 ---
 
 ### Q: Can I extend the trial, and who do I contact?
-**A:** Yes, trials can be extended from 30 days to 60-90 days. Contact your GitHub Solutions Engineer (SE), Customer Success Manager (CSM), or Sales representative to request an extension. Submit the request before day 25 of your trial — requests made after the trial expires may not be honored. Include a brief explanation of what you still need to evaluate.
+**A:** Extensions aren't self-service. Contact your GitHub Solutions Engineer (SE), Customer Success Manager (CSM), or Sales representative well before the 30 days end, and explain what you still need to evaluate. If the trial expires, the enterprise is deleted 90 days later unless you convert it.
 
 ---
 
 ### Q: The enterprise namespace I want is already taken — what can I do?
-**A:** Enterprise slugs are globally unique across all of GitHub. If the name you want is taken by another customer, you must choose a different slug. If it was taken by a previous trial you created that expired, contact GitHub Support to have it released. Common workarounds include appending a suffix (e.g., `contoso-corp` instead of `contoso`). The enterprise slug is permanent and cannot be changed after creation.
+**A:** Enterprise slugs are globally unique across all of GitHub. If the name you want is taken by another customer, you must choose a different slug. If it was taken by a previous trial you created that expired, contact GitHub Support to have it released. Common workarounds include appending a suffix (e.g., `contoso-corp` instead of `contoso`). You can change a slug later (Enterprise → **Settings** → **Danger zone** → **Change enterprise URL slug**) if you pay by credit card or PayPal; EMU or invoiced enterprises must ask GitHub Sales, and GHE.com enterprises can't change it — so choose carefully.
 
 ---
 
-### Q: I requested a Copilot or GHAS add-on trial, but it is not showing up — what should I check?
-**A:** Add-on trials (Copilot Business, GHAS) must be activated by your GitHub Sales representative or Solutions Engineer — they are not self-service. After requesting, allow 1-2 business days for activation. Once activated, Copilot appears under Enterprise > AI controls > Copilot, and GHAS appears under Organization > Settings > Advanced Security. If it still does not appear, confirm with your GitHub contact that the add-on was applied to the correct enterprise or org.
+### Q: I can't find Copilot or Advanced Security in my trial — what should I check?
+**A:** Secret Protection and Code Security are already included in GitHub.com trials (not GHE.com) — look under Organization → Settings → Advanced Security. Copilot isn't part of the self-serve trial; a Copilot pilot must be arranged with your GitHub Sales representative or Solutions Engineer. Once Copilot is active, it appears under Enterprise > AI controls > Copilot, and GHAS appears under Organization > Settings > Advanced Security. If it still does not appear, confirm with your GitHub contact that the add-on was applied to the correct enterprise or org.
 
 ---
 

@@ -420,10 +420,12 @@ Set up Copilot in this order: **6A** turn Copilot on for organizations, **6B** s
    - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
    - **MCP** — Model Context Protocol (MCP) policies.
 3. Set each policy:
-   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide).
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **Let organizations decide**.
    - **Toggle:** click it.
    - **No visible control:** click the policy name to see its options.
 4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
+
+> ⏰ **Before October 22, 2026:** decide the **Default policy for new features** on this same **Copilot** page (**Enabled**, **Disabled**, or **Let organizations decide**). From that date, GA features you've left **Unconfigured** follow it — and it's **Enabled** by default. Explicit choices are never overridden.
 
 > 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 

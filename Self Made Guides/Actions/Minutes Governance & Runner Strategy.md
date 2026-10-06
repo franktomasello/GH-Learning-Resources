@@ -145,6 +145,8 @@ GitHub Enterprise Cloud includes a monthly quota for **private and internal** re
 
 > ⚠️ **Security:** use self-hosted runners only with private repositories — forks of public repositories can run untrusted code on them.
 
+> 🚨 **Minimum runner version:** since **September 29, 2026** (GHE.com: July 31, 2026), self-hosted runners older than **2.329.0** can't register, and runners below the job-execution minimum stop running jobs. Keep runners on auto-update or upgrade them regularly.
+
 ---
 
 ## 4️⃣ Setting Actions Budgets and Alerts
@@ -198,6 +200,16 @@ GitHub Enterprise Cloud includes a monthly quota for **private and internal** re
 
 > 💡 **Tip:** Local actions (`uses: ./...`) are never restricted. Under **Runners** on the same page you can also disable repository-level self-hosted runners.
 
+### Workflow execution protections (GA September 2026)
+
+Control **who** can trigger workflows and **which events** can start them — at enterprise, organization, or repository level, optionally scoped to specific workflow files.
+
+1. Enterprise → **Policies** tab → **Actions** → **Policies** (organizations and repositories: **Settings** → **Actions** → **Policies**).
+2. Create a policy: name it, choose an enforcement status (**Evaluate** lets you watch the impact in policy insights first), and target organizations, repositories, or workflow files.
+3. Add **actor** rules (users, roles, teams, apps) and **event** rules (allowed triggers).
+
+> ⚠️ **November 2, 2026:** public repositories without an event policy get a default rule that **blocks `pull_request_target`** (currently in evaluate mode). Check policy insights and explicitly allow the trigger where a workflow truly needs it.
+
 ---
 
 ## 6️⃣ Runner Groups for Organization Isolation
@@ -231,6 +243,10 @@ Use these mechanisms to govern workflow behavior and resource consumption:
 | **Environment protection rules** | Require approvals before deployment | Configure required reviewers on the environment |
 
 > 💡 **Tip:** Set `timeout-minutes` on every workflow to prevent runaway jobs from consuming your entire minutes pool. The default timeout is 6 hours.
+
+---
+
+> 🚨 **Node 20 removed (September 23, 2026):** JavaScript actions that still declare `node20` no longer run. Update to current majors (for example `actions/checkout@v7`, `azure/login@v3`) and check third-party actions in your allowlist.
 
 ---
 

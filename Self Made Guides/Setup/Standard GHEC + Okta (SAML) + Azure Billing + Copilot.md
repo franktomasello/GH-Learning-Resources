@@ -350,10 +350,12 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
    - **Agents** — AI agent policies, such as **Copilot cloud agent** (formerly Copilot coding agent).
    - **MCP** — Model Context Protocol (MCP) policies.
 3. Set each policy:
-   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **No policy** (lets each organization owner decide in 7C).
+   - **Dropdown:** open it and choose an enforcement option — **Enabled**, **Disabled**, or **Let organizations decide** (each organization owner decides in 7C).
    - **Toggle:** click it.
    - **No visible control:** click the policy name to see its options.
 4. Check that each policy shows the value you chose. *(Changes apply on selection — there is no Save button.)*
+
+> ⏰ **Before October 22, 2026:** decide the **Default policy for new features** on this same **Copilot** page (**Enabled**, **Disabled**, or **Let organizations decide**). From that date, GA features you've left **Unconfigured** follow it — and it's **Enabled** by default. Explicit choices are never overridden.
 
 > 💡 **Suggestions matching public code:** agree on this setting with your legal team before you enable it.
 
@@ -366,7 +368,7 @@ If your organization belongs to an enterprise account (the usual GHEC setup), se
 1. Click **Policies** to set feature and privacy policies, or **Models** to choose which models beyond the basic set are available (some can add cost).
 2. For each policy, open its dropdown and choose an enforcement option. *(Changes apply on selection.)*
 
-> 📌 **Enterprise wins:** a policy the enterprise set in 7B can't be changed here — only policies left at **No policy** are editable by the organization.
+> 📌 **Enterprise wins:** a policy the enterprise set in 7B can't be changed here — only policies left at **Let organizations decide** are editable by the organization.
 
 ### 7D — Assign seats in the organization
 
